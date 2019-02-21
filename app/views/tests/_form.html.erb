@@ -1,0 +1,17 @@
+<%= form_for @test do |f| %>
+
+	<%= f.text_field :name %>
+	<%= f.label :name %>
+
+	<%= f.text_field :lis_code %>
+	<%= f.label :lis_code %>
+
+	<%= f.text_field :price %>
+	<%= f.label :price %>
+
+	<%= f.text_field :description %>
+	<%= f.label :description %>
+
+	<%= f.submit "Submit" %>
+
+<% end %>
