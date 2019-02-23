@@ -16,6 +16,12 @@ Rails.application.routes.draw do
   resources :tests
   resources :patients
   resources :reports
+  resources :normal_ranges
+  resources :patients
+  resources :orders
+  resources :items
+  resources :item_groups
+  resources :employees
 
   root 'tests#index'
   # Example resource route with options:

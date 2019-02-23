@@ -7,16 +7,29 @@ class TestsController < ApplicationController
 	end
 
 	def edit
+		@test = Test.find(params[:id])
 	end
 
 	def create
-		@test = Test.new(permitted_params)
-		@test.save
+		@test = Test.new(permitted_params["test"])
+		response = @test.save
+		respond_to do |format|
+			format.html do 
+				render "show"
+			end
+		end
 	end
 
 	def update
-		## now how to update the existing test ?
-		## with a script ?
+		@test = Test.find(params[:id])
+		@test.load_normal_ranges
+		@test.assign_attributes(permitted_params["test"])
+		@test.save
+		respond_to do |format|
+			format.html do 
+				render "show"
+			end
+		end
 	end
 
 	def destroy
@@ -24,11 +37,7 @@ class TestsController < ApplicationController
 
 	def show
 		@test = Test.find(params[:id])
-	end
-
-	## this endpoint has to also be there.
-	## and we want patient and tube ids on autocomplete.
-	def search
+		@test.load_normal_ranges
 	end
 
 	def index

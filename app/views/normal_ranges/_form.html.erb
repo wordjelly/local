@@ -1,0 +1,26 @@
+<%= form_for @normal_range do |f| %>
+
+	<%= f.text_field :test_id, readonly: true %>
+	<%= f.label :test_id %>
+
+	<%= f.text_field :test_name, readonly: true %>
+	<%= f.label :test_name %>
+
+	<%= f.number_field :min_age %>
+	<%= f.label :min_age %>
+
+	<%= f.number_field :max_age %>
+	<%= f.label :max_age %>
+
+	<%= f.text_field :sex %>
+	<%= f.label :sex %>
+
+	<%= f.number_field :min_value %>
+	<%= f.label :min_value %>
+
+	<%= f.number_field :max_value %>
+	<%= f.label :max_value %>
+
+	<%= f.submit "Submit" %>
+
+<% end %>

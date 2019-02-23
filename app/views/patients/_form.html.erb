@@ -1,0 +1,95 @@
+<%= form_for @patient do |f| %>
+
+	<%= f.text_field :first_name %>
+	<%= f.label :first_name %>
+
+	<%= f.text_field :last_name %>
+	<%= f.label :last_name %>
+
+	<%= f.text_field :email %>
+	<%= f.label :email %>
+
+	<%= f.text_field :mobile_number %>
+	<%= f.label :mobile_number %>
+
+	<%= f.text_field :area %>
+	<%= f.label :area %>
+
+	<!-- allergies -->
+	<h5>Do you have any allergies?</h5>
+	<p>
+      <label>
+        <input name="patient[allergies]" type="radio" checked />
+        <span>No</span>
+      </label>
+    </p>
+    <p>
+      <label>
+        <input name="patient[allergies]" type="radio" />
+        <span>Yes</span>
+      </label>
+    </p>
+
+    <!-- anticoagulatns -->
+    <h5>Are you on any blood thinners?</h5>
+	<p>
+      <label>
+        <input name="patient[anticoagulants]" type="radio" checked />
+        <span>No</span>
+      </label>
+    </p>
+    <p>
+      <label>
+        <input name="patient[anticoagulants]" type="radio" />
+        <span>Yes</span>
+      </label>
+    </p>
+
+    <!-- Diabetic -->
+    <h5>Are you on a diabetic?</h5>
+	<p>
+      <label>
+        <input name="patient[diabetic]" type="radio" checked />
+        <span>No</span>
+      </label>
+    </p>
+    <p>
+      <label>
+        <input name="patient[diabetic]" type="radio" />
+        <span>Yes</span>
+      </label>
+    </p>
+
+    <!-- Asthmatic -->
+    <h5>Are you asthmatic?</h5>
+	<p>
+      <label>
+        <input name="patient[asthmatic]" type="radio" checked />
+        <span>No</span>
+      </label>
+    </p>
+    <p>
+      <label>
+        <input name="patient[asthmatic]" type="radio" />
+        <span>Yes</span>
+      </label>
+    </p>
+
+    <!-- Asthmatic -->
+    <h5>Do you have any heart problems?</h5>
+	<p>
+      <label>
+        <input name="patient[heart_problems]" type="radio" checked />
+        <span>No</span>
+      </label>
+    </p>
+    <p>
+      <label>
+        <input name="patient[heart_problems]" type="radio" />
+        <span>Yes</span>
+      </label>
+    </p>
+
+	<%= f.submit "Submit" %>
+
+<% end %>

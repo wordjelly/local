@@ -1,14 +1,24 @@
  <table>
+        
         <thead>
           <tr>
               <th>Name</th>
               <th>Description</th>
               <th>Price</th>
               <th>LIS CODE</th>
+              <th>Options</th>
           </tr>
         </thead>
 
         <tbody>
         	<%= render :partial => "show" %>
         </tbody>
+
+
+
+        <% @normal_ranges = @test.normal_ranges %>
+        
+        <%= render :partial => "normal_ranges/index" %>
+
+
 </table>

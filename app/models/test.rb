@@ -3,39 +3,27 @@ require 'elasticsearch/persistence/model'
 class Test	
 	
 	include Elasticsearch::Persistence::Model
-	
+				
+	attr_accessor :normal_ranges
+	## mapped in block
 	attribute :name, String
 
-=begin
-	attribute :lis_code, String, mapping: { 
-				:type => 'keyword', 
-				:fields => {
-			        :raw => { 
-			          	:type =>  'text', 
-						:analyzer => "nGram_analyzer",
-						:search_analyzer => "whitespace"
-			        }
-			    }
-			}
-=end	
+	## mapped in block
+	attribute :lis_code, String
+	
 	attribute :price, Float
-	
-=begin
-	attribute :description, String, mapping: {type: 'text', analyzer: "nGram_analyzer", search_analyzer: "whitespace"}
-=end
+
+	## mapped in block
+	attribute :description, String
+
+	## mapped in block
 	attribute :patient_id, String
-	
-	attribute :result, Float
-	
+		
 	attribute :email_status, String
 	
 	attribute :sms_status, String
 	
 	attribute :status, String
-	
-	attribute :normal_ranges ,Array[Hash]
-
-	attribute :report_id, String
 
 	attribute :tube_ids, Array
 
@@ -44,6 +32,53 @@ class Test
 
 	## which mobile numbers to notify at every status change.
 	attribute :mobile_numbers, Array
+
+
+	##############################################################
+	##
+	##
+	## TIMING.
+	##
+	##
+	##############################################################
+
+	## how long does this test usually take.
+	attribute :test_duration, Integer
+
+	## when is this report expected
+	attribute :report_expected_at, Integer
+
+	## when was the report actually dispatched
+	attribute :report_dispatched_at, Integer
+
+	## what was the turn around time of the report.
+	attribute :turn_around_time, Integer
+
+	##############################################################
+	##
+	##
+	## ALLOTMENT.
+	## the technician to who the job has been alloted. 
+	##
+	##############################################################
+	attribute :alloted_to_technician, String
+
+
+	##############################################################
+	##
+	##
+	## CHECKLISTS
+	##
+	##
+	##############################################################
+	attr_accessor :checklists_to_be_approved
+
+	##############################################################
+	##
+	##
+	## 
+	##
+	##############################################################
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -83,79 +118,87 @@ class Test
 	            }
 	    	}
 	  	} do
+
 	    mapping do
-	      indexes :name, type: 'keyword', fields: {
-	      	:raw => {
-	      		:type => "text",
-	      		:analyzer => "standard"
+	      
+		    indexes :name, type: 'keyword', fields: {
+		      	:raw => {
+		      		:type => "text",
+		      		:analyzer => "nGram_analyzer",
+		      		:search_analyzer => "whitespace_analyzer"
+		      	}
+		    }
+
+	      	indexes :lis_code, type: 'keyword', fields: {
+	      		:raw => {
+	      			:type => "text",
+	      			:analyzer => "nGram_analyzer",
+	      			:search_analyzer => "whitespace_analyzer"
+	      		}
 	      	}
-	      }
+
+	      	indexes :description, type: 'text'
+
+	       	indexes :status, type: 'keyword', fields: {
+	      		:raw => {
+	      			:type => "text",
+	      			:analyzer => "nGram_analyzer",
+	      			:search_analyzer => "whitespace_analyzer"
+	      		}
+	      	}
+
+	      	indexes :report_name, type: 'keyword', fields: {
+	      		:raw => {
+	      			:type => "text",
+	      			:analyzer => "nGram_analyzer",
+	      			:search_analyzer => "whitespace_analyzer"
+	      		}
+	      	}
+
+	      	indexes :patient_id, type: 'keyword', fields: {
+	      		:raw => {
+	      			:type => "text",
+	      			:analyzer => "nGram_analyzer",
+	      			:search_analyzer => "whitespace_analyzer"
+	      		}
+	      	}
+
+	      	indexes :tube_ids, type: 'keyword', fields: {
+	      		:raw => {
+	      			:type => "text",
+	      			:analyzer => "nGram_analyzer",
+	      			:search_analyzer => "whitespace_analyzer"
+	      		}
+	      	}
+
+	      	indexes :emails, type: 'keyword', fields: {
+	      		:raw => {
+	      			:type => "text",
+	      			:analyzer => "nGram_analyzer",
+	      			:search_analyzer => "whitespace_analyzer"
+	      		}
+	      	}
+
+	      	indexes :mobile_numbers, type: 'keyword', fields: {
+	      		:raw => {
+	      			:type => "text",
+	      			:analyzer => "nGram_analyzer",
+	      			:search_analyzer => "whitespace_analyzer"
+	      		}
+	      	}
+
 	    end
 	end
-
-
-	# so so much for the search part.
-	# will have to configure it tomorrow.
 	
-
-=begin
-	 do
-	    mappings dynamic: 'false',
-	      	analysis:  {
-	            filter:  {
-	                nGram_filter:  {
-	                    type: "nGram",
-	                    min_gram: 2,
-	                    max_gram: 20,
-	                   	token_chars: [
-	                       "letter",
-	                       "digit",
-	                       "punctuation",
-	                       "symbol"
-	                    ]
-	                }
-	            },
-	            analyzer:  {
-	                nGram_analyzer:  {
-	                    type: "custom",
-	                    tokenizer:  "whitespace",
-	                    filter: [
-	                        "lowercase",
-	                        "asciifolding",
-	                        "nGram_filter"
-	                    ]
-	                },
-	                whitespace_analyzer: {
-	                    type: "custom",
-	                    tokenizer: "whitespace",
-	                    filter: [
-	                        "lowercase",
-	                        "asciifolding"
-	                    ]
-	                }
-	            }
-        	} do 
-
-	    end
+	def load_normal_ranges
+		results = NormalRange.search({
+			query: {
+				term: {
+					test_id: self.id.to_s
+				}
+			}
+		})
+		self.normal_ranges = results.response.hits.hits
 	end
-=end
-	
-
-
-	## what methods will be necessary
-	## given a tube id and a lis code, update it.
-	def self.lis_update(lis_code, tube_id)
-		
-	end
-
-	def verify
-
-	end
-
-	def notify
-
-	end
-
-	## print is available on the report only.
 
 end
