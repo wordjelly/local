@@ -1,0 +1,4 @@
+var input_element = $("input[data-autocomplete-type='<%= @type.to_s %>']").first();
+
+$("#autocomplete_dropdown").remove();
+$("<%= escape_javascript(render :partial => 'search/autocomplete_dropdown', locals: {search_results: @search_results}) %>").insertAfter(input_element);

@@ -1,0 +1,18 @@
+<li class="collection-item search_result teal-text">
+<% link_text = (result.respond_to? "name") ? result.send("name") : result.id.to_s %>
+<% link_address = (result.class.name.downcase + "_path") %>
+<% link_description = (result.respond_to? "description") ? result.send("description") : "" %>
+	<div>
+		<%= link_to link_text, main_app.send(link_address,result.id.to_s) %>
+	</div>
+	<div>
+		<%= link_description %>
+	</div>
+	<% if result.respond_to? "search_options" %>
+		<div>
+			<% result.search_options.each do |sopt| %>
+				<span style="margin-left: 10px;" data-id="<%= result.id.to_s %>"><%= sopt %></span>
+			<% end %>
+		</div>
+	<% end %>
+</li>

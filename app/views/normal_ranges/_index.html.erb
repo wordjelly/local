@@ -6,12 +6,13 @@
               <th>Min Age</th>
               <th>Max Age</th>
               <th>Sex</th>
+              <th>Options</th>
           </tr>
         </thead>
 
         <tbody>
           <% @normal_ranges.each do |nr| %>
-        	 <% @normal_range = nr %>
+           <% @normal_range = nr %>
            <%= render :partial => "show" %>
           <% end %>
         </tbody>

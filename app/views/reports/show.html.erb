@@ -1,0 +1,32 @@
+<div class="section">
+  <h5>Report Summary</h5>
+  <table>
+          
+          <thead>
+            <tr>
+                <th>Name</th>
+                <th>Total Tests</th>
+                <th>Price</th>
+                <th>Total Requirements</th>
+                <th>Options</th>
+            </tr>
+          </thead>
+
+          <tbody>
+          	<%= render :partial => "show" %>
+          </tbody>
+
+  </table>
+</div>
+
+<div class="section">
+<h5>Component Tests</h5>
+<% @tests = @report.tests %>
+<%= render :partial => "tests/index" %>
+</div>
+
+<div class="section">
+<h5>Item Requirements</h5>
+<% @item_requirements = @report.item_requirements %>
+<%= render :partial => "item_requirements/index" %>
+</div>

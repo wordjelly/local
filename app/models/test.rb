@@ -3,8 +3,15 @@ require 'elasticsearch/persistence/model'
 class Test	
 	
 	include Elasticsearch::Persistence::Model
-				
+		
+	index_name "pathofast-tests"
+
 	attr_accessor :normal_ranges
+
+	attribute :template_test_id, String
+
+	attribute :search_options, Array
+
 	## mapped in block
 	attribute :name, String
 
@@ -63,7 +70,7 @@ class Test
 	##############################################################
 	attribute :alloted_to_technician, String
 
-
+	## item types have to be hard-coded.
 	##############################################################
 	##
 	##
@@ -199,6 +206,14 @@ class Test
 			}
 		})
 		self.normal_ranges = results.response.hits.hits
+	end
+
+	def clone(patient_id)
+		
+		patient_test = Test.new(self.attributes.merge({:patient_id => patient_id, :template_test_id => self.id.to_s}))
+
+		patient_test
+
 	end
 
 end

@@ -1,0 +1,14 @@
+<table>
+        <thead>
+          <tr>
+              <th>Name</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @statuses.each do |nr| %>
+        	 <% @status = nr %>
+           <%= render :partial => "show" %>
+          <% end %>
+        </tbody>
+</table>

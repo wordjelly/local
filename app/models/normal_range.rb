@@ -4,6 +4,8 @@ class NormalRange
 	
 	include Elasticsearch::Persistence::Model
 
+	index_name "pathofast-normal-ranges"
+
 	attribute :test_id, String
 
 	attr_accessor :test_name

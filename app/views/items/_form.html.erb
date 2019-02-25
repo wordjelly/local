@@ -1,0 +1,26 @@
+<%= form_for @item do |f| %>
+
+	<%= f.text_field :item_type, :data => {:autocomplete_type => "item-types"} %>
+	<%= f.label :item_type %>
+
+  <%= f.text_field :location, :data => {:autocomplete_type => "locations"} %>
+  <%= f.label :location %>
+
+  <%= f.text_field :filled_amount %>
+  <%= f.label :filled_amount %>
+
+  <%= f.text_field :expiry_date, :class => "datepicker" %>
+  <%= f.label :expiry_date %>
+
+  <!-- the expiry date of the patient fluid inside -->
+  <h6>Expiry Date of Patient Fluid Inside Item</h6>
+  
+  <%= f.text_field :contents_expiry_date, :class => "datepicker" %>
+  <%= f.label :contents_expiry_date %>  
+
+  <%= f.text_field :barcode %>
+  <%= f.label :barcode %>
+  	
+	<%= f.submit "Submit" %>
+
+<% end %>

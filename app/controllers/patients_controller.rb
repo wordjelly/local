@@ -22,9 +22,9 @@ class PatientsController  < ApplicationController
 
 	def update
 		@patient = Patient.find(params[:id])
-		@patient.load_normal_ranges
-		@patient.assign_attributes(permitted_params["patient"])
-		@patient.save
+		
+		@patient.update_attributes(permitted_params["patient"])
+		
 		respond_to do |format|
 			format.html do 
 				render "show"
@@ -37,7 +37,7 @@ class PatientsController  < ApplicationController
 
 	def show
 		@patient = Patient.find(params[:id])
-		@patient.load_normal_ranges
+		
 	end
 
 	def index

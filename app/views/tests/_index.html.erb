@@ -1,0 +1,17 @@
+ <table>
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>LIS CODE</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        	<% @tests.each do |test| %>
+        	<% @test = test %>
+        	<%= render :partial => "show" %>
+        	<% end %>
+        </tbody>
+</table>

@@ -15,10 +15,9 @@
         </tbody>
 
 
-
-        <% @normal_ranges = @test.normal_ranges %>
-        
-        <%= render :partial => "normal_ranges/index" %>
-
+        <% unless @test.normal_ranges.blank? %>
+          <% @normal_ranges = @test.normal_ranges %> 
+          <%= render :partial => "normal_ranges/index" %>
+        <% end %>
 
 </table>

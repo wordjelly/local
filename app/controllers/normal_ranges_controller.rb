@@ -24,8 +24,7 @@ class NormalRangesController < ApplicationController
 
 	def update
 		@normal_range = NormalRange.find(:id)
-		@normal_range.assign_attributes(permitted_params[:normal_range])
-		@normal_range.save
+		@normal_range.update_attributes(permitted_params[:normal_range])
 		@normal_range.load_test_name
 		respond_to do |format|
 			format.html do 

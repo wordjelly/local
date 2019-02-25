@@ -3,6 +3,8 @@ class Patient
 
 	include Elasticsearch::Persistence::Model
 
+	index_name "pathofast-patients"
+
 	attribute :first_name, String
 
 	attribute :last_name, String
@@ -25,6 +27,7 @@ class Patient
 
 	attribute :heart_problems, Integer
 
+	attribute :sex, String
 	##########################################
 	##
 	##
@@ -38,7 +41,9 @@ class Patient
 	end
 
 	def age
-		(Time.now - self.date_of_birth).years.to_s
+		return nil unless self.date_of_birth
+		now = Time.now.utc.to_date
+  		now.year - date_of_birth.year - ((now.month > date_of_birth.month || (now.month == date_of_birth.month && now.day >= date_of_birth.day)) ? 0 : 1)
 	end
 
 	def alert_information

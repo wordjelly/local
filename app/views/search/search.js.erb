@@ -1,0 +1,9 @@
+$(".search_result").remove();
+<% @search_results.each do |result| %>
+		
+	$("#search_collection").append("<%= escape_javascript(render :partial => 'search/search_result', locals: {result: result}) %>");
+	
+<% end %>
+
+highlight();
+

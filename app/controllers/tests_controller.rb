@@ -11,7 +11,7 @@ class TestsController < ApplicationController
 	end
 
 	def create
-		@test = Test.new(permitted_params["test"])
+		@test = Test.new(permitted_params["test"].merge(:search_options => ["Add To Report","Remove From Report"]))
 		response = @test.save
 		respond_to do |format|
 			format.html do 
@@ -23,8 +23,7 @@ class TestsController < ApplicationController
 	def update
 		@test = Test.find(params[:id])
 		@test.load_normal_ranges
-		@test.assign_attributes(permitted_params["test"])
-		@test.save
+		@test.update_attributes(permitted_params["test"])
 		respond_to do |format|
 			format.html do 
 				render "show"
@@ -33,6 +32,7 @@ class TestsController < ApplicationController
 	end
 
 	def destroy
+
 	end
 
 	def show

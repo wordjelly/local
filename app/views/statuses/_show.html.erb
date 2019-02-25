@@ -1,0 +1,4 @@
+<tr>
+	<td><%= link_to @status.name, status_path(@status.id.to_s) %></td>
+	<td><%= render :partial => "statuses/options" %></td>
+</tr>

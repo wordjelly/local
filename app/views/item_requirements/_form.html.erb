@@ -1,0 +1,34 @@
+<%= form_for @normal_range do |f| %>
+
+	<%= f.text_field :item_type, readonly: true %>
+	<%= f.label :item_type %>
+
+	<!-- allergies -->
+    <div class="section">
+  	  <h6>Is this item requirement optional, for eg if you have already defined a red top tube as required, then a golden top tube becomes optional as an item requirement.</h6>
+  	  <p>
+        <label>
+          <input name="item_requirement[optional]" type="radio" checked />
+          <span>No</span>
+        </label>
+      </p>
+      <p>
+        <label>
+          <input name="item_requirment[optional]" type="radio" />
+          <span>Yes</span>
+        </label>
+      </p>
+    </div>
+
+    <h6>How much of this item is necessary for this report(0 - 100), eg: if the report is hemogram, and the item is an edta tube, we need a minimum of 50% of the tube for this report.</h6>
+	<%= f.number_field :amount %>
+	<%= f.label :amount %>
+
+
+	<h6>If optional item requirements have been defined, then it will take the one with the maximum priority, for a given item_type. So if RST has a priority of 1, and SST has a priority of 2, it will take RST, if SST is optional.</h6>
+	<%= f.number_field :priority %>
+	<%= f.label :priority %>
+
+	<%= f.submit "Submit" %>
+
+<% end %>

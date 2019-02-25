@@ -15,6 +15,8 @@
   <!-- Compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js"></script>
+  
   <!-- Compiled and minified JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
   
@@ -41,24 +43,38 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+<ul id="dropdown1" class="dropdown-content">
+  <li><%= link_to "Add New Item Type", new_item_type_path %></li>
+  <li class="divider"></li>
+  <li><%= link_to "Add New Status", new_status_path %></li>
+  <li class="divider"></li>
+  <li><%= link_to "Add New Location", new_location_path %></li>
+  <li class="divider"></li>
+  <li><%= link_to "Add New Patient", new_patient_path %></li>
+  <li class="divider"></li>
+  <li><%= link_to "Add New Report", new_report_path %></li>
+  <li class="divider"></li>
+  <li><%= link_to "Add New Test", new_test_path %></li>
+  <li class="divider"></li>
+  <li><%= link_to "Add New Employee", new_employee_path %></li>
+  <li class="divider"></li>
+  <li><%= link_to "Add New Item", new_item_path %></li>
+</ul>
 <nav>
     <div class="nav-wrapper">
       <a href="#" class="brand-logo">Pathofast</a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="sass.html">Add New Patient</a></li>
-        <li><%= link_to "Add New Test", new_test_path %></li>
+        <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">Options<i class="material-icons right">arrow_drop_down</i></a></li>
       </ul>
     </div>
 </nav>
 
 <div class="container">
+<%= render :partial => "search/search" %>
 <%= yield %>
 </div>
 
 </body>
 </html>
 
-<!-- i want to finish this by tonight -->
-<!-- include wickedpdf -->
-<!-- by weekend with automatic print outs -->
 

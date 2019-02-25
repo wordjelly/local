@@ -1,0 +1,8 @@
+<tr>
+	<td><%= link_to @normal_range.test_id, test_path(@normal_range.test_id) %></td>
+	<td><%= @normal_range.test_name %></td>
+	<td><%= @normal_range.min_age %></td>
+	<td><%= @normal_range.max_age %></td>
+	<td><%= @normal_range.sex %></td>
+	<td><%= render :partial => "normal_ranges/options" %></td>
+</tr>
