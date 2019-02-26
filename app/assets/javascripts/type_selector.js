@@ -23,6 +23,12 @@ $(document).on('keypress','input:text',function(e){
 });
 
 
-function get_input_field_by_type(type){
-		
-}
+$(document).on('click','.autocomplete_dropdown_element',function(e){
+	$(this).parent().prev().val($(this).text());
+	$("#autocomplete_dropdown").remove();
+});
+
+
+$(document).on('click','body',function(e){
+	
+});

@@ -34,7 +34,7 @@ class Item
 		self.id = self.barcode unless self.barcode.blank?
 	end
 
-	before_create do |document|
+	before_save do |document|
 		document.set_id_from_barcode
 	end
 

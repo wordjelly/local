@@ -23,6 +23,23 @@ class Report
 	attr_accessor :item_requirement_id
 	attr_accessor :item_requirements
 
+	## what kind of images are needed
+	## references
+	## signatures
+	## alert criteria.
+	## pdf generation of the report
+	## verification.
+	## direct verification, or individual test verification.
+	## on verification sending emails/sms.
+	## total -> pdf.
+	## report -> pdf (emailing and smsing)
+	## adding tests
+	## removing tests
+	## splitting tests
+	## summary of abnormal values.
+	## updating item statuses.(image, location, status, so we can keep a status_update object and work with that)
+
+
 	before_save do |document|
 		if document.test_id_action
 			if document.test_id_action == "add"

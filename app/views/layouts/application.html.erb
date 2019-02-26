@@ -2,9 +2,13 @@
 <html>
 <head>
   <title>Local</title>
+  
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  
+
 
   <!-- strftime -->
   <script src="https://cdn.jsdelivr.net/npm/strftime@0.10.0/strftime.min.js"></script>
@@ -40,8 +44,15 @@
 
   <!--- fontawesome icons -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
   <%= csrf_meta_tags %>
+
+  <%= javascript_include_tag  "https://widget.cloudinary.com/global/all.js" %>
+
+  <%= cloudinary_js_config %>
+
 </head>
+
 <body>
 <ul id="dropdown1" class="dropdown-content">
   <li><%= link_to "Add New Item Type", new_item_type_path %></li>

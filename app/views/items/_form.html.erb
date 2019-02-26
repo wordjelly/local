@@ -6,7 +6,7 @@
   <%= f.text_field :location, :data => {:autocomplete_type => "locations"} %>
   <%= f.label :location %>
 
-  <%= f.text_field :filled_amount %>
+  <%= f.number_field :filled_amount %>
   <%= f.label :filled_amount %>
 
   <%= f.text_field :expiry_date, :class => "datepicker" %>
@@ -21,6 +21,19 @@
   <%= f.text_field :barcode %>
   <%= f.label :barcode %>
   	
+  <% unless @item.new_record? %>
+    <%= render :partial => "images/image", locals: {model: @item} %>
+  <% end %>
+
 	<%= f.submit "Submit" %>
 
 <% end %>
+
+<!-- we need to sort out image upload -->
+
+<!-- its pretty simple, the reports define item types and quantities -->
+<!-- i.e item_requirements -->
+<!-- so that's it really -->
+<!-- it is calcualted -->
+
+<!-- we need to sort out pdf generation -->

@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   resources :item_types
   resources :statuses
   resources :locations
+  resources :images
 
   get 'search' => 'search#search'
   get 'search/type_selector' => 'search#type_selector'
