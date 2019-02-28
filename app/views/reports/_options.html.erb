@@ -1,7 +1,7 @@
 <span>
-	<%= link_to "Add New Range", new_normal_range_path(:normal_range => {:test_id => @test.id.to_s}) %>
+	<%= link_to "Edit", edit_report_path(:id => @report.id.to_s) %>
 </span>
 
 <span>
-	<%= link_to "Delete", new_normal_range_path(:test_id => @test.id.to_s) %>
+	<%= link_to "Delete",report_path(:id => @report.id.to_s, :method => "delete") %>
 </span>

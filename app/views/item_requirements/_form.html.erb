@@ -1,6 +1,9 @@
-<%= form_for @normal_range do |f| %>
+<%= form_for @item_requirement do |f| %>
+  
+  <%= f.text_field :name %>
+  <%= f.label :name %>
 
-	<%= f.text_field :item_type, readonly: true %>
+	<%= f.text_field :item_type, :data => {:autocomplete_type => "item-types"} %>
 	<%= f.label :item_type %>
 
 	<!-- allergies -->
@@ -14,7 +17,7 @@
       </p>
       <p>
         <label>
-          <input name="item_requirment[optional]" type="radio" />
+          <input name="item_requirement[optional]" type="radio" />
           <span>Yes</span>
         </label>
       </p>

@@ -43,11 +43,15 @@ class ReportsController < ApplicationController
 		@reports = Report.all
 	end
 
+	## so here it has to refer to tests, and item requirements, 
+	## and on clicking it it has to do the autocomplete.
+	## so we will give an add or a remove.
+	## only add, and a remove option also can be giben.
 	
 	def permitted_params
 		## we can add one test or item_requirement at a time.
 		## the item requirements.
-		params.permit(:id , {:report => [:report_name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_action]})
+		params.permit(:id , {:report => [:report_name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_action, :price]})
 	end
 
 

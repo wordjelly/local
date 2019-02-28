@@ -109,8 +109,8 @@ class Image
     params_to_sign = {:public_id => self.id.to_s,:timestamp=> self.timestamp, :callback => "http://widget.cloudinary.com/cloudinary_cors.html"}
     params_to_sign.merge!({:custom_coordinates => self.custom_coordinates}) unless self.custom_coordinates.blank?
     Cloudinary::Utils.sign_request(params_to_sign, :options=>{:api_key=>Cloudinary.config.api_key, :api_secret=>Cloudinary.config.api_secret})
-
   end
+
 
   ## rendered in create, in the authenticated_controller.
   def text_representation
@@ -119,9 +119,9 @@ class Image
 
   def get_url
     if self.custom_coordinates
-      Cloudinary::Utils.cloudinary_url self.id.to_s, gravity: "custom", crop: "crop"
+      Cloudinary::Utils.cloudinary_url self.id.to_s, gravity: "custom", crop: "crop", sign_url: true
     else
-      Cloudinary::Utils.cloudinary_url self.id.to_s
+      Cloudinary::Utils.cloudinary_url self.id.to_s, sign_url: true
     end
   end
 

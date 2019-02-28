@@ -1,19 +1,32 @@
 <div class="section">
+
 	<%= form_for @report do |f| %>
 
-		<%= f.text_field :report_name %>
-		<%= f.label :report_name %>
+		<%= f.text_field :name %>
+		<%= f.label :name %>
 
 		<%= f.number_field :price %>
 		<%= f.label :price %>
 
+		<!-- the autocomplete is done on this -->
+		<!-- the hit id is taken from this and set as the test_id in the fields below -->
+		<!-- for this will have to give the item requirement a name -->
+		<%= f.text_field :test_name , :data => {:autocomplete_type => "tests"} %>
+		<%= f.label :test_name %>
+
+		<%= f.text_field :item_requirement_name, :data => {:autocomplete_type => "item-requirements"} %>
+		<%= f.label :item_requirement_name %>
+
+		<!-- this is going to be set by javascript, before submit. -->
 		<%= f.hidden_field :test_id %>
-		<%= f.hidden_field :test_id_action %>
+		<%= f.hidden_field :test_id_action, :value => "add" %>
 
 		<%= f.hidden_field :item_requirement_id %>
-		<%= f.hidden_field :item_requirement_id_action %>
+		<%= f.hidden_field :item_requirement_id_action, :value => "add" %>
 
 		<%= f.submit "Submit", :class => "waves-effect waves-light btn" %>
+
+		<!-- first we have to be able to add or remove them -->
 
 	<% end %>
 	

@@ -25,6 +25,7 @@ $(document).on('keypress','input:text',function(e){
 
 $(document).on('click','.autocomplete_dropdown_element',function(e){
 	$(this).parent().prev().val($(this).text());
+	$(this).parent().prev().attr("data-hit-id",$(this).attr("data-hit-id"));
 	$("#autocomplete_dropdown").remove();
 });
 

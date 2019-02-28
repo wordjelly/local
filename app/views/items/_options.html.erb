@@ -1,9 +1,9 @@
 <!-- remove range -->
 <span>
-	<%= link_to "Delete", normal_range_path(@normal_range.id.to_s), :method => :delete %>
+	<%= link_to "Delete", item_path(@item.id.to_s), :method => :delete %>
 </span>
 
 <!-- edit range -->
 <span style="margin-left: 10px;">
-	<%= link_to "Edit", edit_normal_range_path(@normal_range.id.to_s) %>
+	<%= link_to "Edit", edit_item_path(@item.id.to_s) %>
 </span>

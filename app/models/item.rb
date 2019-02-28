@@ -4,6 +4,8 @@ class Item
 
 	include Elasticsearch::Persistence::Model
 
+	include Concerns::ImageLoadConcern
+
 	index_name "pathofast-items"
 
 	## now comes the issue of item types.

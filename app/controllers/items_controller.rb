@@ -42,6 +42,7 @@ class ItemsController  < ApplicationController
 
 	def index
 		@items = Item.all
+		@items.map{|c| c.load_images}
 	end
 
 	

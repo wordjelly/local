@@ -1,17 +1,21 @@
 <table>
         <thead>
           <tr>
-              <th>Test Id</th>
-              <th>Test Name</th>
-              <th>Min Age</th>
-              <th>Max Age</th>
-              <th>Sex</th>
+              <th>Id</th>
+              <th>Item Type</th>
+              <th>Location</th>
+              <th>Filled Amount</th>
+              <th>Expiry Date</th>
+              <th>Expiry Date of Contents</th>
+              <th>Barcode</th>
+              <th>Images</th>
+              <th>Options</th>
           </tr>
         </thead>
 
         <tbody>
-          <% @normal_ranges.each do |nr| %>
-        	 <% @normal_range = nr %>
+          <% @items.each do |nr| %>
+        	 <% @item = nr %>
            <%= render :partial => "show" %>
           <% end %>
         </tbody>

@@ -1,5 +1,5 @@
 <ul class="collection" id="autocomplete_dropdown">
 	<% search_results.each do |hit| %>
-		<li class="collection-item autocomplete_dropdown_element"><%= hit.name %></li>
+		<li class="collection-item autocomplete_dropdown_element" data-hit-id="<%= hit.id.to_s %>"><%= hit.name %></li>
 	<% end %>
 </ul>

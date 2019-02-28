@@ -9,19 +9,23 @@ class Report
 
 	attribute :test_ids, Array
 
+	attr_accessor :test_name
 	attr_accessor :test_id_action
 	attr_accessor :test_id
-	attr_accessor :tests
+	attribute :tests, Array
 
 	attribute :patient_id, String
 
-	attribute :report_name, String
+	attribute :name, String
+
+	attribute :price, Float
 
 	attribute :item_requirement_ids, Array
 
-	attr_accessor :item_requirment_id_action
+	attr_accessor :item_requirement_name
+	attr_accessor :item_requirement_id_action
 	attr_accessor :item_requirement_id
-	attr_accessor :item_requirements
+	attribute :item_requirements, Array
 
 	## what kind of images are needed
 	## references

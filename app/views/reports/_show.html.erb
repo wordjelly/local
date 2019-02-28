@@ -1,7 +1,7 @@
 <tr>
-	<td><%= link_to @test.name, test_path(@test.id.to_s) %></td>
-	<td><%= @test.description %></td>
-	<td><%= @test.price %></td>
-	<td><%= @test.lis_code %></td>
-	<td><%= render :partial => "tests/options" %></td>
+	<td><%= link_to @report.name, report_path(@report.id.to_s) %></td>
+	<td><%= @report.tests.size %></td>
+	<td><%= @report.price %></td>
+	<td><%= @report.item_requirements.size %></td>
+	<td><%= render :partial => "reports/options" %></td>
 </tr>

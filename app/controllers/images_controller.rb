@@ -12,10 +12,8 @@ class ImagesController < ApplicationController
 	end
 
 	def create
-		## so now it saves the image.
-		## now we have to show that image.
-		## that's the remaining part.
 		@image = Image.new(permitted_params["image"])
+		@image.save
 		respond_to do |format|
 			format.html do 
 				render "show"

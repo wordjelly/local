@@ -1,17 +1,18 @@
 <table>
         <thead>
           <tr>
-              <th>Test Id</th>
-              <th>Test Name</th>
-              <th>Min Age</th>
-              <th>Max Age</th>
-              <th>Sex</th>
+              <th>Name</th>
+              <th>Item Type</th>
+              <th>Amount</th>
+              <th>Optional</th>
+              <th>Priority</th>
+              <th>Belongs to Reports</th>
           </tr>
         </thead>
 
         <tbody>
-          <% @normal_ranges.each do |nr| %>
-        	 <% @normal_range = nr %>
+          <% @item_requirements.each do |nr| %>
+        	 <% @item_requirement = nr %>
            <%= render :partial => "show" %>
           <% end %>
         </tbody>

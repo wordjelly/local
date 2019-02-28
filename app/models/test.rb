@@ -8,6 +8,14 @@ class Test
 
 	attr_accessor :normal_ranges
 
+	## this is set when the tests are loaded, while viewing the report.
+	## if the report id is set on the test, then in its options, we give a link to remove the test from that report, as an update.
+	## the same is done for item requirements.
+	## in order to add the report.
+	## we give the test name.
+	## and add the data attribute by default on that input element.
+	attr_accessor :report_id
+
 	attribute :template_test_id, String
 
 	attribute :search_options, Array

@@ -1,4 +1,4 @@
-module Auth::Concerns::ImageLoadConcern
+module Concerns::ImageLoadConcern
 
 	extend ActiveSupport::Concern
 
@@ -6,7 +6,7 @@ module Auth::Concerns::ImageLoadConcern
 
 		attr_accessor :images
 		
-		after_initialize do |document|
+		after_find do |document|
 			document.load_images
 		end
 
@@ -14,11 +14,13 @@ module Auth::Concerns::ImageLoadConcern
 		##and add them to an images array. 
 		def load_images
 			puts "came to load images ----------- "
-			self.images = Auth::Image.search(
+			self.images = Image.search(
 				{
-					:term => {
-						:parent_id => {
-							:value => self.id.to_s
+					:query => {
+						:term => {
+							:parent_id => {
+								:value => self.id.to_s
+							}
 						}
 					}
 				}
