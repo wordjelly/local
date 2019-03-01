@@ -1,0 +1,22 @@
+<div class="section">
+
+	<%= form_for @report, :html => {:class => "report_form"} do |f| %>
+
+
+		<%= f.text_field :patient_name %>
+		<%= f.label :patient_name %>
+
+
+		<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true} %>
+		<%= f.label :report_name %>
+
+		<!-- so here we choose from the dropdown -->
+		<!-- we have to have the option of choose multiple -->
+		<!-- right now we make the value of the previous input as this value -->
+		<!-- what i need to do is -->
+
+		<%= f.submit "Submit", :class => "waves-effect waves-light btn" %>
+
+	<% end %>
+	
+</div>

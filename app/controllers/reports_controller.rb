@@ -8,6 +8,8 @@ class ReportsController < ApplicationController
 
 	def edit
 		@report = Report.find(params[:id])
+		@report.load_tests
+		@report.load_item_requirements
 	end
 
 	def create
@@ -22,10 +24,14 @@ class ReportsController < ApplicationController
 
 	def update
 		@report = Report.find(params[:id])
-		@report.update_attributes(permitted_params["report"])
+		## so the before update thing does not work.
+		@report.attributes = permitted_params["report"]
+		@report.save
+		#@report.load_tests
+		#@report.load_item_requirements
 		respond_to do |format|
 			format.html do 
-				render "show"
+				redirect_to report_path(@report.id.to_s)
 			end
 		end
 	end
@@ -51,7 +57,7 @@ class ReportsController < ApplicationController
 	def permitted_params
 		## we can add one test or item_requirement at a time.
 		## the item requirements.
-		params.permit(:id , {:report => [:report_name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_action, :price]})
+		params.permit(:id , {:report => [:name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_id_action, :price]})
 	end
 
 

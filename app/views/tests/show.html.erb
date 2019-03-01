@@ -11,13 +11,13 @@
         </thead>
 
         <tbody>
-        	<%= render :partial => "show" %>
+        	<%= render :partial => "/tests/show" %>
         </tbody>
 
 
         <% unless @test.normal_ranges.blank? %>
           <% @normal_ranges = @test.normal_ranges %> 
-          <%= render :partial => "normal_ranges/index" %>
+          <%= render :partial => "/normal_ranges/index" %>
         <% end %>
 
 </table>

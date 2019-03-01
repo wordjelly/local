@@ -9,5 +9,5 @@
 </span>
 
 <% if @item_requirement.report_id %>
-	<%= link_to "Remove Item Requirement From Report", report_path({id: @item_requirement.report_id, report: {item_requirement_action: "remove", item_requirement_id: @item_requirement.id.to_s}})%>
+	<%= link_to "Remove Item Requirement From Report", report_path({id: @item_requirement.report_id, report: {item_requirement_id_action: "remove", item_requirement_id: @item_requirement.id.to_s}}), :method => :put%>
 <% end %>

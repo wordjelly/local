@@ -17,15 +17,15 @@ class Patient
 
 	attribute :area, String
 
-	attribute :allergies, Integer
+	attribute :allergies, String
 
-	attribute :anticoagulants, Integer
+	attribute :anticoagulants, String
 
-	attribute :diabetic, Integer
+	attribute :diabetic, String
 
-	attribute :asthmatic, Integer
+	attribute :asthmatic, String
 
-	attribute :heart_problems, Integer
+	attribute :heart_problems, String
 
 	attribute :sex, String
 	##########################################
@@ -36,7 +36,7 @@ class Patient
 	##
 	##########################################
 
-	def full_name
+	def name
 		self.first_name + " " + self.last_name
 	end
 

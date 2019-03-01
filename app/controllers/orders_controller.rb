@@ -22,7 +22,8 @@ class OrdersController < ApplicationController
 
 	def update
 		@order = Order.find(params[:id])
-		@order.update_attributes(permitted_params["order"])
+		@order.attributes = (permitted_params["order"])
+		@order.save
 		respond_to do |format|
 			format.html do 
 				render "show"
@@ -41,10 +42,11 @@ class OrdersController < ApplicationController
 		@orders = Order.all
 	end
 
-	
+	## what all is it going to have ?
+	## multiple reports / packages from the dropdown
+	## patient id from the dropdown.
+	## that's it.
 	def permitted_params
-		## we can add one test or item_requirement at a time.
-		## the item requirements.
 		params.permit(:id , {:order => [:report_name,:patient_id,:test_id,:item_requirement_id, :test_id_action, :item_requirement_action]})
 	end
 
