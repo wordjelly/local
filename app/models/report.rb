@@ -27,21 +27,58 @@ class Report
 	attr_accessor :item_requirement_id
 	attribute :item_requirements, Array
 
-	## what kind of images are needed
-	## references
-	## signatures
-	## alert criteria.
-	## pdf generation of the report
-	## verification.
-	## direct verification, or individual test verification.
-	## on verification sending emails/sms.
-	## total -> pdf.
-	## report -> pdf (emailing and smsing)
-	## adding tests
-	## removing tests
-	## splitting tests
-	## summary of abnormal values.
-	## updating item statuses.(image, location, status, so we can keep a status_update object and work with that)
+	settings index: { 
+	    number_of_shards: 1, 
+	    number_of_replicas: 0,
+	    analysis: {
+		      	filter: {
+			      	nGram_filter:  {
+		                type: "nGram",
+		                min_gram: 2,
+		                max_gram: 20,
+		               	token_chars: [
+		                   "letter",
+		                   "digit",
+		                   "punctuation",
+		                   "symbol"
+		                ]
+			        }
+		      	},
+	            analyzer:  {
+	                nGram_analyzer:  {
+	                    type: "custom",
+	                    tokenizer:  "whitespace",
+	                    filter: [
+	                        "lowercase",
+	                        "asciifolding",
+	                        "nGram_filter"
+	                    ]
+	                },
+	                whitespace_analyzer: {
+	                    type: "custom",
+	                    tokenizer: "whitespace",
+	                    filter: [
+	                        "lowercase",
+	                        "asciifolding"
+	                    ]
+	                }
+	            }
+	    	}
+	  	} do
+
+	    mapping do
+	      
+		    indexes :name, type: 'keyword', fields: {
+		      	:raw => {
+		      		:type => "text",
+		      		:analyzer => "nGram_analyzer",
+		      		:search_analyzer => "whitespace_analyzer"
+		      	}
+		    }
+		end
+
+	end
+	
 	before_update do |document|
 		if document.test_id_action
 			if document.test_id_action == "add"

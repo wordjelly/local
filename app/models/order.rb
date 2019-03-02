@@ -5,21 +5,14 @@ class Order
 	
 	index_name "pathofast-orders"
 
-	attribute :template_report_ids, Array
+	attribute :patient_name, String
 
+	attribute :patient_id, String
 
-	attribute :patient_report_ids, Array
+	attribute :reports, Array
 
-
-	attribute :patient_test_ids, Array
-
-
-	attribute :items, Array[Hash]
-
-
-	attribute :stage, String
-
-
+	attribute :report_name, String
+	
 	## takes the template report ids, and creates reports from that, as well as cloning all tests associated with those reports.
 	def create_patient_reports
 		self.template_report_ids.each do |report_id|
