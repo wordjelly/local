@@ -47,7 +47,7 @@ class OrdersController < ApplicationController
 	## patient id from the dropdown.
 	## that's it.
 	def permitted_params
-		params.permit(:id , {:order => [:report_name,:patient_id,:test_id,:item_requirement_id, :test_id_action, :item_requirement_action]})
+		params.permit(:id , {:order => [:patient_id, :template_report_ids]})
 	end
 
 

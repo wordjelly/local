@@ -1,7 +1,10 @@
 <tr>
-	<td><%= link_to @report.name, report_path(@report.id.to_s) %></td>
-	<td><%= @report.tests.size %></td>
-	<td><%= @report.price %></td>
-	<td><%= @report.item_requirements.size %></td>
+	<!-- so here what all can we see -->
+	<!-- if we want to see all the individual orders ? -->
+	<!-- just the list of reports -->
+	<!-- the unified screen is this ? -->
+	<td><%= link_to @order.patient.name + "'s Tests", order_path(@order.id.to_s) %></td>
+	<td><%= render :partial => "/orders/reports_cell" %></td>
+	<td><%= render :partial => "/orders/items_cell" %></td>
 	<td><%= render :partial => "reports/options" %></td>
 </tr>

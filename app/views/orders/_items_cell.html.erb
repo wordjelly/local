@@ -1,0 +1,4 @@
+<% @order.items.each do |ir| %>
+	<%= link_to item.item_type + "(" + item.barcode + ")", item_path(ir.id.to_s) %>
+	<%= "," %>
+<% end %>

@@ -22,6 +22,14 @@ $(document).on('keypress','input:text',function(e){
 
 });
 
+$(document).on('click','.delete_multiple_item',function(event){
+
+	// will remove the parent list element.
+	$(this).parent().remove();
+
+});	
+
+
 /**
 **/
 var add_multiple_selection = function(parent_input_element,list_item_name,list_item_id){
@@ -29,14 +37,12 @@ var add_multiple_selection = function(parent_input_element,list_item_name,list_i
 
 	var multiple_element_name = parent_input_element.attr("data-multiple-element-name");
 	
-	var el = "<li class='collection-item'>" + list_item_name + "<input type='hidden' value='" + list_item_name + "' name='" + multiple_element_name + "' /></li>";
+	var el = "<li class='collection-item'>" + list_item_name + "<input type='hidden' value='" + list_item_name + "' name='" + multiple_element_name + "' /><i class='material-icons delete_multiple_item' style='cursor:pointer;'>close</i></li>";
 	
 	var multiple_choices_element = "<ul id='" + parent_input_element.attr("id") + "_multiple" + "'></ul>";
 
 	if($("#" + parent_input_element.attr("id") + "_multiple").length){
 
-		//console.log("it exists");
-		// so now on committing it should work.
 	}
 	else{
 		
@@ -58,22 +64,20 @@ $(document).on('click','.autocomplete_dropdown_element',function(e){
 		add_multiple_selection($(this).parent().prev(),$(this).text(),$(this).attr("data-hit-id"));
 
 	}
-	// here if the parent, prev, has the data-multiple 
-	// as true, 
-	// then instead it has to create additional fields.
-	// and add those as visible fields, somewhere below.
-	// it will have to give them 
-	// the next screen will have a list to choose from
-	// the order has a series of statuses, they progress forwards
-	// first one is collect ->
-	// next one is assign tubes ->
-	// next one is process ->
-	// next one is verify ->
-	// last one is completed ->
+
 	$("#autocomplete_dropdown").remove();
 });
 
 
 $(document).on('click','body',function(e){
-	
+	// unless it is the dropdown that is the target.
+	if($(e.target).hasClass("autocomplete_dropdown_element")){
+
+	}
+	else{
+		$("#autocomplete_dropdown").remove();
+	}
+
 });
+
+// now show the existing report names.

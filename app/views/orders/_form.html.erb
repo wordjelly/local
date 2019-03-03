@@ -1,16 +1,30 @@
 <div class="section">
 
-	<%= form_for @order, :html => {:class => "report_form"} do |f| %>
+	<%= form_for @order, :html => {:class => "order_form"} do |f| %>
 
 
-		<%= f.text_field :patient_name %>
+		<%= f.text_field :patient_name, :data => {:autocomplete_type => "patients"}, :autocomplete => "off" %>
+
 		<%= f.label :patient_name %>
 
+		<!-- its the patient id that is to be sent forwards -->
+		<!-- also one set it cannot be changed -->
 
-		<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true, :multiple_element_name => "order[reports][]"} %>
+		<%= f.hidden_field :patient_id %>
+
+		<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true, :multiple_element_name => "order[template_report_ids][]"}, :autocomplete => "off" %>
 		<%= f.label :report_name %>
 
-		<!-- we have to render a reports partial, so with each report. -->
+		<!-- item requirements -->
+		<% unless @order.new_record %>
+			<h6>Enter the Barcode Number of the Collection Packet</h6>
+			<%= f.text_field :item_group_id %>
+			<%= f.label :item_group_id %>
+
+			<h6>Or</h6>
+			<h6>Enter the Barcode Numbers For Individual Tube Types</h6>
+			
+		<% end %>
 
 
 		<%= f.submit "Submit", :class => "waves-effect waves-light btn" %>
