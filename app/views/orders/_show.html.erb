@@ -6,5 +6,5 @@
 	<td><%= link_to @order.patient.name + "'s Tests", order_path(@order.id.to_s) %></td>
 	<td><%= render :partial => "/orders/reports_cell" %></td>
 	<td><%= render :partial => "/orders/items_cell" %></td>
-	<td><%= render :partial => "reports/options" %></td>
+	<td><%= render :partial => "/orders/options" %></td>
 </tr>

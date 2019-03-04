@@ -7,26 +7,39 @@
 
 		<%= f.label :patient_name %>
 
-		<!-- its the patient id that is to be sent forwards -->
-		<!-- also one set it cannot be changed -->
-
 		<%= f.hidden_field :patient_id %>
+
 
 		<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true, :multiple_element_name => "order[template_report_ids][]"}, :autocomplete => "off" %>
 		<%= f.label :report_name %>
 
 		<!-- item requirements -->
-		<% unless @order.new_record %>
+		<% unless @order.new_record? %>
 			<h6>Enter the Barcode Number of the Collection Packet</h6>
 			<%= f.text_field :item_group_id %>
 			<%= f.label :item_group_id %>
 
 			<h6>Or</h6>
 			<h6>Enter the Barcode Numbers For Individual Tube Types</h6>
-			
+
+			<!-- keep this as a seperate page -->
+			<!-- what will be the form be for ? -->
+			<!-- will go to put -->
+			<% @order.item_requirements.keys.each do |ir| %>
+				<% @order.item_requirements[ir].each_with_index {|tube_entry,index| %>
+					<div class="item_requirement">
+						<input name="item_requirement_type" type="text" class="_type" value="<%= ir %>" />
+						<input name="item_requirement_index" class="_index" type="text" value="<%= index %>" />
+						<input class="_barcode" name="item_requirement_barcode" type="text" value="<%= %>" />
+						</div>
+					</div>
+				<% } %>
+			<% end %>
+
+		
 		<% end %>
 
-
+		<!-- this submission is going to be by ajax -->
 		<%= f.submit "Submit", :class => "waves-effect waves-light btn" %>
 
 	<% end %>

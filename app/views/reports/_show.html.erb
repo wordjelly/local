@@ -1,5 +1,5 @@
 <tr>
-	<td><%= link_to @order.name, report_path(@report.id.to_s) %></td>
+	<td><%= link_to @report.name, report_path(@report.id.to_s) %></td>
 	<td><%= @report.tests.size %></td>
 	<td><%= @report.price %></td>
 	<td><%= @report.item_requirements.size %></td>

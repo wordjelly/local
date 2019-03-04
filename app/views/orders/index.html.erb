@@ -1,18 +1,17 @@
  <table>
         <thead>
           <tr>
-              <th>Name</th>
-              <th>Total Tests</th>
-              <th>Price</th>
-              <th>Total Requirements</th>
-              <th>Options</th>
-          </tr>
+                <th>Order Name</th>
+                <th>Reports</th>
+                <th>Tubes</th>
+                <th>Options</th>
+            </tr>
         </thead>
 
         <tbody>
-        	<% @reports.each do |report| %>
-        	<% @report = report %>
-        	<%= render :partial => "/reports/show" %>
+        	<% @orders.each do |order| %>
+        	<% @order = order %>
+        	<%= render :partial => "/orders/show" %>
         	<% end %>
         </tbody>
 </table>

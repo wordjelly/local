@@ -8,16 +8,16 @@ class OrdersController < ApplicationController
 
 	def edit
 		@order = Order.find(params[:id])
+		@order.load_patient
+		@order.load_reports
+		@order.load_items
 	end
 
 	def create
 		@order = Order.new(permitted_params["order"])
+		puts @order.attributes.to_s
 		response = @order.save
-		respond_to do |format|
-			format.html do 
-				render "show"
-			end
-		end
+		redirect_to order_path(@order.id.to_s)
 	end
 
 	def update
@@ -36,10 +36,18 @@ class OrdersController < ApplicationController
 
 	def show
 		@order = Order.find(params[:id])
+		@order.load_patient
+		@order.load_reports
+		@order.load_items
 	end
 
 	def index
 		@orders = Order.all
+		@orders.map{|c|
+		 	c.load_patient
+		 	c.load_reports
+		 	c.load_items
+		}
 	end
 
 	## what all is it going to have ?
@@ -47,7 +55,7 @@ class OrdersController < ApplicationController
 	## patient id from the dropdown.
 	## that's it.
 	def permitted_params
-		params.permit(:id , {:order => [:patient_id, :template_report_ids]})
+		params.permit(:id , {:order => [:patient_id, {:template_report_ids => []}]})
 	end
 
 

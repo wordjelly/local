@@ -37,7 +37,7 @@ var add_multiple_selection = function(parent_input_element,list_item_name,list_i
 
 	var multiple_element_name = parent_input_element.attr("data-multiple-element-name");
 	
-	var el = "<li class='collection-item'>" + list_item_name + "<input type='hidden' value='" + list_item_name + "' name='" + multiple_element_name + "' /><i class='material-icons delete_multiple_item' style='cursor:pointer;'>close</i></li>";
+	var el = "<li class='collection-item'>" + list_item_name + "<input type='hidden' value='" + list_item_id + "' name='" + multiple_element_name + "' /><i class='material-icons delete_multiple_item' style='cursor:pointer;'>close</i></li>";
 	
 	var multiple_choices_element = "<ul id='" + parent_input_element.attr("id") + "_multiple" + "'></ul>";
 

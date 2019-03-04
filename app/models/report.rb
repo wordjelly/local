@@ -142,9 +142,11 @@ class Report
 		patient_report.test_ids = []
 		
 		self.test_ids.each do |test_id|
-			t = Test.find(test_id)
-			patient_test = t.clone(patient_id)
-			patient_report.test_ids << patient_test.id.to_s
+			unless test_id.blank?
+				t = Test.find(test_id)
+				patient_test = t.clone(patient_id)
+				patient_report.test_ids << patient_test.id.to_s
+			end
 		end
 
 		patient_report

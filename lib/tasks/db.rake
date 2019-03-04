@@ -12,6 +12,22 @@ namespace :db do
 
 	patient = Patient.new(first_name: "Bhargav", last_name: "Raut")
 	patient.save
+
+	item_type_one = ItemType.new(name: "Lavender Tube")
+	item_type_one.save
+
+	item_type_two = ItemType.new(name: "Urine Tube")
+	item_type_two.save
+
+	item_requirement = ItemRequirement.new(name: "Hemogram Tube", item_type: item_type_one.name, optional: "no", priority: 1, amount: 50)
+	item_requirement.save
+
+	item_requirement_two = ItemRequirement.new(name: "Urine Tube", item_type: item_type_two.name, optional: "no", priority: 1, amount: 35)
+	item_requirement_two.save
+
+	## add this item to that report.
+	## i can do that manually
+
   end
 
 end

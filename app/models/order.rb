@@ -26,7 +26,8 @@ class Order
 	## the item id will point to that.
 	## it will carry th test ids.
 
-	attribute :item_requirements, Object
+	attribute :item_requirements, Hash
+
 
 
 	attr_accessor :patient
@@ -39,22 +40,77 @@ class Order
 	attr_accessor :item_group_action
 
 	## if you want to add individual items.
+	## array of objects.
 	attr_accessor :item_type
 	attr_accessor :item_type_index
 	attr_accessor :item_id
 	attr_accessor :item_id_action
-	
+
+	attr_accessor :item_types
+		
+=begin
+
+=end
+
+	settings index: { 
+	    number_of_shards: 1, 
+	    number_of_replicas: 0,
+	    analysis: {
+		      	filter: {
+			      	nGram_filter:  {
+		                type: "nGram",
+		                min_gram: 2,
+		                max_gram: 20,
+		               	token_chars: [
+		                   "letter",
+		                   "digit",
+		                   "punctuation",
+		                   "symbol"
+		                ]
+			        }
+		      	},
+	            analyzer:  {
+	                nGram_analyzer:  {
+	                    type: "custom",
+	                    tokenizer:  "whitespace",
+	                    filter: [
+	                        "lowercase",
+	                        "asciifolding",
+	                        "nGram_filter"
+	                    ]
+	                },
+	                whitespace_analyzer: {
+	                    type: "custom",
+	                    tokenizer: "whitespace",
+	                    filter: [
+	                        "lowercase",
+	                        "asciifolding"
+	                    ]
+	                }
+	            }
+	    	}
+	  	} do
+	    mappings dynamic: 'true' do
+		    indexes :item_requirements, type: 'object'
+		end
+
+	end
+
 	validates_presence_of :patient_id	
 	## takes the template report ids, and creates reports from that, as well as cloning all tests associated with those reports.
-	before_create do |document|
+	before_save do |document|
+		puts "came to create patient reports"
 		document.create_patient_reports
 	end
 
 	def create_patient_reports
+		self.reports ||= []
 		self.template_report_ids.each do |report_id|
 			report = Report.find(report_id)
-			self.patient_report_ids << report.clone.id.to_s
-			self.patient_test_ids << report.test_ids.map{|t| t.id.to_s}
+			self.patient_report_ids << report.clone(self.patient_id).id.to_s
+			self.patient_test_ids << report.test_ids
+			self.patient_test_ids.flatten!
+
 			self.reports << report
 			set_item_requirements
 		end
@@ -88,15 +144,14 @@ class Order
 	end
 
 	
-
-
 	def load_patient
-		begin
+		#begin
 			self.patient = Patient.find(self.patient_id)
+			puts "patient is: #{patient}"
 			self.patient_name = self.patient.name
-		rescue
+		#rescue
 
-		end
+		#end
 	end
 
 	def load_reports
