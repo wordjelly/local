@@ -22,6 +22,11 @@ class OrdersController < ApplicationController
 
 	def update
 		@order = Order.find(params[:id])
+		@order.load_reports
+		@order.load_patient
+		@order.load_items
+		## now next thing is to check if any of its reports are still there in the template ids, and if yes, then assign them.
+		@order.add_barcodes(params)
 		@order.attributes = (permitted_params["order"])
 		@order.save
 		respond_to do |format|
@@ -39,6 +44,8 @@ class OrdersController < ApplicationController
 		@order.load_patient
 		@order.load_reports
 		@order.load_items
+		puts "The order item requirements are:"
+		puts @order.item_requirements.to_s
 	end
 
 	def index
@@ -55,6 +62,8 @@ class OrdersController < ApplicationController
 	## patient id from the dropdown.
 	## that's it.
 	def permitted_params
+		puts "params are:"
+		puts params.to_s
 		params.permit(:id , {:order => [:patient_id, {:template_report_ids => []}]})
 	end
 

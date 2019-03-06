@@ -10,7 +10,7 @@
 		<%= f.hidden_field :patient_id %>
 
 
-		<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true, :multiple_element_name => "order[template_report_ids][]"}, :autocomplete => "off" %>
+		<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true, :multiple_element_name => "template_report_id"}, :autocomplete => "off" %>
 		<%= f.label :report_name %>
 
 		<!-- item requirements -->
@@ -25,22 +25,44 @@
 			<!-- keep this as a seperate page -->
 			<!-- what will be the form be for ? -->
 			<!-- will go to put -->
-			<% @order.item_requirements.keys.each do |ir| %>
-				<% @order.item_requirements[ir].each_with_index {|tube_entry,index| %>
-					<div class="item_requirement">
-						<input name="item_requirement_type" type="text" class="_type" value="<%= ir %>" />
-						<input name="item_requirement_index" class="_index" type="text" value="<%= index %>" />
-						<input class="_barcode" name="item_requirement_barcode" type="text" value="<%= %>" />
-						</div>
-					</div>
-				<% } %>
-			<% end %>
+			<table>
+          
+	          	<thead>
+		            <tr>
+		                <th>Tube Type</th>
+		                <th>Tube Number</th>
+		                <th>Barcode</th>
+		                <th>Filled Amount</th>
+		                <th>Options</th>
+		            </tr>
+	          	</thead>
+
+	          	<tbody>
+		           
+					<% @order.item_requirements.keys.each do |ir| %>
+						<% @order.item_requirements[ir].each_with_index {|tube_entry,index| %>
+							<!-- so we will enter the filled amount -->
+							<tr class="item_requirement">
+								<td class="item_requirement_type"><%= ir %></td>
+								<td class="item_requirement_index"><%= index %></td>
+								<td><input class="item_requirement_filled_amount" type="text" name="item_requirement_filled_amount" value="<%= tube_entry[:filled_amount] %>"/></td>
+								<td><input class="item_requirement_barcode" name="item_requirement_barcode" type="text" value="<%= tube_entry[:barcode] %>" /></td>
+							</tr>
+						<% } %>
+					<% end %>
+
+		        </tbody>
+
+	        </table>
 
 		
 		<% end %>
 
 		<!-- this submission is going to be by ajax -->
-		<%= f.submit "Submit", :class => "waves-effect waves-light btn" %>
+		<%= f.submit "Submit", :class => "waves-effect waves-light btn" , :style => "display: none;"%>
+
+		<!-- so now -->
+		<div class="waves-effect waves-light btn submit_order">Submit</div>
 
 	<% end %>
 	

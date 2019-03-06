@@ -1,15 +1,1 @@
 <%= render :partial => "form" %>
-
-<div class="section">
-<h5>Component Tests</h5>
-<% @tests = @report.tests %>
-<%= render :partial => "tests/index" %>
-</div>
-
-<!-- if there is a report_id, then we have to give an option to remove -->
-
-<div class="section">
-<h5>Item Requirements</h5>
-<% @item_requirements = @report.item_requirements %>
-<%= render :partial => "item_requirements/index" %>
-</div>
