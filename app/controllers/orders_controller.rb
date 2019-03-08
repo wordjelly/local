@@ -14,27 +14,59 @@ class OrdersController < ApplicationController
 	end
 
 	def create
-		@order = Order.new(permitted_params["order"])
-		puts @order.attributes.to_s
+		@order = Order.new
+		@order.add_remove_reports(params)
+		@order.patient_id = params[:patient_id]
 		response = @order.save
-		redirect_to order_path(@order.id.to_s)
+		respond_to do |format|
+			format.json do 
+				render :json => {order: @order}
+			end
+			format.js do
+				render :partial => "show"
+			end
+		end
 	end
+
+	## so we have to have some kind of authentication
+	## we can use amazon incognito.
+	## and do a simple admin thing.
+	## admin super.
+	## kamthe's login, so we add that as a mixin all throughout.
+	## to have a access_by?
+	## billing -> test price
+	## user prices.
+	## letter head reports
+	## add a logo or whatever.
+	## and also add the nail analysis, our product pages,
+	## and other information stuff, all into this site.
+	## so we can have a settings page, where we add our letter head
+	## logo
+	## and signature for the reports
+	## thereafter, its just about assigning a user to each report
 
 	def update
 		@order = Order.find(params[:id])
 		@order.load_reports
 		@order.load_patient
 		@order.load_items
-		## now next thing is to check if any of its reports are still there in the template ids, and if yes, then assign them.
+		@order.add_remove_reports(params)
 		@order.add_barcodes(params)
-		@order.attributes = (permitted_params["order"])
 		@order.save
 		respond_to do |format|
-			format.html do 
-				render "show"
+			format.json do 
+				render :json => {order: @order}
+			end
+			format.js do 
+				render :partial => "show"
 			end
 		end
 	end
+
+	## how much longer ?
+	## orders -> statuses
+	## login -> 
+
 
 	def destroy
 	end

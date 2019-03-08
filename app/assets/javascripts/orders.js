@@ -34,7 +34,7 @@ var get_patient_id = function(){
 var get_template_report_ids = function(){
 	var template_report_ids = [];
 	$.each($("[name='template_report_id']"),function(index,element){
-		template_report_ids.push(element.val());
+		template_report_ids.push($(element).val());
 	});
 	return template_report_ids;
 }

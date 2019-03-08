@@ -97,19 +97,25 @@ class Order
 
 	validates_presence_of :patient_id	
 	## takes the template report ids, and creates reports from that, as well as cloning all tests associated with those reports.
-	before_save do |document|
-		puts "came to create patient reports"
-		document.create_patient_reports
+	#before_save do |document|
+	#	puts "came to create patient reports"
+	#	document.create_patient_reports
+	#end
+
+	after_save do |document|
+		## adds the reports to the items themselves.
+		## or removes them thereof.
 	end
 
 	def add_report(report_id)
 
 	end
 
+=begin
 	def create_patient_reports
 		self.reports ||= []
 		self.template_report_ids.each do |report_id|
-			report = Report.find(report_id)
+			report = Report.fhttps://guides.rubyonrails.org/testing.html#functional-tests-for-your-controllersind(report_id)
 			self.patient_report_ids << report.clone(self.patient_id).id.to_s
 			self.patient_test_ids << report.test_ids
 			self.patient_test_ids.flatten!
@@ -119,42 +125,80 @@ class Order
 			set_item_requirements
 		end
 	end
+=end
 
-	def barcoded_tube_has_space?(filled_amount, already_occupied, additional_requirement)
+	def barcoded_tube_has_space?(filled_amount, already_required, additional_requirement)
+		return (filled_amount - already_required) >= additional_requirement
+	end
 
+	## adds a new tube for a particular report.
+	def add_new_tube(item_requirement,report)
+		
+
+		self.item_requirements[item_requirement.item_type] ||= []
+		self.item_requirements[item_requirement.item_type] << 
+		{required_amount: item_requirement.amount, optional: item_requirement.optional, barcode: nil, filled_amount: 0, report_ids: [report.id.to_s]}
+		
+		#puts self.item_requirements[item_requirement.item_type]
+
+	end
+
+	## @param[ItemRequirement] ir
+	## @param[Integer] key 
+	## @param[String] report_id
+	def add_report_id_to_item_requirement(ir,key,report_id)
+		self.item_requirements[ir.item_type][key]["report_ids"] ||= []
+		self.item_requirements[ir.item_type][key]["report_ids"] << report_id
 	end
 
 	## @param[String] report_id : the report id that you want to accomodate in this order.
 	## @return[Hash] true/false :true if the existing item_requirements can accomodate it and 
 	def accomodate(report)
-		result = false
-		## an accomodation address map for each requirement.
-		## if it could be accomodated.
-		## if a new tube had to be created for it?
-		## if a new tube had to be created, then we have to break saying could not be accomodated.
-		## and thereafter.
-		report.item_requirements.keys.each do |ir|
+		report.item_requirements.each do |ir|
+			#puts "iterating report item req"
+			#puts ir.to_s
+			#puts "self item requirements are:"
+			#puts self.item_requirements.to_s
+			#exit(1)
 			if self.item_requirements[ir.item_type].blank?
-				result = false
-				break
-				## add the tube.
+				puts "adding new tube----------- for item type: #{ir.item_type}"
+				add_new_tube(ir,report)
+				puts "item requirements becomes:"
+				puts self.item_requirements.to_s
 			else
 				requirement_accomodated = false
-				self.item_requirements[ir.item_type].map{|item_requirement,key|
-					unless item_requirement[:barcode].blank?
-						if barcoded_tube_has_space?(item_requirement[:filled_amount],item_requirement[:amount],ir.amount)
-							## add it to the amount, and add this report id also.
+
+				self.item_requirements[ir.item_type].each_with_index{|item_requirement,key|
+
+					unless item_requirement["barcode"].blank?
+						if barcoded_tube_has_space?(item_requirement["filled_amount"],item_requirement["required_amount"],ir.amount)
+							
+							self.item_requirements[ir.item_type][key]["required_amount"] += ir.amount
+							
+							add_report_id_to_item_requirement(ir,key,report.id.to_s)
+
 							requirement_accomodated = true
-							## add it.
-							## add the thing to the current tube.
+							
 						end
 					else
-						## check if the ir.amount + item_requirement[amount] > 100, in which case it cannot be accomodated, so we dont' do anthing.
+						#puts "ir is:"
+						#puts ir.to_s
+						#puts "item requirement is:"
+						#puts item_requirement.to_s
+						unless (ir.amount + item_requirement["required_amount"] > 100)
+
+							self.item_requirements[ir.item_type][key]["required_amount"]+=ir.amount
+
+							add_report_id_to_item_requirement(ir,key,report.id.to_s)
+
+							requirement_accomodated = true
+
+						end
 					end
 				}
-				## if could not be accomodated -> add a new tube.
-				## basically that's the idea.
-				
+				if requirement_accomodated == false
+					add_new_tube(ir,report)
+				end
 			end
 
 		end	
@@ -166,74 +210,29 @@ class Order
 
 	## so now if it says cannot accomodate, then tubes have to be added.
 	## in that case, if the order status is past collection, it should decide.
-	
-	def add_remove_reports
+	def add_remove_reports(params)
+		puts "params are:"
 		self.template_report_ids ||= []
-		params[:template_report_ids].each do |report_id|
-			unless exists?(report_id)
-				report = Report.find(report_id)
-				self.patient_report_ids << report.clone(self.patient_id).id.to_s
-				self.patient_test_ids << report.test_ids
-				self.patient_test_ids.flatten!
-				self.reports << report
-				accomodate(report)
-			else
-				puts "this report already exists."
+		self.reports ||= []
+		unless params[:template_report_ids].blank?
+			params[:template_report_ids].each do |report_id|
+				unless exists?(report_id)
+					self.template_report_ids << report_id
+					report = Report.find(report_id)
+					self.patient_report_ids << report.clone(self.patient_id).id.to_s
+					self.patient_test_ids << report.test_ids
+					self.patient_test_ids.flatten!
+					self.reports << report
+					report.load_item_requirements
+					accomodate(report)
+				else
+					puts "this report already exists."
+				end
 			end
 		end
-		## now check which of the existing reports have been removed.
-		## in that case, we just knock of those report ids, from the item_requirements, i.e we mark them as removed.
-		## nothing more is needed to be done.
 	end
 
-	## then the patient id.
-
-
-	def set_item_requirements
-		self.item_requirements ||= {}
-		self.reports.each do |report|
-			puts "iterating report: #{report}"
-			report.load_item_requirements
-			puts "its item requirements are:"
-			puts report.item_requirements
-			report.item_requirements.each do |ir|
-				puts "doing item requirement: #{ir}"
-				if self.item_requirements[ir.item_type].blank?
-					
-					## we will also have to define some kind of bare minimum dead amount.
-					## in any tube.
-					## for eg if three things, are there
-					## each needs 10.
-					## so suppose the current requirement amount on that tube is 20.
-					## and we have a filled amoutn of 40.
-					## we have to check if this tube, can accomodate this report or not.
-					## we have to see so, can_be_accomodated?
-					## if yes, then we add it to those tubes
-					## otherwise, we add additional indexes, of the required tubes.
-					self.item_requirements[ir.item_type] = [{amount: ir.amount, optional: ir.optional, barcode: nil, filled_amount: 0}]
-					
-				else
-
-					puts "item type exists in the item_requirements"
-
-					self.item_requirements[ir.item_type][-1][:amount] += ir.amount
-						
-					puts "incrementing the amount."
-					puts self.item_requirements.to_s
-
-					if 	self.item_requirements[ir.item_type][-1][:amount] > 100
-
-						k = self.item_requirements[ir.item_type][-1][:amount]
-
-						self.item_requirements[ir.item_type] << {amount: (k - 100), optional: ir.optional}
-
-						self.item_requirements[ir.item_type][-2][:amount] = 100 
-					end
-				end
-			end	
-		end 
-	end
-
+	
 	def other_order_has_barcode?(barcode)
 		response = Order.search({
 			query: {
@@ -242,21 +241,37 @@ class Order
 				}
 			}
 		})
-		mash = Hashie::Mash.new response 
-		return true if hash.hits.hits.size > 0
+		
+		return true if response.results.size > 0
 		
 	end
 
 
 	def add_barcodes(params)
-		params["item_requirements"].keys.each do |id|
-			type = params["item_requirements"]["type"]
-			index = params["item_requirements"]["index"]
-			barcode = params["item_requirements"]["barcode"]
-			unless barcode.blank?
-				unless self.item_requirements[type].blank?
-					self.item_requirements[type][index.to_i]["barcode"] = barcode unless other_order_has_barcode?(barcode)
+		unless params["item_requirements"].blank?
+			params["item_requirements"].keys.each do |id|
+				
+				type = params["item_requirements"][id]["type"]
+				
+				index = params["item_requirements"][id]["index"]
+				
+				barcode = params["item_requirements"][id]["barcode"]
+				
+				filled_amount = params["item_requirements"][id]["filled_amount"]
+				
+				unless barcode.blank?
+					
+					unless self.item_requirements[type].blank?
+						self.item_requirements[type][index.to_i]["barcode"] = barcode unless other_order_has_barcode?(barcode)
+						self.item_ids ||= []
+						self.item_ids << barcode
+						self.item_requirements[type][index.to_i]["filled_amount"] = filled_amount unless filled_amount.blank?
+					else
+						puts "this type does not exist in the self item requirements."
+					end
+
 				end
+
 			end
 		end
 	end

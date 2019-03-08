@@ -26,13 +26,12 @@
 			<!-- what will be the form be for ? -->
 			<!-- will go to put -->
 			<table>
-          
 	          	<thead>
 		            <tr>
 		                <th>Tube Type</th>
 		                <th>Tube Number</th>
-		                <th>Barcode</th>
 		                <th>Filled Amount</th>
+		                <th>Barcode</th>
 		                <th>Options</th>
 		            </tr>
 	          	</thead>
@@ -45,7 +44,7 @@
 							<tr class="item_requirement">
 								<td class="item_requirement_type"><%= ir %></td>
 								<td class="item_requirement_index"><%= index %></td>
-								<td><input class="item_requirement_filled_amount" type="text" name="item_requirement_filled_amount" value="<%= tube_entry[:filled_amount] %>"/></td>
+								<td><input class="item_requirement_filled_amount" type="number" name="item_requirement_filled_amount" value="<%= tube_entry[:filled_amount] %>"/></td>
 								<td><input class="item_requirement_barcode" name="item_requirement_barcode" type="text" value="<%= tube_entry[:barcode] %>" /></td>
 							</tr>
 						<% } %>
