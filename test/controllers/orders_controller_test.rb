@@ -232,16 +232,13 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   	@order.patient_id = @patient.id.to_s
   	@order.add_remove_reports({template_report_ids: [@r.id.to_s]})
   	@order.save
-  	#puts "order requirements at this stage are:"
-  	#puts @order.item_requirements["Lavender Tube"]
   	
   	o = Order.find(@order.id)
-  	#puts o.item_requirements.to_s
-  	## this should have been an array., 
-  	## not a hash.
-  	#exit(1)
+  	
   	o.item_requirements["Lavender Tube"][0]["filled_amount"] = 50
   	o.item_requirements["Lavender Tube"][0]["barcode"] = @item.barcode
+  	o.item_ids << @item.barcode
+
   	o.save
 
   	## now create a new order for the same patient.
@@ -257,16 +254,38 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   	order_two = Order.find(order_two.id.to_s)
   	puts "requirements of order two."
   	puts order_two.item_requirements.to_s
+  	assert_equal nil, order_two.item_requirements["Lavender Tube"][0]["barcode"]
+  	assert_equal [], order_two.item_ids
 
   end
 
-=begin
+
   test "cannot update non barcoded tube with filled amount" do 
 
+  	@order = Order.new
+  	@order.patient_id = @patient.id.to_s
+  	@order.add_remove_reports({template_report_ids: [@r.id.to_s]})
+  	@order.save
+  	
+  	o = Order.find(@order.id)
+
+	put("/orders/#{o.id.to_s}.json","item_requirements"=>{"0"=>{"type"=>"Lavender Tube", "index"=>"0","filled_amount" => "22.5"}})  	
+
+	o = Order.find(@order.id)
+
+	assert_equal nil, o.item_requirements["Lavender Tube"][0]["barcode"]
+	assert_equal 0, o.item_requirements["Lavender Tube"][0]["filled_amount"]
+  	assert_equal [], o.item_ids
 
   end
 
+  ## item group can have any number of containers.
+  ## it is not only tubes.
+  ## but it has to have an item type.
+  ## so it can have any number of items ?
+  ## so we have to first create items.
 
+=begin
   test "if filled amount is insufficient, marks the tube as QNS" do 
   	## on updating the filled amount, it will check if this is more than or equal to the required amount, and mark as quantity not sufficient.
 

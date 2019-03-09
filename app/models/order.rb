@@ -241,7 +241,7 @@ class Order
 				}
 			}
 		})
-		
+		self.errors.add(:item_ids, "This barcode #{barcode} has already been assigned to order id #{response.results.first.id.to_s}") if response.results.size > 0
 		return true if response.results.size > 0
 		
 	end

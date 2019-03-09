@@ -17,7 +17,9 @@ class OrdersController < ApplicationController
 		@order = Order.new
 		@order.add_remove_reports(params)
 		@order.patient_id = params[:patient_id]
-		response = @order.save
+		if @order.errors.empty?
+			response = @order.save
+		end
 		respond_to do |format|
 			format.json do 
 				render :json => {order: @order}
@@ -52,7 +54,12 @@ class OrdersController < ApplicationController
 		@order.load_items
 		@order.add_remove_reports(params)
 		@order.add_barcodes(params)
-		@order.save
+		#puts "after add barcodes does it have errors?"
+		#puts @order.errors.full_messages.to_s
+		if @order.errors.empty?
+			save_result = @order.save
+		end
+		#puts "save result is: #{save_result}----------------------------------------"
 		respond_to do |format|
 			format.json do 
 				render :json => {order: @order}

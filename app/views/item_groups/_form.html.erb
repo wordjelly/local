@@ -1,0 +1,17 @@
+<%= form_for @item_group do |f| %>
+
+	<%= f.text_field :barcode %>
+	<%= f.label :barcode %>
+
+  <% f.item_ids.each do |item_id| %>
+
+    <%= text_field_tag 'item_group[item_ids][]' %> 
+
+  <% end %>
+
+  <i class="material-icons add_item_id">add</i>
+ 
+	<%= f.submit "Submit" %>
+
+<% end %>
+
