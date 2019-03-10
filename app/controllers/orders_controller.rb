@@ -11,42 +11,34 @@ class OrdersController < ApplicationController
 		@order.load_patient
 		@order.load_reports
 		@order.load_items
+		puts @order.item_requirements.to_s
 	end
 
 	def create
 		@order = Order.new
 		@order.add_remove_reports(params)
 		@order.patient_id = params[:patient_id]
+		puts "the order errors are: -----------------"
+		puts @order.errors.full_messages.to_s
 		if @order.errors.empty?
+			puts "saving order"
+			puts "item requirements."
+			puts @order.item_requirements.to_s
 			response = @order.save
+			puts "order save errros"
+			puts response.to_s
 		end
 		respond_to do |format|
 			format.json do 
 				render :json => {order: @order}
 			end
 			format.js do
-				render :partial => "show"
+				render :partial => "show", locals: {order: @order}
 			end
 		end
 	end
 
-	## so we have to have some kind of authentication
-	## we can use amazon incognito.
-	## and do a simple admin thing.
-	## admin super.
-	## kamthe's login, so we add that as a mixin all throughout.
-	## to have a access_by?
-	## billing -> test price
-	## user prices.
-	## letter head reports
-	## add a logo or whatever.
-	## and also add the nail analysis, our product pages,
-	## and other information stuff, all into this site.
-	## so we can have a settings page, where we add our letter head
-	## logo
-	## and signature for the reports
-	## thereafter, its just about assigning a user to each report
-
+	
 	def update
 		@order = Order.find(params[:id])
 		@order.load_reports
@@ -65,7 +57,7 @@ class OrdersController < ApplicationController
 				render :json => {order: @order}
 			end
 			format.js do 
-				render :partial => "show"
+				render :partial => "show", locals: {order: @order}
 			end
 		end
 	end

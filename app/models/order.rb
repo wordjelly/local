@@ -154,11 +154,13 @@ class Order
 	## @param[String] report_id : the report id that you want to accomodate in this order.
 	## @return[Hash] true/false :true if the existing item_requirements can accomodate it and 
 	def accomodate(report)
+		puts "the report item requirements are:"
+		puts report.item_requirements.to_s
 		report.item_requirements.each do |ir|
-			#puts "iterating report item req"
-			#puts ir.to_s
-			#puts "self item requirements are:"
-			#puts self.item_requirements.to_s
+			puts "iterating report item req"
+			puts ir.to_s
+			puts "self item requirements are:"
+			puts self.item_requirements.to_s
 			#exit(1)
 			if self.item_requirements[ir.item_type].blank?
 				puts "adding new tube----------- for item type: #{ir.item_type}"
@@ -212,11 +214,14 @@ class Order
 	## in that case, if the order status is past collection, it should decide.
 	def add_remove_reports(params)
 		puts "params are:"
+		puts params.to_s
 		self.template_report_ids ||= []
 		self.reports ||= []
 		unless params[:template_report_ids].blank?
 			params[:template_report_ids].each do |report_id|
+				puts "doing report id: #{report_id}"
 				unless exists?(report_id)
+					puts "does not exist."
 					self.template_report_ids << report_id
 					report = Report.find(report_id)
 					self.patient_report_ids << report.clone(self.patient_id).id.to_s
@@ -229,6 +234,8 @@ class Order
 					puts "this report already exists."
 				end
 			end
+		else
+			puts "no template report ids in params."
 		end
 	end
 
@@ -246,28 +253,71 @@ class Order
 		
 	end
 
+	def group_param_item_requirements_by_type(params)
+		item_requirements = params["item_requirements"]
+		results = {}
+		item_requirements.keys.each do |id|
+			type = item_requirements[id]["type"]
+				
+			index = item_requirements[id]["index"]
+				
+			barcode = item_requirements[id]["barcode"]
+				
+			filled_amount = item_requirements[id]["filled_amount"]
+			results[type] = [] if results[type].nil?
+			results[type] << item_requirements[id]
+		end
+		results
+	end
 
+	## so we need to get the item group items in this manner.
 	def add_barcodes(params)
-		unless params["item_requirements"].blank?
-			params["item_requirements"].keys.each do |id|
-				
-				type = params["item_requirements"][id]["type"]
-				
-				index = params["item_requirements"][id]["index"]
-				
-				barcode = params["item_requirements"][id]["barcode"]
-				
-				filled_amount = params["item_requirements"][id]["filled_amount"]
-				
-				unless barcode.blank?
+
+		item_requirements = group_param_item_requirements_by_type(params)
+
+		if item_group_id = params["item_group_id"]
+			ig = ItemGroup.find(item_group_id)
+			item_group_item_requirements = ig.prepare_items_to_add_to_order
+
+
+			item_group_item_requirements.keys.each do |igk|
+				if item_requirements[igk]
+					item_group_item_requirements[igk].each_with_index {|el,key|
+						## will assign the barcode from the packet if the current barcode is nil.
+						if item_requirements[igk][key]
+							item_requirements[igk][key]["barcode"] = item_group_item_requirements[igk][key]["barcode"] if item_requirements[igk][key]["barcode"].blank?
+						end
+					}
+				end
+			end
+
+
+			
+		end
+		
+
+		unless item_requirements.blank?
+			item_requirements.keys.each do |id|
+				item_requirements[id].each do |ireq|
+					type = ireq["type"]
 					
-					unless self.item_requirements[type].blank?
-						self.item_requirements[type][index.to_i]["barcode"] = barcode unless other_order_has_barcode?(barcode)
-						self.item_ids ||= []
-						self.item_ids << barcode
-						self.item_requirements[type][index.to_i]["filled_amount"] = filled_amount unless filled_amount.blank?
-					else
-						puts "this type does not exist in the self item requirements."
+					index = ireq["index"]
+					
+					barcode = ireq["barcode"]
+					
+					filled_amount = ireq["filled_amount"]
+					
+					unless barcode.blank?
+						
+						unless self.item_requirements[type].blank?
+							self.item_requirements[type][index.to_i]["barcode"] = barcode unless other_order_has_barcode?(barcode)
+							self.item_ids ||= []
+							self.item_ids << barcode
+							self.item_requirements[type][index.to_i]["filled_amount"] = filled_amount unless filled_amount.blank?
+						else
+							puts "this type does not exist in the self item requirements."
+						end
+
 					end
 
 				end

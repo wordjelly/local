@@ -7,6 +7,9 @@ $(document).on('submit','.order_form',function(event){
 	return false;
 });
 
+var get_item_group_id = function(){
+	return $("#order_item_group_id").val();
+}
 
 var get_item_requirements = function(){
 	console.log("getting item requirements");
@@ -46,7 +49,8 @@ $(document).on('click','.submit_order',function(event){
 	var data = {
 		item_requirements: get_item_requirements(),
 		patient_id: get_patient_id(),
-		template_report_ids: get_template_report_ids()
+		template_report_ids: get_template_report_ids(),
+		item_group_id: get_item_group_id()
 	}
 
 	console.log(data);

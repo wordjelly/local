@@ -1,0 +1,12 @@
+var errors = "<%= !order.errors.empty? %>";
+if(errors == "true"){
+	// show the errors, by rendering the errors partial.
+
+	$("#errors").remove();
+	$(".page_content").first().prepend("<%= escape_javascript(render :partial => 'shared/errors', locals: {model: order}) %>");
+}
+else{
+	console.log("going to set window location");
+	console.log("/orders/<%= order.id.to_s %>");
+	window.location.assign("/orders/<%= order.id.to_s %>");
+}

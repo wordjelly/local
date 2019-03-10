@@ -8,27 +8,20 @@ class Item
 
 	index_name "pathofast-items"
 
-	## now comes the issue of item types.
-	## locations
-	## statuses
-	## all these have to be added.
-	## so it will autocomplete from where ?
-	## call it attributes ?
-	## or if we type in that field, it will autocomplete from only that collection.
-	## so we have to have seperate objects for that.
-	## like add new status
-	## add new location
-	## add new item_type
-
 	attribute :item_type, String
+	validates_presence_of :item_type
+
+	attribute :name, String
 
 	attribute :location, String
 
 	attribute :filled_amount, Float
 
 	attribute :expiry_date, DateTime
+	validates_presence_of :expiry_date
 
 	attribute :barcode, String
+	validates_presence_of :barcode
 
 	attribute :contents_expiry_date, DateTime	
 
@@ -37,6 +30,7 @@ class Item
 	end
 
 	before_save do |document|
+		document.name = document.barcode
 		document.set_id_from_barcode
 	end
 
@@ -82,7 +76,7 @@ class Item
 
 	    mapping do
 	      
-		    indexes :barcode, type: 'keyword', fields: {
+		    indexes :name, type: 'keyword', fields: {
 		      	:raw => {
 		      		:type => "text",
 		      		:analyzer => "nGram_analyzer",

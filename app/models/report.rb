@@ -79,26 +79,7 @@ class Report
 
 	end
 	
-	before_update do |document|
-		if document.test_id_action
-			if document.test_id_action == "add"
-				document.test_ids << document.test_id
-			elsif document.test_id_action == "remove"
-				document.test_ids.delete(document.test_id)
-			end
-		end
-		puts " -------- CAME TO BEFORE UPDATE --------- "
-		if document.item_requirement_id_action
-			if document.item_requirement_id_action == "add"
-				puts "adding to the item_Requirement_ids"
-				puts document.item_requirement_ids
-				document.item_requirement_ids << document.item_requirement_id
-			elsif document.item_requirement_id_action == "remove"
-				document.item_requirement_ids.delete(document.item_requirement_id)
-			end
-		end
-	end
-
+	
 	before_save do |document|
 		if document.test_id_action
 			if document.test_id_action == "add"
@@ -107,12 +88,11 @@ class Report
 				document.test_ids.delete(document.test_id)
 			end
 		end
-		puts " -------- CAME TO BEFORE SAVE --------- "
+		
 		if document.item_requirement_id_action
 			if document.item_requirement_id_action == "add"
 				document.item_requirement_ids << document.item_requirement_id
-				puts "adding to the item_Requirement_ids"
-				puts document.item_requirement_ids
+				
 			elsif document.item_requirement_id_action == "remove"
 				document.item_requirement_ids.delete(document.item_requirement_id)
 			end
@@ -164,8 +144,10 @@ class Report
 	end
 
 	def load_item_requirements
+		puts "Came to load item requirements."
 		self.item_requirements ||= []
 		self.item_requirement_ids.each do |iid|
+			puts "doing iid: #{iid}"
 			self.item_requirements << ItemRequirement.find(iid) unless iid.blank?
 		end
 		self.item_requirements.map{|c| c.report_id = self.id.to_s }

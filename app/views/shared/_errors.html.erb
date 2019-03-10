@@ -1,0 +1,12 @@
+<% if !model.errors.full_messages.empty? %>
+	<div class="card" id="errors">
+		<div class="card-content">
+			<div class="card-title">
+				There were errors while performing the action
+			</div>
+			<% model.errors.full_messages do |err| %>
+				<div><%= err %></div>
+			<% end %>
+		</div>
+	</div>
+<% end %>

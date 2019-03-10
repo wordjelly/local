@@ -10,3 +10,7 @@
         	<%= render :partial => "item_groups/show" %>
         </tbody>
 </table>
+
+<h6>Component Items</h6>
+<% @items = @item_group.items %>
+<%= render :partial => "/items/index" %>
