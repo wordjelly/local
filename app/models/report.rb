@@ -27,6 +27,10 @@ class Report
 	attr_accessor :item_requirement_id
 	attribute :item_requirements, Array
 
+	attr_accessor :item_requirements_grouped_by_type
+
+
+
 	settings index: { 
 	    number_of_shards: 1, 
 	    number_of_replicas: 0,
@@ -118,6 +122,9 @@ class Report
 	def clone(patient_id)
 		
 		patient_report = Report.new(self.attributes.merge({patient_id: patient_id, template_report_id: self.id.to_s}))
+		#puts "after merging patient report:"
+		#puts patient_report.attributes.to_s
+		#exit(1)
 		
 		patient_report.test_ids = []
 		
@@ -129,6 +136,7 @@ class Report
 			end
 		end
 
+		patient_report.save
 		patient_report
 
 	end
@@ -145,12 +153,21 @@ class Report
 
 	def load_item_requirements
 		puts "Came to load item requirements."
+		self.item_requirements_grouped_by_type = {}
 		self.item_requirements ||= []
 		self.item_requirement_ids.each do |iid|
-			puts "doing iid: #{iid}"
-			self.item_requirements << ItemRequirement.find(iid) unless iid.blank?
+			unless iid.blank? 
+				ireq = ItemRequirement.find(iid)
+				if self.item_requirements_grouped_by_type[ireq.item_type]
+				else
+					self.item_requirements_grouped_by_type[ireq.item_type] = []
+				end
+				self.item_requirements_grouped_by_type[ireq.item_type] << ireq
+				self.item_requirements << ireq
+			end
 		end
 		self.item_requirements.map{|c| c.report_id = self.id.to_s }
 	end
+
 
 end

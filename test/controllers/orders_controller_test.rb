@@ -225,7 +225,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
   end
 =end
-
+=begin
   test "if another order has the barcode it will provide a relevant error" do 
 
   	@order = Order.new
@@ -269,13 +269,44 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   	
   	o = Order.find(@order.id)
 
-	put("/orders/#{o.id.to_s}.json","item_requirements"=>{"0"=>{"type"=>"Lavender Tube", "index"=>"0","filled_amount" => "22.5"}})  	
+	 put("/orders/#{o.id.to_s}.json","item_requirements"=>{"0"=>{"type"=>"Lavender Tube", "index"=>"0","filled_amount" => "22.5"}})  	
 
-	o = Order.find(@order.id)
+	 o = Order.find(@order.id)
 
-	assert_equal nil, o.item_requirements["Lavender Tube"][0]["barcode"]
-	assert_equal 0, o.item_requirements["Lavender Tube"][0]["filled_amount"]
+	 assert_equal nil, o.item_requirements["Lavender Tube"][0]["barcode"]
+	 assert_equal 0, o.item_requirements["Lavender Tube"][0]["filled_amount"]
   	assert_equal [], o.item_ids
+
+  end
+=end
+  test " removes the report from the report ids, and item requirements " do 
+
+
+    @order = Order.new
+    @order.patient_id = @patient.id.to_s
+    @order.add_remove_reports({template_report_ids: [@r.id.to_s]})
+    @order.save
+    
+    put("/orders/#{@order.id.to_s}.json","template_report_ids" => [])    
+
+    o = Order.find(@order.id)
+
+    puts "template report ids---------"
+    puts o.template_report_ids.to_s
+
+    puts "patient report ids-----------"
+    puts o.patient_report_ids
+
+    puts "patient test ids ------------"
+    puts o.patient_test_ids
+
+    puts "item requirements ------------"
+    puts o.item_requirements
+    #assert_equal {}, o.item_requirements
+    #assert_equal [], o.template_report_ids
+    #assert_equal [], o.patient_report_ids
+    #assert_equal [], o.patient_test_ids
+
 
   end
 

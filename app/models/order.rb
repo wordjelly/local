@@ -2,6 +2,7 @@ require 'elasticsearch/persistence/model'
 class Order
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::StatusConcern
 	
 	index_name "pathofast-orders"
 
@@ -154,19 +155,13 @@ class Order
 	## @param[String] report_id : the report id that you want to accomodate in this order.
 	## @return[Hash] true/false :true if the existing item_requirements can accomodate it and 
 	def accomodate(report)
-		puts "the report item requirements are:"
-		puts report.item_requirements.to_s
+		
 		report.item_requirements.each do |ir|
-			puts "iterating report item req"
-			puts ir.to_s
-			puts "self item requirements are:"
-			puts self.item_requirements.to_s
-			#exit(1)
+			
 			if self.item_requirements[ir.item_type].blank?
-				puts "adding new tube----------- for item type: #{ir.item_type}"
+				
 				add_new_tube(ir,report)
-				puts "item requirements becomes:"
-				puts self.item_requirements.to_s
+				
 			else
 				requirement_accomodated = false
 
@@ -202,7 +197,6 @@ class Order
 					add_new_tube(ir,report)
 				end
 			end
-
 		end	
 	end
 
@@ -210,8 +204,97 @@ class Order
 		self.template_report_ids.include? report_id
 	end
 
+	def delete_template_report_id(template_report_id)
+		self.template_report_ids.delete(template_report_id)
+	end
+
+	def delete_patient_report_id(patient_report)
+		self.patient_report_ids.delete(patient_report.id.to_s)
+		patient_report.test_ids.each do |tid|
+			delete_patient_test_id(tid)
+		end
+	end
+
+
+	def delete_patient_test_id(patient_test_id)
+		self.patient_test_ids.delete(patient_test_id)
+	end
+
+
+	## @param[String] template_report_id
+	## removes 
+	## this should be called on each template report.
+	def remove_report(template_report_id,params)
+		puts "Came to check remove report "
+		template_report_ids = params[:template_report_ids] || []
+		puts "the params template report ids are:"
+		puts template_report_ids.to_s
+
+		unless template_report_ids.include? template_report_id
+			puts "The params dont include this report id: #{template_report_id}"
+			puts "the self reports are:"
+			puts self.reports.to_s
+
+			self.reports.each do |report|
+				if report.template_report_id == template_report_id
+					self.item_requirements.keys.each do |type|
+						self.item_requirements[type].each_with_index {|tube,key|
+							if tube["report_ids"].include? report.id.to_s
+								self.item_requirements[type][key]["report_ids"].delete(report.id.to_s)
+								if report.item_requirements_grouped_by_type[type][key]
+									self.item_requirements[type][key]["required_amount"]-= report.item_requirements_grouped_by_type[type][key]["amount"]
+									if self.item_requirements[type][key]["required_amount"] <= 0
+										self.item_requirements[type].delete_at(key)
+									end
+								end
+							end
+						}
+						## clears the item requirements if they have nothing left .
+						self.item_requirements.delete(type) if self.item_requirements[type].blank?
+					end
+					delete_patient_report_id(report)
+				end
+			end
+			delete_template_report_id(template_report_id)
+		end
+	end
+
+	## so now we removed reports
+	## now what is the next step.
+	## we can add or remove reports.
+	## suppose a barcode is not given.
+	## someone wants to use a barcode that 
+	## they want to just run it from some labelled
+	## tube.
+	## if they click i don't use these tubes
+	## next step is status updates
+	## and payments and report formats.
+	## suppose i delete an item group.
+	## i mean we had added an item group
+	## now we want to delete it.
+	## so from the ui side, if no item group is sent, then what happens ?
+	## if no item group comes into the 
+	## what if an item group is added subsequently ?
+	## also for item_requirements.
+	## we want to change the barcode on an individual tube later on.
+	## can we do it?
+	## we want to remove a mistaken item_group
+	## can we do it?
+	## 
+
+	## so now begins extensive testing of removing reports
+	## part 2.
+	## 
 	## so now if it says cannot accomodate, then tubes have to be added.
 	## in that case, if the order status is past collection, it should decide.
+	# remove report from item_requirement
+	# if its too much or too little.
+	# so suppose i remove a report
+	# i have to also reduce the required amount from the item requirement where it has been added.
+	# if that amount becomes zero, i have to remove that item requirement, provided that no other report is registered on it.
+	# so we have to check all the current template report ids, against incoming.
+	# if a template report id is not there, call remove on it.
+	# we do this after adding.
 	def add_remove_reports(params)
 		puts "params are:"
 		puts params.to_s
@@ -237,6 +320,10 @@ class Order
 		else
 			puts "no template report ids in params."
 		end
+		self.template_report_ids.each do |rid|
+			puts "iterating self template report id: #{rid}"
+			remove_report(rid,params)
+		end
 	end
 
 	
@@ -256,34 +343,46 @@ class Order
 	def group_param_item_requirements_by_type(params)
 		item_requirements = params["item_requirements"]
 		results = {}
-		item_requirements.keys.each do |id|
-			type = item_requirements[id]["type"]
-				
-			index = item_requirements[id]["index"]
-				
-			barcode = item_requirements[id]["barcode"]
-				
-			filled_amount = item_requirements[id]["filled_amount"]
-			results[type] = [] if results[type].nil?
-			results[type] << item_requirements[id]
+		unless item_requirements.blank?
+			item_requirements.keys.each do |id|
+				type = item_requirements[id]["type"]
+					
+				index = item_requirements[id]["index"]
+					
+				barcode = item_requirements[id]["barcode"]
+					
+				filled_amount = item_requirements[id]["filled_amount"]
+				results[type] = [] if results[type].nil?
+				results[type] << item_requirements[id]
+			end
 		end
 		results
 	end
 
-	## so we need to get the item group items in this manner.
+	def delete_item_group(params)
+		unless self.item_group_id.blank?
+			if params[:item_group_id].blank?
+				## clear the self item_group_id
+				## 
+			end
+		end
+	end
+
 	def add_barcodes(params)
 
 		item_requirements = group_param_item_requirements_by_type(params)
 
-		if item_group_id = params["item_group_id"]
+		item_group_id = params["item_group_id"]
+		unless item_group_id.blank?
 			ig = ItemGroup.find(item_group_id)
+			self.item_group_id = ig.id.to_s
 			item_group_item_requirements = ig.prepare_items_to_add_to_order
 
 
 			item_group_item_requirements.keys.each do |igk|
 				if item_requirements[igk]
 					item_group_item_requirements[igk].each_with_index {|el,key|
-						## will assign the barcode from the packet if the current barcode is nil.
+					
 						if item_requirements[igk][key]
 							item_requirements[igk][key]["barcode"] = item_group_item_requirements[igk][key]["barcode"] if item_requirements[igk][key]["barcode"].blank?
 						end
@@ -334,7 +433,10 @@ class Order
 	def load_reports
 		self.reports ||= []
 		self.patient_report_ids.each do |patient_report_id|
-			self.reports << Report.find(patient_report_id)
+			report = Report.find(patient_report_id)
+			report.load_tests
+			report.load_item_requirements
+			self.reports << report
 		end	
 	end
 

@@ -220,6 +220,9 @@ class Test
 		
 		patient_test = Test.new(self.attributes.merge({:patient_id => patient_id, :template_test_id => self.id.to_s}))
 
+
+		patient_test.save
+
 		patient_test
 
 	end

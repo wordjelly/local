@@ -17,6 +17,18 @@
 
 				<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true, :multiple_element_name => "template_report_id"}, :autocomplete => "off" %>
 				<%= f.label :report_name %>
+
+				<ul class="collection">
+					<% @order.items.each do |item| %>
+						<li class='collection-item'> 
+							<%= item.item_type %>
+							<input type='hidden' value="<%= item.id.to_s %>" name="order[item_ids][]" />
+							<i class='material-icons delete_multiple_item' style='cursor:pointer;'>close
+							</i>
+						</li>
+					<% end %>
+				</ul>
+
 			</div>
 		</div>
 		<!-- item requirements -->
@@ -53,8 +65,8 @@
 							<tr class="item_requirement">
 								<td class="item_requirement_type"><%= ir %></td>
 								<td class="item_requirement_index"><%= index %></td>
-								<td><input class="item_requirement_filled_amount" type="number" name="item_requirement_filled_amount" value="<%= tube_entry[:filled_amount] %>"/></td>
-								<td><input class="item_requirement_barcode" name="item_requirement_barcode" type="text" value="<%= tube_entry[:barcode] %>" /></td>
+								<td><input class="item_requirement_filled_amount" type="number" name="item_requirement_filled_amount" value="<%= tube_entry['filled_amount'] %>"/></td>
+								<td><input class="item_requirement_barcode" name="item_requirement_barcode" type="text" value="<%= tube_entry['barcode'] %>" /></td>
 							</tr>
 						<% } %>
 					<% end %>

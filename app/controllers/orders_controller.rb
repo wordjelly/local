@@ -11,6 +11,7 @@ class OrdersController < ApplicationController
 		@order.load_patient
 		@order.load_reports
 		@order.load_items
+		puts "these are the item requirements."
 		puts @order.item_requirements.to_s
 	end
 
@@ -46,8 +47,7 @@ class OrdersController < ApplicationController
 		@order.load_items
 		@order.add_remove_reports(params)
 		@order.add_barcodes(params)
-		#puts "after add barcodes does it have errors?"
-		#puts @order.errors.full_messages.to_s
+		## item group id is assigned internally.
 		if @order.errors.empty?
 			save_result = @order.save
 		end
@@ -62,9 +62,15 @@ class OrdersController < ApplicationController
 		end
 	end
 
-	## how much longer ?
-	## orders -> statuses
-	## login -> 
+	## report can have many status ids.
+	## we precreate these status ids.
+	## they are aggregated and shown next to the tubes
+	## when a status is clicked, a clone is created and attached.
+	## which has this tube id.
+	## or which has any of hte report ids, which this tube is reporting to.
+	## aggregate by name, and show.
+	## if the tube id one exists, then show it first.
+	## otherwise show the other ones.
 
 
 	def destroy
@@ -75,6 +81,10 @@ class OrdersController < ApplicationController
 		@order.load_patient
 		@order.load_reports
 		@order.load_items
+		## a status object which will be rendered in the make_payment partial to allow a 
+		## payment to be made.
+		@payment_status = Status.new(parent_id: @order.id.to_s)
+		@payment_status.information_keys = {amount: nil}
 		puts "The order item requirements are:"
 		puts @order.item_requirements.to_s
 	end

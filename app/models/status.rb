@@ -7,11 +7,23 @@ class Status
 	index_name "pathofast-statuses"
 
 	attribute :name, String
+	attribute :parent_id, String
 	attribute :report_id, String
 	attribute :item_id, String
 	attribute :item_group_id, String
 	attribute :order_id, String
 	attribute :response, Boolean
+	attribute :patient_id, String
+	attribute :info, Hash
+
+	## status will be created with a name
+	## like payment_made, so we may need some additional information
+	## so this will be provided in a key -> value
+	## format
+	## like amount -> x.
+	## so we can then perform operations on that.
+	## about payments.
+	## so we keep that dynamic mapping.
 
 	## will call a method named "on_#{name}" after create on 
 	## each object who can be resolved, in a background job.
@@ -63,8 +75,8 @@ class Status
 	    	}
 	  	} do
 
-	    mapping do
-	      
+	    mappings dynamic: 'true' do
+	      	indexes :info, type: 'object'
 		    indexes :name, type: 'keyword', fields: {
 		      	:raw => {
 		      		:type => "text",
