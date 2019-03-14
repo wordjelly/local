@@ -13,7 +13,6 @@ module Concerns::ImageLoadConcern
 		##find an image/ images with this parent id.
 		##and add them to an images array. 
 		def load_images
-			puts "came to load images ----------- "
 			self.images = Image.search(
 				{
 					:query => {

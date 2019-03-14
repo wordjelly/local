@@ -1,38 +1,67 @@
 <%= form_for @status do |f| %>
 	
 	<!-- this will come from a drop down ? -->
-	<%= f.text_field :name %>
-	<%= f.label :name %>
+	<!-- what if a status is applicable to multiple parents -->
+	<!-- that will be a better way to do things -->
+	<!-- for eg: on conveyor belt is applicable to practically everything under the sun-->
+	<!-- so we can autocomplete on a field called parents -->
+	<!-- or we can do it reverse -->
+	<!-- on the report we add statuses to it -->
+	<!-- so parent is inferred on status -->
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">Status Details</div>
+			<%= f.text_field :name, :data => {:autocomplete_type => "statuses"}, :autocomplete => "off" %>
+			<%= f.label :name %>
 
-	<%= f.text_field :parent_id, disabled: true %>
-	<%= f.label :parent_id %>
+			<%= f.number_field :priority %>
+			<%= f.label :priority %>
 
-	<%= f.text_field :report_id, disabled: true %>
-	<%= f.label :report_id %>
+			<div class="section">
+				<p>
+			      <label>
+			        <input type="checkbox" name="status[requires_image]"/>
+			        <span>Image must be uploaded with this status</span>
+			      </label>
+			    </p>
+			</div>
 
-	<%= f.text_field :item_id, disabled: true %>
-	<%= f.label :item_id %>
+			<% @status.information_keys.each do |ikey| %>
 
-	<%= f.text_field :item_group_id, disabled: true %>
-	<%= f.label :item_group_id %>
+				<input type="text" name="status[info][<%= ikey %>]" val="<%= @status.information_keys[ikey] %>" />
 
-	<%= f.text_field :order_id, disabled: true %>
-	<%= f.label :order_id %>
+			<% end %>
+		</div>
+	</div>
 
-	<%= f.text_field :patient_id, disabled: true %>
-	<%= f.label :patient_id %>
-
-	<!-- so all you have to do is define its information keys, which can be a attr_accessor, depending on where it is being called from -->
-	<% @status.information_keys.each do |ikey| %>
-
-		<input type="text" name="status[info][<%= ikey %>]" val="<%= @status.information_keys[ikey] %>" />
-
+	<% unless @status.new_record? %>
+	    <%= render :partial => "images/image", locals: {model: @status} %>
 	<% end %>
 
-	<!-- so in the order we can have different payment options -->
-	<!-- so make payment, enter the amount -->
 
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Related Object details
+			</div>
+		
+			<%= f.text_field :report_id, disabled: true %>
+			<%= f.label :report_id %>
 
-	<%= f.submit "Submit" %>
+			<%= f.text_field :item_id, disabled: true %>
+			<%= f.label :item_id %>
+
+			<%= f.text_field :item_group_id, disabled: true %>
+			<%= f.label :item_group_id %>
+
+			<%= f.text_field :order_id, disabled: true %>
+			<%= f.label :order_id %>
+
+			<%= f.text_field :patient_id, disabled: true %>
+			<%= f.label :patient_id %>
+		</div>
+	</div>
+	
+	<%= f.submit "Submit", :class => "waves-effect waves-light btn" %>
 
 <% end %>

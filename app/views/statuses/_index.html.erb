@@ -1,14 +1,28 @@
-<table>
-        <thead>
-          <tr>
-              <th>Name</th>
-          </tr>
-        </thead>
+<div class="card">
+  <div class="card-content">
+    <div class="card-title">
+    </div>
+      <table>
+              <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Priority</th>
+                    <th>Belongs To</th>
+                    <th>Report</th>
+                    <th>Item</th>
+                    <th>Item Group</th>
+                    <th>Order</th>
+                    <th>Patient</th>
+                    <th>Info</th>
+                </tr>
+              </thead>
 
-        <tbody>
-          <% @statuses.each do |nr| %>
-        	 <% @status = nr %>
-           <%= render :partial => "show" %>
-          <% end %>
-        </tbody>
-</table>
+              <tbody>
+                <% @statuses.each do |nr| %>
+              	 <% @status = nr %>
+                 <%= render :partial => "statuses/show" %>
+                <% end %>
+              </tbody>
+      </table>
+  </div>
+</div>

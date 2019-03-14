@@ -5,3 +5,6 @@
 <span>
 	<%= link_to "Delete",report_path(:id => @report.id.to_s, :method => "delete") %>
 </span>
+<span>
+	<%= link_to "Add New Status", new_status_path(:status => {:report_id => @report.id.to_s, :parent_id => @report.id.to_s}) %>
+</span>

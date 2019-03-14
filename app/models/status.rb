@@ -7,7 +7,7 @@ class Status
 	index_name "pathofast-statuses"
 
 	attribute :name, String
-	attribute :parent_id, String
+	attribute :parent_ids, Array
 	attribute :report_id, String
 	attribute :item_id, String
 	attribute :item_group_id, String
@@ -15,6 +15,11 @@ class Status
 	attribute :response, Boolean
 	attribute :patient_id, String
 	attribute :info, Hash
+	attribute :priority, Float
+	## whether an image is compulsory for this status.
+	attribute :requires_image, Boolean
+
+	attribute :information_keys, Hash
 
 	## status will be created with a name
 	## like payment_made, so we may need some additional information
@@ -76,7 +81,7 @@ class Status
 	  	} do
 
 	    mappings dynamic: 'true' do
-	      	indexes :info, type: 'object'
+	      	indexes :information_keys, type: 'object'
 		    indexes :name, type: 'keyword', fields: {
 		      	:raw => {
 		      		:type => "text",

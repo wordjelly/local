@@ -1,4 +1,24 @@
 <tr>
 	<td><%= link_to @status.name, status_path(@status.id.to_s) %></td>
+	<td><%= @status.priority %></td>
+    <td><% @status.belongs_to.each do |object| %>
+    		<%= link_to object.name, main_app.send(result.class.name.underscore.downcase + "_path",object.id.to_s) %>	
+    	<% end %>
+    </td>
+    <td>
+    	<% if report = @status.get_report %>
+    		<%=  link_to report.name, report_path(report.id.to_s) %>
+    	<% end %>
+    </td>
+    <td>
+    	<% if item = @status.get_item %>
+    		<%= link_to item.name, item_path(item.id.to_s) %>
+    	<% end %>
+    </td>
+    <td>Item Group</td>
+    <td>Order</td>
+    <td>Patient</td>
+    <td>Info</td>
 	<td><%= render :partial => "statuses/options" %></td>
 </tr>
+

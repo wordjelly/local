@@ -2,6 +2,7 @@ require 'elasticsearch/persistence/model'
 class Report
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::StatusConcern
 
 	index_name "pathofast-reports"
 

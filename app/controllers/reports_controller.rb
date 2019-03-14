@@ -8,6 +8,7 @@ class ReportsController < ApplicationController
 
 	def edit
 		@report = Report.find(params[:id])
+		@report.run_callbacks(:find)
 		@report.load_tests
 		@report.load_item_requirements
 	end
@@ -24,6 +25,7 @@ class ReportsController < ApplicationController
 
 	def update
 		@report = Report.find(params[:id])
+		@report.run_callbacks(:find)
 		## so the before update thing does not work.
 		@report.attributes = permitted_params["report"]
 		@report.save
@@ -41,23 +43,24 @@ class ReportsController < ApplicationController
 
 	def show
 		@report = Report.find(params[:id])
+		@report.run_callbacks(:find)
 		@report.load_tests
 		@report.load_item_requirements
 	end
 
 	def index
 		@reports = Report.all
+		@reports.map{|c|
+			c.run_callbacks(:find)
+		}
 	end
 
 	## so here it has to refer to tests, and item requirements, 
 	## and on clicking it it has to do the autocomplete.
 	## so we will give an add or a remove.
 	## only add, and a remove option also can be giben.
-	
 	def permitted_params
-		## we can add one test or item_requirement at a time.
-		## the item requirements.
-		params.permit(:id , {:report => [:name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_id_action, :price]})
+		params.permit(:id , {:report => [:name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_id_action, :price, {:status_ids => []}]})
 	end
 
 
