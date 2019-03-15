@@ -24,15 +24,7 @@
 		<%= f.hidden_field :item_requirement_id %>
 		<%= f.hidden_field :item_requirement_id_action, :value => "add" %>
 
-		<div class="card">
-			<div class="card-content">
-				<div class="card-title">
-					Add Statuses
-				</div>
-				<%= f.text_field :status_id , :data => {:autocomplete_type => "statuses", :multiple => true, :multiple_element_name => "report[status_ids][]"}, :autocomplete => "off" %>
-				<%= f.label :report_name %>
-			</div>
-		</div>
+		<%= render :partial => "statuses/add_statuses", locals: {parent_object_name: "report", statuses: @report.statuses, f: f} %>
 
 		<div>
 

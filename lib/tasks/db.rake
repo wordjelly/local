@@ -40,6 +40,22 @@ namespace :db do
 	item_two = Item.new(item_type: item_type_two.name, barcode: "456", expiry_date: (Time.now.to_s).to_s)
 	item_two.save
 
+	status_one = Status.new(name: "On Conveyor Belt")
+	status_one.save
+
+	status_two = Status.new(name: "In Centrifuge")
+	status_two.save
+
+	5.times do |n|
+		status = Status.new(report_id: "report1", order_id: "order1", numeric_value: 100, name: "bill")
+		status.save
+	end
+
+	2.times do |n|
+		status = Status.new(report_id: "report1", order_id: "order1", numeric_value: 100, name: "payment")
+		status.save
+	end
+
   end
 
 end

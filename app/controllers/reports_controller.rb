@@ -28,7 +28,10 @@ class ReportsController < ApplicationController
 		@report.run_callbacks(:find)
 		## so the before update thing does not work.
 		@report.attributes = permitted_params["report"]
-		@report.save
+		puts "report status ids after assigning attributes are"
+		puts @report.attributes.to_s
+		save_response = @report.save
+		puts "save response: #{save_response}"
 		#@report.load_tests
 		#@report.load_item_requirements
 		respond_to do |format|

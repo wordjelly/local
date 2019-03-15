@@ -120,7 +120,7 @@ class Report
 	## priority.
 	
 
-	def clone(patient_id)
+	def clone(patient_id,order_id)
 		
 		patient_report = Report.new(self.attributes.merge({patient_id: patient_id, template_report_id: self.id.to_s}))
 		#puts "after merging patient report:"
@@ -138,6 +138,8 @@ class Report
 		end
 
 		patient_report.save
+		## create a status, of the payment.
+		Status.add_bill(patient_report,order_id)
 		patient_report
 
 	end

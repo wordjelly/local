@@ -12,6 +12,18 @@ class StatusesController  < ApplicationController
 		@status = Status.find(params[:id])
 	end
 
+	## so now first order calculates, the pending
+	## payment
+	## then it goes to the status to make the payment
+	## there the payment is made
+	## and then order also has an endpoint to print a 
+	## receipt
+	## on making payment, receipt is generated and printed
+	## by using wickedpdf.
+	## we can make it go to the .pdf extension
+	## on submit?
+	## and it gives you the receipt.
+
 	def create
 		@status = Status.new(permitted_params["status"])
 		response = @status.save
@@ -26,11 +38,6 @@ class StatusesController  < ApplicationController
 		@status = Status.find(params[:id])
 		@status.run_callbacks(:find)
 		@status.attributes(permitted_params["status"])
-		
-		## we also have to load the image concern.
-		## a particular status type may require an image to be present
-		## 
-		
 		respond_to do |format|
 			format.html do 
 				render "show"
@@ -41,11 +48,15 @@ class StatusesController  < ApplicationController
 	def destroy
 	end
 
+	def make_payment
+		@status = Status.new(get_model_params)
+	end
+
 	def show
 		@status = Status.find(params[:id])
 		puts "running callbacks."
 		@status.run_callbacks(:find)
-		ptus "finished running callbacks."
+		#ptus "finished running callbacks."
 	end
 
 	def index

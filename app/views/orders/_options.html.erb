@@ -5,3 +5,7 @@
 <span>
 	<%= link_to "Delete",order_path(:id => @order.id.to_s, :method => "delete") %>
 </span>
+
+<span>
+	<%= link_to "Make Payment", make_payment_path(:status => {order_id: @order.id.to_s, patient_id: @order.patient_id.to_s}) %>
+</span>

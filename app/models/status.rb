@@ -9,12 +9,13 @@ class Status
 	attribute :name, String
 	attribute :parent_ids, Array
 	attribute :report_id, String
+	attribute :numeric_value, Float
+	attribute :text_value, String
 	attribute :item_id, String
 	attribute :item_group_id, String
 	attribute :order_id, String
 	attribute :response, Boolean
 	attribute :patient_id, String
-	attribute :info, Hash
 	attribute :priority, Float
 	## whether an image is compulsory for this status.
 	attribute :requires_image, Boolean
@@ -93,7 +94,82 @@ class Status
 
 	end
 
-	## if the report status is "verified -> certain actions cna be done"
-	## and the status will track the notifications.
+	########################################################
+	##
+	## UTILITY
+	##
+	########################################################
+	## creates a bill for the report.
+	def self.add_bill(patient_report,order_id)	
+		s = Status.new
+		s.report_id = patient_report.id.to_s
+		s.order_id = order_id
+		s.numeric_value = patient_report.price
+		s.text_value = patient_report.name
+		s.name = "bill"
+		s.save
+	end
+
+
+	def belongs_to
+		## here we want to search across all models.
+		## that is going to be the biggest challenge hereforth.
+		#gateway.client.search index: "correlations", body: body
+		results = Elasticsearch::Persistence.client.search index: "pathofast-*", body: {
+			query: {
+				term: {
+					status_ids: self.id.to_s
+				}
+			}
+		}
+
+		results = Hashie::Mash.new results
+
+		puts results.hits.to_s
+
+		search_results = []
+
+		results.hits.hits.each do |hit|
+			obj = hit._type.capitalize.constantize.new(hit._source)
+			obj.id = hit._id
+			search_results << obj
+		end	
+
+		search_results
+
+	end
+
+	def get_report
+		if self.report_id
+			Report.find(self.report_id)
+		end
+	end
+
+	def get_order
+		if self.order_id
+			Order.find(self.order_id)
+		end
+	end
+
+	def get_patient
+		if self.patient_id
+			Patient.find(self.patient_id)
+		end
+	end
+
+	def get_item
+		if self.item_id
+			Item.find(self.item_id)
+		end
+	end
+
+	def get_item_group
+		if self.item_group_id
+			ItemGroup.find(self.item_group_id)
+		end
+	end
+
+
+
 
 end

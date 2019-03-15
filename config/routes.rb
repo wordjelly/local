@@ -31,6 +31,7 @@ Rails.application.routes.draw do
 
   get 'search' => 'search#search'
   get 'search/type_selector' => 'search#type_selector'
+  get 'make_payment' => 'statuses#make_payment'
 
   root 'tests#index'
   # Example resource route with options:

@@ -16,18 +16,14 @@ class OrdersController < ApplicationController
 	end
 
 	def create
-		@order = Order.new
+		@order = Order.new(id: SecureRandom.hex(10))
 		@order.add_remove_reports(params)
+		
 		@order.patient_id = params[:patient_id]
-		puts "the order errors are: -----------------"
-		puts @order.errors.full_messages.to_s
+		#puts "the order errors are: -----------------"
+		#puts @order.errors.full_messages.to_s
 		if @order.errors.empty?
-			puts "saving order"
-			puts "item requirements."
-			puts @order.item_requirements.to_s
 			response = @order.save
-			puts "order save errros"
-			puts response.to_s
 		end
 		respond_to do |format|
 			format.json do 

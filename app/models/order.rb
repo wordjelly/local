@@ -307,7 +307,7 @@ class Order
 					puts "does not exist."
 					self.template_report_ids << report_id
 					report = Report.find(report_id)
-					self.patient_report_ids << report.clone(self.patient_id).id.to_s
+					self.patient_report_ids << report.clone(self.patient_id,self.id.to_s).id.to_s
 					self.patient_test_ids << report.test_ids
 					self.patient_test_ids.flatten!
 					self.reports << report
@@ -446,5 +446,21 @@ class Order
 			self.items << Item.find(item_id)
 		end
 	end	
+
+	## we want to aggregate, all payments
+	## query for either "bill" or "payment"
+	## aggregate by bills -> summate the numeric values
+	## aggregate by payments -> summate the numeric values
+	## and display sorted by date.
+	## so i can test this.
+	## but if we want to make a payment.
+	## it should just show the pending amount.
+	## this is done before, show and populates the make payment thereof, and also shows it in the options.
+	## it also is used for making the receipt.
+	## if he makes a payment, then, it should give a receipt option, while showing the status ?
+	## just gives the whole statement.
+	def account_statement
+
+	end
 	
 end
