@@ -13,7 +13,6 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 	@t3 = Test.new(name: "HBA1C", lis_code: "HBA1C", price: 550)
 	@t3.save
 
-	
 	@patient = Patient.new(first_name: "Bhargav", last_name: "Raut")
 	@patient.save
 

@@ -6,16 +6,16 @@ class Status
 
 	index_name "pathofast-statuses"
 
-	attribute :name, String
-	attribute :parent_ids, Array
-	attribute :report_id, String
+	attribute :name, String, mapping: {type: 'keyword'}
+	attribute :parent_ids, Array, mapping: {type: 'keyword'}
+	attribute :report_id, String, mapping: {type: 'keyword'}
 	attribute :numeric_value, Float
-	attribute :text_value, String
-	attribute :item_id, String
-	attribute :item_group_id, String
-	attribute :order_id, String
+	attribute :text_value, String, mapping: {type: 'keyword'}
+	attribute :item_id, String, mapping: {type: 'keyword'}
+	attribute :item_group_id, String, mapping: {type: 'keyword'}
+	attribute :order_id, String, mapping: {type: 'keyword'}
 	attribute :response, Boolean
-	attribute :patient_id, String
+	attribute :patient_id, String, mapping: {type: 'keyword'}
 	attribute :priority, Float
 	## whether an image is compulsory for this status.
 	attribute :requires_image, Boolean

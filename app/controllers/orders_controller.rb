@@ -11,6 +11,7 @@ class OrdersController < ApplicationController
 		@order.load_patient
 		@order.load_reports
 		@order.load_items
+		@order.generate_account_statement
 		puts "these are the item requirements."
 		puts @order.item_requirements.to_s
 	end
@@ -43,6 +44,7 @@ class OrdersController < ApplicationController
 		@order.load_items
 		@order.add_remove_reports(params)
 		@order.add_barcodes(params)
+		@order.generate_account_statement
 		## item group id is assigned internally.
 		if @order.errors.empty?
 			save_result = @order.save
@@ -77,6 +79,7 @@ class OrdersController < ApplicationController
 		@order.load_patient
 		@order.load_reports
 		@order.load_items
+		@order.generate_account_statement
 		## a status object which will be rendered in the make_payment partial to allow a 
 		## payment to be made.
 		@payment_status = Status.new(parent_id: @order.id.to_s)
@@ -91,6 +94,7 @@ class OrdersController < ApplicationController
 		 	c.load_patient
 		 	c.load_reports
 		 	c.load_items
+		 	c.generate_account_statement
 		}
 	end
 

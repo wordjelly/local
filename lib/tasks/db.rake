@@ -47,12 +47,12 @@ namespace :db do
 	status_two.save
 
 	5.times do |n|
-		status = Status.new(report_id: "report1", order_id: "order1", numeric_value: 100, name: "bill")
+		status = Status.new(report_id: "report#{n}", order_id: "order1", numeric_value: 100, name: "bill")
 		status.save
 	end
 
 	2.times do |n|
-		status = Status.new(report_id: "report1", order_id: "order1", numeric_value: 100, name: "payment")
+		status = Status.new(order_id: "order1", numeric_value: 100, name: "payment")
 		status.save
 	end
 

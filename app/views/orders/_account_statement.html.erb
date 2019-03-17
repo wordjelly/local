@@ -1,0 +1,49 @@
+<div class="card">
+	<div class="card-content">
+		<div class="card-title">
+			<%= Time.now.strftime("%b %-d %Y, %I:%M %P") %> | Pending Amount
+		</div>
+		<div>
+			<h5><%= @order.account_statement[:pending_amount] %></h5>
+		</div>
+	</div>
+</div>
+<table class="striped bill">
+    <thead>
+      	<tr>
+      		<th>Report Date</th>
+          	<th>Report Name</th>
+          	<th>Bill Amount</th>
+      	</tr>
+    </thead>
+    <tbody>
+    	<% @order.account_statement[:bill].each do |bill| %>
+    		<tr>
+    			<td><%= bill[:date] %></td>
+    			<!-- here we can ideally load that report -->
+    			<!-- or we can subaggregate by name -->
+    			<!-- and load it there -->
+    			<td><%= bill[:id] %></td>
+    			<td><%= bill[:amount] %></td>
+    		</tr>
+    	<% end %>
+    </tbody>
+</table>
+<table class="striped payment">
+    <thead>
+      	<tr>
+          	<th>Payment Id</th>
+          	<th>Amount</th>
+      	</tr>
+    </thead>
+    <tbody>
+    	<% @order.account_statement[:payment].each do |payment| %>
+    		<tr>
+    			<td><%= payment[:date] %></td>
+    			<td><%= payment[:id] %></td>
+    			<td><%= payment[:amount] %></td>
+    		</tr>
+    	<% end %>
+    </tbody>
+</table>
+

@@ -8,6 +8,8 @@ class Order
 
 	attr_accessor :patient_name
 
+	attr_accessor :account_statement
+
 	attribute :patient_id, String
 
 	## these are the template reports.
@@ -459,7 +461,107 @@ class Order
 	## it also is used for making the receipt.
 	## if he makes a payment, then, it should give a receipt option, while showing the status ?
 	## just gives the whole statement.
-	def account_statement
+	## this should show up in the order show view.
+	## as a seperate partial.
+	## we also need an endpoint for this for the receipt.
+	def generate_account_statement
+		results = Status.search({
+			sort: {
+				created_at: {
+					order: "asc"
+				}
+			},
+			query: {
+				bool: {
+					must: [
+							{
+								bool: {
+									should: [
+										{
+											term: {
+												name: {
+													value: "bill"
+												}
+											}
+										},
+										{
+											term: {
+												name: {
+													value: "payment"
+												}
+											}
+										}
+									]
+								}
+							},
+							{
+								term: {
+									order_id: {
+										value: self.id.to_s
+									}
+								}
+							}
+					]
+				}
+			},
+			aggs: {
+				bills_and_payments: {
+					terms: {
+						field: "name",
+						size: 100
+					},
+					aggs: {
+				        by_id: {
+					        terms: {
+					            field: "_id",
+					            size: 100
+					        },
+					        aggs: {
+					        	amount: {
+					        		terms: {
+					        			field: "numeric_value",
+					        			size: 1
+					        		}
+					        	},
+					        	dates: {
+					        		date_histogram: {
+					        			field: "created_at",
+					        			interval: "day"
+					        		}
+					        	}
+					        }
+				        },
+				        total: {
+				          	sum: {
+				            	field: "numeric_value"
+				          	}
+				        }
+				    }
+				}
+			}
+		})
+
+		self.account_statement = {bill: [], payment: [], pending: nil}
+
+		total_bills = 0
+		total_payments = 0
+
+		results.response.aggregations.bills_and_payments.buckets.each do |bucket|
+			curr_key = bucket["key"]
+			bucket.by_id.buckets.each do |status|
+				id = status["key"]
+				amount = status.amount.buckets.first["key"]
+				date = status.dates.buckets.first["key_as_string"]
+				self.account_statement[curr_key.to_s.to_sym] << {id: id, amount: amount, date: date}
+			end
+			if curr_key == "bill"
+				total_bills = bucket["total"]["value"]
+			elsif curr_key == "payment"
+				total_payments = bucket["total"]["value"]
+			end
+		end
+
+		self.account_statement[:pending] = total_bills - total_payments
 
 	end
 	
