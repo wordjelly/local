@@ -80,12 +80,23 @@ class OrdersController < ApplicationController
 		@order.load_reports
 		@order.load_items
 		@order.generate_account_statement
-		## a status object which will be rendered in the make_payment partial to allow a 
-		## payment to be made.
 		@payment_status = Status.new(parent_id: @order.id.to_s)
 		@payment_status.information_keys = {amount: nil}
-		puts "The order item requirements are:"
-		puts @order.item_requirements.to_s
+		@order.generate_pdf
+		## do a background job to generate the receipt - send links to email, sms, watsapp
+		## and show the receipt anyways here.
+		respond_to do |format|
+			format.html do 
+				render "show"
+			end
+			format.json do 
+				render :json => {order: @order.to_json}
+			end
+			format.pdf do
+				render pdf: "receipt",
+	               layout: "pdf/application.html.erb"
+			end
+		end
 	end
 
 	def index

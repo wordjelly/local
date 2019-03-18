@@ -7,12 +7,12 @@ class OrderTest < ActiveSupport::TestCase
     	@o.save
    		5.times do |n|
 			status = Status.new(report_id: "report#{n}", order_id: 
-				@o.id.to_s, numeric_value: 100, name: "bill")
+				@o.id.to_s, numeric_value: 100, name: "bill", text_value: "report#{n}")
 			status.save
 		end
 
 		2.times do |n|
-			status = Status.new(order_id: @o.id.to_s, numeric_value: 100, name: "payment")
+			status = Status.new(order_id: @o.id.to_s, numeric_value: 100, name: "payment", text_value: "payment")
 			status.save
 		end
 
@@ -23,7 +23,9 @@ class OrderTest < ActiveSupport::TestCase
    test "account statement is generated" do 
    		o = Order.find(@o.id.to_s)
    		o.generate_account_statement
-   		puts JSON.pretty_generate(o.account_statement)
+   		o.generate_pdf
+      puts JSON.pretty_generate(o.account_statement)
    end
+
 
 end

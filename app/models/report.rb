@@ -20,6 +20,8 @@ class Report
 	attribute :name, String
 
 	attribute :price, Float
+	validates :price, numericality: true
+
 
 	attribute :item_requirement_ids, Array
 
@@ -139,6 +141,7 @@ class Report
 
 		patient_report.save
 		## create a status, of the payment.
+
 		Status.add_bill(patient_report,order_id)
 		patient_report
 

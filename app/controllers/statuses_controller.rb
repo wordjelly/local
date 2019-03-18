@@ -54,9 +54,8 @@ class StatusesController  < ApplicationController
 
 	def show
 		@status = Status.find(params[:id])
-		puts "running callbacks."
+		#puts "running callbacks."
 		@status.run_callbacks(:find)
-		#ptus "finished running callbacks."
 	end
 
 	def index
@@ -76,7 +75,7 @@ class StatusesController  < ApplicationController
 
 	
 	def permitted_params
-		params.permit(:id , {:status => [:name,:parent_id,:report_id,:item_id,:item_group_id,:order_id,:response,:patient_id,:priority,:requires_image]})
+		params.permit(:id , {:status => [:name,:parent_id,:report_id,:item_id,:item_group_id,:order_id,:response,:patient_id,:priority,:requires_image, :numeric_value, :text_value]})
 	end
 
 

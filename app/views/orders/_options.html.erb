@@ -9,3 +9,7 @@
 <span>
 	<%= link_to "Make Payment", make_payment_path(:status => {order_id: @order.id.to_s, patient_id: @order.patient_id.to_s}) %>
 </span>
+
+<span>
+	<%= link_to "Receipt Pdf", order_path(:id => @order.id.to_s,:format => "pdf") %>
+</span>

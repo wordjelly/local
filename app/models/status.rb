@@ -107,7 +107,9 @@ class Status
 		s.numeric_value = patient_report.price
 		s.text_value = patient_report.name
 		s.name = "bill"
-		s.save
+		puts "adding bill"
+		response = s.save
+		puts "add bill response: #{response}"
 	end
 
 
@@ -140,31 +142,31 @@ class Status
 	end
 
 	def get_report
-		if self.report_id
+		unless self.report_id.blank?
 			Report.find(self.report_id)
 		end
 	end
 
 	def get_order
-		if self.order_id
+		unless self.order_id.blank?
 			Order.find(self.order_id)
 		end
 	end
 
 	def get_patient
-		if self.patient_id
+		unless self.patient_id.blank?
 			Patient.find(self.patient_id)
 		end
 	end
 
 	def get_item
-		if self.item_id
+		unless self.item_id.blank?
 			Item.find(self.item_id)
 		end
 	end
 
 	def get_item_group
-		if self.item_group_id
+		unless self.item_group_id.blank?
 			ItemGroup.find(self.item_group_id)
 		end
 	end

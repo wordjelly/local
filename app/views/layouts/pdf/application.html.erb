@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+      <%= wicked_pdf_stylesheet_link_tag "materialize.min" %>
+
+  </head>
+  <body onload='number_pages'>
+    <div id="header">
+      <h3 class="teal-text text-darken-1">PathoFast - Lab Reports In 30 mins</h3>
+      <h6 class="grey-text">Tel: 020 49304930 | Fax: 020 26137412 | Web: https://www.pathofast.com | Address: Head Office : 2nd Floor, Manisha Terrace, Moledina Road, Pune - Camp, Maharashtra.</h6>
+    </div>
+    <div id="content">
+      <%= yield %>
+    </div>
+  </body>
+</html>

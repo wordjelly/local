@@ -17,6 +17,12 @@
 			<%= f.number_field :priority %>
 			<%= f.label :priority %>
 
+			<%= f.number_field :numeric_value %>
+			<%= f.label :numeric_value %>
+
+			<%= f.text_field :text_value %>
+			<%= f.label :text_value %>
+
 			<div class="section">
 				<p>
 			      <label>
@@ -45,19 +51,19 @@
 				Related Object details
 			</div>
 		
-			<%= f.text_field :report_id, disabled: true %>
+			<%= f.text_field :report_id, readonly: true %>
 			<%= f.label :report_id %>
 
-			<%= f.text_field :item_id, disabled: true %>
+			<%= f.text_field :item_id, readonly: true %>
 			<%= f.label :item_id %>
 
-			<%= f.text_field :item_group_id, disabled: true %>
+			<%= f.text_field :item_group_id, readonly: true %>
 			<%= f.label :item_group_id %>
 
-			<%= f.text_field :order_id, disabled: true %>
+			<%= f.text_field :order_id, readonly: true %>
 			<%= f.label :order_id %>
 
-			<%= f.text_field :patient_id, disabled: true %>
+			<%= f.text_field :patient_id, readonly: true %>
 			<%= f.label :patient_id %>
 		</div>
 	</div>

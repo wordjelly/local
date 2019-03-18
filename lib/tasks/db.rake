@@ -29,7 +29,7 @@ namespace :db do
 
 	## add this item to that report.
 	## i can do that manually
-	r = Report.new(name: "Hemogram")
+	r = Report.new(name: "Hemogram", price: 300)
 	r.test_ids = [t.id.to_s,t2.id.to_s]
 	r.item_requirement_ids = [item_requirement.id.to_s, item_requirement_two.id.to_s]
 	r.save

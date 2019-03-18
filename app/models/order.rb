@@ -3,6 +3,7 @@ class Order
 
 	include Elasticsearch::Persistence::Model
 	include Concerns::StatusConcern
+	include Concerns::PdfConcern
 	
 	index_name "pathofast-orders"
 
@@ -298,15 +299,15 @@ class Order
 	# if a template report id is not there, call remove on it.
 	# we do this after adding.
 	def add_remove_reports(params)
-		puts "params are:"
-		puts params.to_s
+		#puts "params are:"
+		#puts params.to_s
 		self.template_report_ids ||= []
 		self.reports ||= []
 		unless params[:template_report_ids].blank?
 			params[:template_report_ids].each do |report_id|
-				puts "doing report id: #{report_id}"
+				#puts "doing report id: #{report_id}"
 				unless exists?(report_id)
-					puts "does not exist."
+					#puts "does not exist."
 					self.template_report_ids << report_id
 					report = Report.find(report_id)
 					self.patient_report_ids << report.clone(self.patient_id,self.id.to_s).id.to_s
@@ -528,6 +529,12 @@ class Order
 					        			field: "created_at",
 					        			interval: "day"
 					        		}
+					        	},
+					        	text_value: {
+					        		terms: {
+					        			field: "text_value",
+					        			size: 1
+					        		}
 					        	}
 					        }
 				        },
@@ -548,20 +555,28 @@ class Order
 
 		results.response.aggregations.bills_and_payments.buckets.each do |bucket|
 			curr_key = bucket["key"]
-			bucket.by_id.buckets.each do |status|
-				id = status["key"]
-				amount = status.amount.buckets.first["key"]
-				date = status.dates.buckets.first["key_as_string"]
-				self.account_statement[curr_key.to_s.to_sym] << {id: id, amount: amount, date: date}
-			end
-			if curr_key == "bill"
-				total_bills = bucket["total"]["value"]
-			elsif curr_key == "payment"
-				total_payments = bucket["total"]["value"]
+			unless bucket.by_id.buckets.blank?
+				bucket.by_id.buckets.each do |status|
+					unless status.amount.buckets.blank?
+						id = status["key"]
+						amount = status.amount.buckets.first["key"]
+						date = status.dates.buckets.first["key_as_string"]
+						text_value = status.text_value.buckets.first["key"]
+						self.account_statement[curr_key.to_s.to_sym] << {id: id, amount: amount, date: date, text_value: text_value}
+					end
+				end
+				if curr_key == "bill"
+					total_bills = bucket["total"]["value"]
+				elsif curr_key == "payment"
+					total_payments = bucket["total"]["value"]
+				end
 			end
 		end
 
 		self.account_statement[:pending] = total_bills - total_payments
+
+		puts "the account statement is:"
+		puts JSON.pretty_generate(self.account_statement)
 
 	end
 	
