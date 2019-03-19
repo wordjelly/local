@@ -15,3 +15,7 @@
 //= require turbolinks
 //= require cloudinary
 //= require_tree .
+
+$(document).ready(function(){
+    $('.tabs').tabs();
+});

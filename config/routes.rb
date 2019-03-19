@@ -33,7 +33,7 @@ Rails.application.routes.draw do
   get 'search/type_selector' => 'search#type_selector'
   get 'make_payment' => 'statuses#make_payment'
 
-  root 'tests#index'
+  root 'home#index'
   # Example resource route with options:
   #   resources :products dos
   #     member do

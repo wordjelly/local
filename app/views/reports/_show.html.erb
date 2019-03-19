@@ -1,7 +1,30 @@
+<!--
+<th>Name</th>
+<th>Patient</th>
+<th>Current Step</th>
+<th>Remaining Steps</th>
+<th>Result</th>
+<th>Normal Range</th>
+<th>Total Tests</th>
+<th>Price</th>
+<th>Total Requirements</th>
+<th>Options</th>
+-->
+<!-- this was currently being set inside item_requirements -->
+<!-- those items had to preexist, but we had -->
 <tr>
 	<td><%= link_to @report.name, report_path(@report.id.to_s) %></td>
-	<td><%= @report.tests.size %></td>
-	<td><%= @report.price %></td>
-	<td><%= @report.item_requirements.size %></td>
+	<% if !@report.is_template_report? %>
+		<td><%= @report.tests.size %></td>
+		<td><%= @report.price %></td>
+		<td><%= @report.item_requirements.size %></td>
+	<% else %>
+		<th><%= link_to @report.patient.name, patient_path(@report.patient_id) %></th>
+		<th><%= @report.current_step %></th>
+		<th><%= @report.next_step %></th>
+		<th><%= @report.result %></th>
+		<th><%= @report.normal_range %></th>
+	<% end %>
+
 	<td><%= render :partial => "reports/options" %></td>
 </tr>

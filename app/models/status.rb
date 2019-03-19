@@ -16,7 +16,39 @@ class Status
 	attribute :order_id, String, mapping: {type: 'keyword'}
 	attribute :response, Boolean
 	attribute :patient_id, String, mapping: {type: 'keyword'}
+	## so this priority has to be autoassigned.
+	## for eg if you add a status, 
+	## should it be grouped by the name or the priority ?
+	## a particular status can have only one priority?
+	## i mean where is the order of the statuses defined
+	## to show the next step 
+	## unless that status has multiple priorities.
+	## for eg for hemogram
+	## it is first-> add to roller -> add to belt
+	## in serum tube -> directly -> add to belt.
+	## suppose we give it a report index.
+	## whenever we add it to a report.
+	## and then we aggregate by that ?
+	## like group by name ->
+	## then each status has several indices
+	## so we sort by what exactly?
+	## we have to show a table
+	## we want to apply current status
+	## then we have to show 
+	## on choosing a status -> we know which reports
+	## it is applicable to .
+	## whichever report the earlier status has been completed
+	## only to that it can be applied.
+	## okay so how do we sort it and show it
+	## group by name.
+	## sort by priority.
+	## if two statuses have the same priority, show them together.
+	## okay so how do i simulate this?
+	## we need to create several statuses, and add them to a bunch of reports
+	## but make priority compulsory for status.
+
 	attribute :priority, Float
+	validates_numericality_of :priority
 	## whether an image is compulsory for this status.
 	attribute :requires_image, Boolean
 
@@ -171,7 +203,7 @@ class Status
 		end
 	end
 
-
-
+	## but then that aggregation will have to be done
+	## everytime.
 
 end

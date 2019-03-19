@@ -150,9 +150,11 @@ class Order
 	## @param[ItemRequirement] ir
 	## @param[Integer] key 
 	## @param[String] report_id
-	def add_report_id_to_item_requirement(ir,key,report_id)
+	def add_report_id_to_item_requirement(ir,key,report)
 		self.item_requirements[ir.item_type][key]["report_ids"] ||= []
-		self.item_requirements[ir.item_type][key]["report_ids"] << report_id
+		self.item_requirements[ir.item_type][key]["template_report_ids"] ||= []
+		self.item_requirements[ir.item_type][key]["report_ids"] << report.id.to_s
+		self.item_requirements[ir.item_type][key]["template_report_ids"] << template_report.id.to_s
 	end
 
 	## @param[String] report_id : the report id that you want to accomodate in this order.
@@ -222,7 +224,6 @@ class Order
 	def delete_patient_test_id(patient_test_id)
 		self.patient_test_ids.delete(patient_test_id)
 	end
-
 
 	## @param[String] template_report_id
 	## removes 

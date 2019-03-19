@@ -12,8 +12,14 @@ class OrdersController < ApplicationController
 		@order.load_reports
 		@order.load_items
 		@order.generate_account_statement
-		puts "these are the item requirements."
-		puts @order.item_requirements.to_s
+		## so we need a status picker
+		## and a sorter
+		## this can be seen in a tab called patient
+		## reports.
+		## so it will be showing only those with a patient id.
+		## so we go to reports index
+		## with a flag.
+		## 
 	end
 
 	def create
@@ -83,8 +89,7 @@ class OrdersController < ApplicationController
 		@payment_status = Status.new(parent_id: @order.id.to_s)
 		@payment_status.information_keys = {amount: nil}
 		@order.generate_pdf
-		## do a background job to generate the receipt - send links to email, sms, watsapp
-		## and show the receipt anyways here.
+
 		respond_to do |format|
 			format.html do 
 				render "show"

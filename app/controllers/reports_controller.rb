@@ -28,10 +28,10 @@ class ReportsController < ApplicationController
 		@report.run_callbacks(:find)
 		## so the before update thing does not work.
 		@report.attributes = permitted_params["report"]
-		puts "report status ids after assigning attributes are"
-		puts @report.attributes.to_s
+		#puts "report status ids after assigning attributes are"
+		#puts @report.attributes.to_s
 		save_response = @report.save
-		puts "save response: #{save_response}"
+		#puts "save response: #{save_response}"
 		#@report.load_tests
 		#@report.load_item_requirements
 		respond_to do |format|
@@ -52,18 +52,34 @@ class ReportsController < ApplicationController
 	end
 
 	def index
-		@reports = Report.all
+
+		if permitted_params[:report]
+			report = Report.new(permitted_params[:report])
+			must_clauses = report.build_query
+		end
+
+		@reports = Report.search({
+			query: {
+				bool: {
+					must: must_clauses
+				}
+			}
+		})
+
 		@reports.map{|c|
 			c.run_callbacks(:find)
 		}
 	end
+
+	## its going to be an ajax request anyways.
+	## if we make another controller it won't matter.
 
 	## so here it has to refer to tests, and item requirements, 
 	## and on clicking it it has to do the autocomplete.
 	## so we will give an add or a remove.
 	## only add, and a remove option also can be giben.
 	def permitted_params
-		params.permit(:id , {:report => [:name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_id_action, :price, {:status_ids => []}]})
+		params.permit(:id , {:report => [:name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_id_action, :price, {:status_ids => []}, {:test_ids => []}, {:item_requirement_ids => []}, :patient_id, :template_report_id ]})
 	end
 
 

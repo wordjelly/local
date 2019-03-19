@@ -31,8 +31,13 @@ class Report
 	attribute :item_requirements, Array
 
 	attr_accessor :item_requirements_grouped_by_type
+	attr_accessor :patient
 
-
+	after_find do |document|
+		document.load_patient
+		document.load_tests
+		document.load_item_requirements
+	end
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -147,6 +152,12 @@ class Report
 
 	end
 
+	def load_patient	
+		unless self.patient_id.blank?
+			self.patient = Patient.find(self.patient_id)
+		end
+	end
+
 	def load_tests
 		self.tests ||= []
 		self.test_ids.each do |tid|
@@ -175,5 +186,58 @@ class Report
 		self.item_requirements.map{|c| c.report_id = self.id.to_s }
 	end
 
+	def build_query
+		queries = [{
+			filter: {
+				query: {
+					match_all: {}
+				}
+			}
+		}]
+
+		self.attributes.each do |attr|
+			if self.send(attr).class.to_s == "Array"
+				unless self.send(attr).blank?
+					if self.send(attr)[0] == "*"
+						queries << {
+							exists: {
+								field: attr.to_sym.to_s
+							}
+						}
+					else
+						queries << {
+							terms: {
+								attr.to_s.to_sym => self.send(attr)
+							}
+						}
+					end
+				end
+			elsif self.send(attr).class.to_s == "String"
+				if self.send(attr) == "*"
+					queries << {
+						exists: {
+							field: attr.to_sym.to_s
+						}
+					}
+				else
+					queries << {
+						term: {
+							attr.to_s.to_sym => self.send(attr)
+						}
+					}
+				end
+			elsif self.send(attr).class.to_s =~ /Float|Integer/
+				queries << {
+					range: {
+						attr.to_s.to_sym => {
+							gte: self.send(attr),
+							lte: self.send(attr)
+						}
+					}
+				}
+			end
+		end	
+		queries
+	end
 
 end
