@@ -6,6 +6,7 @@ class ItemType
 	index_name "pathofast-item-types"
 
 	attribute :name, String
+	validates_presence_of :name
 
 	settings index: { 
 	    number_of_shards: 1, 

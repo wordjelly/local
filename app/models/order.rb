@@ -141,7 +141,7 @@ class Order
 
 		self.item_requirements[item_requirement.item_type] ||= []
 		self.item_requirements[item_requirement.item_type] << 
-		{required_amount: item_requirement.amount, optional: item_requirement.optional, barcode: nil, filled_amount: 0, report_ids: [report.id.to_s]}
+		{"required_amount" => item_requirement.amount, "optional" => item_requirement.optional, "barcode" => nil, "filled_amount" => 0, "report_ids" => [report.id.to_s]}
 		
 		#puts self.item_requirements[item_requirement.item_type]
 
@@ -154,7 +154,7 @@ class Order
 		self.item_requirements[ir.item_type][key]["report_ids"] ||= []
 		self.item_requirements[ir.item_type][key]["template_report_ids"] ||= []
 		self.item_requirements[ir.item_type][key]["report_ids"] << report.id.to_s
-		self.item_requirements[ir.item_type][key]["template_report_ids"] << template_report.id.to_s
+		self.item_requirements[ir.item_type][key]["template_report_ids"] << report.template_report_id
 	end
 
 	## @param[String] report_id : the report id that you want to accomodate in this order.
@@ -172,26 +172,31 @@ class Order
 
 				self.item_requirements[ir.item_type].each_with_index{|item_requirement,key|
 
+					puts "item requirement is:"
+					puts item_requirement.to_s
+
+					puts "ir is :"
+					puts ir.attributes.to_s
+
 					unless item_requirement["barcode"].blank?
 						if barcoded_tube_has_space?(item_requirement["filled_amount"],item_requirement["required_amount"],ir.amount)
 							
 							self.item_requirements[ir.item_type][key]["required_amount"] += ir.amount
 							
-							add_report_id_to_item_requirement(ir,key,report.id.to_s)
+							add_report_id_to_item_requirement(ir,key,report)
 
 							requirement_accomodated = true
 							
 						end
 					else
-						#puts "ir is:"
-						#puts ir.to_s
-						#puts "item requirement is:"
-						#puts item_requirement.to_s
+						## so i'm hitting issues on deep symbolize keys.
+						puts item_requirement["required_amount"]
+						puts ir.amount
 						unless (ir.amount + item_requirement["required_amount"] > 100)
 
 							self.item_requirements[ir.item_type][key]["required_amount"]+=ir.amount
 
-							add_report_id_to_item_requirement(ir,key,report.id.to_s)
+							add_report_id_to_item_requirement(ir,key,report)
 
 							requirement_accomodated = true
 

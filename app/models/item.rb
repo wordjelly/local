@@ -129,7 +129,7 @@ class Item
 				}
 			},
 			aggs: {
-
+				
 			}
 		})
 		## get me all the statuses that belong to that template.

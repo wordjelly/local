@@ -139,6 +139,7 @@ class Status
 		s.numeric_value = patient_report.price
 		s.text_value = patient_report.name
 		s.name = "bill"
+		s.priority = 0
 		puts "adding bill"
 		response = s.save
 		puts "add bill response: #{response}"

@@ -6,31 +6,11 @@
 	<%= f.text_field :item_type, :data => {:autocomplete_type => "item-types"} %>
 	<%= f.label :item_type %>
 
-	<!-- allergies -->
-    <div class="section">
-  	  <h6>Is this item requirement optional, for eg if you have already defined a red top tube as required, then a golden top tube becomes optional as an item requirement.</h6>
-  	  <p>
-        <label>
-          <input name="item_requirement[optional]" type="radio" checked />
-          <span>No</span>
-        </label>
-      </p>
-      <p>
-        <label>
-          <input name="item_requirement[optional]" type="radio" />
-          <span>Yes</span>
-        </label>
-      </p>
-    </div>
+  <% @item_requirement.definitions.each do |definition| %>
+    <%= render :partial => "/item_requirements/definitions_form.html.erb", locals: {definition: definition} %>
+  <% end %>
 
-    <h6>How much of this item is necessary for this report(0 - 100), eg: if the report is hemogram, and the item is an edta tube, we need a minimum of 50% of the tube for this report.</h6>
-	<%= f.number_field :amount %>
-	<%= f.label :amount %>
-
-
-	<h6>If optional item requirements have been defined, then it will take the one with the maximum priority, for a given item_type. So if RST has a priority of 1, and SST has a priority of 2, it will take RST, if SST is optional.</h6>
-	<%= f.number_field :priority %>
-	<%= f.label :priority %>
+  <%= render :partial => "/item_requirements/definitions_form.html.erb", locals: {definition: {report_id: nil}} %>
 
 	<%= f.submit "Submit" %>
 

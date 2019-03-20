@@ -12,6 +12,7 @@ class ItemTypesController  < ApplicationController
 
 	def create
 		@item_type = ItemType.new(permitted_params["item_type"])
+		@item_type.id = @item_type.name unless @item_type.name.blank?
 		response = @item_type.save
 		respond_to do |format|
 			format.html do 
@@ -23,8 +24,10 @@ class ItemTypesController  < ApplicationController
 	def update
 		@item_type = ItemType.find(params[:id])
 		
-		@item_type.update_attributes(permitted_params["item_type"])
+		@item_type.attributes = permitted_params["item_type"].except(:name)
 		
+		@item_type.save
+
 		respond_to do |format|
 			format.html do 
 				render "show"

@@ -12,6 +12,7 @@ class ItemRequirementsController  < ApplicationController
 
 	def create
 		@item_requirement = ItemRequirement.new(permitted_params["item_requirement"])
+		@item_requirement.id = @item_requirement.name unless @item_requirement.name.blank?
 		response = @item_requirement.save
 		respond_to do |format|
 			format.html do 
@@ -22,7 +23,11 @@ class ItemRequirementsController  < ApplicationController
 
 	def update
 		@item_requirement = ItemRequirement.find(params[:id])
-		@item_requirement.update_attributes(permitted_params["item_requirement"])
+		
+		@item_requirement.attributes = permitted_params[:item_requirement].except(:name)
+		
+		@item_requirements.save
+
 		respond_to do |format|
 			format.html do 
 				render "show"
@@ -49,9 +54,8 @@ class ItemRequirementsController  < ApplicationController
 		}
 	end
 
-	
 	def permitted_params
-		params.permit(:id , {:item_requirement => [:name, :item_type, :optional, :amount, :priority]})
+		params.permit(:id , {:item_requirement => [:name, :item_type, :optional, :amount, :priority, :definitions => [:report_id, :report_name, :amount, :priority]]})
 	end
 
 

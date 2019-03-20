@@ -6,10 +6,29 @@ class ItemRequirement
 
 	index_name "pathofast-item-requirements"
 
-	attribute :name, String
+	## you cannot change the name.
+	## once the name is set.
+	## because the id does not correspond otherwise.
 
+	attribute :name, String
+	validates_presence_of :name
+	## so let's say its item type remains constant at 
+	## serum_tube
+	## but then let's say that we create this requirement 
+	## the amounts will have to be defined based on the test
+	## so amount will be a hash.
+	## so item type will be serum
+	## name will be golden_top_tube.
+	## and amounts will be hashified.
+	## then that will have to be modified load time.
+	## we cannot create two item_requirements with the same name
+	## we also cannot create two item_types with the same name
+	## so we have to make the id the name.
 	attribute :item_type, String
+	validates_presence_of :item_type
 	
+	attribute :definitions, Array[Hash]
+
 	attribute :optional, String
 	
 	attribute :amount, Float
@@ -73,6 +92,21 @@ class ItemRequirement
 		      		:analyzer => "nGram_analyzer",
 		      		:search_analyzer => "whitespace_analyzer"
 		      	}
+		    }
+
+		    indexes :definitions, type: 'nested', properties: {
+		    	report_id: {
+					type: "keyword"
+				},
+				report_name: {
+					type: "keyword"
+				},
+				amount: {
+					type: "float"
+				},
+				priority: {
+					type: "integer"
+				}
 		    }
 
 	    end

@@ -1,0 +1,34 @@
+<table>
+  	<thead>
+        <tr>
+            <th>Tube Type</th>
+            <th>Tube Number</th>
+            <th>Filled Amount</th>
+            <th>Barcode</th>
+            <th>Options</th>
+        </tr>
+  	</thead>
+
+  	<tbody>
+       	<!-- so we have to know what this is optional for -->
+       	<!-- for eg the tube type is a serum tube. -->
+       	<!-- the optional concept does not make sense -->
+       	<!-- unless we have some kind of optional key type -->
+       	<!-- we will have to give that some kind of solution -->
+       	<!-- that i finish now -->
+       	<!-- then we come to status updates -->
+		<% @order.item_requirements.keys.each do |ir| %>
+			<% @order.item_requirements[ir].each_with_index {|tube_entry,index| %>
+				<!-- so we will enter the filled amount -->
+				<tr class="item_requirement">
+					<td class="item_requirement_type"><%= ir %></td>
+					<td class="item_requirement_index"><%= index %></td>
+					<td><input class="item_requirement_filled_amount" type="number" name="item_requirement_filled_amount" value="<%= tube_entry['filled_amount'] %>"/></td>
+					<td><input class="item_requirement_barcode" name="item_requirement_barcode" type="text" value="<%= tube_entry['barcode'] %>" /></td>
+				</tr>
+			<% } %>
+		<% end %>
+
+    </tbody>
+
+</table>
