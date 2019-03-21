@@ -1,4 +1,4 @@
-<%= form_for @item_requirement do |f| %>
+<%= form_for @item_requirement, :class => "item_requirement_form" do |f| %>
   
   <%= f.text_field :name %>
   <%= f.label :name %>
@@ -6,11 +6,26 @@
 	<%= f.text_field :item_type, :data => {:autocomplete_type => "item-types"} %>
 	<%= f.label :item_type %>
 
-  <% @item_requirement.definitions.each do |definition| %>
-    <%= render :partial => "/item_requirements/definitions_form.html.erb", locals: {definition: definition} %>
-  <% end %>
-
-  <%= render :partial => "/item_requirements/definitions_form.html.erb", locals: {definition: {report_id: nil}} %>
+  <div>Add New Report Definition</div>
+  
+    
+  <table>
+    <thead>
+      <tr>
+        <th>Report Name</th>
+        <th>Required Amount</th>
+        <th>Priority(Higher Number is lower priority)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- this entry is added to add a new item -->
+      <%= render :partial => "/item_requirements/definitions_form.html.erb", locals: {definition: {report_id: nil}} %>
+      <!-- this entry ends -->
+      <% @item_requirement.definitions.each do |definition| %>
+        <%= render :partial => "/item_requirements/definitions_form.html.erb", locals: {definition: definition} %>
+      <% end %>
+    </tbody>
+  </table>
 
 	<%= f.submit "Submit" %>
 

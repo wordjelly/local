@@ -1,14 +1,19 @@
-<div class="definition">
-	<input type="text" name="item_requirement[definitions][][report_id]" value='<%= definition["report_id"] %>' />
-	<label>Report Id</label>
+<tr class="definition">
 
-	<input type="text" name="item_requirement[definitions][][report_name]" />
-	<label>Report Name</label>
+	
+	<input type="hidden" name="item_requirement[definitions][][report_id]" class="report_id" value='<%= definition["report_id"] %>' />
+	
 
-	<input type="text" name="item_requirement[definitions][][amount]" />
-	<label>Amount</label>
+	<td>
+		<input type="text" name="item_requirement[definitions][][report_name]" value='<%= definition["report_name"] %>' class="report_name" data-autocomplete-type="reports" />
+	</td>
 
+	<td>
+		<input type="text" name="item_requirement[definitions][][amount]" class="amount" value='<%= definition["amount"] %>' />
+	</td>
 
-	<input type="text" name="item_requirement[definitions][][priority]" />
-	<label>Priority</label>
-</div>
+	<td>
+		<input type="text" name="item_requirement[definitions][][priority]" class="priority" value='<%= definition["priority"] %>' />
+	</td>
+
+</tr>

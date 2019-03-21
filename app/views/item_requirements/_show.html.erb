@@ -1,18 +1,5 @@
 <tr>
 	<td><%= link_to @item_requirement.name.to_s, item_requirement_path(@item_requirement.id.to_s) %></td>
 	<td><%= @item_requirement.item_type %></td>
-	<td><%= @item_requirement.amount %></td>
-	<td><%= @item_requirement.optional %></td>
-	<td><%= @item_requirement.priority %></td>
-	<td>
-		<% @item_requirement.associated_reports ||= [] %>
-		<% @item_requirement.associated_reports[0..5].each do |ar| %>
-			<%= link_to ar.id.to_s, ar.report_name %>
-			<%= "," %>
-		<% end %>
-		<% if @item_requirement.associated_reports.size > 5 %>
-			<%= (@item_requirement.associated_reports.size - 5).to_s + " more" %>
-		<% end %>
- 	</td>
 	<td><%= render :partial => "/item_requirements/options" %></td>
 </tr>

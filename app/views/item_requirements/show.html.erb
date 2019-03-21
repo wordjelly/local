@@ -3,10 +3,6 @@
           <tr>
               <th>Name</th>
               <th>Item Type</th>
-              <th>Amount</th>
-              <th>Optional</th>
-              <th>Priority</th>
-              <th>Belongs to Reports</th>
               <th>Options</th>
           </tr>
         </thead>
@@ -14,4 +10,21 @@
         <tbody>
         	<%= render :partial => "/item_requirements/show" %>
         </tbody>
+</table>
+
+<table>
+    <thead>
+      <tr>
+        <th>Report Name</th>
+        <th>Required Amount</th>
+        <th>Priority(Higher Number is lower priority)</th>
+      </tr>
+    </thead>
+    <tbody>
+    <!-- render the definitions -->
+    <% @item_requirement.definitions.each do |definition| %>
+      <%= render :partial => "/item_requirements/definitions_form.html.erb", locals: {definition: definition} %>
+    <% end %>
+
+    </tbody>
 </table>

@@ -1,5 +1,7 @@
 class ItemRequirementsController  < ApplicationController
 
+	## next step give autocomplete on the report name.
+	## and auto assign the id.
 	respond_to :html, :json, :js
 
 	def new
@@ -26,7 +28,7 @@ class ItemRequirementsController  < ApplicationController
 		
 		@item_requirement.attributes = permitted_params[:item_requirement].except(:name)
 		
-		@item_requirements.save
+		@item_requirement.save
 
 		respond_to do |format|
 			format.html do 
