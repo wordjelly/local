@@ -23,7 +23,7 @@ class Order
 
 	attribute :template_report_ids, Array
 
-	attribute :tubes, Hash
+	attribute :tubes, Array
 
 
 	attr_accessor :patient
@@ -33,7 +33,7 @@ class Order
 	attr_accessor :item_group_id
 	attr_accessor :item_group_action
 
-	
+	attr_accessor :cloned_reports
 		
 =begin
 
@@ -85,10 +85,7 @@ class Order
 		    	patient_report_ids: {
 		    		type: 'keyword'
 		    	},
-		    	item_requirement_volumes: {
-		    		type: 'float'
-		    	},
-		    	remaining_volume: {
+		    	occupied_space: {
 		    		type: 'float'
 		    	},
 		    	template_report_ids: {
@@ -112,20 +109,62 @@ class Order
 	def existing_template_report_ids
 		self.tubes ||= []
 		self.tubes.map{|c|
-			c[:template_report_ids]
+			c["template_report_ids"]
 		}.flatten.uniq
+	end
+
+	## returns the id of the patient report.
+	## won't reclone the report if its already cloned
+	## only applicable intra sesssion.
+	## so we clone some of the applicable reports.
+	## and we added those tubes
+	## but it doesn't become transactional.
+	## so it may reclone, and screw up the bill.
+	def clone_report(report_id)	
+		self.cloned_reports ||= {}
+		if self.cloned_reports[report_id].blank?
+			self.cloned_reports[report_id] = Report.find(report_id).clone(self.patient_id,self.id.to_s).id.to_s
+		end
+		self.cloned_reports[report_id]
+	end
+
+	## @param[Hash] args: Hash of the tube definition.
+	## It will include the following keys.
+	## :item_requirement_name
+	## :template_report_ids
+	## :required_space
+	## @return[Hash] 
+	def add_tube_requirement(args)
+		last_index = self.tubes.rindex{|x|
+			x["item_requirement_name"] == args["item_requirement_name"]
+		}
+		if last_index.blank?
+			self.tubes << args
+		else
+
+			puts "this is the last tube index"
+			puts self.tubes[last_index].to_s
+
+			if (100 - self.tubes[last_index]["occupied_space"]) >= args["occupied_space"]
+				self.tubes[last_index]["template_report_ids"]+= args["template_report_ids"]
+				self.tubes[last_index]["patient_report_ids"]+= args["patient_report_ids"]
+				self.tubes[last_index]["occupied_space"]+= args["occupied_space"]
+			else
+				self.tubes << args
+			end
+		end
 	end
 
 	def update_tubes
 		## first delete the reports that have been removed.
 		(existing_template_report_ids - self.template_report_ids).each do |template_report_id_to_remove|
 			self.tubes.map{|c|
-				if arrind = c[:template_report_ids].index(template_report_id_to_remove)
-					patient_report = Report.find(c[:patient_report_ids][arrind])
+				if arrind = c["template_report_ids"].index(template_report_id_to_remove)
+					patient_report = Report.find(c["patient_report_ids"][arrind])
 					if patient_report.can_be_cancelled?
-						c[:template_report_ids].delete_at(arrind)
-						c[:patient_report_ids].delete_at(arrind)
-						c[:remaining_volume]+= c[:item_requirement_volumes].delete_at(arrind)
+						c["template_report_ids"].delete_at(arrind)
+						c["patient_report_ids"].delete_at(arrind)
+						c["occupied_space"]-= ItemRequirement.find(c["item_requirement_name"]).get_amount_for_report(template_report_id_to_remove)
 					else
 						## so we add it back to the current template report ids, because that patient report can no longer be cancelled.
 						self.template_report_ids << template_report_id_to_remove
@@ -136,8 +175,12 @@ class Order
 
 		report_ids_to_add = self.template_report_ids - existing_template_report_ids
 
-		## now we aggregate item requirements.
-		ItemRequirement.search({
+		puts "the template report ids are ----------------------------"
+		puts self.template_report_ids.to_s
+		puts "report ids to add are ----------------------------------"
+		puts report_ids_to_add.to_s
+
+		required_item_amounts = ItemRequirement.search({
 			query: {
 				bool: {
 					filter: {
@@ -145,7 +188,7 @@ class Order
 							path: "definitions",
 							query: {
 								terms: {
-									"definitions.report_id".to_sym => report_ids_To_add
+									"definitions.report_id".to_sym => report_ids_to_add
 								}
 							}
 						}
@@ -158,23 +201,70 @@ class Order
 						field: "item_type",
 						size: 100
 					},
-					item_requirements: {
-						terms: {
-							field: "name",
-							size: 100
+					aggs: {
+						item_requirements: {
+							terms: {
+								field: "name",
+								size: 100,
+								order: {"priorities>min_priority".to_sym => "asc"}
+							},
+							aggs: {
+								priorities: {
+									nested: {
+										path: "definitions"
+									},
+									aggs: {
+										min_priority: {
+											min: {
+												field: "definitions.priority"
+											}
+										}
+									}
+								},
+								amounts: {
+									nested: {
+										path: "definitions"
+									},
+									aggs: {
+										sum_amount: {
+											sum: {
+												field: "definitions.amount"
+											}
+										},
+										applicable_reports: {
+											terms: {
+												field: "definitions.report_id",
+												include: report_ids_to_add
+											}
+										}
+									}
+								}
+							}
 						}
-
 					}
 				}
 			}
 		})
-		## now add the newer reports.
-		## for this how do we proceed.
-		## now we minus from the second the first, and work on those
-		## with the aggregations
-		## this is pretty easy.
-		## we also have to figure out a way to add the barcode, but since these are nested, that will be very simple in a tabular format.
-		## same for the item group.
+
+		puts JSON.pretty_generate(required_item_amounts.response.aggregations)
+		
+		required_item_amounts.response.aggregations.item_types.buckets.each do |item_type|
+			item_type.item_requirements.buckets.each do |ir|
+				tube_type = ir["key"]
+				required_amount = ir.amounts.sum_amount.value
+				applicable_reports = ir.amounts.applicable_reports.buckets.map{|c| c = c["key"]}
+				patient_report_ids = applicable_reports.map{|c|
+					clone_report(c)
+				}
+				add_tube_requirement({
+					"item_requirement_name" => tube_type,
+					"template_report_ids" => applicable_reports,
+					"occupied_space" => required_amount,
+					"patient_report_ids" => patient_report_ids
+				})
+				## that's it.
+			end
+		end
 	end
 
 	def other_order_has_barcode?(barcode)

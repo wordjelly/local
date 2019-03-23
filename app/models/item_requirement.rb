@@ -10,7 +10,7 @@ class ItemRequirement
 	## once the name is set.
 	## because the id does not correspond otherwise.
 
-	attribute :name, String
+	attribute :name, String, mapping: {type: "keyword"}
 	validates_presence_of :name
 	## so let's say its item type remains constant at 
 	## serum_tube
@@ -24,16 +24,10 @@ class ItemRequirement
 	## we cannot create two item_requirements with the same name
 	## we also cannot create two item_types with the same name
 	## so we have to make the id the name.
-	attribute :item_type, String
+	attribute :item_type, String, mapping: {type: "keyword"}
 	validates_presence_of :item_type
 	
 	attribute :definitions, Array[Hash]
-
-	attribute :optional, String
-	
-	attribute :amount, Float
-	
-	attribute :priority, Integer
 
 	attr_accessor :associated_reports
 
@@ -115,6 +109,16 @@ class ItemRequirement
 	def load_associated_reports
 		puts "loaded associated reports"
 		self.associated_reports = []
+	end
+
+	## what if this is more than 100?
+	## so from a given tube it can remove how much?
+	## 
+	def get_amount_for_report(report_id)
+		defs = self.definitions.select{|c|
+			c["report_id"] == report_id
+		}
+		(defs[0]["amount"] > 100) ? 100 : defs[0]["amount"]
 	end
 
 end

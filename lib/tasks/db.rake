@@ -1,8 +1,9 @@
 namespace :db do
+	
   desc "Creates two dummy tests, one report containing those tests and one patient"
   task seed: :environment do
   	
-  	["Test","Employee","Item","ItemGroup","ItemRequirement","ItemType","Location","NormalRange","Order","Patient","Report","Status","Test"].each do |cls|
+  	["Test","Employee","Item","ItemGroup","ItemRequirement","ItemType","Location","NormalRange","Order","Patient","Report","Status","Test","Image"].each do |cls|
   		cls.constantize.send("create_index!",{force: true})
   	end
 
@@ -15,10 +16,10 @@ namespace :db do
 	patient = Patient.new(first_name: "Bhargav", last_name: "Raut")
 	patient.save
 
-	item_type_one = ItemType.new(name: "Golden Top Tube")
+	item_type_one = ItemType.new(name: "Serum Tube")
 	item_type_one.save
 
-	item_type_two = ItemType.new(name: "RS Tube")
+	item_type_two = ItemType.new(name: "Plasma Tube")
 	item_type_two.save
 
 	item_type_three = ItemType.new(name: "Plain Tube")
@@ -27,34 +28,60 @@ namespace :db do
 	item_type_four = ItemType.new(name: "Plasma Tube")
 	item_type_four.save
 
-	item_requirement = ItemRequirement.new(name: "Golden Top Tube", item_type: item_type_one.name, optional: "yes", priority: 1, amount: 50)
+	item_requirement = ItemRequirement.new(name: "Golden Top Tube", item_type: item_type_one.name)
 	item_requirement.save
 
-	item_requirement_two = ItemRequirement.new(name: "RS Tube", item_type: item_type_two.name, optional: "no", priority: 1, amount: 35)
+	item_requirement_two = ItemRequirement.new(name: "RS Tube", item_type: item_type_one.name)
 	item_requirement_two.save
 
-	item_requirement_three = ItemRequirement.new(name: "Plain Tube", item_type: item_type_three.name, optional: "yes", priority: 1, amount: 35)
+	item_requirement_three = ItemRequirement.new(name: "Plain Tube", item_type: item_type_one.name)
 	item_requirement_three.save
 
-	item_requirement_four = ItemRequirement.new(name: "Plasma Tube", item_type: item_type_four.name, optional: "yes", priority: 1, amount: 35)
+	item_requirement_four = ItemRequirement.new(name: "Plasma Tube", item_type: item_type_two.name)
 	item_requirement_four.save
 
 	## add this item to that report.
 	## i can do that manually
-	r = Report.new(name: "Creatinine", price: 300)
-	r.test_ids = [t.id.to_s,t2.id.to_s]
-	r.item_requirement_ids = [item_requirement.id.to_s, item_requirement_two.id.to_s, item_requirement_three.id.to_s,item_requirement_four.id.to_s]
-	r.save
+	r1 = Report.new(name: "Creatinine", price: 300)
+	r1.test_ids = [t.id.to_s,t2.id.to_s]
+	r1.item_requirement_ids = [item_requirement.id.to_s, item_requirement_two.id.to_s, item_requirement_three.id.to_s,item_requirement_four.id.to_s]
+	r1.save
 
-	r = Report.new(name: "Urea", price: 300)
-	r.test_ids = [t.id.to_s,t2.id.to_s]
-	r.item_requirement_ids = [item_requirement.id.to_s, item_requirement_two.id.to_s, item_requirement_three.id.to_s,item_requirement_four.id.to_s]
-	r.save
+	r2 = Report.new(name: "Urea", price: 300)
+	r2.test_ids = [t.id.to_s,t2.id.to_s]
+	r2.item_requirement_ids = [item_requirement.id.to_s, item_requirement_two.id.to_s, item_requirement_three.id.to_s,item_requirement_four.id.to_s]
+	r2.save
 
-	r = Report.new(name: "HDL", price: 300)
-	r.test_ids = [t.id.to_s,t2.id.to_s]
-	r.item_requirement_ids = [item_requirement.id.to_s, item_requirement_two.id.to_s, item_requirement_three.id.to_s,item_requirement_four.id.to_s]
-	r.save
+	r3 = Report.new(name: "HDL", price: 300)
+	r3.test_ids = [t.id.to_s,t2.id.to_s]
+	r3.item_requirement_ids = [item_requirement.id.to_s, item_requirement_two.id.to_s, item_requirement_three.id.to_s,item_requirement_four.id.to_s]
+	r3.save
+
+	[item_requirement,item_requirement_two,item_requirement_three].each_with_index {|ir,key|
+		item_requirement = ItemRequirement.find(ir.id.to_s)
+		item_requirement.definitions = [
+			{
+				report_id: r1.id.to_s,
+				report_name: r1.name.to_s,
+				amount: 10,
+				priority: key
+			},
+			{
+				report_id: r2.id.to_s,
+				report_name: r2.name.to_s,
+				amount: 10,
+				priority: key
+			},
+			{
+				report_id: r3.id.to_s,
+				report_name: r3.name.to_s,
+				amount: 10,
+				priority: key
+			}
+		]
+		item_requirement.save
+	}
+
 
 	item_one = Item.new(item_type: item_type_one.name, barcode: "GOLDEN_TOP_TUBE", expiry_date: (Time.now + 10.days).to_s)
 	item_one.save
@@ -99,9 +126,6 @@ namespace :db do
 
 	status_eight = Status.new(name: "Aliquoted", priority: 6)
 	status_eight.save
-
-	## we will add these statuses to three reports.
-	## after this i have to solve the problem of the tube requirements.
 
 	5.times do |n|
 		status = Status.new(report_id: "report#{n}", order_id: "order1", numeric_value: 100, name: "bill", priority: 0)
