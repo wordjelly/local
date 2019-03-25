@@ -1,0 +1,14 @@
+<table>
+        <thead>
+          <tr>
+              <th>Name</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @equipments.each do |nr| %>
+        	 <% @equipment = nr %>
+           <%= render :partial => "/equipment/show" %>
+          <% end %>
+        </tbody>
+</table>

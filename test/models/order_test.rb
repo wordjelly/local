@@ -67,6 +67,12 @@ class OrderTest < ActiveSupport::TestCase
       r4.save
       @r4_id = r4.id.to_s
 
+      r5 = Report.new(name: "GGT", price: 300)
+      r5.test_ids = [t.id.to_s,t2.id.to_s]
+      r5.item_requirement_ids = [item_requirement.id.to_s, item_requirement_two.id.to_s, item_requirement_three.id.to_s,item_requirement_four.id.to_s]
+      r5.save
+      @r5_id = r5.id.to_s
+
       [item_requirement,item_requirement_two,item_requirement_three].each_with_index {|ir,key|
         item_requirement = ItemRequirement.find(ir.id.to_s)
         item_requirement.definitions = [
@@ -92,6 +98,12 @@ class OrderTest < ActiveSupport::TestCase
             report_id: r4.id.to_s,
             report_name: r4.name.to_s,
             amount: 10,
+            priority: key
+          },
+          {
+            report_id: r5.id.to_s,
+            report_name: r5.name.to_s,
+            amount: 80,
             priority: key
           }
         ]
@@ -165,19 +177,24 @@ class OrderTest < ActiveSupport::TestCase
       puts JSON.pretty_generate(o.account_statement)
     end
 =end
+
 =begin
     test "3 new tubes are added" do 
-      #8AGmq2kBsGmr1cmYoiRo
-      #8QGmq2kBsGmr1cmYoiS6
-      #8gGmq2kBsGmr1cmYoiTr
-      #8wGmq2kBsGmr1cmYoyQj
       o = Order.new
       o.patient_id = "test_patient"
-      o.template_report_ids = ["8AGmq2kBsGmr1cmYoiRo","8QGmq2kBsGmr1cmYoiS6","8gGmq2kBsGmr1cmYoiTr"]
+      o.template_report_ids = [@r1_id,@r2_id,@r3_id]
       o.save
       assert_equal 3, o.tubes.size
+      ["Golden Top Tube","RS Tube","Plain Tube"].each do |tube|
+        assert o.tubes.select{|c| c["item_requirement_name"] == tube}.size == 1
+      end
+      o.tubes.each do |tube|
+        [@r1_id,@r2_id,@r3_id].each do |rid|
+          assert tube["template_report_ids"].include? rid
+        end
+        assert_equal tube["occupied_space"],30.0
+      end
     end
-=end
 
     test "report is added to 3 existing tubes" do 
       o = Order.new
@@ -187,24 +204,124 @@ class OrderTest < ActiveSupport::TestCase
       o = Order.find(o.id.to_s)
       o.template_report_ids << @r4_id
       o.save
-      #assert_equal 3, o.tubes.size
+      assert_equal 3, o.tubes.size
+      o.tubes.each do |tube|
+        [@r1_id,@r2_id,@r3_id,@r4_id].each do |rid|
+          assert tube["template_report_ids"].include? rid
+        end
+        assert_equal tube["occupied_space"],40.0
+      end
     end
-=begin
 
-    test "new tubes are added over and above existing tubes" do 
-
+    test "adds new tube of same type if existing tube does not have enough space" do 
+      o = Order.new
+      o.patient_id = "test_patient"
+      o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+      o.save
+      o = Order.find(o.id.to_s)
+      o.template_report_ids << @r5_id
+      o.save
+      assert_equal 6, o.tubes.size
     end
-
 
     test "reports are removed, tube is also removed, and new tube of the same type is added for another report" do 
 
+      o = Order.new
+      o.patient_id = "test_patient"
+      o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+      o.save
+      o = Order.find(o.id.to_s)
+      o.template_report_ids = [@r1_id,@r2_id]
+      o.save
+      assert_equal 3, o.tubes.size
+      ["Golden Top Tube","RS Tube","Plain Tube"].each do |tube|
+        assert o.tubes.select{|c| c["item_requirement_name"] == tube}.size == 1
+      end
+      o.tubes.each do |tube|
+        [@r1_id,@r2_id].each do |rid|
+          assert tube["template_report_ids"].include? rid
+        end
+        assert_equal tube["occupied_space"],20.0
+        assert_equal 2, tube["template_report_ids"].size
+      end       
+    end
+=end
+
+
+    test "only r2 is removed, not r3, because r3 has crossed the point of cancellation" do 
+
+      o = Order.new
+      o.patient_id = "test_patient"
+      o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+      o.save
+      # so clone is not working properly.
+     
+      Elasticsearch::Persistence.client.indices.refresh index: "pathofast-reports"      
+
+      puts "r3 id is: #{@r3_id}"
+
+
+      results = Report.search({
+        size: 1,
+        query: {
+          bool: {
+            must: [
+              {
+                term: {
+                  patient_id: "test_patient"
+                }
+              },
+              {
+                term: {
+                  template_report_id: @r3_id
+                }
+              } 
+            ]
+          }
+        }
+      })
+
+      puts "r3 id is: #{@r3_id}"
+
+      patient_report = nil
+      results.response.hits.hits.each do |hit|
+        patient_report = Report.new(hit["_source"])
+        patient_report.id = hit["_id"]
+      end
+
+      puts "the patient report is:"
+      puts patient_report.attributes.to_s
+
+      s = Status.new
+      s.parent_ids = [patient_report.id.to_s]
+      s.text_value = Status::COLLECTION_COMPLETED
+      s.priority = 1
+      s.save
+
+      Elasticsearch::Persistence.client.indices.refresh index: "pathofast-statuses"    
+
+      o.template_report_ids = [@r1_id]
+      o.save
+      ## only r2 will be removed.
+      ## not r3.
+      assert_equal 3, o.tubes.size
+      ["Golden Top Tube","RS Tube","Plain Tube"].each do |tube|
+        assert o.tubes.select{|c| c["item_requirement_name"] == tube}.size == 1
+      end
+      o.tubes.each do |tube|
+        puts "this is the tube"
+        puts JSON.pretty_generate(tube)
+        [@r1_id,@r3_id].each do |rid|
+          assert tube["template_report_ids"].include? rid
+        end
+       #assert ((tube["template_report_ids"].include? @r2_id) == false)
+        assert_equal tube["occupied_space"],20.0
+        assert_equal 2, tube["template_report_ids"].size
+      end     
 
     end
 
-
-    test "report removal fails if can_remove_report? returns false, and error is provided to the end user" do 
-
-    end
+=begin
 
     test "barcodes can be added to individual tubes" do 
 
@@ -213,8 +330,9 @@ class OrderTest < ActiveSupport::TestCase
 
     test "group item id, on being added is assigned to the relevant tubes" do 
 
-
     end
+
 =end
+
  
 end

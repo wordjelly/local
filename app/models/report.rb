@@ -6,7 +6,7 @@ class Report
 
 	index_name "pathofast-reports"
 
-	attribute :template_report_id, String
+	attribute :template_report_id, String, mapping: {type: "keyword"}
 
 	attribute :test_ids, Array
 
@@ -15,7 +15,7 @@ class Report
 	attr_accessor :test_id
 	attribute :tests, Array
 
-	attribute :patient_id, String
+	attribute :patient_id, String, mapping: {type: 'keyword'}
 
 	attribute :name, String
 
@@ -129,7 +129,7 @@ class Report
 
 	def clone(patient_id,order_id)
 		
-		patient_report = Report.new(self.attributes.merge({patient_id: patient_id, template_report_id: self.id.to_s}))
+		patient_report = Report.new(self.attributes.except(:id).merge({patient_id: patient_id, template_report_id: self.id.to_s}))
 		#puts "after merging patient report:"
 		#puts patient_report.attributes.to_s
 		#exit(1)
@@ -151,6 +151,18 @@ class Report
 		patient_report
 
 	end
+
+	## as long as there is no status that says collection completed
+	## the 
+	def can_be_cancelled?
+		status_completed = self.statuses.select{|c|
+			c.text_value == Status::COLLECTION_COMPLETED
+		}
+		status_completed.size == 0
+	end
+
+	## so we add some status like this
+	## for the test.
 
 	def load_patient	
 		unless self.patient_id.blank?

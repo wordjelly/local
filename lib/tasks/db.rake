@@ -1,5 +1,5 @@
 namespace :db do
-	
+
   desc "Creates two dummy tests, one report containing those tests and one patient"
   task seed: :environment do
   	
@@ -29,15 +29,19 @@ namespace :db do
 	item_type_four.save
 
 	item_requirement = ItemRequirement.new(name: "Golden Top Tube", item_type: item_type_one.name)
+	item_requirement.id = item_requirement.name
 	item_requirement.save
 
 	item_requirement_two = ItemRequirement.new(name: "RS Tube", item_type: item_type_one.name)
+	item_requirement_two.id = item_requirement_two.name
 	item_requirement_two.save
 
 	item_requirement_three = ItemRequirement.new(name: "Plain Tube", item_type: item_type_one.name)
+	item_requirement_three.id = item_requirement_three.name
 	item_requirement_three.save
 
 	item_requirement_four = ItemRequirement.new(name: "Plasma Tube", item_type: item_type_two.name)
+	item_requirement_four.id = item_requirement_four.name
 	item_requirement_four.save
 
 	## add this item to that report.

@@ -19,8 +19,6 @@ class Order
 
 	attribute :patient_report_ids, Array
 
-
-
 	attribute :template_report_ids, Array
 
 	attribute :tubes, Array
@@ -142,8 +140,8 @@ class Order
 			self.tubes << args
 		else
 
-			puts "this is the last tube index"
-			puts self.tubes[last_index].to_s
+			#puts "this is the last tube index"
+			#puts self.tubes[last_index].to_s
 
 			if (100 - self.tubes[last_index]["occupied_space"]) >= args["occupied_space"]
 				self.tubes[last_index]["template_report_ids"]+= args["template_report_ids"]
@@ -156,15 +154,38 @@ class Order
 	end
 
 	def update_tubes
+		puts "the existing template report ids are:"
+		puts existing_template_report_ids
+
+		puts "the template report ids are"
+		puts self.template_report_ids.to_s
 		## first delete the reports that have been removed.
 		(existing_template_report_ids - self.template_report_ids).each do |template_report_id_to_remove|
+			puts "trying to remove: #{template_report_id_to_remove}"
 			self.tubes.map{|c|
+				puts "checking tube:"
+				puts c.to_s
 				if arrind = c["template_report_ids"].index(template_report_id_to_remove)
 					patient_report = Report.find(c["patient_report_ids"][arrind])
+					patient_report.load_statuses
 					if patient_report.can_be_cancelled?
+						puts "report can be cancelled."
 						c["template_report_ids"].delete_at(arrind)
 						c["patient_report_ids"].delete_at(arrind)
-						c["occupied_space"]-= ItemRequirement.find(c["item_requirement_name"]).get_amount_for_report(template_report_id_to_remove)
+						ireq = ItemRequirement.search({
+							query: {
+								term: {
+									name: c["item_requirement_name"]
+								}
+							}
+						}).response.hits.hits.first._source
+						#puts ireq.to_s
+						#puts ireq.class.name
+						ireq = ItemRequirement.new(ireq)
+						#puts ireq.to_s
+						ireq.get_amount_for_report(template_report_id_to_remove)
+						#puts "-------------------------------"
+						c["occupied_space"]-= ireq.get_amount_for_report(template_report_id_to_remove)
 					else
 						## so we add it back to the current template report ids, because that patient report can no longer be cancelled.
 						self.template_report_ids << template_report_id_to_remove
@@ -175,10 +196,10 @@ class Order
 
 		report_ids_to_add = self.template_report_ids - existing_template_report_ids
 
-		puts "the template report ids are ----------------------------"
-		puts self.template_report_ids.to_s
-		puts "report ids to add are ----------------------------------"
-		puts report_ids_to_add.to_s
+		#puts "the template report ids are ----------------------------"
+		#puts self.template_report_ids.to_s
+		#puts "report ids to add are ----------------------------------"
+		#puts report_ids_to_add.to_s
 
 		required_item_amounts = ItemRequirement.search({
 			query: {
@@ -226,15 +247,23 @@ class Order
 										path: "definitions"
 									},
 									aggs: {
-										sum_amount: {
-											sum: {
-												field: "definitions.amount"
-											}
-										},
-										applicable_reports: {
-											terms: {
-												field: "definitions.report_id",
-												include: report_ids_to_add
+										required_reports: {
+											filter: {
+												terms: {
+													"definitions.report_id".to_sym => report_ids_to_add
+												}
+											},
+											aggs: {
+												sum_amount: {
+													sum: {
+														field: "definitions.amount"
+													}
+												},
+												applicable_reports: {
+													terms: {
+														field: "definitions.report_id"
+													}
+												}
 											}
 										}
 									}
@@ -246,13 +275,13 @@ class Order
 			}
 		})
 
-		puts JSON.pretty_generate(required_item_amounts.response.aggregations)
+		#uts JSON.pretty_generate(required_item_amounts.response.aggregations)
 		
 		required_item_amounts.response.aggregations.item_types.buckets.each do |item_type|
 			item_type.item_requirements.buckets.each do |ir|
 				tube_type = ir["key"]
-				required_amount = ir.amounts.sum_amount.value
-				applicable_reports = ir.amounts.applicable_reports.buckets.map{|c| c = c["key"]}
+				required_amount = ir.amounts.required_reports.sum_amount.value
+				applicable_reports = ir.amounts.required_reports.applicable_reports.buckets.map{|c| c = c["key"]}
 				patient_report_ids = applicable_reports.map{|c|
 					clone_report(c)
 				}
@@ -262,7 +291,6 @@ class Order
 					"occupied_space" => required_amount,
 					"patient_report_ids" => patient_report_ids
 				})
-				## that's it.
 			end
 		end
 	end
@@ -295,17 +323,11 @@ class Order
 		self.patient_name = self.patient.name
 	end
 
-	def load_reports
-		self.reports ||= []
-		self.patient_report_ids.each do |patient_report_id|
-			report = Report.find(patient_report_id)
-			report.load_tests
-			report.load_item_requirements
-			self.reports << report
-		end	
+	def get_patient_report_ids
+		self.tubes.map{|c|
+			c["patient_report_ids"]
+		}.flatten.uniq
 	end
-
-
 	## we want to aggregate, all payments
 	## query for either "bill" or "payment"
 	## aggregate by bills -> summate the numeric values
@@ -356,6 +378,11 @@ class Order
 									order_id: {
 										value: self.id.to_s
 									}
+								}
+							},
+							{
+								terms: {
+									report_id: get_patient_report_ids
 								}
 							}
 					]

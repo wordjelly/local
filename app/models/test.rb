@@ -218,7 +218,7 @@ class Test
 
 	def clone(patient_id)
 		
-		patient_test = Test.new(self.attributes.merge({:patient_id => patient_id, :template_test_id => self.id.to_s}))
+		patient_test = Test.new(self.attributes.except(:id).merge({:patient_id => patient_id, :template_test_id => self.id.to_s}))
 
 
 		patient_test.save

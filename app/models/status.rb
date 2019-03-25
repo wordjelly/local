@@ -1,6 +1,20 @@
 require 'elasticsearch/persistence/model'
 class Status
 
+	###########################################################
+	##
+	## STATUS CONSTANTS
+	##
+	###########################################################
+
+	COLLECTION_COMPLETED = "collection completed"
+
+	###########################################################
+	##
+	## 
+	##
+	###########################################################
+
 	include Elasticsearch::Persistence::Model
 	include Concerns::ImageLoadConcern
 
@@ -140,6 +154,7 @@ class Status
 		s.text_value = patient_report.name
 		s.name = "bill"
 		s.priority = 0
+		s.parent_ids = [order_id.to_s,patient_report.id.to_s]
 		puts "adding bill"
 		response = s.save
 		puts "add bill response: #{response}"
@@ -204,7 +219,6 @@ class Status
 		end
 	end
 
-	## but then that aggregation will have to be done
-	## everytime.
+	
 
 end

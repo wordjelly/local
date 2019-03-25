@@ -1,0 +1,10 @@
+<!-- remove range -->
+<span>
+	<%= link_to "Delete", equipment_path(@equipment.id.to_s), :method => :delete %>
+</span>
+
+<!-- edit range -->
+<span style="margin-left: 10px;">
+	<%= link_to "Edit", edit_equipment_path(@equipment.id.to_s) %>
+</span>
+
