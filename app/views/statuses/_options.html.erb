@@ -1,8 +1,19 @@
-<span>
-	<%= link_to "Delete", status_path(@status.id.to_s), :method => :delete %>
-</span>
+<div style="margin-left: 10px;">
+<%= link_to "Edit", edit_status_path(@status.id.to_s) %>
+</div>
 
+<div>
+	Insert Status Above
+</div>
 
-<span style="margin-left: 10px;">
-	<%= link_to "Edit", edit_status_path(@status.id.to_s) %>
-</span>
+<div>
+	Insert Status Below
+</div>
+
+<div>
+	Move Up in Priority
+</div>
+
+<div>
+	Move Down in Priority
+</div>

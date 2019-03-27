@@ -59,10 +59,55 @@ class StatusesController  < ApplicationController
 	end
 
 	def index
-		@statuses = Status.all
-		@statuses.map{|c|
-			c.run_callbacks(:find)
+		## gives you all the statuses where there is no patient_id.
+		## so ignores all the bills.
+		## also those statuses which don't have a 
+		## report_id.
+
+		@statuses = Status.search({
+			sort: {
+				priority: {
+					order: "asc"
+				}
+			},
+			query: {
+				bool: {
+					filter: {
+						match_all: {}
+					},
+					must_not: [
+						{	
+							exists: {
+								field: "patient_id"
+							}	
+						},
+						{
+							exists: {
+								field: "report_id"
+							}
+						},
+						{
+							terms: {
+								name: ["payment","bill"]
+							}
+						}
+					]
+				}
+			}
+		})
+
+		## what all do you want to see in a status
+		## the reports.
+		## that are rgiegster on it.
+
+		@statuses = @statuses.map{|c|
+			s = Status.new(c["_source"])
+			s.id = c["_id"]
+			c = s
+			s.run_callbacks(:find)
+			s
 		}
+
 	end
 
 	def get_model_params

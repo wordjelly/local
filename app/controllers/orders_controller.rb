@@ -45,16 +45,11 @@ class OrdersController < ApplicationController
 	
 	def update
 		@order = Order.find(params[:id])
-		@order.load_reports
-		@order.load_patient
-		@order.load_items
-		@order.add_remove_reports(params)
-		@order.add_barcodes(params)
-		@order.generate_account_statement
-		## item group id is assigned internally.
+		@order.attributes = permitted_params(:order)
 		if @order.errors.empty?
 			save_result = @order.save
 		end
+		@order.generate_account_statement
 		#puts "save result is: #{save_result}----------------------------------------"
 		respond_to do |format|
 			format.json do 
@@ -119,9 +114,9 @@ class OrdersController < ApplicationController
 	## patient id from the dropdown.
 	## that's it.
 	def permitted_params
-		puts "params are:"
-		puts params.to_s
-		params.permit(:id , {:order => [:patient_id, {:template_report_ids => []}]})
+		## so now we can add a barcode.
+		## we just have to check that the barcodes are not present in any other order.
+		params.permit(:id , {:order => [:item_group_id, :item_group_action, :tubes => [:item_requirement_name, :patient_report_ids, :template_report_ids, :barcode, :occupied_space] :patient_id, {:template_report_ids => []}]})
 	end
 
 

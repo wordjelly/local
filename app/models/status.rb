@@ -30,63 +30,16 @@ class Status
 	attribute :order_id, String, mapping: {type: 'keyword'}
 	attribute :response, Boolean
 	attribute :patient_id, String, mapping: {type: 'keyword'}
-	## so this priority has to be autoassigned.
-	## for eg if you add a status, 
-	## should it be grouped by the name or the priority ?
-	## a particular status can have only one priority?
-	## i mean where is the order of the statuses defined
-	## to show the next step 
-	## unless that status has multiple priorities.
-	## for eg for hemogram
-	## it is first-> add to roller -> add to belt
-	## in serum tube -> directly -> add to belt.
-	## suppose we give it a report index.
-	## whenever we add it to a report.
-	## and then we aggregate by that ?
-	## like group by name ->
-	## then each status has several indices
-	## so we sort by what exactly?
-	## we have to show a table
-	## we want to apply current status
-	## then we have to show 
-	## on choosing a status -> we know which reports
-	## it is applicable to .
-	## whichever report the earlier status has been completed
-	## only to that it can be applied.
-	## okay so how do we sort it and show it
-	## group by name.
-	## sort by priority.
-	## if two statuses have the same priority, show them together.
-	## okay so how do i simulate this?
-	## we need to create several statuses, and add them to a bunch of reports
-	## but make priority compulsory for status.
-
+	
 	attribute :priority, Float
+	
 	validates_numericality_of :priority
 	## whether an image is compulsory for this status.
 	attribute :requires_image, Boolean
 
 	attribute :information_keys, Hash
 
-	## status will be created with a name
-	## like payment_made, so we may need some additional information
-	## so this will be provided in a key -> value
-	## format
-	## like amount -> x.
-	## so we can then perform operations on that.
-	## about payments.
-	## so we keep that dynamic mapping.
-
-	## will call a method named "on_#{name}" after create on 
-	## each object who can be resolved, in a background job.
-	## so if status is verified
-	## will call on_verified , on report, item, item_group, and order
-	## if the method does not exist, won't do anything
-	## will store the results of calling that method, on the object
-	## if the object wants to call that method again, it has to set that status again.
-	## if it has to be retried.
-	## if the job fails, the status gets marked as failed.
-	## and will give the reason for it.
+	attr_accessor :parents
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -142,6 +95,16 @@ class Status
 
 	########################################################
 	##
+	##
+	## CALLBACKS.
+	##
+	##
+	########################################################
+	after_find do |document|
+		document.load_parents
+	end
+	########################################################
+	##
 	## UTILITY
 	##
 	########################################################
@@ -175,7 +138,7 @@ class Status
 
 		results = Hashie::Mash.new results
 
-		puts results.hits.to_s
+		
 
 		search_results = []
 
@@ -197,7 +160,11 @@ class Status
 
 	def get_order
 		unless self.order_id.blank?
-			Order.find(self.order_id)
+			begin
+				Order.find(self.order_id)
+			rescue
+				
+			end
 		end
 	end
 
@@ -219,6 +186,31 @@ class Status
 		end
 	end
 
+	def load_parents
+		self.parents = []
+		results = Elasticsearch::Persistence.client.search index: "pathofast-*", body: {
+			query: {
+				terms: {
+					parent_ids: self.parent_ids
+				}
+			}
+		}
+
+		results = Hashie::Mash.new results
+
+		#puts results.hits.to_s
+
+		search_results = []
+
+		results.hits.hits.each do |hit|
+			obj = hit._type.capitalize.constantize.new(hit._source)
+			obj.id = hit._id
+			search_results << obj
+		end	
+
+		self.parents = search_results
+
+	end
 	
 
 end

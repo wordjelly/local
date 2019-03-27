@@ -29,7 +29,9 @@ class ItemGroup
 			begin
 				Item.find(iid)
 			rescue
-				self.errors.find(:item_ids,"this item #{iid} does not exist")
+				puts "the item id not found is:"
+				puts iid
+				self.errors.add(:item_ids,"this item #{iid} does not exist")
 			end
 		end	
 	end	
@@ -42,6 +44,10 @@ class ItemGroup
 					}
 				}
 		}
+
+		puts "item id queries are:"
+		puts JSON.pretty_generate(item_id_queries)
+		puts "------------------------------------------------"
 
 		response = ItemGroup.search({
 			query: {

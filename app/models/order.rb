@@ -11,8 +11,6 @@ class Order
 
 	attr_accessor :account_statement
 
-
-
 	attribute :patient_id, String
 
 	attribute :patient_test_ids, Array
@@ -21,16 +19,15 @@ class Order
 
 	attribute :template_report_ids, Array
 
-	attribute :tubes, Array
+	attribute :tubes, Array[Hash]
 
+	## this is for the external api.
+	attribute :external_reference_number, String, mapping: {type: 'keyword'}
 
 	attr_accessor :patient
 	attr_accessor :reports
-	## adding or removing an item group.
-	## if you want to ad items by means of an item group
-	attr_accessor :item_group_id
-	attr_accessor :item_group_action
-
+	attribute :item_group_id
+	attribute :item_group_action
 	attr_accessor :cloned_reports
 		
 =begin
@@ -91,6 +88,9 @@ class Order
 		    	},
 		    	barcode: {
 		    		type: 'keyword'
+		    	},
+		    	item_group_id: {
+		    		type: 'keyword'
 		    	}
 		    }
 		end
@@ -101,6 +101,7 @@ class Order
 
 	
 	before_save do |document|
+		document.update_barcodes
 		document.update_tubes
 	end
 
@@ -139,10 +140,6 @@ class Order
 		if last_index.blank?
 			self.tubes << args
 		else
-
-			#puts "this is the last tube index"
-			#puts self.tubes[last_index].to_s
-
 			if (100 - self.tubes[last_index]["occupied_space"]) >= args["occupied_space"]
 				self.tubes[last_index]["template_report_ids"]+= args["template_report_ids"]
 				self.tubes[last_index]["patient_report_ids"]+= args["patient_report_ids"]
@@ -153,23 +150,78 @@ class Order
 		end
 	end
 
-	def update_tubes
-		puts "the existing template report ids are:"
-		puts existing_template_report_ids
+	def update_barcodes
+		if(Set.new(existing_template_report_ids) == Set.new(self.template_report_ids))
+			if self.item_group_id.blank?
+				self.tubes.map{|tube|
+					unless tube["item_group_id"].blank?
+						tube["barcode"] = nil 
+						tube["item_group_id"] = nil
+					end
+				}
+			else
+				item_group = ItemGroup.find(item_group_id)
+				tube_indices_assigned = []
+				item_group.load_associated_items
 
-		puts "the template report ids are"
-		puts self.template_report_ids.to_s
+				item_group_indices = {}
+
+				#puts "-------------- these are the items -------------"
+				#item_group.items.each do |item|
+				#	puts JSON.pretty_generate(item.attributes)
+				#end
+				#puts "-------------- items end -----------------------"
+
+
+				item_group.items.each_with_index{|item,ikey|
+					#self.tubes.map.each_with_index
+
+					item_group_indices[ikey.to_s] = nil
+					self.tubes.map.each_with_index{|tube,key|
+						unless tube_indices_assigned.include? key
+							if tube["item_requirement_name"] == item.item_type
+								#self.tubes[key]["barcode"] = item.barcode
+								#self.tubes[key]["item_group_id"] = item_group.id.to_s
+								item_group_indices[ikey.to_s] = key
+								tube_indices_assigned << key 
+							end
+						end
+					}
+				}
+
+				item_group_indices.keys.each do |ikey|
+					unless item_group_indices[ikey].blank?
+						#puts " -------- setting tube data ----------- "
+						self.tubes[item_group_indices[ikey]]["barcode"] = item_group.items[ikey.to_i].barcode
+						self.tubes[item_group_indices[ikey]]["item_group_id"] = item_group.id.to_s
+					end
+				end
+
+			end
+				
+			#puts JSON.pretty_generate(self.tubes)
+
+			self.tubes.each do |tube|
+				unless tube["barcode"].blank?
+					other_order_has_barcode?(tube["barcode"])
+					item_type_is_equivalent?(tube["barcode"],tube["item_requirement_name"])
+				end
+			end	
+		end
+	end
+
+	def update_tubes
 		## first delete the reports that have been removed.
+		## if there is no difference only then we check the barcodes.
 		(existing_template_report_ids - self.template_report_ids).each do |template_report_id_to_remove|
-			puts "trying to remove: #{template_report_id_to_remove}"
+			#puts "trying to remove: #{template_report_id_to_remove}"
 			self.tubes.map{|c|
-				puts "checking tube:"
-				puts c.to_s
+				#puts "checking tube:"
+				#puts c.to_s
 				if arrind = c["template_report_ids"].index(template_report_id_to_remove)
 					patient_report = Report.find(c["patient_report_ids"][arrind])
 					patient_report.load_statuses
 					if patient_report.can_be_cancelled?
-						puts "report can be cancelled."
 						c["template_report_ids"].delete_at(arrind)
 						c["patient_report_ids"].delete_at(arrind)
 						ireq = ItemRequirement.search({
@@ -195,11 +247,6 @@ class Order
 		end
 
 		report_ids_to_add = self.template_report_ids - existing_template_report_ids
-
-		#puts "the template report ids are ----------------------------"
-		#puts self.template_report_ids.to_s
-		#puts "report ids to add are ----------------------------------"
-		#puts report_ids_to_add.to_s
 
 		required_item_amounts = ItemRequirement.search({
 			query: {
@@ -295,17 +342,31 @@ class Order
 		end
 	end
 
+	def item_type_is_equivalent?(barcode,tube_type)
+		item = Item.find(barcode)
+		unless item.item_type == tube_type
+			self.errors.add(:tubes, "tube type for this barcode : #{barcode} , does not match : #{tube_type}")
+		end
+		item.item_type == tube_type
+	end
+
 	def other_order_has_barcode?(barcode)
-		response = Order.search({
+		puts "barcode is: #{barcode}"
+		## and not self.
+		results = Order.search({
 			query: {
-				term: {
-					item_ids: barcode
+				nested: {
+					path: "tubes",
+					query: {
+						term: {
+							"tubes.barcode".to_sym => barcode
+						}
+					}
 				}
 			}
 		})
-		self.errors.add(:item_ids, "This barcode #{barcode} has already been assigned to order id #{response.results.first.id.to_s}") if response.results.size > 0
-		return true if response.results.size > 0
-		
+		self.errors.add(:tubes, "This barcode #{barcode} has already been assigned to order id #{response.results.first.id.to_s}") if results.response.hits.hits.size > 0
+		return true if results.response.hits.hits.size > 0
 	end
 
 	def delete_item_group(params)
@@ -316,7 +377,6 @@ class Order
 			end
 		end
 	end
-
 	
 	def load_patient
 		self.patient = Patient.find(self.patient_id)

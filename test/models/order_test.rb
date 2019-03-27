@@ -110,18 +110,23 @@ class OrderTest < ActiveSupport::TestCase
         item_requirement.save
       }
 
-
-      item_one = Item.new(item_type: item_type_one.name, barcode: "GOLDEN_TOP_TUBE", expiry_date: (Time.now + 10.days).to_s)
+      
+      item_one = Item.new(item_type: "Golden Top Tube", barcode: "Golden Top Tube", expiry_date: (Time.now + 10.days).to_s)
       item_one.save
 
-      item_two = Item.new(item_type: item_type_two.name, barcode: "RS_TUBE", expiry_date: (Time.now.to_s).to_s)
+      item_one_b = Item.new(item_type: "Golden Top Tube", barcode: "Golden Top Tube 2", expiry_date: (Time.now + 10.days).to_s)
+      item_one_b.save
+
+      item_two = Item.new(item_type: "RS Tube", barcode: "RS Tube", expiry_date: (Time.now.to_s).to_s)
       item_two.save
 
-      item_three = Item.new(item_type: item_type_three.name, barcode: "PLAIN_TUBE", expiry_date: (Time.now.to_s).to_s)
+      item_three = Item.new(item_type: "Plain Tube", barcode: "Plain Tube", expiry_date: (Time.now.to_s).to_s)
       item_three.save
 
-      item_four = Item.new(item_type: item_type_four.name, barcode: "PLASMA_TUBE", expiry_date: (Time.now.to_s).to_s)
+      item_four = Item.new(item_type: "Plasma Tube", barcode: "Plasma Tube", expiry_date: (Time.now.to_s).to_s)
       item_four.save
+
+
 
       ## so now we have saved the items, and the optional item requirements.
       ## these are for the individual requiremetns.
@@ -166,6 +171,21 @@ class OrderTest < ActiveSupport::TestCase
       end
 
   		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-statuses"
+
+      item_group = ItemGroup.new
+      item_group.barcode = "item_group"
+      item_group.item_ids = [item_one.id.to_s, item_two.id.to_s, item_three.id.to_s]
+      item_group.group_type = "collection_packet"
+      item_group.save
+
+      item_group_two = ItemGroup.new
+      item_group_two.barcode = "item_group_two"
+      item_group_two.item_ids = [item_one_b.id.to_s]
+      item_group_two.group_type = "collection_packet"
+      item_group_two.save
+
+      Elasticsearch::Persistence.client.indices.refresh index: "pathofast-item-groups"
+      ##exit(1)
 
     end
 
@@ -247,7 +267,7 @@ class OrderTest < ActiveSupport::TestCase
     end
 =end
 
-
+=begin
     test "only r2 is removed, not r3, because r3 has crossed the point of cancellation" do 
 
       o = Order.new
@@ -320,19 +340,97 @@ class OrderTest < ActiveSupport::TestCase
       end     
 
     end
-
-=begin
-
-    test "barcodes can be added to individual tubes" do 
-
-    end
-
-
-    test "group item id, on being added is assigned to the relevant tubes" do 
-
-    end
-
 =end
 
+=begin
+    test "barcodes can be added to individual tubes, they should not exist in any other tube" do 
+
+      o = Order.new
+      o.patient_id = "test_patient"
+      o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+      if o.errors.empty?
+        o.save
+      end
+            
+      k = o.tubes
+      k[0]["barcode"] = "Golden Top Tube"
+      k[1]["barcode"] = "RS Tube"
+      k[2]["barcode"] = "Plain Tube"
+
+      o = Order.find(o.id.to_s)
+      o.tubes = k
+      o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+      if o.errors.empty?
+        o.save
+      end
+
+      o = Order.find(o.id.to_s)
+      puts JSON.pretty_generate(o.tubes)
+      o.tubes.each do |tube|
+        assert_equal tube["item_requirement_name"], tube["barcode"]
+      end
  
+    end
+=end
+
+=begin
+  test "group item id, on being added is assigned to the relevant tubes" do 
+
+    o = Order.new
+    o.patient_id = "test_patient"
+    o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+    if o.errors.empty?
+      o.save
+    end
+
+    o = Order.find(o.id.to_s)
+    o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+    o.item_group_id = "item_group"
+    o.save
+
+    o.tubes.each do |tube|
+      assert tube["barcode"] == tube["item_requirement_name"]
+    end
+
+  end
+
+  test "-- item group takes preceedence -- " do 
+
+    o = Order.new
+    o.patient_id = "test_patient"
+    o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+    if o.errors.empty?
+      o.save
+    end
+
+    k = o.tubes
+    k.map!{|c|
+      c["barcode"] = c["item_requirement_name"]
+      c
+    } 
+
+    o = Order.find(o.id.to_s)
+    o.tubes = k
+    o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+    o.save
+
+    o = Order.find(o.id.to_s)
+    o.tubes = k
+    o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+    o.item_group_id = "item_group_two"
+    o.save
+
+    assert_equal "Golden Top Tube 2", o.tubes[0]["barcode"]
+
+  end
+=end
+
+=begin
+  test " -- tubes without a barcode should not throw an error on final validation -- " do 
+
+  end
+=end
+  
+
+
 end

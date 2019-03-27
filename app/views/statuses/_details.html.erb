@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-content">
+        <div class="card-title">
+            Status Details
+        </div>
+        <ul class="collection">
+            <li class="collection-item">Numeric Value: <%= @status.numeric_value %></li>
+            <li class="collection-item">Text Value: <%= @status.text_value %></li>
+            <% if report = @status.get_report %>
+                <li class="collection-item">Report: <%=  link_to report.name, report_path(report.id.to_s) %></li>
+            <% end %>
+            <% if item = @status.get_item %>
+                <li class="collection-item">Item: <%= link_to item.name, item_path(item.id.to_s) %></li>
+            <% end %>
+            <% if item = @status.get_item_group %>
+                <li class="collection-item">Item Group: <%= link_to item_group.name, item_group_path(item_group.id.to_s) %></li>
+            <% end %>
+            <% if item = @status.get_order %>
+                <li class="collection-item">Order: <%= link_to order.name, order_path(order.id.to_s) %></li>
+            <% end %>
+            <% if patient = @status.get_patient %>
+                <li class="collection-item">Patient: <%= link_to patient.name, patient_path(patient.id.to_s) %></li>
+            <% end %>
+        </ul>
+    </div>
+</div>
+
+<!-- we want to see the status trail for reports -->

@@ -1,41 +1,9 @@
 <tr>
 	<td><%= link_to @status.name, status_path(@status.id.to_s) %></td>
 	<td><%= @status.priority %></td>
-    <td><% @status.belongs_to.each do |object| %>
+    <td><% @status.parents.each do |object| %>
     		<%= link_to object.name, main_app.send(object.class.name.underscore.downcase + "_path",object.id.to_s) %>	
     	<% end %>
     </td>
-    <td>
-    	<% if report = @status.get_report %>
-    		<%=  link_to report.name, report_path(report.id.to_s) %>
-    	<% end %>
-    </td>
-    <td>
-    	<% if item = @status.get_item %>
-    		<%= link_to item.name, item_path(item.id.to_s) %>
-    	<% end %>
-    </td>
-    <td>
-    	<% if item = @status.get_item_group %>
-    		<%= link_to item_group.name, item_group_path(item_group.id.to_s) %>
-    	<% end %>
-    </td>
-    <td>
-    	<% if item_group = @status.get_item_group %>
-    		<%= link_to item_group.name, item_group_path(item_group.id.to_s) %>
-    	<% end %>
-    </td>
-    <td>
-    	<% if patient = @status.get_patient %>
-    		<%= link_to patient.name, patient_path(patient.id.to_s) %>
-    	<% end %>
-    </td>
-    <td>
-    	<% @status.information_keys.each do |key_name| %>
-    		<span class="blue-grey-text"><%= key_name %>:</span>
-    		<span class="black-text"><%= @status.information_keys[key_name] %></span>
-    	<% end %>
-    </td>
-	<td><%= render :partial => "statuses/options" %></td>
+	<td><%= render :partial => "/statuses/options" %></td>
 </tr>
-
