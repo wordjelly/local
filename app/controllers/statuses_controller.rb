@@ -37,7 +37,9 @@ class StatusesController  < ApplicationController
 	def update
 		@status = Status.find(params[:id])
 		@status.run_callbacks(:find)
-		@status.attributes(permitted_params["status"])
+		@status.attributes = get_model_params
+		@status.parent_ids = (get_model_params[:parent_ids] || [])
+		@status.save
 		respond_to do |format|
 			format.html do 
 				render "show"
@@ -52,18 +54,21 @@ class StatusesController  < ApplicationController
 		@status = Status.new(get_model_params)
 	end
 
+	def get_model_params
+		permitted_params[:status] || {}
+	end
+
 	def show
 		@status = Status.find(params[:id])
-		#puts "running callbacks."
+		unless params[:status].blank?
+			@status.show_reports_modal = params[:status][:show_reports_modal]
+		end
+		@status.show_reports_modal ||= false
 		@status.run_callbacks(:find)
+		
 	end
 
 	def index
-		## gives you all the statuses where there is no patient_id.
-		## so ignores all the bills.
-		## also those statuses which don't have a 
-		## report_id.
-
 		@statuses = Status.search({
 			sort: {
 				priority: {
@@ -96,17 +101,17 @@ class StatusesController  < ApplicationController
 			}
 		})
 
-		## what all do you want to see in a status
-		## the reports.
-		## that are rgiegster on it.
-
-		@statuses = @statuses.map{|c|
+		@statuses = @statuses.each_with_index.map{|c,k|
 			s = Status.new(c["_source"])
 			s.id = c["_id"]
 			c = s
 			s.run_callbacks(:find)
+			s.higher_priority = Status.higher_priority(@statuses,k)
+			s.lower_priority = Status.lower_priority(@statuses,k)
 			s
 		}
+
+
 
 	end
 
@@ -120,7 +125,7 @@ class StatusesController  < ApplicationController
 
 	
 	def permitted_params
-		params.permit(:id , {:status => [:name,:parent_id,:report_id,:item_id,:item_group_id,:order_id,:response,:patient_id,:priority,:requires_image, :numeric_value, :text_value]})
+		params.permit(:id , {:status => [:name, {:parent_ids => []},:report_id,:item_id,:item_group_id,:order_id,:response,:patient_id,:priority,:requires_image, :numeric_value, :text_value, :show_reports_modal]})
 	end
 
 

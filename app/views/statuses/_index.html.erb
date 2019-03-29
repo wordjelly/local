@@ -13,10 +13,11 @@
               </thead>
 
               <tbody>
-                <% @statuses.each do |nr| %>
+                <% @statuses.each_with_index {|nr,key| %>
               	 <% @status = nr %>
-                 <%= render :partial => "statuses/show" %>
-                <% end %>
+                 <!-- how to display the priority -->
+                 <%= render :partial => "statuses/show", locals: {status: @status} %>
+                <% } %>
               </tbody>
       </table>
   </div>

@@ -1,9 +1,11 @@
-<tr>
-	<td><%= link_to @status.name, status_path(@status.id.to_s) %></td>
-	<td><%= @status.priority %></td>
-    <td><% @status.parents.each do |object| %>
+<tr id="status_row_<%= status.id.to_s %>">
+	<td><%= link_to status.name, status_path(status.id.to_s) %></td>
+	<td><%= status.priority %></td>
+    <td>
+    	<% status.parents.each do |object| %>
     		<%= link_to object.name, main_app.send(object.class.name.underscore.downcase + "_path",object.id.to_s) %>	
     	<% end %>
+    	<%= link_to "Edit Applicable Reports", status_path(status.id.to_s, :status => {:show_reports_modal => true}), :remote => :true %> 
     </td>
-	<td><%= render :partial => "/statuses/options" %></td>
+	<td><%= render :partial => "/statuses/options", locals: {status: status} %></td>
 </tr>

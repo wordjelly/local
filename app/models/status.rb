@@ -30,7 +30,6 @@ class Status
 	attribute :order_id, String, mapping: {type: 'keyword'}
 	attribute :response, Boolean
 	attribute :patient_id, String, mapping: {type: 'keyword'}
-	
 	attribute :priority, Float
 	
 	validates_numericality_of :priority
@@ -40,6 +39,16 @@ class Status
 	attribute :information_keys, Hash
 
 	attr_accessor :parents
+	## whether the reports modal is to be shown.
+	## used in status#index view, in each status, on clicking edit reports, in the options, it makes a called to statuses_controller#show, and there it 
+	attr_accessor :show_reports_modal
+	## the template reports that are not present in the parent_ids of the report.
+	attr_accessor :template_reports_not_added_to_status
+	
+	## this is assigned to enable the UI to 
+	## move the status up or down.
+	attr_accessor :higher_priority
+	attr_accessor :lower_priority
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -102,6 +111,7 @@ class Status
 	########################################################
 	after_find do |document|
 		document.load_parents
+		document.load_template_reports_not_added_to_status
 	end
 	########################################################
 	##
@@ -163,7 +173,7 @@ class Status
 			begin
 				Order.find(self.order_id)
 			rescue
-				
+
 			end
 		end
 	end
@@ -186,12 +196,15 @@ class Status
 		end
 	end
 
+	## the next step is to find out whether, 
+	## 
+
 	def load_parents
 		self.parents = []
 		results = Elasticsearch::Persistence.client.search index: "pathofast-*", body: {
 			query: {
-				terms: {
-					parent_ids: self.parent_ids
+				ids: {
+					values: self.parent_ids
 				}
 			}
 		}
@@ -206,11 +219,81 @@ class Status
 			obj = hit._type.capitalize.constantize.new(hit._source)
 			obj.id = hit._id
 			search_results << obj
+			obj.run_callbacks(:find)
 		end	
 
 		self.parents = search_results
 
 	end
-	
+		
+
+	def load_template_reports_not_added_to_status
+
+		self.template_reports_not_added_to_status = Report.search({
+			query: {
+				bool: {
+					must_not: [
+						{
+							exists: {
+								field: "template_report_id"
+							}
+						},
+						{
+							exists: {
+								field: "patient_id"
+							}
+						},
+						{
+							ids: {
+								values: self.parent_ids 
+							}
+						}
+					]
+				}
+			}
+		})
+
+		self.template_reports_not_added_to_status.map!{|c|
+			r = Report.new(c["_source"])
+			r.id = c["_id"]
+			c = r
+			r.run_callbacks(:find)
+			r
+		}
+
+	end
+
+	def self.decr(priority)
+		priority - 0.1
+	end
+
+	def self.incr(priority)
+		priority + 0.1
+	end
+
+	def self.higher_priority(statuses,self_key)
+		if self_key == 0
+			statuses[0].priority
+		elsif self_key == 1
+			decr(statuses[0].priority)
+		else
+			(statuses[self_key - 2].priority + statuses[self_key - 1].priority)/2
+		end
+	end
+
+
+	def self.lower_priority(statuses,self_key)
+		statuses_size = statuses.size
+		if self_key == (statuses_size - 1)
+			## it is the last element.
+			statuses[self_key].priority
+		elsif self_key == (statuses_size - 2)
+			## it is the second last element.
+			incr(statuses[self_key + 1].priority)
+		else
+			## we take the next two elements , and average them.
+			(statuses[self_key + 2].priority + statuses[self_key + 1].priority)/2
+		end
+	end
 
 end

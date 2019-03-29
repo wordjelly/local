@@ -1,19 +1,11 @@
 <div style="margin-left: 10px;">
-<%= link_to "Edit", edit_status_path(@status.id.to_s) %>
+<%= link_to "Edit", edit_status_path(status.id.to_s) %>
 </div>
 
 <div>
-	Insert Status Above
+<%= link_to "Shift Up", status_path(status.id.to_s, :status => {:priority => status.higher_priority, :parent_ids => status.parent_ids}), method: :put %>
 </div>
 
 <div>
-	Insert Status Below
-</div>
-
-<div>
-	Move Up in Priority
-</div>
-
-<div>
-	Move Down in Priority
+<%= link_to "Shift Down", status_path(status.id.to_s, :status => {:priority => status.lower_priority, :parent_ids => status.parent_ids}), method: :put %>
 </div>

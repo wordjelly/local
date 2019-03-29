@@ -71,52 +71,6 @@ class ReportsController < ApplicationController
 		}
 	end
 
-	## we are expecting a status id also coming in.
-	def get_template_reports
-		## so the modal contains the whole form
-		## which immediately updates the template report ids.
-		## 
-		@status = Status.find(params[:status_id]) if params[:status_id]
-		@reports = Report.search({
-			query: {
-				bool: {
-					must_not: [
-						{
-							exists: {
-								field: "template_report_id"
-							}
-						},
-						{
-							exists: {
-								field: "patient_id"
-							}
-						}
-					]
-				}
-			}
-		})
-
-		@reports.map!{|c|
-			r = Report.new(c["_source"])
-			r.id = c["_id"]
-			c = r
-			r.run_callbacks(:find)
-			r
-		}
-
-		respond_to do |format|
-			format.js do 
-				## this has to open the modal.
-				render :partial => "template_reports.js.erb"
-			end
-
-			format.json do 
-				render :json => {reports: @reports}
-			end
-
-		end
-
-	end
 
 	## its going to be an ajax request anyways.
 	## if we make another controller it won't matter.
