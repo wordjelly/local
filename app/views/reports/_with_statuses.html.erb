@@ -1,0 +1,20 @@
+<table>
+	<thead>
+		<!-- these are going to be vertical -->
+		<th>Reports</th>
+		<!-- ill have to fire one agg, just on all the statuses -->
+		<!-- and here we have the statuses -->
+		<% @statuses.each do |status| %>
+			<th data-id="<%= status.id.to_s %>"><%= status.name %></th>
+		<% end %>
+	</thead>
+	<tbody>
+		<% @reports.each do |report| %>
+			<tr>
+				<% @statuses.each do |status| %>
+					<!-- if the report status has a matching status, then we add it here, otherwise skip -->
+				<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>

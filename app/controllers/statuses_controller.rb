@@ -111,8 +111,7 @@ class StatusesController  < ApplicationController
 			s
 		}
 
-
-
+	
 	end
 
 	def get_model_params
@@ -125,7 +124,7 @@ class StatusesController  < ApplicationController
 
 	
 	def permitted_params
-		params.permit(:id , {:status => [:name, {:parent_ids => []},:report_id,:item_id,:item_group_id,:order_id,:response,:patient_id,:priority,:requires_image, :numeric_value, :text_value, :show_reports_modal]})
+		params.permit(:id , {:status => [:name, {:tag_ids => []}, {:parent_ids => []},:report_id,:item_id,:item_group_id,:order_id,:response,:patient_id,:priority,:requires_image, :numeric_value, :text_value, :show_reports_modal]})
 	end
 
 

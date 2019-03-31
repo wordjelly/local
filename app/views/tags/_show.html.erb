@@ -1,0 +1,4 @@
+<tr>
+	<td><%= link_to @tag.name, tag_path(@tag.id.to_s) %></td>
+	<td><%= render :partial => "tags/options" %></td>
+</tr>

@@ -8,27 +8,13 @@ class OrdersController < ApplicationController
 
 	def edit
 		@order = Order.find(params[:id])
-		@order.load_patient
-		@order.load_reports
-		@order.load_items
-		@order.generate_account_statement
-		## so we need a status picker
-		## and a sorter
-		## this can be seen in a tab called patient
-		## reports.
-		## so it will be showing only those with a patient id.
-		## so we go to reports index
-		## with a flag.
-		## 
+		@order.run_callbacks(:find)
 	end
 
 	def create
 		@order = Order.new(id: SecureRandom.hex(10))
-		@order.add_remove_reports(params)
-		
-		@order.patient_id = params[:patient_id]
-		#puts "the order errors are: -----------------"
-		#puts @order.errors.full_messages.to_s
+
+		@order.attributes = get_model_params
 		if @order.errors.empty?
 			response = @order.save
 		end
@@ -45,15 +31,17 @@ class OrdersController < ApplicationController
 	
 	def update
 		@order = Order.find(params[:id])
-		@order.attributes = permitted_params(:order)
+		@order.attributes = get_model_params
 		if @order.errors.empty?
 			save_result = @order.save
 		end
-		@order.generate_account_statement
-		#puts "save result is: #{save_result}----------------------------------------"
+		@order.run_callbacks(:find)		
 		respond_to do |format|
 			format.json do 
 				render :json => {order: @order}
+			end
+			format.html do 
+				render "show"
 			end
 			format.js do 
 				render :partial => "show", locals: {order: @order}
@@ -71,19 +59,14 @@ class OrdersController < ApplicationController
 	## if the tube id one exists, then show it first.
 	## otherwise show the other ones.
 
-
 	def destroy
 	end
 
 	def show
 		@order = Order.find(params[:id])
-		@order.load_patient
-		@order.load_reports
-		@order.load_items
-		@order.generate_account_statement
 		@payment_status = Status.new(parent_id: @order.id.to_s)
 		@payment_status.information_keys = {amount: nil}
-		@order.generate_pdf
+		@order.run_callbacks(:find)
 
 		respond_to do |format|
 			format.html do 
@@ -102,11 +85,20 @@ class OrdersController < ApplicationController
 	def index
 		@orders = Order.all
 		@orders.map{|c|
-		 	c.load_patient
-		 	c.load_reports
-		 	c.load_items
-		 	c.generate_account_statement
+			begin
+			 	c.run_callbacks(:find)
+			rescue => e
+				c.errors.add(:id, e.to_s)
+			end
 		}
+	end
+
+	def get_model_params
+		if permitted_params[:order].blank?
+			{}
+		else
+			permitted_params.fetch(:order)
+		end
 	end
 
 	## what all is it going to have ?
@@ -114,9 +106,19 @@ class OrdersController < ApplicationController
 	## patient id from the dropdown.
 	## that's it.
 	def permitted_params
-		## so now we can add a barcode.
-		## we just have to check that the barcodes are not present in any other order.
-		params.permit(:id , {:order => [:item_group_id, :item_group_action, :tubes => [:item_requirement_name, :patient_report_ids, :template_report_ids, :barcode, :occupied_space] :patient_id, {:template_report_ids => []}]})
+		params.permit(
+			:id,
+			{
+			 	:order => [
+			 		:start_time,
+			 		:item_group_id,
+			 		:item_group_action,
+			 		:patient_id,
+			 		{:template_report_ids => []},
+			 		:tubes => [:item_requirement_name, :patient_report_ids, :template_report_ids, :barcode, :occupied_space]
+			 	]
+			}
+		)
 	end
 
 

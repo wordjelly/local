@@ -15,6 +15,13 @@
 			<%= f.text_field :text_value %>
 			<%= f.label :text_value %>
 
+
+			<%= f.text_field :tag_name , :data => {:autocomplete_type => "tags", :multiple => true, :multiple_element_name => "status[tag_ids][]"}, :autocomplete => "off" %>
+			<%= f.label :tag_name %>
+
+			<%= render :partial => "/shared/display_array", locals: {model: @report, multiple_el: "tag_ids", multiple_objects: "tag_ids"} %>
+			
+
 			<div class="section">
 				<p>
 			      <label>
@@ -31,6 +38,8 @@
 			<% end %>
 		</div>
 	</div>
+
+	<!-- this is similar to adding tests inside reports -->
 
 	<% unless @status.new_record? %>
 	    <%= render :partial => "images/image", locals: {model: @status} %>

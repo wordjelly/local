@@ -31,10 +31,15 @@ class Status
 	attribute :response, Boolean
 	attribute :patient_id, String, mapping: {type: 'keyword'}
 	attribute :priority, Float
-	
+	attribute :tag_ids, String, mapping: {type: 'keyword'}
+	attribute :duration, Integer, :default => 300
+	attr_accessor :tag_name
+	## the tag id is the name.
+	## so we can search directly.
+
 	validates_numericality_of :priority
 	## whether an image is compulsory for this status.
-	attribute :requires_image, Boolean
+	attribute :requires_image, Integer, :default => 0
 
 	attribute :information_keys, Hash
 
@@ -196,8 +201,130 @@ class Status
 		end
 	end
 
-	## the next step is to find out whether, 
-	## 
+	## @used_in : order, #update_tubes.
+	## takes all the template report ids, and builds this hash.
+	## then passes that into clone report, so that these statuses can be pushed into each report's statuses.
+	## @return[Hash] : with the following structure:
+	## {
+	##	 "report_id" : 
+	##		{
+	##          priority: ,
+	## 			name: ,
+	##          template_status_id: ,
+	##          requires_image: ,
+	## 			duration: 
+	##		}
+	## }
+	## first lets test this returned hash.
+	## then we go for the cloning, and attribution.
+	def self.get_statuses_for_report_ids(template_report_ids)
+		puts "Searching for template report ids"
+		puts template_report_ids.to_s 
+		puts "-------------------------------------------------"
+		results = Status.search({
+			query: {
+				bool: {
+					must_not: [
+						{
+							exists: {
+								field: "patient_id"
+							}
+ 						},
+ 						{
+ 							exists: {
+ 								field: "order_id"
+ 							}
+ 						},
+ 						{
+ 							exists: {
+ 								field: "report_id"
+ 							}
+ 						}
+					],
+					must: [
+						{
+							terms: {
+								parent_ids: template_report_ids
+							}
+						}
+					]
+				}
+			},
+			aggs: {
+				template_report_ids: {
+					terms: {
+						field: "parent_ids",
+						include: template_report_ids
+					},
+					aggs: {
+						status_ids: {
+							terms: {
+								field: "_id",
+								size: 100,
+								order: { 
+									priority: "asc" 
+								}
+							},
+							aggs: {
+								priority: {
+									max: {
+										field: "priority"
+									}
+								},
+								name: {
+									terms: {
+										field: "name"
+									}
+								},
+								template_status_id: {
+									terms: {
+										field: "_id"
+									}
+								},
+								requires_image: {
+									terms: {
+										field: "requires_image"
+									}
+								},
+								duration: {
+									terms: {
+										field: "duration"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+
+		reports_to_statuses_hash = {}
+		results.response.aggregations.template_report_ids.buckets.each do |bucket|
+			template_report_id = bucket["key"]
+			reports_to_statuses_hash[template_report_id] = []
+			unless bucket.status_ids.buckets.blank?
+				bucket.status_ids.buckets.each do |status_id|
+					#puts "the status id is:"
+					#puts status_id.to_s
+					#puts status_id.priority
+					#puts status_id["priority"]
+					#exit(1)
+
+					reports_to_statuses_hash[template_report_id] << 
+					{
+						priority:  status_id.priority.value,
+						name: status_id["name"].buckets[0]["key"],
+						template_status_id: status_id["template_status_id"].buckets[0]["key"],
+						requires_image: status_id["requires_image"].buckets[0]["key"],
+						duration: status_id["duration"].buckets[0]["key"]
+					}
+				end
+			end
+		end
+
+		reports_to_statuses_hash
+
+	end
 
 	def load_parents
 		self.parents = []
@@ -295,5 +422,122 @@ class Status
 			(statuses[self_key + 2].priority + statuses[self_key + 1].priority)/2
 		end
 	end
+
+	## imagine we are only interested in pending reports.
+	## so what is a pending report ?
+	## a report where a particular status has not yet been performed.
+	## for eg: verified.
+	## we also want to see only the last performed status, not all from the beginning.
+	## so we include, where performed_at exists is false.
+	## and performed_at, for status name "verified" is also false.
+	## how do you sort the reports ?
+	## it would be better to have the outer by report_id.
+	## so that we can proceed those as rows, and sort also .
+	## then we want to sort the reports that are being shown, inside each status.
+	## we will first gather by the 
+	## by default sorts by the most delayed status.
+	## we want all reports with patient_id.
+	## so lets call gather_Statuses and see what happens.
+	## so tomorrow the status display, and then equipment applicability for the tube for the reports.
+	def self.gather_statuses(query_clauses=nil)
+		query_clauses ||= {
+			bool: {
+				must: [
+					{
+						exists: {
+							field: "patient_id"
+						}
+					}
+				]
+			}
+		}
+		response = Report.search({
+			query: query_clauses,
+			aggs: {
+				reports: {
+					terms: {
+						field: "_id",
+				        size: 10,
+				        order: {
+				          "delay>expected_time".to_sym => "desc"
+				        }
+					},
+					aggs: {
+						delay: {
+							nested: {
+								path: "statuses"
+							},
+							aggs: {
+								expected_time: {
+									filter: {
+										term: {
+											"statuses.completed".to_sym => 0
+										}
+									},
+									aggs: {
+										eta: {
+											min: {
+												field: "statuses.expected_time"
+											}
+										}
+									}
+								},
+								template_status_id: {
+									terms: {
+										field: "statuses.template_status_id",
+										order: {
+											priority: "asc"
+										}
+									},
+									aggs: {
+										priority: {
+											min: {
+												field: "statuses.priority"
+											}
+										},
+										expected_time: {
+											min: {
+												field: "statuses.expected_time"
+											}
+										},
+										name: {
+											terms: {
+												field: "statuses.name"
+											}
+										},
+										assigned_to_employee_id: {
+											terms: {
+												field: "statuses.assigned_to_employee_id"
+											}
+										},
+										performed_at: {
+											min: {
+												field: "statuses.performed_at"
+											}
+										},
+										comments: {
+											nested: {
+												path: "statuses.comments"
+											},
+											aggs: {
+												individual_comment: {
+													terms: {
+														field: "statuses.comments.comment"
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}	
+		})
+
+		
+
+	end	
 
 end

@@ -1,0 +1,9 @@
+<% @order.tubes.each do |item| %>
+	<%= item["item_requirement_name"] %>
+	<% unless item["barcode"].blank? %>
+		(<%= link_to item["barcode"], item_path(item["barcode"]) %>)
+	<% else %>
+		(Barcode Not Assigned)
+	<% end %>
+	<%= "," %>
+<% end %>

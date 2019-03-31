@@ -1,0 +1,14 @@
+<table>
+        <thead>
+          <tr>
+              <th>Name</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @tags.each do |nr| %>
+        	 <% @tag = nr %>
+           <%= render :partial => "show" %>
+          <% end %>
+        </tbody>
+</table>

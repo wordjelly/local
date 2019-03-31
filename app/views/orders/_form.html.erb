@@ -14,21 +14,9 @@
 
 				<%= f.hidden_field :patient_id %>
 
-
-				<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true, :multiple_element_name => "template_report_id"}, :autocomplete => "off" %>
+				<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true, :multiple_element_name => "order[template_report_ids][]"}, :autocomplete => "off" %>
 				<%= f.label :report_name %>
-				<% unless @order.items.blank? %>
-					<ul class="collection">
-						<% @order.items.each do |item| %>
-							<li class='collection-item'> 
-								<%= item.item_type %>
-								<input type='hidden' value="<%= item.id.to_s %>" name="order[item_ids][]" />
-								<i class='material-icons delete_multiple_item' style='cursor:pointer;'>close
-								</i>
-							</li>
-						<% end %>
-					</ul>
-				<% end %>
+				<%= render :partial => "/shared/display_array", locals: {model: @order, multiple_el: "template_report_ids", multiple_objects: "reports"} %>
 			</div>
 		</div>
 		<!-- item requirements -->
@@ -46,17 +34,16 @@
 			<div class="card-content">
 			<div class="card-title">Enter the Barcode Numbers For Individual Tube Types</div>
 			
-			<%= render :partial => "/orders/show_item_requirements.html.erb" %>
+			<%= render :partial => "/orders/show_tubes.html.erb" %>
 	    	</div>
 	    	</div>
 		
 		<% end %>
 
 		<!-- this submission is going to be by ajax -->
-		<%= f.submit "Submit", :class => "waves-effect waves-light btn" , :style => "display: none;"%>
+		<%= f.submit "Submit", :class => "waves-effect waves-light btn"%>
 
-		<!-- so now -->
-		<div class="waves-effect waves-light btn submit_order">Submit</div>
+		
 
 	<% end %>
 	

@@ -13,7 +13,7 @@ class Report
 	attr_accessor :test_name
 	attr_accessor :test_id_action
 	attr_accessor :test_id
-	attribute :tests, Array
+	attr_accessor :tests
 
 	attribute :patient_id, String, mapping: {type: 'keyword'}
 
@@ -22,16 +22,21 @@ class Report
 	attribute :price, Float
 	validates :price, numericality: true
 
-
 	attribute :item_requirement_ids, Array
+
+	attribute :statuses, Array[Hash]
+
+	attribute :tag_ids, Array, mapping: {type: "keyword"}
 
 	attr_accessor :item_requirement_name
 	attr_accessor :item_requirement_id_action
 	attr_accessor :item_requirement_id
-	attribute :item_requirements, Array
+	attr_accessor :item_requirements
 
 	attr_accessor :item_requirements_grouped_by_type
 	attr_accessor :patient
+
+	attr_accessor :tag_name
 
 	after_find do |document|
 		document.load_patient
@@ -87,53 +92,141 @@ class Report
 		      		:search_analyzer => "whitespace_analyzer"
 		      	}
 		    }
+		    indexes :statuses, type: 'nested', properties: {
+		    	priority: {
+		    		type: "integer"
+		    	},
+		    	name: {
+		    		type: "keyword"
+		    	},
+		    	template_status_id: {
+		    		type: "keyword"
+		    	},
+		    	expected_time: {
+		    		type: "date"
+		    	},
+		    	assigned_to_employee_id: {
+		    		type: "keyword"
+		    	},
+		    	requires_image: {
+		    		type: "integer"
+		    	},
+		    	performed_at: {
+		    		type: "date"
+		    	},
+		    	completed: {
+		    		type: "integer"
+		    	},
+		    	comments: {
+		    		type: "nested",
+		    		properties: {
+		    			comment: {
+		    				type: "text"
+		    			},
+		    			created_at: {
+		    				type: "date"
+		    			},
+		    			created_by: {
+		    				type: "keyword"
+		    			}
+		    		}
+		    	}
+		    }
 		end
-
 	end
 	
 	
 	before_save do |document|
 		if document.test_id_action
-			if document.test_id_action == "add"
-				document.test_ids << document.test_id
-			elsif document.test_id_action == "remove"
-				document.test_ids.delete(document.test_id)
+			unless document.test_id.blank?
+				if document.test_id_action == "add"
+					document.test_ids << document.test_id
+				end
 			end
 		end
 		
 		if document.item_requirement_id_action
-			if document.item_requirement_id_action == "add"
-				document.item_requirement_ids << document.item_requirement_id
-				
-			elsif document.item_requirement_id_action == "remove"
-				document.item_requirement_ids.delete(document.item_requirement_id)
+			unless document.item_requirement_id.blank?
+				if document.item_requirement_id_action == "add"
+					document.item_requirement_ids << document.item_requirement_id
+				end
 			end
 		end
 	end
 
+	## so next step is simple.
+	## we have to be able to show these statuses in different scenarios
+	## first about the employees.
+	## who is available to do what when.
+	## and then aggregating that, together with a UI.
+	## UI to update the status comments, and whatever else.
+	## also UI to add employee schedules.
+	## on the statuses.
+	## normal ranges, alerts and formats of the reports, for pdf.
+	## and sms.
+	## interfacing with the app.
+	## lets finish the interface for the status, in any and all situations.
+	## tomorrow for UI of employees -> for jobs, as well as status allotment.
+	## think how to put jobs into this.
+	## maximum one week to finish all this.
+	## one week more for control integration + LIS integration
 
-	#attribute :required_image_ids, Array
-	## what kind of pictures are necessary
-	## before releasing this report ?
-	## rapid kit image
-	## blood grouping card image
-	## optional images of test_tubes
-	## graph image for hba1c
-
-	## what type of items does it need?
-	## for eg : item type (red top tube/ orange top/ golden top, uses 5%, min amount, and max amount.)
-	## this will be called a report_item_requirement.
-	## will be an item type, a amount, optional
-	## priority.
 	
-
-	def clone(patient_id,order_id)
-		
-		patient_report = Report.new(self.attributes.except(:id).merge({patient_id: patient_id, template_report_id: self.id.to_s}))
-		#puts "after merging patient report:"
-		#puts patient_report.attributes.to_s
+	def clone(patient_id,order_id,applicable_statuses,order_start_time)
+		#puts JSON.pretty_generate(applicable_statuses)
 		#exit(1)
-		
+		##Since we want to clone many reports
+		##what we do is that certain statuses are excluded if the 
+		##order has some qualifiers.
+		##for example if order is home_visit
+		##or should it be report level ?
+		##so status can have tags
+		##and while adding it is filtered against those tags
+		##we pass in the aggrego hash here itself
+		##we can filter at order level also.
+		##but statuses should have some feature for tags.
+		##so here we can do this quickly.
+		##the question is that the personnel assigment and time, both have to be setup here, provided that the tags are matching, for the given order.
+
+		patient_report = Report.new(self.attributes.except(:id).merge({patient_id: patient_id, template_report_id: self.id.to_s}))
+
+		patient_report.statuses = applicable_statuses[self.id.to_s]
+
+		k = 0
+		puts "order start time: #{order_start_time}"
+		prev_time = nil
+		puts JSON.pretty_generate(patient_report.statuses)
+		patient_report.statuses.map!{|c|
+			c[:completed] = 0
+			if k == 0
+				c[:expected_time] = order_start_time	
+			else
+				c[:expected_time] = prev_time + c[:duration].seconds
+			end
+			prev_time = c[:expected_time]
+			k+=1
+			c
+		}
+
+		## so this can be done.
+		## what about alloted to ?
+		## we have it like this
+		## from ->  {
+		## 		to: 	
+		##}
+		## okay we have to make a provision for them to have comments, and who wrote that comment.
+		## so let me add that to the nested mappings.
+		## secondly how to know which techinicans is free without making a hundred qeireis.
+		## status -> 
+		## from -> 
+		## from -> {
+		## agg by to ->
+		## and then the name of the technician
+		## so find all froms which are greater
+		## inside that find all to's 
+		## and check the count assigned, and distribute.
+		## so that's how we do it.
+
 		patient_report.test_ids = []
 		
 		self.test_ids.each do |test_id|
@@ -161,41 +254,47 @@ class Report
 		status_completed.size == 0
 	end
 
+	def is_template_report?
+		self.template_report_id.blank?
+	end
+
 	## so we add some status like this
 	## for the test.
 
 	def load_patient	
 		unless self.patient_id.blank?
-			self.patient = Patient.find(self.patient_id)
+			begin
+				self.patient = Patient.find(self.patient_id)
+			rescue
+				self.errors.add(:id,"patient #{self.patient_id} not found")
+			end
 		end
 	end
 
 	def load_tests
+		puts " ------------------ loading tests -------------------- "
 		self.tests ||= []
 		self.test_ids.each do |tid|
 			self.tests << Test.find(tid) unless tid.blank?
 		end
 		self.tests.map{|c| c.report_id = self.id.to_s}
-		puts "the test report ids are:"
-		self.tests.map{|c| puts c.report_id}
+		puts "self tests are:"
+		puts self.tests.to_s
 	end
 
 	def load_item_requirements
-		puts "Came to load item requirements."
+		puts "--------------Came to load item requirements------------------"
 		self.item_requirements_grouped_by_type = {}
 		self.item_requirements ||= []
 		self.item_requirement_ids.each do |iid|
 			unless iid.blank? 
 				ireq = ItemRequirement.find(iid)
-				if self.item_requirements_grouped_by_type[ireq.item_type]
-				else
-					self.item_requirements_grouped_by_type[ireq.item_type] = []
-				end
-				self.item_requirements_grouped_by_type[ireq.item_type] << ireq
 				self.item_requirements << ireq
 			end
 		end
 		self.item_requirements.map{|c| c.report_id = self.id.to_s }
+		puts "the item requirements are:"
+		puts self.item_requirements.to_s
 	end
 
 	def build_query

@@ -40,6 +40,16 @@ class Item
 		document.gather_statuses
 	end
 
+	## we have to have only one 
+	## does it go by report ?
+	## we should be able to sort somehwo.
+	## there may be 100 reports
+	## that are delayed.
+	## 200
+	## just from 10 patients.
+	## so the first thing to do is to filter by order.
+	## can we somehow deduplicate at the order level.
+	## 
 	
 	settings index: { 
 	    number_of_shards: 1, 
@@ -94,18 +104,39 @@ class Item
 
 	end	
 
-	## 12 hourly.
+	def gather_statuses
+		search_results = Order.search({
+			query: {
+				_source: false,
+				nested: {
+					path: "tubes",
+					query: {
+						term: {
+							"tubes.barcode".to_sym => {
+								value: self.id.to_s
+							}
+						}
+					},
+					inner_hits: {}
+				}
+			}
+		})
+		patient_report_ids = []
+		unless search_results.response.hits.hits.blank?
+			search_results.response.hits.hits.inner_hits.tubes.hits.hits.each do |hit|
+				patient_report_ids = hit._source.patient_report_ids
+			end
+		end	
+		
+		 
 
-	## if i can finish status views tomorrow(overall, order, report, patient, item)
-	## with equipment links for report updates
+	end
 
-	## then i can try to do user authorization on sunday(cognito),
-	## together with jobs
-	
-	## polish off in one week more.
-	
-	## one more week, for remaining interfacing and controls 
-	## data.
-	## + integration with app. 
+
+	def update_status(template_status_id)
+
+	end
+
+
 
 end

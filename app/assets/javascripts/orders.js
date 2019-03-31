@@ -1,11 +1,11 @@
-$(document).on('submit','.order_form',function(event){
+//$(document).on('submit','.order_form',function(event){
 	//console.log("got on submit");	
 	// now what do we do.
 	// on clicking the submit button.
 	// we will send by js.
 	// so we have total control.
-	return false;
-});
+	//return false;
+//});
 
 var get_item_group_id = function(){
 	return $("#order_item_group_id").val();
@@ -42,10 +42,9 @@ var get_template_report_ids = function(){
 	return template_report_ids;
 }
 
-$(document).on('click','.submit_order',function(event){
 
-	
-	
+/****
+$(document).on('click','.submit_order',function(event){
 	var data = {
 		item_requirements: get_item_requirements(),
 		patient_id: get_patient_id(),
@@ -68,3 +67,4 @@ $(document).on('click','.submit_order',function(event){
 		$.post("/orders.js",data);
 	}
 });	
+****/

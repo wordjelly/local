@@ -160,9 +160,11 @@ class EquipmentStatusTest < ActiveSupport::TestCase
 	test " looking for a barcode, gives the statuses of each report under that item -- " do 
 
 	  	o = Order.new
+	  	o.start_time = Time.now
 	  	o.patient_id = "test_patient"
 	  	o.template_report_ids = [@r1_id,@r2_id,@r3_id]
 	  	if o.errors.empty?
+	  		puts "------ first save completed-----------"
 	    	o.save
 	  	end
 
@@ -175,7 +177,10 @@ class EquipmentStatusTest < ActiveSupport::TestCase
 	    o.tubes = k
 	    o.template_report_ids = [@r1_id,@r2_id,@r3_id]
 	    if o.errors.empty?
+	    	puts "- =================saved order============="
 	        o.save
+	    else
+	    	puts 
 	    end
 
       	o.tubes.first["patient_report_ids"].each_with_index {|pid,key|
@@ -202,6 +207,15 @@ class EquipmentStatusTest < ActiveSupport::TestCase
 
 	      	end
       	}
+
+      	#reports_to_statuses_hash = Status.get_statuses_for_report_ids(o.tubes.first["template_report_ids"])
+
+      	#puts JSON.pretty_generate(reports_to_statuses_hash)
+
+      	#now i want to call gather_statuses with no arguments.
+      	#Status.gather_statuses
+      	#employee schedule management + absentees + rotations.
+      	#including recurring job management.
 
 	end
 end

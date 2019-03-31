@@ -24,11 +24,16 @@ class Order
 	## this is for the external api.
 	attribute :external_reference_number, String, mapping: {type: 'keyword'}
 
-	attr_accessor :patient
-	attr_accessor :reports
+	attribute :start_time, Date
+	validates_presence_of :start_time
+
 	attribute :item_group_id
 	attribute :item_group_action
+
+	attr_accessor :patient
+	attr_accessor :reports
 	attr_accessor :cloned_reports
+	attr_accessor :report_name
 		
 =begin
 
@@ -99,10 +104,25 @@ class Order
 
 	validates_presence_of :patient_id	
 
+
 	
 	before_save do |document|
 		document.update_barcodes
 		document.update_tubes
+	end
+
+	after_find do |document|
+		document.load_patient
+		document.load_patient_reports
+		document.generate_account_statement
+		document.generate_pdf
+	end
+
+	def load_patient_reports
+		self.reports ||= []
+		get_patient_report_ids.each do |pid|
+			self.reports << Report.find(pid)
+		end
 	end
 
 	def existing_template_report_ids
@@ -111,7 +131,7 @@ class Order
 			c["template_report_ids"]
 		}.flatten.uniq
 	end
-
+	
 	## returns the id of the patient report.
 	## won't reclone the report if its already cloned
 	## only applicable intra sesssion.
@@ -119,10 +139,10 @@ class Order
 	## and we added those tubes
 	## but it doesn't become transactional.
 	## so it may reclone, and screw up the bill.
-	def clone_report(report_id)	
+	def clone_report(report_id,statuses)	
 		self.cloned_reports ||= {}
 		if self.cloned_reports[report_id].blank?
-			self.cloned_reports[report_id] = Report.find(report_id).clone(self.patient_id,self.id.to_s).id.to_s
+			self.cloned_reports[report_id] = Report.find(report_id).clone(self.patient_id,self.id.to_s,statuses,self.start_time).id.to_s
 		end
 		self.cloned_reports[report_id]
 	end
@@ -213,11 +233,10 @@ class Order
 	def update_tubes
 		## first delete the reports that have been removed.
 		## if there is no difference only then we check the barcodes.
+
 		(existing_template_report_ids - self.template_report_ids).each do |template_report_id_to_remove|
-			#puts "trying to remove: #{template_report_id_to_remove}"
+			
 			self.tubes.map{|c|
-				#puts "checking tube:"
-				#puts c.to_s
 				if arrind = c["template_report_ids"].index(template_report_id_to_remove)
 					patient_report = Report.find(c["patient_report_ids"][arrind])
 					patient_report.load_statuses
@@ -247,6 +266,12 @@ class Order
 		end
 
 		report_ids_to_add = self.template_report_ids - existing_template_report_ids
+
+		## so we want to cater only for these.
+
+		statuses_for_reports = Status.get_statuses_for_report_ids(report_ids_to_add)
+
+		## so we clone them with the relevant statuses.
 
 		required_item_amounts = ItemRequirement.search({
 			query: {
@@ -329,9 +354,25 @@ class Order
 				tube_type = ir["key"]
 				required_amount = ir.amounts.required_reports.sum_amount.value
 				applicable_reports = ir.amounts.required_reports.applicable_reports.buckets.map{|c| c = c["key"]}
+				## so what do we want to clone here exaclty ?
+				## template_report ids.
+				## we get the applicable statuses.
+				## and clone them into the patient reports.
+				## so given those template_report_ids
+				## we want all the statuses
+				## we send the statuses, while cloning the reports
+				## that are applicable to the parent report
+				## at the same time we also send in the tags.
+				## that we want to use.
+				## these can be chosen
+				## so search for the statuses,
+				## then group by template_report id.
+				## and internally sort by the priority of the status.
 				patient_report_ids = applicable_reports.map{|c|
-					clone_report(c)
+					clone_report(c,statuses_for_reports)
 				}
+				## here we want to add the statuses.
+				## rest of it deals with items, etc.
 				add_tube_requirement({
 					"item_requirement_name" => tube_type,
 					"template_report_ids" => applicable_reports,
@@ -388,21 +429,8 @@ class Order
 			c["patient_report_ids"]
 		}.flatten.uniq
 	end
-	## we want to aggregate, all payments
-	## query for either "bill" or "payment"
-	## aggregate by bills -> summate the numeric values
-	## aggregate by payments -> summate the numeric values
-	## and display sorted by date.
-	## so i can test this.
-	## but if we want to make a payment.
-	## it should just show the pending amount.
-	## this is done before, show and populates the make payment thereof, and also shows it in the options.
-	## it also is used for making the receipt.
-	## if he makes a payment, then, it should give a receipt option, while showing the status ?
-	## just gives the whole statement.
-	## this should show up in the order show view.
-	## as a seperate partial.
-	## we also need an endpoint for this for the receipt.
+	
+
 	def generate_account_statement
 		results = Status.search({
 			sort: {

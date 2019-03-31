@@ -2,19 +2,10 @@
         <thead>
           <tr>
               <th>Name</th>
-              <% if !@report.is_template_report? %>
-                  <th>Patient</th>
-                  <th>Alloted To</th>
-                  <th>Current Step</th>
-                  <th>Remaining Steps</th>
-                  <th>Result</th>
-                  <th>Normal Range</th>
-              <% end %>
-              <% if @report.is_template_report? %>
-                  <th>Total Tests</th>
-                  <th>Price</th>
-                  <th>Total Requirements</th>
-                <% end %>
+              <th>Total Tests</th>
+              <th>Price</th>
+              <th>Total Requirements</th>
+              <th>Patient</th>
               <th>Options</th>
           </tr>
         </thead>

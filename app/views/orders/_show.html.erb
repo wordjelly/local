@@ -1,10 +1,10 @@
 <tr>
-	<!-- so here what all can we see -->
-	<!-- if we want to see all the individual orders ? -->
-	<!-- just the list of reports -->
-	<!-- the unified screen is this ? -->
-	<td><%= link_to @order.patient.name + "'s Tests", order_path(@order.id.to_s) %></td>
-	<td><%= render :partial => "/orders/reports_cell" %></td>
-	<td><%= render :partial => "/orders/items_cell" %></td>
-	<td><%= render :partial => "/orders/options" %></td>
+	<% unless @order.errors.empty? %>
+		<td><%= @order.errors.full_messages %></td>
+	<% else %>
+		<td><%= link_to @order.patient.name + "'s Tests", order_path(@order.id.to_s) %></td>
+		<td><%= render :partial => "/orders/reports_cell" %></td>
+		<td><%= render :partial => "/orders/tubes_cell" %></td>
+		<td><%= render :partial => "/orders/options" %></td>
+	<% end %>
 </tr>
