@@ -121,7 +121,12 @@ class Report
 		    		type: "nested",
 		    		properties: {
 		    			comment: {
-		    				type: "text"
+		    				type: "keyword",
+		    				fields: {
+		    					raw: {
+		    						type: "text"
+		    					}
+		    				}
 		    			},
 		    			created_at: {
 		    				type: "date"

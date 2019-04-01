@@ -438,7 +438,7 @@ class Status
 	## by default sorts by the most delayed status.
 	## we want all reports with patient_id.
 	## so lets call gather_Statuses and see what happens.
-	## so tomorrow the status display, and then equipment applicability for the tube for the reports.
+	## so tomorrow the status display, and then equipment applicability for the tube for the reports, and employee 
 	def self.gather_statuses(query_clauses=nil)
 		query_clauses ||= {
 			bool: {
@@ -451,9 +451,36 @@ class Status
 				]
 			}
 		}
-		response = Report.search({
+		search_results = Report.search({
 			query: query_clauses,
 			aggs: {
+				statuses: {
+					nested: {
+						path: "statuses"
+					},
+					aggs: {
+						status_ids: {
+							terms: {
+								field: "statuses.template_status_id",
+								order: {
+									priority: "asc"
+								}
+							},
+							aggs: {
+								priority: {
+									min: {
+										field: "statuses.priority"
+									}
+								},
+								name: {
+									terms: {
+										field: "statuses.name"
+									}
+								}
+							}
+						}
+					}
+				},
 				reports: {
 					terms: {
 						field: "_id",
@@ -463,6 +490,21 @@ class Status
 				        }
 					},
 					aggs: {
+						name: {
+							terms: {
+								field: "name"
+							}
+						},
+						patient_id: {
+							terms: {
+								field: "patient_id"
+							}
+						},
+						order_id: {
+							terms: {
+								field: "order_id"
+							}
+						},
 						delay: {
 							nested: {
 								path: "statuses"
@@ -536,8 +578,69 @@ class Status
 			}	
 		})
 
-		
+		reports = []
+		statuses = []
+		## we aslo need the statuses in a seperate array to make it possible to display them.
+		## then we give the UI to update it.
+		puts "these are the aggs------------->"
+		puts search_results.response.hits
+		puts search_results.response.aggregations.to_s
+		search_results.response.aggregations.statuses.status_ids.buckets.each do |status_bucket|
+			status = {}
+			status[:id] = status_bucket["key"]
+			status_bucket.name.buckets.each do |name_bucket|
+				status[:name] = name_bucket["key"]
+			end
+			statuses << status
+		end
+		search_results.response.aggregations.reports.buckets.each do |report_bucket|
+
+			report_id = report_bucket["key"]
+			report = {id: report_id, statuses: []}			
+
+			report_bucket.delay.template_status_id.buckets.each do |template_status_id_bucket|
+
+				status = {}
+
+				status[:template_status_id] = template_status_id_bucket["key"]
+
+				status[:priority] = template_status_id_bucket.priority.value
+
+				status[:expected_time] = template_status_id_bucket.expected_time.value
+
+				status[:name] = template_status_id_bucket.name.buckets[0]["key"]
+
+				status[:assigned_to_employee_id] = template_status_id_bucket.assigned_to_employee_id.buckets[0]["key"] unless template_status_id_bucket.assigned_to_employee_id.buckets[0].blank?
+
+				status[:performed_at] = template_status_id_bucket.performed_at.value
+
+				puts "this is the template status id bucket------------------------------------"
+				puts template_status_id_bucket.to_s
+				puts "these are the comments"
+				puts template_status_id_bucket.comments.to_s
+
+				puts template_status_id_bucket.comments.individual_comment.to_s
+
+				status[:comments] = template_status_id_bucket.comments.individual_comment.buckets.map{|c| c["key"]} unless (template_status_id_bucket.comments.individual_comment.blank? && template_status_id_bucket.comments.individual_comment.buckets.blank?)
+
+				report[:statuses] << status
+
+			end
+
+			reports << report
+
+		end	
+
+		puts " -------- these are the aggregated reports ------ "
+		puts JSON.pretty_generate(reports)
+		puts " -------- these are the aggregated status ids ---"
+		puts JSON.pretty_generate(statuses)
+
+		## returns a hash with reports and statuses.
+
+		{reports: reports, statuses: statuses}
 
 	end	
+
 
 end

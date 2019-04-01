@@ -27,6 +27,10 @@ class Item
 
 	attribute :contents_expiry_date, DateTime	
 
+	attr_accessor :statuses
+
+	attr_accessor :reports
+
 	def set_id_from_barcode
 		self.id = self.barcode unless self.barcode.blank?
 	end
@@ -37,7 +41,9 @@ class Item
 	end
 
 	after_find do |document|
-		document.gather_statuses
+		res = document.get_statuses
+		document.statuses = res[:statuses]
+		document.reports = res[:reports]
 	end
 
 	## we have to have only one 
@@ -104,10 +110,10 @@ class Item
 
 	end	
 
-	def gather_statuses
+	def get_statuses
 		search_results = Order.search({
+			_source: false,
 			query: {
-				_source: false,
 				nested: {
 					path: "tubes",
 					query: {
@@ -123,12 +129,19 @@ class Item
 		})
 		patient_report_ids = []
 		unless search_results.response.hits.hits.blank?
-			search_results.response.hits.hits.inner_hits.tubes.hits.hits.each do |hit|
-				patient_report_ids = hit._source.patient_report_ids
+			search_results.response.hits.hits.each do |outer_hit|
+				outer_hit.inner_hits.tubes.hits.hits.each do |hit|
+					patient_report_ids = hit._source.patient_report_ids
+				end
 			end
 		end	
 		
-		 
+		## so here we send this as the query.
+		Status.gather_statuses({
+			ids: {
+				values: patient_report_ids
+			}
+		})
 
 	end
 

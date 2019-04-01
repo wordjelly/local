@@ -216,6 +216,6 @@ class EquipmentStatusTest < ActiveSupport::TestCase
       	#Status.gather_statuses
       	#employee schedule management + absentees + rotations.
       	#including recurring job management.
-
+      	Status.gather_statuses
 	end
 end

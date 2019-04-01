@@ -17,3 +17,6 @@
         	<%= render :partial => "show" %>
         </tbody>
 </table>
+<!-- lets see how this goes -->
+<!-- so this is the item -->
+<%= render :partial => "/reports/with_statuses", locals: {reports: @item.reports, statuses: @item.statuses} %>

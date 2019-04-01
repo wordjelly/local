@@ -12,6 +12,21 @@ module ApplicationHelper
 		html += "</ul>"
 	end	
 
-	
+	## @param[Array] applicable_status
+	def is_delayed?(applicable_status)
+		if applicable_status.size == 1
+			""
+		else
+			if Time.now.to_i > applicable_status[0][:expected_time]
+				if applicable_status[0][:performed_at].blank?
+					"red-text"
+				else
+					""
+				end
+			else
+				""
+			end
+		end
+	end	
 
 end
