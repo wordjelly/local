@@ -15,7 +15,21 @@
 	<tbody>
 		<% reports.each do |report| %>
 			<tr>
-				<td><%= Report.find(report[:id]).name %></td>
+				<td>
+					<div><%= link_to report[:name], report_path(report[:id]) %></div>
+					<% patient_name = report[:patient_id] %>
+					<% 
+					   begin
+					   	patient_name = Patient.find(report:patient_id)
+					   rescue
+
+					   end
+					%>
+					<div><%= link_to patient_name, patient_path(report[:patient_id]) %></div>
+					<% unless report[:order_id].blank? %>
+					<div><%= link_to report[:order_id], order_path(report[:order_id]) %></div>
+					<% end %>
+				</td>
 				<% statuses.each do |status| %>
 					<% applicable_status = report[:statuses].select{|c| c[:template_status_id] == status[:id]}
 					%>

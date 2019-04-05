@@ -47,6 +47,7 @@ GEM
       debug_inspector (>= 0.0.1)
     builder (3.2.3)
     byebug (11.0.0)
+    chronic (0.10.2)
     cloudinary (1.11.1)
       aws_cf_signer
       rest-client
@@ -226,6 +227,7 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
+  chronic
   cloudinary
   coffee-rails (~> 4.1.0)
   down

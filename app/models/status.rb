@@ -55,6 +55,14 @@ class Status
 	attr_accessor :higher_priority
 	attr_accessor :lower_priority
 
+	#########################################################
+	## FOR SCHEDULE.
+	attr_accessor :from
+	attr_accessor :to
+	attr_accessor :employee_ids
+	attr_accessor :divide_into
+	#########################################################
+
 	settings index: { 
 	    number_of_shards: 1, 
 	    number_of_replicas: 0,
@@ -118,11 +126,42 @@ class Status
 		document.load_parents
 		document.load_template_reports_not_added_to_status
 	end
+
+	before_save do |document|
+
+		unless document.add_schedule.blank?
+			add_schedule(document.from,document.to,document.employee_ids,self.id.to_s)
+		
+		end
+	end
+
+	## suppose i give for em200
+	## can another person operate it again?
+	## no so the status is to be removed for other people
+	## for the booked duration, remove it for everyone else, and that employee also.
+	## that's what has to be done.
+	## and all this in one bulk call.
+	## so where will we add this bulk item?
+	## on minute.
+
+	def add_schedule(from,to,employee_ids,status_id,divide_equally)
+		Minute.get_minute_ids(document.from,document.to).each do |min_id|
+			update_request = Minute.update_minute(min_id,{status_id: status_id, employee_ids: employee_ids})
+			Minute.add_bulk_item(update_request)
+		end
+		Minute.flush_bulk
+	end
+
+	
+
 	########################################################
 	##
 	## UTILITY
 	##
 	########################################################
+
+
+
 	## creates a bill for the report.
 	def self.add_bill(patient_report,order_id)	
 		s = Status.new
@@ -137,6 +176,7 @@ class Status
 		response = s.save
 		puts "add bill response: #{response}"
 	end
+
 
 
 	def belongs_to
@@ -582,9 +622,9 @@ class Status
 		statuses = []
 		## we aslo need the statuses in a seperate array to make it possible to display them.
 		## then we give the UI to update it.
-		puts "these are the aggs------------->"
-		puts search_results.response.hits
-		puts search_results.response.aggregations.to_s
+		#puts "these are the aggs------------->"
+		#puts search_results.response.hits
+		#puts search_results.response.aggregations.to_s
 		search_results.response.aggregations.statuses.status_ids.buckets.each do |status_bucket|
 			status = {}
 			status[:id] = status_bucket["key"]
@@ -593,10 +633,17 @@ class Status
 			end
 			statuses << status
 		end
+
 		search_results.response.aggregations.reports.buckets.each do |report_bucket|
 
 			report_id = report_bucket["key"]
-			report = {id: report_id, statuses: []}			
+			order_id = nil
+			order_id = report_bucket.order_id.buckets[0]["key"] unless report_bucket.order_id.buckets.blank?
+			report = {id: report_id, statuses: [],
+				 name: report_bucket.name.buckets[0]["key"],
+				patient_id: report_bucket.patient_id.buckets[0]["key"], 
+				order_id: order_id 
+			}			
 
 			report_bucket.delay.template_status_id.buckets.each do |template_status_id_bucket|
 
