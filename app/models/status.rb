@@ -33,7 +33,14 @@ class Status
 	attribute :priority, Float
 	attribute :tag_ids, String, mapping: {type: 'keyword'}
 	attribute :duration, Integer, :default => 300
+	attribute :employee_block_duration, Integer, :default => 300
+	attribute :block_other_employees, Integer, :default => 1
+
 	attr_accessor :tag_name
+
+	## the total number of these statuses that have to be done, 
+	## used onlyh in minute#build_minute_update_request_for_order
+	attr_accessor :count
 	## the tag id is the name.
 	## so we can search directly.
 
@@ -246,14 +253,23 @@ class Status
 	## then passes that into clone report, so that these statuses can be pushed into each report's statuses.
 	## @return[Hash] : with the following structure:
 	## {
-	##	 "report_id" : 
-	##		{
-	##          priority: ,
-	## 			name: ,
-	##          template_status_id: ,
-	##          requires_image: ,
-	## 			duration: 
-	##		}
+	##   reports_to_statuses_hash : {
+	##	 	"report_id" : 
+	##			{
+	##          	priority: ,
+	## 				name: ,
+	##          	template_status_id: ,
+	##          	requires_image: ,
+	## 				duration: 
+	##			}
+	##   	}
+	##   },
+	##   statuses_to_reports_hash: {
+	##      "status_id" : {
+	##              reports: [r1,r2,r3],
+	##              duration: 1003 
+	##       }
+	##	 }
 	## }
 	## first lets test this returned hash.
 	## then we go for the cloning, and attribution.
@@ -334,9 +350,55 @@ class Status
 							}
 						}
 					}
+				},
+				status_ids: {
+					terms: {
+						field: "_id",
+						order: {
+							priority: "asc"
+						}
+					},
+					aggs: {
+						reports: {
+							terms: {
+								field: "report_id"
+							}
+						},
+						duration: {
+							min: {
+								field: "duration"
+							}
+						},
+						priority: {
+							min: {
+								field: "priority"
+							}
+						}
+					}
 				}
 			}
 		})
+
+		statuses_to_reports_hash = {}
+
+		results.response.status_ids.buckets.each do |status_id_bucket|
+
+			status_id = status_id_bucket["key"]
+			reports = []
+			duration = nil
+			priority = nil
+
+			reports = status_id.reports.buckets.map{|c| c["key"]}
+			duration = status_id.duration.min.value
+			priority = status_id.priority.min.value
+
+			statuses_to_reports_hash[status_id] = 
+			{
+				reports: reports,
+				duration: duration
+			}
+
+		end
 
 		reports_to_statuses_hash = {}
 		results.response.aggregations.template_report_ids.buckets.each do |bucket|
@@ -362,7 +424,11 @@ class Status
 			end
 		end
 
-		reports_to_statuses_hash
+		{
+			reports_to_statuses_hash:  reports_to_statuses_hash,
+			statuses_to_reports_hash: statuses_to_reports_hash
+		}
+		
 
 	end
 
@@ -684,6 +750,8 @@ class Status
 		puts JSON.pretty_generate(statuses)
 
 		## returns a hash with reports and statuses.
+		## this will have to be changed, because now the cancellation and reallotment happens at the minute level.
+		## 
 
 		{reports: reports, statuses: statuses}
 

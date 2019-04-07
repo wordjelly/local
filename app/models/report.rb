@@ -213,25 +213,13 @@ class Report
 			c
 		}
 
-		## so this can be done.
-		## what about alloted to ?
-		## we have it like this
-		## from ->  {
-		## 		to: 	
-		##}
-		## okay we have to make a provision for them to have comments, and who wrote that comment.
-		## so let me add that to the nested mappings.
-		## secondly how to know which techinicans is free without making a hundred qeireis.
-		## status -> 
-		## from -> 
-		## from -> {
-		## agg by to ->
-		## and then the name of the technician
-		## so find all froms which are greater
-		## inside that find all to's 
-		## and check the count assigned, and distribute.
-		## so that's how we do it.
-
+		## so first make the thing to get the best minute to allot
+		## then allot it to the minutes
+		## and if we have to display then, we will have to get
+		## it from the minutes
+		## for this order id.
+		## that's the best way to section it.
+		
 		patient_report.test_ids = []
 		
 		self.test_ids.each do |test_id|

@@ -58,6 +58,9 @@ class Minute
 					status_ids: {
 						type: "keyword"
 					},
+					bookings_score: {
+						type: "float"
+					},
 					bookings: {
 						type: "nested",
 						properties: {
@@ -111,13 +114,13 @@ class Minute
 
 	def self.create_test_minutes(number_of_minutes)
 		status_ids = []    	
-    	100.times do |status|
-    		status_ids << status
+    	5.times do |status|
+    		status_ids << status.to_s
     	end
 		number_of_minutes.times do |minute|
 			m = Minute.new(number: minute, working: 1, employees: [], id: minute.to_s)
 			6.times do |employee|
-				e = Employee.new(id: employee.to_s, status_ids: status_ids)
+				e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: [0,1,2,3,4,5,6,7,8,9,10].sample)
 				[0,1,2,3,4].sample.times do |booking|
 					b = Booking.new
 					b.status_id = status_ids.sample
@@ -160,9 +163,12 @@ class Minute
     	Minute.flush_bulk
 	end	
 
-	def aggregate_employee_bookings(employee_id,minute_from,minute_to)
 
-		Minute.search({
+
+	def self.aggregate_employee_bookings(employee_id,minute_from,minute_to)
+		## so let's get this working first. of all.
+		search_results = Minute.search({
+			_source: false,
 			query: {
 				nested: {
 					path: "employees",
@@ -175,8 +181,13 @@ class Minute
 									}
 								},
 								{
-									exists: {
-										field: "employees.bookings"
+									nested: {
+										path: "employees.bookings",
+										query: {
+											exists: {
+												field: "employees.bookings"
+											}
+										}
 									}
 								}
 							]
@@ -185,9 +196,113 @@ class Minute
 				}
 			},
 			aggs: {
-				
+				minute: {
+					terms: {
+						field: "_id"
+					},
+					aggs: {
+						targeted_employee_bookings: {
+							nested: {
+								path: "employees"
+							},
+							aggs: {
+								this_employee: {
+									filter: {
+										term: {
+											"employees.employee_id".to_sym => employee_id
+										}
+									},
+									aggs: {
+										this_employee_bookings: {
+											nested: {
+												path: "employees.bookings",
+											},
+											aggs: {
+												order_id: {
+													terms: {
+														field: "employees.bookings.order_id"
+													},
+													aggs: {
+														status_id: {
+															terms: {
+																field: "employees.bookings.status_id"
+															}
+														},
+														report_ids: {
+															terms: {
+																field: "employees.bookings.report_ids"
+															}
+														},
+														priority: {
+															terms: {
+																field: "employees.bookings.priority"
+															}
+														},
+														count: {
+															terms: {
+																field: "employees.bookings.count"
+															}
+														},
+														max_delay: {
+															terms: {
+																field: "employees.bookings.max_delay"
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								},
+								least_booked_employee: {
+									terms: {
+										field: "employees.employee_id",
+										exclude: [employee_id],
+										order: {
+											"employee_bookings_score".to_sym => "desc"
+										}
+									},
+									aggs: {
+										"employee_bookings_score".to_sym => {
+											min: {
+												field: "employee.bookings_score"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		})
+
+		reallotment_hash = {}
+
+		search_results.response.aggregations.minute.buckets.each do |minute_bucket|
+			minute = minute_bucket["key"]
+			bookings = []
+			minute_bucket.targeted_employee_bookings.this_employee.this_employee_bookings.order_id.buckets.each do |order_id_bucket|
+				booking = {}
+				booking[:order_id] = order_id_bucket["key"]
+				booking[:status_id] = order_id_bucket.status_id.buckets[0]["key"]
+				booking[:count] = order_id_bucket["count"].buckets[0]["key"]
+				booking[:report_ids] = order_id_bucket.report_ids.buckets[0]["key"]
+				booking[:priority] = order_id_bucket.priority.buckets[0]["key"]
+				bookings << booking
+			end
+
+			reallot_to_employee = nil
+
+			if minute_bucket.targeted_employee_bookings.least_booked_employee.buckets.size > 0
+				reallot_to_employee = minute_bucket.targeted_employee_bookings.least_booked_employee.buckets[0]["key"]
+			end
+
+			reallotment_hash[minute] = {reallot_to: reallot_to_employee, bookings: bookings}
+
+		end
+
+		reallotment_hash
 
 	end
 
@@ -197,10 +312,26 @@ class Minute
 	## @param[Array] status_ids : defaults to an empty array, which means all statuses.
 	def self.block_and_reallot_bookings(from,to,employee_id,status_ids=[])
 
-		## first i have to randomly create this.
+		minute_ids = get_minutes_ids(from,to)
 
+		minute_ids.each_slice(100) do |minutes|
+
+			reallotment_hash = aggregate_employee_bookings(employee_id,minutes.first,minutes.last)
+
+			reallotment_hash.keys.each do |minute_id|
+
+				update_hash = build_minute_update_request_for_reallotment(reallotment_hash.merge(:employee_to_block => employee_id))
+
+				Minute.add_bulk_item(update_hash)
+
+			end
+
+			Minute.flush_bulk
+
+		end
 
 	end
+
 
 
 	## @param[String] date : block and reallot from
@@ -212,17 +343,33 @@ class Minute
 	end
 
 	## @param[Array] required_statuses: 
-	## some status may be such that it can only be done at a 
-	## particular time.
-	## for eg: microbiology reporting -> maybe only on a certain
-	## time of a day
-	## or on a certain day.
-	## also statuses have to have a capacity.
-	## 
+	## each status must have
+	## :from => an integer (minutes from epoch)
+	## :to => an integer (minutes from epoch)
+	## :id => the id of the status 
+	## :maximum_capacity => an integer, the maximum number of these statuses that can be done at any given minute
+	## @return[Hash]
+=begin
+	{
+		status_id => {
+			minute_id => {
+				employee_ids => []
+			}
+		}
+	}
+=end
 	def self.get_minute_slots(args)
 		
-		queries = args[:required_statuses].map{|c|
-			query_template = {
+		query = {
+			bool: {
+				should: [
+
+				]
+			}
+		}
+
+		args[:required_statuses].map{|c|
+			query[:bool][:should] << {
 				bool: {
 					must: [
 						{
@@ -235,44 +382,60 @@ class Minute
 						},
 						{
 							bool: {
-								should: [
+								must: [
 									nested: {
 										path: "employees",
 										query: {
 											bool: {
-												should: [
+												must: [
+													{range: {"employees.bookings_score".to_sym => {lte: 10}}},
 													{
-														bool: {
-															must: [
-																{
-																	term: {
-																		"employees.status_id".to_sym => c[:status_id]
-																	}
-																},
-																{
-																	term: {
-																		"employees.booked_count".to_sym => -1
-																	}
-																}
-															]
+														term: {
+															"employees.status_ids".to_sym => c[:id]
 														}
 													},
 													{
-														bool: {
-															must: {
-																term: {
-																	"employees.booked_status_id".to_sym => c[:status_id]
-																}
-															},
-															must: {
-																range: {
-																	"employee.booked_count".to_sym => {
-																		lte: c[:maximum_capacity] 
-																	}
+														nested: {
+															path: "employees.bookings",
+															query: {
+																bool: {
+																	minimum_should_match: 1,
+																	should: [
+																		{
+																			bool: {
+																				must: [
+																					{
+																						range: {
+																							"employees.bookings.count".to_sym => 
+																							{
+																								lte: c[:maximum_capacity]
+																							}
+																						}
+																					},
+																					{
+																						term: {
+																							"employees.bookings.status_id".to_sym => c[:id]
+																						}
+																					}
+																				]
+																			}
+																		},
+																		{
+																			bool: {
+																				must_not: [
+																					{
+																						term: {
+																							"employees.bookings.status_id".to_sym => c[:id]
+																						}
+																					}
+																				]
+																			}
+																		}
+																	]
 																}
 															}
 														}
-													}
+													}		
 												]
 											}
 										}
@@ -283,53 +446,14 @@ class Minute
 					]
 				}
 			}
-			query_template
 		}
 
-		## so we have a day
-		## we can assign employees to certain statuses for certain slots
-		## automatically or in rotation.
-		## problem is what if its not there in that range
-		## for any employee a particular status?
-		## then you widen the range there, and redo the fucking query
-		## so we have this query and aggs
-		## so what has to be added ui side ?
-		## better go employee and status.
-		## first the status.
-		## we want to allot a status
-		## keep it simple for the moment.
-		## which statuses can an employee do ->
-		## choose the status names.
-		## over which timeframe ?
-		## choose the timeframe
-		## or we can have a particular status divided over 
-		## all employees over a timeframe.
-		## that also we can do.
-		## so let's make this screen on the status creation
-		## that will be the best option.
-		## so there i can instead choose the employee who can do that status
-		## and then i can modulate it via the minutes ui, to block an employee from certain things.
-		## but for eg we want one employee on the roche for 2 hours
-		## and no one else.
-		## so lets say you give an option -> divide equally.
-		## in that case, you ahve to give a slot option.
-		## what will be the slot duration.
-		## otherwise, all workers can do, and then everyone is registered for every minute.
-		## routines are basically sets of statuses
-		## like reports
-		## we can schedule routines periodically
-		## in that case, the individual statuses have to also be scheduled.
-		## for eg : routine weekly maintainance of roche e411
-		## so lets add this module to the status.
-		## so this will actually be updating minute.
-		## so first minutes.
-		## minute UI.
-		## then status UI.
-		## first atust.
+		puts "the queries are:"
+		puts JSON.pretty_generate(query)
 
 		query_and_aggs = 
 			{
-				query: queries,
+				query: query,
 			  	aggs: {
 			    	required_status: {
 			      		nested: {
@@ -340,7 +464,7 @@ class Minute
 				          		terms: {
 				            		field: "employees.status_ids",
 				            		size: 10,
-				            		include: "2"
+				            		include: args[:required_statuses].map{|c| c[:id]}
 				          		},
 				          		aggs: {
 				            		minute: {
@@ -349,7 +473,7 @@ class Minute
 				                			minute_id: {
 				                  				terms: {
 				                    				field: "number",
-				                    				size: 10
+				                    				order: {"_key".to_sym => "asc"}
 				                  				},
 				                  				aggs: {
 					                    			employees: {
@@ -359,16 +483,16 @@ class Minute
 						                      			aggs: {
 						                        			emp_id: {
 						                          				terms: {
-						                            				field: "employees.id",
+						                            				field: "employees.employee_id",
 						                            				size: 10,
 						                            				order: {
-						                              					booked_count: "asc"
+						                              					bookings_score: "asc"
 						                            				}
 						                         				},
 						                          				aggs: {
-						                            				booked_count: {
+						                            				bookings_score: {
 							                              				min: {
-							                                				field: "employees.booked_count"
+							                                				field: "employees.bookings_score"
 							                              				}
 						                            				}
 						                          				}
@@ -385,6 +509,27 @@ class Minute
 			    	}
 			  	}
 			}
+
+		response = search(query_and_aggs)
+
+		## this is not working, because number is not here.
+		##puts response.response.hits.hits.to_s
+		##puts response.response.aggregations.required_status.to_s
+		status_results = {}
+		response.response.aggregations.required_status.status_id.buckets.each do |status_id_bucket|
+			status_id = status_id_bucket["key"]
+			status_results[status_id] = {}
+			status_id_bucket.minute.minute_id.buckets.each do |minute_bucket|
+				minute = minute_bucket["key"]
+				employee_ids = minute_bucket.employees.emp_id.buckets.map{|c|
+					c["key"]
+				}
+				status_results[status_id][minute] = employee_ids
+			end
+		end
+
+		status_results
+
 	end
 
 	#######################################################
@@ -467,6 +612,136 @@ class Minute
 			}
 		}
 
+
+	end
+
+
+	def self.build_minute_update_request_for_order(order_statuses_hash,order_id,status_obj)
+		prev_status_minute = nil
+		prev_status_id = nil
+		order_statuses_hash.keys.each do |status|
+			report_ids = status_obj.report_ids
+			status_duration = status_obj.duration
+			status_count = status_obj.count
+			employee_block_duration = status_obj.employee_block_duration
+			block_other_employees = status_obj.block_other_employees
+
+			if prev_status_minute.blank?
+				start_minute = order_statuses_hash[status].keys[0]
+				## so we want to modify this minute
+				## and which employee ?
+				## and what count
+				## and 
+			else
+				viable_minutes = order_statuses_hash[status].keys.select{|c|
+					c >= (prev_status_minute + status_duration)
+				}
+				unless viable_minutes.blank?
+					start_minute = viable_minutes[0]
+
+				end
+			end
+
+			employee_id = order_statuses_hash[status][start_minute].keys[0]
+
+
+
+			update_request = {
+				script: {
+					lang: "painless",
+					inline: '''
+						for(employee in ctx._source.employees){
+					        if(employee["id"] == params.employee_id){
+					        	Map booking = new HashMap();
+						        booking.put("report_ids",params.report_ids);
+						        booking.put("status_id",params.status_id);
+						        booking.put("order_id",params.order_id);
+						        booking.put("count",params.count);
+						        booking.put("priority",(1/employee.bookings.size));
+					        	employee["bookings"].add(booking);
+					        	employee["bookings_score"] = employee["bookings_score"] + 1;
+					        }
+
+					      }
+					''',
+					params: {
+						employee_id: employee_id,
+						order_id: order_id,
+						status_id: status,
+						report_ids: report_ids,
+						count: status_count
+					}		
+				}
+			}
+
+			update_request = {
+				update: {
+					_index: index_name, _type: document_type, _id: start_minute, data: update_request
+				}
+			}
+
+			add_bulk_item(update_request)
+
+			employee_block_duration.times do |k|
+				## after this seperate the order creation, 
+				## from the scheduling
+				## and then the routine creation, same seperate from the scheduling
+				## and then reallotment -> request creation
+				## after that the UI, and displaying the statuses report wise, from the minutes, instead of the reports themselves.
+				## shouldn't be too hard.
+				## what is the action?
+				## show
+				## which user ids / groups are registered on show on that record?
+				## end of story.
+				## it's as simple as that
+				## similary which are registered on notify.
+				## end of story.
+			end
+
+
+			prev_status_minute = start_minute
+			prev_status_id = status
+		end
+	end
+
+
+
+	def self.build_minute_update_request_for_routine()
+
+	end
+
+
+	## @param[Hash] reallotment_details : A hash which contains, the following keys:
+	## => reallot_to : [String] id of the employee to which to reallot
+	## => bookings: [Array] the array of the bookings to push to the employee to reallot to
+	## => employee_to_block : [String] id of the employee to be blocked.
+	def self.build_minute_update_request_for_reallotment(reallotment_details)
+
+		update_request = {
+			script: {
+				lang: "painless",
+				inline: '''
+			        for(employee in ctx._source.employees){
+			            if(employee["id"] == params.employee_to_block){
+			              employee.bookings = null;
+			              employee.status_ids = null;
+			            }
+			        	else if(employee["id"] == params.reallot_to){
+			        		for(booking in params.bookings){
+			        			employee["bookings"].add(booking);
+			        		}
+			        	}
+			        }
+				''',
+				params: reallotment_details
+			}
+		}
+
+		{
+			update: {
+				_index: index_name, _type: document_type, _id: id, data: update_request
+			}
+		}
 
 	end
 

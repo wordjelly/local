@@ -4,10 +4,13 @@ require 'test_helper'
 class DayTest < ActiveSupport::TestCase
    
     setup do
-		Minute.create_index! force: true    	
-		Minute.create_test_minutes(5)
+		#Minute.create_index! force: true    	
+		#Minute.create_test_minutes(25)
+		#Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
     end
 
+
+=begin
     test "test adds new employee to minute" do 
     	new_employee_ids = ["101","221","321"]
 
@@ -62,39 +65,37 @@ class DayTest < ActiveSupport::TestCase
     	end
 
     end
+=end
 
+=begin
     test "aggregates the bookings of the employee to be blocked" do 
-
-    	
-    	
+    	Minute.aggregate_employee_bookings("1","","")
     end
+=end
+	
+	test " - gets all minutes as slots for this status - " do 
 
+		required_statuses = [
+			{
+				:from => 0,
+				:to => 10,
+				:id => "1",
+				:maximum_capacity => 10
+			}
+		]
+
+		Minute.get_minute_slots({:required_statuses => required_statuses})
+
+	end
+
+=begin
     test "blocks employee given start time and end time" do
-
-    	## what is a block basically?
-    	## you find all minutes
-    	## then you aggregate by id.
-    	## you iterate, each employee till you get it.
-    	## there you set the status either as empty
-    	## or for whichever status you want to block.
-    	## suppose no other employee is available, what happens?
-    	## who gets assigned to it
-    	## so the aggregation will reveal who to reassign it to.
-    	## and we filter these 
-    	## while iterating, we can check ?
-    	## or it goes into a floating pool?
-    	## it gets alloted to every other person on that minute
-    	## we will see how to reallot it later.
-    	## that's what happens
-    	## so booked statuses, will also be nested.
-    	## 
-    	## before blocking, should assign the assigned task to another employee if he/she is available.
-    	## 
 
     end
 
     test "reallots job to other employee if primary employee is to be blocked" do 
 
     end
-    
+=end
+
 end

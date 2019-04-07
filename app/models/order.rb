@@ -268,9 +268,19 @@ class Order
 		report_ids_to_add = self.template_report_ids - existing_template_report_ids
 
 		## so we want to cater only for these.
+		## these have come with each report seperately
+		## but we want it actually status wise
+		## and the count of the reports.
+		## that is something that we can directly check
+		## for compatibility
+		## we also need the timings of the statuses
+		statuses_and_reports = Status.get_statuses_for_report_ids(report_ids_to_add)
 
-		statuses_for_reports = Status.get_statuses_for_report_ids(report_ids_to_add)
+		reports_to_statuses_hash = statuses_and_reports[:reports_to_statuses_hash]
 
+		statuses_to_reports_hash = statuses_and_reports[:statuses_to_reports_hash]
+
+		
 		## so we clone them with the relevant statuses.
 
 		required_item_amounts = ItemRequirement.search({
@@ -347,8 +357,6 @@ class Order
 			}
 		})
 
-		#uts JSON.pretty_generate(required_item_amounts.response.aggregations)
-		
 		required_item_amounts.response.aggregations.item_types.buckets.each do |item_type|
 			item_type.item_requirements.buckets.each do |ir|
 				tube_type = ir["key"]
@@ -369,7 +377,7 @@ class Order
 				## then group by template_report id.
 				## and internally sort by the priority of the status.
 				patient_report_ids = applicable_reports.map{|c|
-					clone_report(c,statuses_for_reports)
+					clone_report(c,reports_to_statuses_hash)
 				}
 				## here we want to add the statuses.
 				## rest of it deals with items, etc.
