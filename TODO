@@ -10,3 +10,15 @@ checklist approval by dr.sneha
 report pdf generation, with signatures
 abnormal value highlighting
 total of test prices.
+
+## so first of all it should get enqueued.
+
+## after this reallot
+
+## then routine scheduling.
+
+## and then viewing the statuses
+
+## and updating them.
+
+## then UI for all of these.

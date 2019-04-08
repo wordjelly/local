@@ -32,9 +32,17 @@ class Status
 	attribute :patient_id, String, mapping: {type: 'keyword'}
 	attribute :priority, Float
 	attribute :tag_ids, String, mapping: {type: 'keyword'}
+	
+	## REQUIRED
 	attribute :duration, Integer, :default => 300
+	## REQUIRED
 	attribute :employee_block_duration, Integer, :default => 300
+	## REQUIRED
 	attribute :block_other_employees, Integer, :default => 1
+	## the maximum number of these statuses that can be handled at any one time by any give employee.
+	## REQUIRED
+	attribute :maximum_capacity, Integer, :default => 1
+
 
 	attr_accessor :tag_name
 
@@ -64,6 +72,7 @@ class Status
 
 	#########################################################
 	## FOR SCHEDULE.
+	attr_accessor :add_status_schedule
 	attr_accessor :from
 	attr_accessor :to
 	attr_accessor :employee_ids
@@ -136,9 +145,8 @@ class Status
 
 	before_save do |document|
 
-		unless document.add_schedule.blank?
-			add_schedule(document.from,document.to,document.employee_ids,self.id.to_s)
-		
+		unless document.add_status_schedule.blank?
+			document.add_schedule(document.from,document.to,document.employee_ids,self.id.to_s)
 		end
 	end
 
@@ -373,6 +381,11 @@ class Status
 							min: {
 								field: "priority"
 							}
+						},
+						maximum_capacity:{
+							min:{
+								field: "maximum_capacity"
+							}
 						}
 					}
 				}
@@ -381,21 +394,25 @@ class Status
 
 		statuses_to_reports_hash = {}
 
-		results.response.status_ids.buckets.each do |status_id_bucket|
+		results.response.aggregations.status_ids.buckets.each do |status_id_bucket|
 
 			status_id = status_id_bucket["key"]
 			reports = []
 			duration = nil
 			priority = nil
 
-			reports = status_id.reports.buckets.map{|c| c["key"]}
-			duration = status_id.duration.min.value
-			priority = status_id.priority.min.value
+			reports = status_id_bucket.reports.buckets.map{|c| c["key"]}
+			duration = status_id_bucket.duration.min[1]
+			priority = status_id_bucket.priority.min[1]
+			#puts status_id_bucket.to_s
+			#exit(1)
+			maximum_capacity = status_id_bucket.maximum_capacity.min[1]
 
 			statuses_to_reports_hash[status_id] = 
 			{
 				reports: reports,
-				duration: duration
+				duration: duration,
+				maximum_capacity: maximum_capacity
 			}
 
 		end
@@ -424,11 +441,14 @@ class Status
 			end
 		end
 
+		
+
 		{
 			reports_to_statuses_hash:  reports_to_statuses_hash,
 			statuses_to_reports_hash: statuses_to_reports_hash
 		}
 		
+
 
 	end
 

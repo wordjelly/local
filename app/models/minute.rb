@@ -112,6 +112,18 @@ class Minute
 		100
 	end
 
+	## creates a single minute, with 
+	def self.create_single_test_minute(status)
+		status_ids = [status.id.to_s]
+		m = Minute.new(number: 1, working: 1, employees: [], id: 1.to_s)
+		1.times do |employee|
+			e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
+			m.employees << e
+		end
+		Minute.add_bulk_item(m)
+		Minute.flush_bulk
+	end
+
 	def self.create_test_minutes(number_of_minutes)
 		status_ids = []    	
     	5.times do |status|
@@ -395,45 +407,56 @@ class Minute
 														}
 													},
 													{
-														nested: {
-															path: "employees.bookings",
-															query: {
-																bool: {
-																	minimum_should_match: 1,
-																	should: [
-																		{
-																			bool: {
-																				must: [
-																					{
-																						range: {
-																							"employees.bookings.count".to_sym => 
+														bool: {
+															minimum_should_match: 1,
+															should: [
+																{
+																	bool: {must_not: {exists: {field: "employees.bookings"}}}
+																},
+																{   
+																	nested: {
+																	path: "employees.bookings",
+																	query: {
+																		bool: {
+																			minimum_should_match: 1,
+																			should: [
+
+																				{
+																					bool: {
+																						must: [
 																							{
-																								lte: c[:maximum_capacity]
+																								range: {
+																									"employees.bookings.count".to_sym => 
+																									{
+																										lte: c[:maximum_capacity]
+																									}
+																								}
+																							},
+																							{
+																								term: {
+																									"employees.bookings.status_id".to_sym => c[:id]
+																								}
 																							}
-																						}
-																					},
-																					{
-																						term: {
-																							"employees.bookings.status_id".to_sym => c[:id]
-																						}
+																						]
 																					}
-																				]
-																			}
-																		},
-																		{
-																			bool: {
-																				must_not: [
-																					{
-																						term: {
-																							"employees.bookings.status_id".to_sym => c[:id]
-																						}
+																				},
+																				{
+																					bool: {
+																						must_not: [
+																							{
+																								term: {
+																									"employees.bookings.status_id".to_sym => c[:id]
+																								}
+																							}
+																						]
 																					}
-																				]
-																			}
+																				}
+																			]
 																		}
-																	]
+																	}
+																	}
 																}
-															}
+															]
 														}
 													}		
 												]
@@ -616,10 +639,28 @@ class Minute
 	end
 
 
-	def self.build_minute_update_request_for_order(order_statuses_hash,order_id,status_obj)
+	def self.build_minute_update_request_for_order(order_statuses_hash,order_id)
 		prev_status_minute = nil
 		prev_status_id = nil
 		order_statuses_hash.keys.each do |status|
+			status_obj = Status.find(status)
+			## which report ids are these darling?
+			## the patient report ids?
+
+			## take the parent ids from the status
+			## these are the applicable reports
+			## and then we need the reports_to_be_added from the order
+			## that were cloned, i.e the patient reports, of the same
+			## indexes from the order.
+			## those become the report ids.
+			## how to thread the tubes into this ?
+			## which tube is applicable to which status ?
+			## sorry which report
+			## that also we pick up from the order.
+			## and shove all that into this minute
+			## so will have to add that to the bookings.
+			## everything is updated into the minute itself.
+
 			report_ids = status_obj.report_ids
 			status_duration = status_obj.duration
 			status_count = status_obj.count
@@ -628,10 +669,6 @@ class Minute
 
 			if prev_status_minute.blank?
 				start_minute = order_statuses_hash[status].keys[0]
-				## so we want to modify this minute
-				## and which employee ?
-				## and what count
-				## and 
 			else
 				viable_minutes = order_statuses_hash[status].keys.select{|c|
 					c >= (prev_status_minute + status_duration)
@@ -643,8 +680,6 @@ class Minute
 			end
 
 			employee_id = order_statuses_hash[status][start_minute].keys[0]
-
-
 
 			update_request = {
 				script: {
@@ -680,13 +715,72 @@ class Minute
 				}
 			}
 
+
 			add_bulk_item(update_request)
 
 			employee_block_duration.times do |k|
+
+				## for each employee here,
+				## for the block duration
+				if block_other_employees == 1
+
+					## in this case, 
+					## it means that no one else can do this statust till the end.
+					## as well as this employee
+					## its basically a status block.
+					update_request = {
+						script: {
+							lang: "painless",
+							inline: '''
+								for(employee in ctx._source.employees){
+							        employee.status_ids.remove(params.status)
+							      }
+							''',
+							params: {
+								status_id: status
+							}		
+						}
+					}
+
+
+				else
+
+					## we basically make the employee ineligible for these statuses.
+					
+					update_request = {
+						script: {
+							lang: "painless",
+							inline: '''
+								for(employee in ctx._source.employees){
+									if(employee["id"] == params.employee_id)
+							        employee.bookings_score = 11;
+							      }
+							''',
+							params: {
+								status_id: status,
+								employee_id: employee_id
+							}		
+						}
+					}
+
+
+				end
+
+
+				update_request = {
+					update: {
+						_index: index_name, _type: document_type, _id: (start_minute + k), data: update_request
+					}
+				}
+
+				## okay so order creation is basically report cloning
+				## i've got to move that to a background job.
+
 				## after this seperate the order creation, 
 				## from the scheduling
 				## and then the routine creation, same seperate from the scheduling
 				## and then reallotment -> request creation
+
 				## after that the UI, and displaying the statuses report wise, from the minutes, instead of the reports themselves.
 				## shouldn't be too hard.
 				## what is the action?
@@ -696,6 +790,7 @@ class Minute
 				## it's as simple as that
 				## similary which are registered on notify.
 				## end of story.
+
 			end
 
 

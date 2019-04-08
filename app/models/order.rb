@@ -5,6 +5,9 @@ class Order
 	include Concerns::StatusConcern
 	include Concerns::PdfConcern
 	
+	## the interval to keep between minutes.
+	DEFAULT_INTERVAL = 20
+
 	index_name "pathofast-orders"
 
 	attr_accessor :patient_name
@@ -21,10 +24,15 @@ class Order
 
 	attribute :tubes, Array[Hash]
 
+	attribute :schedule_action, String, mapping: {type: 'keyword'}
+
+
+	attribute :report_ids_to_add, Array, mapping: {type: 'keyword'}
+
 	## this is for the external api.
 	attribute :external_reference_number, String, mapping: {type: 'keyword'}
 
-	attribute :start_time, Date
+	attribute :start_time, Time
 	validates_presence_of :start_time
 
 	attribute :item_group_id
@@ -103,12 +111,19 @@ class Order
 	end
 
 	validates_presence_of :patient_id	
-
-
 	
 	before_save do |document|
 		document.update_barcodes
 		document.update_tubes
+	end
+
+	after_save {puts "executing code after saving"}
+
+	after_save do |document|
+		puts " ---------- DOING AFTER SAVE ----------- "
+		## let's see if refresh index works.
+		## but it would'nt have found it at all otherwise.
+		ScheduleJob.perform_later([document.id.to_s,document.class.name])
 	end
 
 	after_find do |document|
@@ -139,10 +154,11 @@ class Order
 	## and we added those tubes
 	## but it doesn't become transactional.
 	## so it may reclone, and screw up the bill.
-	def clone_report(report_id,statuses)	
+	def clone_report(report_id)	
 		self.cloned_reports ||= {}
 		if self.cloned_reports[report_id].blank?
-			self.cloned_reports[report_id] = Report.find(report_id).clone(self.patient_id,self.id.to_s,statuses,self.start_time).id.to_s
+			self.cloned_reports[report_id] = 
+			Report.find(report_id).clone(self.patient_id,self.id.to_s).id.to_s
 		end
 		self.cloned_reports[report_id]
 	end
@@ -231,8 +247,8 @@ class Order
 	end
 
 	def update_tubes
-		## first delete the reports that have been removed.
-		## if there is no difference only then we check the barcodes.
+		
+		puts "---------- CAME TO UPDATE TUBES -------------- "
 
 		(existing_template_report_ids - self.template_report_ids).each do |template_report_id_to_remove|
 			
@@ -265,23 +281,12 @@ class Order
 			}
 		end
 
-		report_ids_to_add = self.template_report_ids - existing_template_report_ids
+		self.report_ids_to_add = self.template_report_ids - existing_template_report_ids
 
-		## so we want to cater only for these.
-		## these have come with each report seperately
-		## but we want it actually status wise
-		## and the count of the reports.
-		## that is something that we can directly check
-		## for compatibility
-		## we also need the timings of the statuses
-		statuses_and_reports = Status.get_statuses_for_report_ids(report_ids_to_add)
+		puts "the report ids to add are:"
+		puts self.report_ids_to_add.to_s
 
-		reports_to_statuses_hash = statuses_and_reports[:reports_to_statuses_hash]
-
-		statuses_to_reports_hash = statuses_and_reports[:statuses_to_reports_hash]
-
-		
-		## so we clone them with the relevant statuses.
+		self.schedule_action = "add" unless self.report_ids_to_add.blank?
 
 		required_item_amounts = ItemRequirement.search({
 			query: {
@@ -291,7 +296,7 @@ class Order
 							path: "definitions",
 							query: {
 								terms: {
-									"definitions.report_id".to_sym => report_ids_to_add
+									"definitions.report_id".to_sym => self.report_ids_to_add
 								}
 							}
 						}
@@ -332,7 +337,7 @@ class Order
 										required_reports: {
 											filter: {
 												terms: {
-													"definitions.report_id".to_sym => report_ids_to_add
+													"definitions.report_id".to_sym => self.report_ids_to_add
 												}
 											},
 											aggs: {
@@ -362,25 +367,11 @@ class Order
 				tube_type = ir["key"]
 				required_amount = ir.amounts.required_reports.sum_amount.value
 				applicable_reports = ir.amounts.required_reports.applicable_reports.buckets.map{|c| c = c["key"]}
-				## so what do we want to clone here exaclty ?
-				## template_report ids.
-				## we get the applicable statuses.
-				## and clone them into the patient reports.
-				## so given those template_report_ids
-				## we want all the statuses
-				## we send the statuses, while cloning the reports
-				## that are applicable to the parent report
-				## at the same time we also send in the tags.
-				## that we want to use.
-				## these can be chosen
-				## so search for the statuses,
-				## then group by template_report id.
-				## and internally sort by the priority of the status.
+				
 				patient_report_ids = applicable_reports.map{|c|
-					clone_report(c,reports_to_statuses_hash)
+					clone_report(c)
 				}
-				## here we want to add the statuses.
-				## rest of it deals with items, etc.
+				
 				add_tube_requirement({
 					"item_requirement_name" => tube_type,
 					"template_report_ids" => applicable_reports,
@@ -389,6 +380,7 @@ class Order
 				})
 			end
 		end
+
 	end
 
 	def item_type_is_equivalent?(barcode,tube_type)
@@ -558,5 +550,79 @@ class Order
 		puts JSON.pretty_generate(self.account_statement)
 
 	end
-	
+
+	###########################################################
+	##
+	##
+	## SCHEDULE
+	##
+	##
+	###########################################################
+	def schedule
+			
+		puts "the schedule action is: #{schedule_action}"
+
+		if self.schedule_action == "add"
+			#self.report_ids_to_add = []
+
+			puts "the report ids to add are:"
+			puts self.report_ids_to_add.to_s
+
+			statuses_and_reports = Status.get_statuses_for_report_ids(self.report_ids_to_add)
+
+			reports_to_statuses_hash = statuses_and_reports[:reports_to_statuses_hash]
+
+			statuses_to_reports_hash = statuses_and_reports[:statuses_to_reports_hash]
+
+			status_arr = []
+
+			prev_from = nil
+				
+			prev_to = nil
+
+			prev_duration = nil
+
+			args = {:required_statuses => []}
+			statuses_to_reports_hash.keys.each_with_index {|status,key|
+				
+				status_details = {}
+
+				status_details[:id] = status
+				status_details[:maximum_capacity] = statuses_to_reports_hash[status][:maximum_capacity]
+
+				if key == 0
+					status_details[:from] = (self.start_time.to_i/60)
+					status_details[:to] = status_details[:from] + DEFAULT_INTERVAL
+				else
+					status_details[:from] = prev_from + prev_duration
+					status_details[:to] = prev_to + prev_duration
+				end
+
+				prev_from = status_details[:from]
+				prev_to = status_details[:to]
+				prev_duration = status_details[:duration]
+				
+				args[:required_statuses] << status_details
+
+				
+			}
+
+			puts "teh required status args are:"
+			puts JSON.pretty_generate(args)
+
+			minute_slots = Minute.get_minute_slots(args)
+			puts "the minute slots are:"
+			puts JSON.pretty_generate(minute_slots)
+
+			Minute.build_minute_update_request_for_order(minute_slots,self.id.to_s)
+
+			#self.save
+
+		else
+
+
+		end
+
+	end
+
 end

@@ -177,48 +177,9 @@ class Report
 	## one week more for control integration + LIS integration
 
 	
-	def clone(patient_id,order_id,applicable_statuses,order_start_time)
-		#puts JSON.pretty_generate(applicable_statuses)
-		#exit(1)
-		##Since we want to clone many reports
-		##what we do is that certain statuses are excluded if the 
-		##order has some qualifiers.
-		##for example if order is home_visit
-		##or should it be report level ?
-		##so status can have tags
-		##and while adding it is filtered against those tags
-		##we pass in the aggrego hash here itself
-		##we can filter at order level also.
-		##but statuses should have some feature for tags.
-		##so here we can do this quickly.
-		##the question is that the personnel assigment and time, both have to be setup here, provided that the tags are matching, for the given order.
-
+	def clone(patient_id,order_id)
+		
 		patient_report = Report.new(self.attributes.except(:id).merge({patient_id: patient_id, template_report_id: self.id.to_s}))
-
-		patient_report.statuses = applicable_statuses[self.id.to_s]
-
-		k = 0
-		puts "order start time: #{order_start_time}"
-		prev_time = nil
-		puts JSON.pretty_generate(patient_report.statuses)
-		patient_report.statuses.map!{|c|
-			c[:completed] = 0
-			if k == 0
-				c[:expected_time] = order_start_time	
-			else
-				c[:expected_time] = prev_time + c[:duration].seconds
-			end
-			prev_time = c[:expected_time]
-			k+=1
-			c
-		}
-
-		## so first make the thing to get the best minute to allot
-		## then allot it to the minutes
-		## and if we have to display then, we will have to get
-		## it from the minutes
-		## for this order id.
-		## that's the best way to section it.
 		
 		patient_report.test_ids = []
 		
