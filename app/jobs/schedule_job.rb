@@ -26,11 +26,9 @@ class ScheduleJob < ActiveJob::Base
   ## 1 => object_class
   ## the object calls the schedule method on itself.
   def perform(args)
-    puts "the args are:"
-    puts args.to_s
     obj = args[1].constantize.find(args[0])
-    puts " -------- came to perform job --------- "
     obj.schedule
+    Minute.flush_bulk
   end
 
 end

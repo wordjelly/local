@@ -81,12 +81,146 @@ class Minute
 							},
 							max_delay: {
 								type: 'keyword'
+							},
+							tubes: {
+								type: 'keyword'
 							}
 						}
 					}
 				}
 	    end
 	end
+
+	## so now we have order, patient report ids, and tube ids, in every minute
+	## so we can search by either of these
+	## if we remove some template reports
+	## then what about the tubes ?
+	## if the barcode is blank?
+	## 
+
+	def self.update_tube_barcode(report_ids,barcode)
+		## we want those minutes
+		## where the report ids is there
+		## but the tube barcode is not seen.
+		## and go and update it there.
+		## in the agg we want to have the employee id, under that minute
+		## where the report ids are found.
+		## so we know we have to go and update that minute.
+		## i could just go with inner hits.
+		## can i combine this in one query ?
+		## like for different barcodes.
+		Minute.search({
+			query: {
+				nested: {
+					path: "employees",
+					query: {
+						nested: {
+							path: "employees.bookings",
+							query: {
+								bool: {
+									must: [
+										{
+											terms: {
+												"employees.bookings.report_ids".to_sym => report_ids
+											}
+										},
+										{
+											bool: {
+												must_not: [
+													{
+														term: {
+															"employees.bookings.tubes".to_sym => barcode
+														}
+													}
+												]
+											}
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			aggs: {
+				minutes: {
+					terms: {
+						field: "_id"
+					},
+					aggs: {
+						employees: {
+							nested: {
+								path: "employees"
+							},
+							aggs: {
+								employee_ids: {
+									nested: {
+										path: "bookings"
+									},
+									aggs: {
+										bookings_with_reports: {
+											filter: {
+												terms: {
+													"employees.bookings.report_ids".to_sym => report_ids
+												}
+											},
+											aggs: {
+												back_to_employees: {
+													reverse_nested: {
+														path: "employees"
+													},
+													aggs: {
+														employee_ids: {
+															terms: {
+																field: "employees.employee_id"
+															},
+															aggs: {
+																back_to_bookings: {
+																	nested: {
+																		path: "bookings"
+																	},
+																	aggs: {
+																		booking_priority: {
+																			min: {
+																				field: "employees.bookings.priority"
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+
+		## then we update those minutes with scripts
+		## after this removal from minutes
+		## if a barcode is wrongly entered.
+		## we only add newer ones.
+		## how to remove one that does not exist anymore ?
+		## if we add a new barcode to the tubes
+		## we would check the reports, 
+		## and then we would add this barcode.
+		## so we will have to send in all the barcodes.
+		## and if none of them is there, it will have to be removed
+		## when a report is removed, it has to be deleted from
+		## any minute where it exists, in any booking.
+		## these two things can be handled easily
+
+	end
+
+	## once the tubes are added, they have to be updated to the relevant minutes
+	## in another background job;
+	## this is because they are added in a seperate request.
 
 	## so the script will check the existing bookings.
 	## these we already have to have.
@@ -107,12 +241,12 @@ class Minute
 	## same minute get the least occupied employee
 	## and in the update script, reassoign to them.
 	## both possibilities can be done.
-
 	def self.bulk_size
 		100
 	end
 
 	## creates a single minute, with 
+	## creates n minutes.
 	def self.create_single_test_minute(status)
 		status_ids = [status.id.to_s]
 		m = Minute.new(number: 1, working: 1, employees: [], id: 1.to_s)
@@ -121,6 +255,22 @@ class Minute
 			m.employees << e
 		end
 		Minute.add_bulk_item(m)
+		Minute.flush_bulk
+	end
+
+
+	## creates a single minute, with 
+	## creates n minutes.
+	def self.create_two_test_minutes(status)
+		status_ids = [status.id.to_s]
+		2.times do |n| 
+			m = Minute.new(number: n, working: 1, employees: [], id: n.to_s)
+			1.times do |employee|
+				e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
+				m.employees << e
+			end
+			Minute.add_bulk_item(m)
+		end
 		Minute.flush_bulk
 	end
 
@@ -639,31 +789,18 @@ class Minute
 	end
 
 
-	def self.build_minute_update_request_for_order(order_statuses_hash,order_id)
+	def self.build_minute_update_request_for_order(
+		order_statuses_hash,order)
 		prev_status_minute = nil
 		prev_status_id = nil
+		## this count is the problem.
+		## how many have to be assigned herewith.
+		## 
 		order_statuses_hash.keys.each do |status|
 			status_obj = Status.find(status)
-			## which report ids are these darling?
-			## the patient report ids?
-
-			## take the parent ids from the status
-			## these are the applicable reports
-			## and then we need the reports_to_be_added from the order
-			## that were cloned, i.e the patient reports, of the same
-			## indexes from the order.
-			## those become the report ids.
-			## how to thread the tubes into this ?
-			## which tube is applicable to which status ?
-			## sorry which report
-			## that also we pick up from the order.
-			## and shove all that into this minute
-			## so will have to add that to the bookings.
-			## everything is updated into the minute itself.
-
-			report_ids = status_obj.report_ids
+			report_ids = order.get_patient_report_ids_applicable_to_status(status_obj)
 			status_duration = status_obj.duration
-			status_count = status_obj.count
+			status_count = report_ids.size
 			employee_block_duration = status_obj.employee_block_duration
 			block_other_employees = status_obj.block_other_employees
 
@@ -679,7 +816,7 @@ class Minute
 				end
 			end
 
-			employee_id = order_statuses_hash[status][start_minute].keys[0]
+			employee_id = order_statuses_hash[status][start_minute][0]
 
 			update_request = {
 				script: {
@@ -692,7 +829,7 @@ class Minute
 						        booking.put("status_id",params.status_id);
 						        booking.put("order_id",params.order_id);
 						        booking.put("count",params.count);
-						        booking.put("priority",(1/employee.bookings.size));
+						        booking.put("priority",(employee.bookings.length));
 					        	employee["bookings"].add(booking);
 					        	employee["bookings_score"] = employee["bookings_score"] + 1;
 					        }
@@ -701,7 +838,7 @@ class Minute
 					''',
 					params: {
 						employee_id: employee_id,
-						order_id: order_id,
+						order_id: order.id,
 						status_id: status,
 						report_ids: report_ids,
 						count: status_count
@@ -723,12 +860,12 @@ class Minute
 				## for each employee here,
 				## for the block duration
 				if block_other_employees == 1
-
+					puts "block other employees"
 					## in this case, 
 					## it means that no one else can do this statust till the end.
 					## as well as this employee
 					## its basically a status block.
-					update_request = {
+					request_details = {
 						script: {
 							lang: "painless",
 							inline: '''
@@ -742,61 +879,54 @@ class Minute
 						}
 					}
 
-
-				else
-
-					## we basically make the employee ineligible for these statuses.
-					
+					## here we don't do k + 1.
+					## here we do only
 					update_request = {
-						script: {
-							lang: "painless",
-							inline: '''
-								for(employee in ctx._source.employees){
-									if(employee["id"] == params.employee_id)
-							        employee.bookings_score = 11;
-							      }
-							''',
-							params: {
-								status_id: status,
-								employee_id: employee_id
-							}		
+						update: {
+							_index: index_name, _type: document_type, _id: (start_minute + k).to_s, data: request_details
 						}
 					}
 
+					add_bulk_item(update_request)
 
 				end
 
+				## we basically make the employee ineligible for these statuses.
+				puts "got that we have to block the employee in subsequent minutes."
 
-				update_request = {
-					update: {
-						_index: index_name, _type: document_type, _id: (start_minute + k), data: update_request
+				request_details = {
+					script: {
+						lang: "painless",
+						inline: '''
+							for(employee in ctx._source.employees){
+								if(employee["id"] == params.employee_id)
+						        employee.bookings_score = 11;
+						      }
+						''',
+						params: {
+							status_id: status,
+							employee_id: employee_id
+						}		
 					}
 				}
 
-				## okay so order creation is basically report cloning
-				## i've got to move that to a background job.
+				puts "start minute + k is: #{start_minute + k}"
 
-				## after this seperate the order creation, 
-				## from the scheduling
-				## and then the routine creation, same seperate from the scheduling
-				## and then reallotment -> request creation
+				update_request = {
+					update: {
+						_index: index_name, _type: document_type, _id: (start_minute + k + 1).to_s, data: request_details
+					}
+				}
 
-				## after that the UI, and displaying the statuses report wise, from the minutes, instead of the reports themselves.
-				## shouldn't be too hard.
-				## what is the action?
-				## show
-				## which user ids / groups are registered on show on that record?
-				## end of story.
-				## it's as simple as that
-				## similary which are registered on notify.
-				## end of story.
-
+				add_bulk_item(update_request)
 			end
 
 
 			prev_status_minute = start_minute
 			prev_status_id = status
 		end
+
+		flush_bulk
 	end
 
 

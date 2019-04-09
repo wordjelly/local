@@ -34,7 +34,7 @@ class Status
 	attribute :tag_ids, String, mapping: {type: 'keyword'}
 	
 	## REQUIRED
-	attribute :duration, Integer, :default => 300
+	attribute :duration, Integer, :default => 10
 	## REQUIRED
 	attribute :employee_block_duration, Integer, :default => 300
 	## REQUIRED
@@ -441,7 +441,7 @@ class Status
 			end
 		end
 
-		
+
 
 		{
 			reports_to_statuses_hash:  reports_to_statuses_hash,

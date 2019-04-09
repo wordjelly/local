@@ -235,12 +235,16 @@ class Order
 
 			end
 				
-			#puts JSON.pretty_generate(self.tubes)
 
 			self.tubes.each do |tube|
 				unless tube["barcode"].blank?
 					other_order_has_barcode?(tube["barcode"])
 					item_type_is_equivalent?(tube["barcode"],tube["item_requirement_name"])
+					## update to every minute, where these reports have been found in the bookings.
+					## if its not already there.
+				else
+					## remove it from those reports, in every minute, wherever it has been found.
+					## this part is ok.
 				end
 			end	
 		end
@@ -259,6 +263,8 @@ class Order
 					if patient_report.can_be_cancelled?
 						c["template_report_ids"].delete_at(arrind)
 						c["patient_report_ids"].delete_at(arrind)
+						## delete it from the minutes whereever it is registered
+						## also if some tube was added, nothign much can be done for that.
 						ireq = ItemRequirement.search({
 							query: {
 								term: {
@@ -287,6 +293,11 @@ class Order
 		puts self.report_ids_to_add.to_s
 
 		self.schedule_action = "add" unless self.report_ids_to_add.blank?
+
+		## => key : template_report_id
+		## => value : patient_report_id
+		## used at the end of this function to populate the patient report ids.
+		template_reports_to_patient_reports_hash = {}
 
 		required_item_amounts = ItemRequirement.search({
 			query: {
@@ -364,14 +375,21 @@ class Order
 
 		required_item_amounts.response.aggregations.item_types.buckets.each do |item_type|
 			item_type.item_requirements.buckets.each do |ir|
+				
 				tube_type = ir["key"]
+				
 				required_amount = ir.amounts.required_reports.sum_amount.value
+
 				applicable_reports = ir.amounts.required_reports.applicable_reports.buckets.map{|c| c = c["key"]}
 				
 				patient_report_ids = applicable_reports.map{|c|
 					clone_report(c)
 				}
 				
+				applicable_reports.each_with_index {|ar,key|
+					template_reports_to_patient_reports_hash[ar] = patient_report_ids[key]
+				}
+
 				add_tube_requirement({
 					"item_requirement_name" => tube_type,
 					"template_report_ids" => applicable_reports,
@@ -380,6 +398,8 @@ class Order
 				})
 			end
 		end
+
+		self.patient_report_ids = template_reports_to_patient_reports_hash.values
 
 	end
 
@@ -554,6 +574,22 @@ class Order
 	###########################################################
 	##
 	##
+	## UTILITY
+	##
+	##
+	###########################################################
+	def get_patient_report_ids_applicable_to_status(status)
+		applicable_patient_report_ids = []
+		status.parent_ids.each do |parent_id|
+			applicable_patient_report_ids << self.patient_report_ids[self.template_report_ids.index(parent_id)]
+		end
+		applicable_patient_report_ids
+	end
+
+
+	###########################################################
+	##
+	##
 	## SCHEDULE
 	##
 	##
@@ -614,9 +650,7 @@ class Order
 			puts "the minute slots are:"
 			puts JSON.pretty_generate(minute_slots)
 
-			Minute.build_minute_update_request_for_order(minute_slots,self.id.to_s)
-
-			#self.save
+			Minute.build_minute_update_request_for_order(minute_slots,self)
 
 		else
 
