@@ -6,7 +6,8 @@ class Order
 	include Concerns::PdfConcern
 	
 	## the interval to keep between minutes.
-	DEFAULT_INTERVAL = 20
+	## this is a huge interval.
+	DEFAULT_INTERVAL = 300
 
 	index_name "pathofast-orders"
 
@@ -106,24 +107,45 @@ class Order
 		    		type: 'keyword'
 		    	}
 		    }
+		    indexes :schedule_logs, type: 'nested', properties: {
+		    	log_time: {
+		    		type: 'date'
+		    	},
+		    	report_ids: {
+		    		type: 'keyword'
+		    	},
+		    	result: {
+		    		type: 'keyword'
+		    	},
+		    	order_start_time: {
+		    		type: 'date'
+		    	}
+		    }
 		end
 
 	end
 
 	validates_presence_of :patient_id	
-	
+		
+	## if set to any value, will skip the before save callbacks
+	attr_accessor :skip_before_save
+
+	## if set to any valu, will skip the after save callbacks.
+	attr_accessor :skip_after_save	
+
 	before_save do |document|
-		document.update_barcodes
-		document.update_tubes
+		if document.skip_before_save.blank?
+			document.update_barcodes
+			document.update_tubes
+		end
 	end
 
 	after_save {puts "executing code after saving"}
 
 	after_save do |document|
-		puts " ---------- DOING AFTER SAVE ----------- "
-		## let's see if refresh index works.
-		## but it would'nt have found it at all otherwise.
-		ScheduleJob.perform_later([document.id.to_s,document.class.name])
+		if document.skip_after_save.blank?
+			ScheduleJob.perform_later([document.id.to_s,document.class.name])
+		end
 	end
 
 	after_find do |document|
@@ -240,6 +262,8 @@ class Order
 				unless tube["barcode"].blank?
 					other_order_has_barcode?(tube["barcode"])
 					item_type_is_equivalent?(tube["barcode"],tube["item_requirement_name"])
+					## this is done in the background job.
+					## so all that has to be changed.
 					## update to every minute, where these reports have been found in the bookings.
 					## if its not already there.
 				else
@@ -598,11 +622,22 @@ class Order
 			
 		puts "the schedule action is: #{schedule_action}"
 
-		if self.schedule_action == "add"
-			#self.report_ids_to_add = []
+		## something like scheduled for reports a,b,c
+		## could not schedule, with start time.
+		## could not schedule, with start time.
+		## so that's how it works.
+		## what if its remove.
+		## you can neither add nor remove, if the schedule action is there, basically you cant do anything.
+		## other than changing the start time.
+		## also if its add barcodes
+		## you can't do anything else.
 
-			puts "the report ids to add are:"
-			puts self.report_ids_to_add.to_s
+
+		if self.schedule_action == "add"
+
+			#self.report_ids_to_add = []
+			#puts "the report ids to add are:"
+			#puts self.report_ids_to_add.to_s
 
 			statuses_and_reports = Status.get_statuses_for_report_ids(self.report_ids_to_add)
 
@@ -650,7 +685,8 @@ class Order
 			puts "the minute slots are:"
 			puts JSON.pretty_generate(minute_slots)
 
-			Minute.build_minute_update_request_for_order(minute_slots,self)
+			## the required statuses is passed to the build_minute_request to be handled thereof.
+			Minute.build_minute_update_request_for_order(minute_slots,self,args)
 
 		else
 

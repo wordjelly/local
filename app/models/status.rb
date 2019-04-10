@@ -36,7 +36,7 @@ class Status
 	## REQUIRED
 	attribute :duration, Integer, :default => 10
 	## REQUIRED
-	attribute :employee_block_duration, Integer, :default => 300
+	attribute :employee_block_duration, Integer, :default => 1
 	## REQUIRED
 	attribute :block_other_employees, Integer, :default => 1
 	## the maximum number of these statuses that can be handled at any one time by any give employee.
@@ -423,12 +423,7 @@ class Status
 			reports_to_statuses_hash[template_report_id] = []
 			unless bucket.status_ids.buckets.blank?
 				bucket.status_ids.buckets.each do |status_id|
-					#puts "the status id is:"
-					#puts status_id.to_s
-					#puts status_id.priority
-					#puts status_id["priority"]
-					#exit(1)
-
+					
 					reports_to_statuses_hash[template_report_id] << 
 					{
 						priority:  status_id.priority.value,

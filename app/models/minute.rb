@@ -109,7 +109,7 @@ class Minute
 		## i could just go with inner hits.
 		## can i combine this in one query ?
 		## like for different barcodes.
-		Minute.search({
+		search_results = Minute.search({
 			query: {
 				nested: {
 					path: "employees",
@@ -155,7 +155,7 @@ class Minute
 							aggs: {
 								employee_ids: {
 									nested: {
-										path: "bookings"
+										path: "employees.bookings"
 									},
 									aggs: {
 										bookings_with_reports: {
@@ -177,7 +177,7 @@ class Minute
 															aggs: {
 																back_to_bookings: {
 																	nested: {
-																		path: "bookings"
+																		path: "employees.bookings"
 																	},
 																	aggs: {
 																		booking_priority: {
@@ -202,19 +202,27 @@ class Minute
 			}
 		})
 
-		## then we update those minutes with scripts
-		## after this removal from minutes
-		## if a barcode is wrongly entered.
-		## we only add newer ones.
-		## how to remove one that does not exist anymore ?
-		## if we add a new barcode to the tubes
-		## we would check the reports, 
-		## and then we would add this barcode.
-		## so we will have to send in all the barcodes.
-		## and if none of them is there, it will have to be removed
-		## when a report is removed, it has to be deleted from
-		## any minute where it exists, in any booking.
-		## these two things can be handled easily
+		minute_hash = {}	
+
+		search_results.response.aggregations.minutes.buckets.each do |minute_bucket|
+			
+			minute_id = minute_bucket["key"]
+			minute_hash[minute_id] = {}
+			minute_bucket.employees.employee_ids.bookings_with_reports.back_to_employees.employee_ids.buckets.each do |employee_id_bucket|
+				employee_id = employee_id_bucket["key"]
+				bookings_priority = employee_id_bucket.back_to_bookings.booking_priority["value"]
+				puts "the employee id bucket is:"
+				puts employee_id_bucket.to_s
+				puts "the bookings priority is:"
+				puts bookings_priority.to_s
+				minute_hash[minute_id][employee_id] = bookings_priority.to_i
+			end
+
+		end
+
+		build_minute_update_requests_for_tube(minute_hash,barcode)
+
+		flush_bulk
 
 	end
 
@@ -504,12 +512,14 @@ class Minute
 
 	end
 
-	## @param[Array] required_statuses: 
+	## @args[Hash] : hash of arguments
+	## 1.required_statuses: 
 	## each status must have
 	## :from => an integer (minutes from epoch)
 	## :to => an integer (minutes from epoch)
 	## :id => the id of the status 
 	## :maximum_capacity => an integer, the maximum number of these statuses that can be done at any given minute
+	## 2. order_id
 	## @return[Hash]
 =begin
 	{
@@ -522,16 +532,21 @@ class Minute
 =end
 	def self.get_minute_slots(args)
 		
+		## this is step one.
+		## now we have to define that range somewhere to
+		## be as wide as possible.
+
+
 		query = {
 			bool: {
-				should: [
+				must: [
 
 				]
 			}
 		}
 
 		args[:required_statuses].map{|c|
-			query[:bool][:should] << {
+			query[:bool][:must] << {
 				bool: {
 					must: [
 						{
@@ -633,10 +648,80 @@ class Minute
 			        	path: "employees"
 			      	},
 			      	aggs: {
+			      		## gotta merge this, at the hash level
+			      		## so i'll merge it.
+			      		## so that we can add stuff diretly there.
+			      		booked_statuses: {
+			      			nested: {
+			      				path: "employees.bookings"
+			      			},
+			      			aggs: {
+			      				filter: {
+			      					term: {
+			      						"employees.bookings.order_id".to_sym => args[:order_id]
+			      					}
+			      				},
+			      				aggs: {
+			      					terms: {
+			      						field: "employees.bookings.status_id",
+			      						include: args[:required_statuses].map{|c| c[:id]}
+			      					},
+			      					aggs: {
+			      						minute: {
+			      							reverse_nested: {},
+			      							aggs: {
+			      								minute_id: {
+					                  				terms: {
+					                    				field: "number",
+					                    				order: {"_key".to_sym => "asc"}
+					                  				},
+					                  				aggs: {
+						                    			employees: {
+							                      			nested: {
+							                        			path: "employees"
+							                      			},
+							                      			aggs: {
+							                        			emp_id: {
+							                          				terms: {
+							                            				field: "employees.employee_id",
+							                            				size: 10,
+							                            				order: {
+							                              					bookings_score: "asc"
+							                            				}
+							                         				},
+							                          				aggs: {
+							                            				bookings_score: {
+								                              				min: {
+								                                				field: "employees.bookings_score"
+								                              				}
+							                            				},
+							                            				bookings: {
+							                            					nested: {
+							                            						path: "employees.bookings",
+
+							                            					},
+							                            					aggs: {
+							                            						bookings_priority: {
+							                            							min: {field: "employees.bookings.priority"}
+							                            						}
+							                            					}
+							                            				}
+							                          				}
+							                        			}
+
+							                      			}
+						                    			}
+					                  				}
+					                			}
+			      							}
+			      						}
+			      					}
+			      				}
+			      			}
+			      		},
 			        	status_id: {
 				          		terms: {
 				            		field: "employees.status_ids",
-				            		size: 10,
 				            		include: args[:required_statuses].map{|c| c[:id]}
 				          		},
 				          		aggs: {
@@ -670,6 +755,7 @@ class Minute
 						                            				}
 						                          				}
 						                        			}
+
 						                      			}
 					                    			}
 				                  				}
@@ -788,15 +874,77 @@ class Minute
 
 	end
 
+	def self.build_minute_update_requests_for_tube(minute_hash,barcode)
+		minute_hash.keys.each do |minute_id|
+			minute_hash[minute_id].keys.each do |employee_id|
 
+				update_script = {
+					script: {
+						lang: "painless",
+						inline: '''
+							for(employee in ctx._source.employees){
+								
+						        if(employee["id"] == params.employee_id){
+						        	
+						        	for(booking in employee.bookings){
+						        		if(booking["priority"] == params.booking_priority){
+						        			if(booking["tubes"] == null){
+						        				booking["tubes"] = new ArrayList();
+						        			}
+							        		booking["tubes"].add(params.barcode);
+						        		}
+						        	}
+						        }
+
+						      }
+						''',
+						params: {
+							employee_id: employee_id,
+							booking_priority: minute_hash[minute_id][employee_id],
+							barcode: barcode
+						}		
+					}
+				}
+
+				update_request = {
+					update: {
+						_index: index_name, _type: document_type, _id: minute_id, data: update_script
+					}
+				}
+
+				add_bulk_item(update_request)
+
+			end
+		end
+	end
+
+	## @param[Hash] order_statuses_hash => 
+	## @param[Order] order =>
+	## @param[Hash] args => contains a single key,
+	## :required_statuses.
 	def self.build_minute_update_request_for_order(
-		order_statuses_hash,order)
+		order_statuses_hash,order,args)
+		
+	
+		required_statuses = args[:required_statuses]
+
 		prev_status_minute = nil
 		prev_status_id = nil
-		## this count is the problem.
-		## how many have to be assigned herewith.
-		## 
-		order_statuses_hash.keys.each do |status|
+
+		## if the first status is itself not there.
+		## it doesn't matter, we piggyback in totum.
+		
+		required_statuses.each do |status|
+
+			## is this status even there ?
+			## otherwise, it has to be alloted for piggyback.
+			## lets say step 6 was alloted to an employee at a certain minute
+			## first six steps we didn't have anyone.
+			## maybe there was no employee
+			## or there was all full employees.
+			## whatever it is, where does this get queued ?
+			## 
+			
 			status_obj = Status.find(status)
 			report_ids = order.get_patient_report_ids_applicable_to_status(status_obj)
 			status_duration = status_obj.duration
@@ -812,7 +960,13 @@ class Minute
 				}
 				unless viable_minutes.blank?
 					start_minute = viable_minutes[0]
-
+				else
+					## so this solves the problem.
+					## the result in case this hash is empty
+					## is that could not be scheduled
+					## please choose another day/start_time.
+					## 
+					start_minute = order_statuses_hash[status].keys[-1]
 				end
 			end
 
@@ -870,7 +1024,7 @@ class Minute
 							lang: "painless",
 							inline: '''
 								for(employee in ctx._source.employees){
-							        employee.status_ids.remove(params.status)
+							        employee.status_ids.remove(employee.status_ids.indexOf(params.status_id))
 							      }
 							''',
 							params: {
@@ -924,9 +1078,39 @@ class Minute
 
 			prev_status_minute = start_minute
 			prev_status_id = status
+
 		end
 
 		flush_bulk
+
+		## here we want to check if it was empty
+		## otherwise we remove the ids to add
+		## and also the action
+		## otherwise 
+		## something like a log,
+		## so that i can see what all was attempted.
+		## that would be useful.
+		## so lets have a concern for a nested mapping.
+		## called a schedule_actions_log
+		## this is only on order
+		## so add the mappings there itself.
+		## and update them here without triggering the whole
+		## enchilada.
+		## we can do that from the 
+		## i want to complete, add and remove reports
+		## just think, that we add some reports
+		## they don't get scheduled
+		## tney you add some more reports.
+		## then what happens ?
+		## so it doesn't let you do that.
+		## it checks if they are there, and asks you to 
+		## first reschedule
+		## if you remove some reports, 
+		## then the schedule has to be remodified.
+		## any minute where it was booked just for that report
+		## has to get freed up.
+		## i can deal with all this today.
+
 	end
 
 
