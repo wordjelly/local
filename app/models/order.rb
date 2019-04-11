@@ -38,11 +38,13 @@ class Order
 
 	attribute :item_group_id
 	attribute :item_group_action
+	attribute :order_logs, Array[Hash]
 
 	attr_accessor :patient
 	attr_accessor :reports
 	attr_accessor :cloned_reports
 	attr_accessor :report_name
+	attr_accessor :report_ids_to_remove
 		
 =begin
 
@@ -107,14 +109,14 @@ class Order
 		    		type: 'keyword'
 		    	}
 		    }
-		    indexes :schedule_logs, type: 'nested', properties: {
+		    indexes :order_logs, type: 'nested', properties: {
 		    	log_time: {
 		    		type: 'date'
 		    	},
-		    	report_ids: {
+		    	description: {
 		    		type: 'keyword'
 		    	},
-		    	result: {
+		    	report_ids: {
 		    		type: 'keyword'
 		    	},
 		    	order_start_time: {
@@ -610,7 +612,57 @@ class Order
 		applicable_patient_report_ids
 	end
 
+	###########################################################
+	##
+	##
+	## SCHEDULE LOGS
+	## each of these methods accepts an order_log object.
+	## it adds that to the orders logs, and saves
+	###########################################################
+	def failed_to_schedule(message)
+		self.order_logs ||= []
+		self.order_logs << OrderLog.new(:log_time => Time.now.to_i, :description => "failed to create schedule", :message => message)
+	end
 
+	def scheduled_successfully
+		self.order_logs ||= []
+		self.order_logs << OrderLog.new(:log_time => Time.now.to_i, :description => "scheduled scheduled_successfully")
+	end
+
+	def changed_order_time
+		self.order_logs ||= []
+		self.order_logs << OrderLog.new(:log_time => Time.now.to_i, :order_start_time => self.order_start_time, :description => "changed order time")
+	end
+
+	def submitted_for_scheduling
+		self.order_logs ||= []
+		self.order_logs << OrderLog.new(:log_time => Time.now.to_i, :description => "submitted for scheduling")
+	end
+
+	def added_reports
+		self.order_logs ||= []
+		self.order_logs << OrderLog.new(:log_time => Time.now.to_i, :report_ids => self.report_ids_to_add, :description => "added reports")
+	end
+
+	def removed_reports
+		self.order_logs ||= []
+		self.order_logs << OrderLog.new(:log_time => Time.now.to_i, :report_ids => self.report_ids_to_remove, :description => "removed reports")
+	end
+
+	def submitted_to_update_barcodes
+		self.order_logs ||= []
+		self.order_logs << OrderLog.new(:log_time => Time.now.to_i, :description => "submitted to update barcodes")
+	end
+
+	def barcodes_updated_successfully
+		self.order_logs ||= []
+		self.order_logs << OrderLog.new(:log_time => Time.now.to_i, :description => "barcodes updated successfully")
+	end
+
+	def barcodes_update_failed
+		self.order_logs ||= []
+		self.order_logs << OrderLog.new(:log_time => Time.now.to_i, :description => "barcodes update failed")
+	end
 	###########################################################
 	##
 	##

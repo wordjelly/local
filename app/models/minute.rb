@@ -530,6 +530,7 @@ class Minute
 		}
 	}
 =end
+
 	def self.get_minute_slots(args)
 		
 		## this is step one.
@@ -639,83 +640,87 @@ class Minute
 		puts "the queries are:"
 		puts JSON.pretty_generate(query)
 
+		status_results = {}
+
 		query_and_aggs = 
 			{
 				query: query,
 			  	aggs: {
 			    	required_status: {
 			      		nested: {
-			        	path: "employees"
-			      	},
-			      	aggs: {
-			      		## gotta merge this, at the hash level
-			      		## so i'll merge it.
-			      		## so that we can add stuff diretly there.
+			        		path: "employees"
+			      		},
+			      		aggs: {
+
 			      		booked_statuses: {
 			      			nested: {
 			      				path: "employees.bookings"
 			      			},
 			      			aggs: {
-			      				filter: {
-			      					term: {
-			      						"employees.bookings.order_id".to_sym => args[:order_id]
-			      					}
-			      				},
-			      				aggs: {
-			      					terms: {
-			      						field: "employees.bookings.status_id",
-			      						include: args[:required_statuses].map{|c| c[:id]}
-			      					},
-			      					aggs: {
-			      						minute: {
-			      							reverse_nested: {},
-			      							aggs: {
-			      								minute_id: {
-					                  				terms: {
-					                    				field: "number",
-					                    				order: {"_key".to_sym => "asc"}
-					                  				},
-					                  				aggs: {
-						                    			employees: {
-							                      			nested: {
-							                        			path: "employees"
-							                      			},
-							                      			aggs: {
-							                        			emp_id: {
-							                          				terms: {
-							                            				field: "employees.employee_id",
-							                            				size: 10,
-							                            				order: {
-							                              					bookings_score: "asc"
-							                            				}
-							                         				},
-							                          				aggs: {
-							                            				bookings_score: {
-								                              				min: {
-								                                				field: "employees.bookings_score"
-								                              				}
-							                            				},
-							                            				bookings: {
-							                            					nested: {
-							                            						path: "employees.bookings",
+			      				this_order: {
+				      				filter: {
+				      					term: {
+				      						"employees.bookings.order_id".to_sym => args[:order_id]
+				      					}
+				      				},
+				      				aggs: {
+				      					this_order_statuses: {
+					      					terms: {
+					      						field: "employees.bookings.status_id",
+					      						include: args[:required_statuses].map{|c| c[:id]}
+					      					},
+					      					aggs: {
+					      						minute: {
+					      							reverse_nested: {},
+					      							aggs: {
+					      								minute_id: {
+							                  				terms: {
+							                    				field: "number",
+							                    				order: {"_key".to_sym => "asc"}
+							                  				},
+							                  				aggs: {
+								                    			employees: {
+									                      			nested: {
+									                        			path: "employees"
+									                      			},
+									                      			aggs: {
+									                        			emp_id: {
+									                          				terms: {
+									                            				field: "employees.employee_id",
+									                            				size: 10,
+									                            				order: {
+									                              					bookings_score: "asc"
+									                            				}
+									                         				},
+									                          				aggs: {
+									                            				bookings_score: {
+										                              				min: {
+										                                				field: "employees.bookings_score"
+										                              				}
+									                            				},
+									                            				bookings: {
+									                            					nested: {
+									                            						path: "employees.bookings",
 
-							                            					},
-							                            					aggs: {
-							                            						bookings_priority: {
-							                            							min: {field: "employees.bookings.priority"}
-							                            						}
-							                            					}
-							                            				}
-							                          				}
-							                        			}
+									                            					},
+									                            					aggs: {
+									                            						bookings_priority: {
+									                            							min: {field: "employees.bookings.priority"}
+									                            						}
+									                            					}
+									                            				}
+									                          				}
+									                        			}
 
-							                      			}
-						                    			}
-					                  				}
-					                			}
-			      							}
-			      						}
-			      					}
+									                      			}
+								                    			}
+							                  				}
+							                			}
+					      							}
+					      						}
+					      					}
+				      					}
+				      				}
 			      				}
 			      			}
 			      		},
@@ -769,12 +774,16 @@ class Minute
 			  	}
 			}
 
+		puts JSON.pretty_generate(query_and_aggs)
+
 		response = search(query_and_aggs)
 
-		## this is not working, because number is not here.
-		##puts response.response.hits.hits.to_s
-		##puts response.response.aggregations.required_status.to_s
-		status_results = {}
+		## structure of the status_results hash is .
+		## status_id => {minute_id => {booking_priority => [employee_ids]}}
+		## this also means that we will be ignoring these results in the second aggregation
+		## or there will be a duplication.
+		## so that filter will have to be applied to the head of the second aggregation
+		
 		response.response.aggregations.required_status.status_id.buckets.each do |status_id_bucket|
 			status_id = status_id_bucket["key"]
 			status_results[status_id] = {}
@@ -783,12 +792,43 @@ class Minute
 				employee_ids = minute_bucket.employees.emp_id.buckets.map{|c|
 					c["key"]
 				}
-				status_results[status_id][minute] = employee_ids
+				status_results[status_id][minute] ||= {"-1".to_sym => []}
+				 
+				status_results[status_id][minute]["-1".to_sym] << employee_ids
 			end
 		end
 
-		status_results
 
+		response.response.aggregations.booked_statuses.this_order_statuses.buckets.each do |status_id_bucket|
+			status_id = status_id_bucket["key"]
+			status_id_bucket.minute.minute_id.buckets.each do |minute_bucket|
+				minute = minute_bucket["key"]
+				employee_ids_to_bookings_priority = {}
+				minute_bucket.employees.emp_id.buckets.map{|c|
+					employee_ids_to_bookings_priority[c["key"]] = c.bookings.bookings_priority["value"]
+				}
+				employee_ids_to_bookings_priority.keys.each do |eid|
+					## so this key
+					## is 
+					status_results[status_id][minute]["-1".to_sym].delete(eid)
+					## at the booking priority add the employee id.
+					## 
+					status_results[status_id][minute][employee_ids_to_bookings_priority[eid].to_s.to_sym] ||= []
+					status_results[status_id][minute][employee_ids_to_bookings_priority[eid].to_s.to_sym] << eid
+				end
+			end
+		end
+
+
+		status_results.keys.each do |sk|
+			
+			status_results[sk] = (status_results[sk].sort_by{|k,v|
+				k.to_s.to_i
+			}).to_h
+
+		end
+
+		status_results
 	end
 
 	#######################################################
@@ -924,7 +964,7 @@ class Minute
 	## :required_statuses.
 	def self.build_minute_update_request_for_order(
 		order_statuses_hash,order,args)
-		
+
 	
 		required_statuses = args[:required_statuses]
 
@@ -933,7 +973,7 @@ class Minute
 
 		## if the first status is itself not there.
 		## it doesn't matter, we piggyback in totum.
-		
+=begin
 		required_statuses.each do |status|
 
 			## is this status even there ?
@@ -952,22 +992,55 @@ class Minute
 			employee_block_duration = status_obj.employee_block_duration
 			block_other_employees = status_obj.block_other_employees
 
-			if prev_status_minute.blank?
-				start_minute = order_statuses_hash[status].keys[0]
-			else
-				viable_minutes = order_statuses_hash[status].keys.select{|c|
-					c >= (prev_status_minute + status_duration)
-				}
-				unless viable_minutes.blank?
-					start_minute = viable_minutes[0]
-				else
-					## so this solves the problem.
-					## the result in case this hash is empty
-					## is that could not be scheduled
-					## please choose another day/start_time.
-					## 
-					start_minute = order_statuses_hash[status].keys[-1]
+			
+			last_minute = order_statuses_hash[status].keys.select{|c|
+				order_statuses_hash[status][c].size > 1
+			}
+			unless last_minute.blank?
+				last_minute = last_minute[-1]
+			end
+			order_statuses_hash[status].keys.each do |min|
+				if order_statuses_hash[status][min].keys.size > 1
+					if start_minute.blank?
+						if prev_status_minute.blank?
+							start_minute = minute
+							# here also set the booking priority
+							# and employee id.
+						else
+							if min >= (prev_status_minute + status_duration)
+								start_minute = minute
+							end 
+						end 
+					end
 				end
+			end
+
+			start_minute = last_minute unless ((last_minute.blank?) && (last_minute <= prev_status_minute))
+
+			if start_minute.blank?
+				## here its already been chosen.
+				## so we hook it onto the last minute.
+				if prev_status_minute.blank?
+					start_minute = order_statuses_hash[status].keys[0]
+				else
+					viable_minutes = order_statuses_hash[status].keys.select{|c|
+						c >= (prev_status_minute + status_duration)
+					}
+					unless viable_minutes.blank?
+						start_minute = viable_minutes[0]
+					else
+						## as long as the start minute is at least greater than the 
+						## the previous status minute.
+						start_minute = order_statuses_hash[status].keys[-1] if (order_statuses_hash[status].keys[-1] >= prev_status_minute)
+					end
+				end
+			end
+
+
+			if start_minute.blank?
+				order.failed_to_schedule("could not find a start minute for status : #{status}")
+				order.save
+				return
 			end
 
 			employee_id = order_statuses_hash[status][start_minute][0]
@@ -1078,38 +1151,13 @@ class Minute
 
 			prev_status_minute = start_minute
 			prev_status_id = status
+			start_minute = nil
 
 		end
-
+=end
 		flush_bulk
 
-		## here we want to check if it was empty
-		## otherwise we remove the ids to add
-		## and also the action
-		## otherwise 
-		## something like a log,
-		## so that i can see what all was attempted.
-		## that would be useful.
-		## so lets have a concern for a nested mapping.
-		## called a schedule_actions_log
-		## this is only on order
-		## so add the mappings there itself.
-		## and update them here without triggering the whole
-		## enchilada.
-		## we can do that from the 
-		## i want to complete, add and remove reports
-		## just think, that we add some reports
-		## they don't get scheduled
-		## tney you add some more reports.
-		## then what happens ?
-		## so it doesn't let you do that.
-		## it checks if they are there, and asks you to 
-		## first reschedule
-		## if you remove some reports, 
-		## then the schedule has to be remodified.
-		## any minute where it was booked just for that report
-		## has to get freed up.
-		## i can deal with all this today.
+		order.scheduled_successfully
 
 	end
 

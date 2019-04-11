@@ -1,6 +1,12 @@
-class PatientsController  < ApplicationController
+class PatientsController  < UsersController
 
 	respond_to :html, :json, :js
+
+	## so we want get_model_class
+	## get get_permitted_params
+	## we can do all this here itself.
+	## only the views will change i think.
+	## which is preferable.
 
 	def new
 		@patient = Patient.new
