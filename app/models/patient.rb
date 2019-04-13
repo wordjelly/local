@@ -5,7 +5,7 @@ class Patient
 
 	index_name "pathofast-patients"	
 
-	attribute :associated_user_id, String, mapping: {'type' : 'keyword'}
+	attribute :associated_user_id, String, mapping: {type: 'keyword'}
 
 	attribute :first_name, String
 

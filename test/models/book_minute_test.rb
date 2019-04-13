@@ -110,7 +110,6 @@ class BookMinuteTest < ActiveSupport::TestCase
 	    item_requirement.save
 	    }
 
-
 	    item_one = Item.new(item_type: "Golden Top Tube", barcode: "Golden Top Tube", expiry_date: (Time.now + 10.days).to_s)
       	item_one.save
 
@@ -127,14 +126,19 @@ class BookMinuteTest < ActiveSupport::TestCase
       	@status_zero = Status.new(name: "At Collection Site", priority: 0, parent_ids: [@r1_id, @r2_id, @r3_id])
 	    @status_zero.save
 
-	    Minute.create_index! force: true
-		Minute.create_two_test_minutes(@status_zero)
+	    
+	end
+
+=begin
+	test "books single minute" do 
+
+		Minute.create_index! force: true
+		Minute.create_single_test_minute(@status_zero)
 
 	    Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
-	end
+	    puts " - setup completed - "
 
-	test "books single minute" do 
 		o = Order.new
 	    o.patient_id = "test_patient"
 	    o.template_report_ids = [@r1_id,@r2_id,@r3_id]
@@ -149,6 +153,14 @@ class BookMinuteTest < ActiveSupport::TestCase
 	    else
 	      puts " ORDER HAS ERRORS "
 	    end
+
+	    m = Minute.find("1")
+	    ## its bookings should not be empty.
+	    assert m.employees[0]["bookings"].size == 1
+
+	end
+=end
+
 =begin
 		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
@@ -156,8 +168,65 @@ class BookMinuteTest < ActiveSupport::TestCase
 	   		Minute.update_tube_barcode(tube["patient_report_ids"],tube["item_requirement_name"])
 	  	end
 =end
+
+	test "uses existing order status if it is available" do 
+
+		Minute.create_index! force: true
+		Minute.create_single_test_minute(@status_zero,2)
+
+	    Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+	    puts " - setup completed - "
+
+		o = Order.new
+	    o.patient_id = "test_patient"
+	    o.template_report_ids = [@r1_id,@r2_id]
+	    o.start_time = Time.utc(1970,1,1,0,0,0)
+	    if o.errors.empty?
+	      puts "SAVING ORDER IT HAS NO ERRORS."
+	     # o.run_callbacks(:save)
+	      response = o.save
+	      puts o.errors.full_messages.to_s
+	      puts response.to_s
+
+	    else
+	      puts " ORDER HAS ERRORS "
+	    end
+
+	    #exit(1)
+	    ## so basically we have to see it working, even when reports are available
+	    ## for other employees
+	    ## and the same employee.
+	    ## so lets have one more employee.
+
+	    o = Order.find(o.id.to_s)
+	    o.patient_id = "test_patient"
+	    o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+		o.start_time = Time.utc(1970,1,1,0,0,0)
+	    if o.errors.empty?
+	      puts "SAVING ORDER IT HAS NO ERRORS."
+	     # o.run_callbacks(:save)
+	      response = o.save
+	      puts o.errors.full_messages.to_s
+	      puts response.to_s
+
+	    else
+	      puts " ORDER HAS ERRORS "
+	    end	    
+
+	    ## so it has merged this order.
+	    ## why ?
+	    ## because the status matches.
+	    ## but within only one minute.
+	    ## now lets do a test
+	    ## where it has to do three different statuses
+	    ## each about 10 minutes long.
+	    ## and then see how things go, over 60 minutes
+	    ## lets keep two employees.
+	    ## first solve the null problems.
 	end
 
+=begin
 	test "books two minutes" do 
 	
 	end
@@ -191,7 +260,7 @@ class BookMinuteTest < ActiveSupport::TestCase
 	test "blocks same employee for centrifuge" do 
 
 	end
-
+=end
 	
 	
 end

@@ -12,7 +12,6 @@ class MinuteTest < ActiveSupport::TestCase
     ## what all to test
     ## 
 
-=begin
     test "test adds new employee to minute" do 
     	new_employee_ids = ["101","221","321"]
 
@@ -68,8 +67,6 @@ class MinuteTest < ActiveSupport::TestCase
 
     end
 
-=end
-
     test " - gets all minutes as slots for this status - " do 
 
 		required_statuses = [
@@ -81,8 +78,16 @@ class MinuteTest < ActiveSupport::TestCase
 			}
 		]
 
-		Minute.get_minute_slots({:required_statuses => required_statuses, :order_id => "test"})
+		statuses_hash = Minute.get_minute_slots({:required_statuses => required_statuses, :order_id => "test"})
 
+		[0,1,2,3,4,5,6,7,8,9].each do |n|
+			
+			assert statuses_hash["1"][n.to_s]
+			[0,1,2,3,4,5].each do |emp_id|
+				assert statuses_hash["1"][n.to_s]["-1"].include? emp_id.to_s
+			end
+		end
+		
 	end
 
 	## so here we work on get slots.

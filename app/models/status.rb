@@ -41,7 +41,7 @@ class Status
 	attribute :block_other_employees, Integer, :default => 1
 	## the maximum number of these statuses that can be handled at any one time by any give employee.
 	## REQUIRED
-	attribute :maximum_capacity, Integer, :default => 1
+	attribute :maximum_capacity, Integer, :default => 10
 
 
 	attr_accessor :tag_name

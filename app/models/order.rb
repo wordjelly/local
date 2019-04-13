@@ -606,10 +606,18 @@ class Order
 	###########################################################
 	def get_patient_report_ids_applicable_to_status(status)
 		applicable_patient_report_ids = []
+		puts "the status parent ids are:"
+		puts status.parent_ids
+		puts "the patient report ids are:"
+		puts self.patient_report_ids
+		puts "the self template report ids are:"
+		puts self.template_report_ids.to_s
 		status.parent_ids.each do |parent_id|
-			applicable_patient_report_ids << self.patient_report_ids[self.template_report_ids.index(parent_id)]
+			if self.template_report_ids.include? parent_id
+				applicable_patient_report_ids << self.patient_report_ids[self.template_report_ids.index(parent_id)]
+			end
 		end
-		applicable_patient_report_ids
+		applicable_patient_report_ids.compact
 	end
 
 	###########################################################
@@ -730,6 +738,8 @@ class Order
 				
 			}
 
+			args[:order_id] = self.id.to_s
+
 			puts "teh required status args are:"
 			puts JSON.pretty_generate(args)
 
@@ -739,6 +749,8 @@ class Order
 
 			## the required statuses is passed to the build_minute_request to be handled thereof.
 			Minute.build_minute_update_request_for_order(minute_slots,self,args)
+
+			## so what should happen at the end of all this.
 
 		else
 

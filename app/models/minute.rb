@@ -255,15 +255,20 @@ class Minute
 
 	## creates a single minute, with 
 	## creates n minutes.
-	def self.create_single_test_minute(status)
+	def self.create_single_test_minute(status,employee_count=1)
 		status_ids = [status.id.to_s]
 		m = Minute.new(number: 1, working: 1, employees: [], id: 1.to_s)
-		1.times do |employee|
+		employee_count.times do |employee|
 			e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
 			m.employees << e
 		end
 		Minute.add_bulk_item(m)
 		Minute.flush_bulk
+	end
+
+	def self.create_multiple_test_minutes(total_mins,employee_count,statuses)
+		## if we remove a report, then all those things have to also
+		## be removed.
 	end
 
 
@@ -525,7 +530,7 @@ class Minute
 	{
 		status_id => {
 			minute_id => {
-				employee_ids => []
+				bookings_priority => []
 			}
 		}
 	}
@@ -637,8 +642,8 @@ class Minute
 			}
 		}
 
-		puts "the queries are:"
-		puts JSON.pretty_generate(query)
+		#puts "the queries are:"
+		#puts JSON.pretty_generate(query)
 
 		status_results = {}
 
@@ -651,7 +656,6 @@ class Minute
 			        		path: "employees"
 			      		},
 			      		aggs: {
-
 			      		booked_statuses: {
 			      			nested: {
 			      				path: "employees.bookings"
@@ -774,7 +778,7 @@ class Minute
 			  	}
 			}
 
-		puts JSON.pretty_generate(query_and_aggs)
+		#puts JSON.pretty_generate(query_and_aggs)
 
 		response = search(query_and_aggs)
 
@@ -783,7 +787,9 @@ class Minute
 		## this also means that we will be ignoring these results in the second aggregation
 		## or there will be a duplication.
 		## so that filter will have to be applied to the head of the second aggregation
-		
+		puts " --------------- THESE ARE THE BOOKED STATUSES ------"		
+		puts response.response.aggregations.required_status.booked_statuses.to_s
+		puts " ----------------- done ----------------- "
 		response.response.aggregations.required_status.status_id.buckets.each do |status_id_bucket|
 			status_id = status_id_bucket["key"]
 			status_results[status_id] = {}
@@ -792,43 +798,63 @@ class Minute
 				employee_ids = minute_bucket.employees.emp_id.buckets.map{|c|
 					c["key"]
 				}
-				status_results[status_id][minute] ||= {"-1".to_sym => []}
+				status_results[status_id][minute] ||= {"-1".to_sym => nil}
 				 
-				status_results[status_id][minute]["-1".to_sym] << employee_ids
+				status_results[status_id][minute]["-1".to_sym] = employee_ids
 			end
 		end
 
+		puts "^^^^^^^^^^^^^^^The status results after the initial^^^^^^^^^^^^^^^^^^^^"
+		puts JSON.pretty_generate(status_results)
 
-		response.response.aggregations.booked_statuses.this_order_statuses.buckets.each do |status_id_bucket|
-			status_id = status_id_bucket["key"]
-			status_id_bucket.minute.minute_id.buckets.each do |minute_bucket|
-				minute = minute_bucket["key"]
-				employee_ids_to_bookings_priority = {}
-				minute_bucket.employees.emp_id.buckets.map{|c|
-					employee_ids_to_bookings_priority[c["key"]] = c.bookings.bookings_priority["value"]
-				}
-				employee_ids_to_bookings_priority.keys.each do |eid|
-					## so this key
-					## is 
-					status_results[status_id][minute]["-1".to_sym].delete(eid)
-					## at the booking priority add the employee id.
-					## 
-					status_results[status_id][minute][employee_ids_to_bookings_priority[eid].to_s.to_sym] ||= []
-					status_results[status_id][minute][employee_ids_to_bookings_priority[eid].to_s.to_sym] << eid
+
+		unless response.response.aggregations.required_status.booked_statuses.blank?
+			
+			response.response.aggregations.required_status.booked_statuses.this_order.this_order_statuses.buckets.each do |status_id_bucket|
+			
+				status_id = status_id_bucket["key"]
+				puts "the status id is: #{status_id}"
+				status_id_bucket.minute.minute_id.buckets.each do |minute_bucket|
+					minute = minute_bucket["key"]
+					puts "teh minute is: #{minute}"
+					employee_ids_to_bookings_priority = {}
+					puts "the minute bucket employees is:"
+					puts minute_bucket.employees.emp_id.to_s
+					minute_bucket.employees.emp_id.buckets.map{|c|
+						unless c.bookings.bookings_priority["value"].blank?
+							employee_ids_to_bookings_priority[c["key"]] = c.bookings.bookings_priority["value"].to_i
+						end
+					}
+					puts "employee id to bookings id:"
+					puts employee_ids_to_bookings_priority
+					employee_ids_to_bookings_priority.keys.each do |eid|
+						 
+						status_results[status_id][minute]["-1".to_sym].delete(eid)
+					
+						status_results[status_id][minute][employee_ids_to_bookings_priority[eid].to_s.to_sym] ||= []
+						status_results[status_id][minute][employee_ids_to_bookings_priority[eid].to_s.to_sym] << eid
+					end
+					puts "the hash becomes:"
+					puts employee_ids_to_bookings_priority.to_s
+					puts " --------- doen iteration ----------"
 				end
 			end
 		end
 
 
 		status_results.keys.each do |sk|
-			
-			status_results[sk] = (status_results[sk].sort_by{|k,v|
-				k.to_s.to_i
-			}).to_h
-
+			status_results[sk].keys.each do |skk|
+				status_results[sk][skk] = (status_results[sk][skk].sort_by{|k,v|
+					k.to_s.to_i
+				}).reverse.to_h
+			end
 		end
 
-		status_results
+		puts "----------------------------------"
+		puts JSON.pretty_generate(status_results)
+		puts "----------------------------------"
+
+		status_results.deep_stringify_keys
 	end
 
 	#######################################################
@@ -973,37 +999,38 @@ class Minute
 
 		## if the first status is itself not there.
 		## it doesn't matter, we piggyback in totum.
-=begin
-		required_statuses.each do |status|
 
-			## is this status even there ?
-			## otherwise, it has to be alloted for piggyback.
-			## lets say step 6 was alloted to an employee at a certain minute
-			## first six steps we didn't have anyone.
-			## maybe there was no employee
-			## or there was all full employees.
-			## whatever it is, where does this get queued ?
-			## 
-			
-			status_obj = Status.find(status)
+		required_statuses.each do |status|
+				
+			## so how many things are registerd.
+			## we want to say that 
+			## if someone is already doing this status.
+			## in a booking, then he should be doing it only 
+			## once.
+			## it should be the maximum capacity of that status.
+			## that's the status count.
+			## that's what we have to pass in.
+			status_obj = Status.find(status[:id])
 			report_ids = order.get_patient_report_ids_applicable_to_status(status_obj)
 			status_duration = status_obj.duration
 			status_count = report_ids.size
 			employee_block_duration = status_obj.employee_block_duration
 			block_other_employees = status_obj.block_other_employees
-
+			bookings_priority = nil
+			merge_order = 0
+			start_minute = nil
 			
-			last_minute = order_statuses_hash[status].keys.select{|c|
-				order_statuses_hash[status][c].size > 1
+			last_minute = order_statuses_hash[status[:id]].keys.select{|c|
+				order_statuses_hash[status[:id]][c].size > 1
 			}
 			unless last_minute.blank?
 				last_minute = last_minute[-1]
 			end
-			order_statuses_hash[status].keys.each do |min|
-				if order_statuses_hash[status][min].keys.size > 1
+			order_statuses_hash[status[:id]].keys.each do |min|
+				if order_statuses_hash[status[:id]][min].keys.size > 1
 					if start_minute.blank?
 						if prev_status_minute.blank?
-							start_minute = minute
+							start_minute = min
 							# here also set the booking priority
 							# and employee id.
 						else
@@ -1015,15 +1042,23 @@ class Minute
 				end
 			end
 
-			start_minute = last_minute unless ((last_minute.blank?) && (last_minute <= prev_status_minute))
+			unless last_minute.blank?
+				if start_minute.blank?
+					start_minute = last_minute unless (last_minute <= prev_status_minute)
+				end
+			end
 
-			if start_minute.blank?
+			unless start_minute.blank?
+				employee_id = order_statuses_hash[status[:id]][start_minute][order_statuses_hash[status[:id]][start_minute].keys[0]][0]
+				bookings_priority = order_statuses_hash[status[:id]][start_minute].keys[0]
+				merge_order = 1
+			else
 				## here its already been chosen.
 				## so we hook it onto the last minute.
 				if prev_status_minute.blank?
-					start_minute = order_statuses_hash[status].keys[0]
+					start_minute = order_statuses_hash[status[:id]].keys[0]
 				else
-					viable_minutes = order_statuses_hash[status].keys.select{|c|
+					viable_minutes = order_statuses_hash[status[:id]].keys.select{|c|
 						c >= (prev_status_minute + status_duration)
 					}
 					unless viable_minutes.blank?
@@ -1031,19 +1066,24 @@ class Minute
 					else
 						## as long as the start minute is at least greater than the 
 						## the previous status minute.
-						start_minute = order_statuses_hash[status].keys[-1] if (order_statuses_hash[status].keys[-1] >= prev_status_minute)
+						start_minute = order_statuses_hash[status[:id]].keys[-1] if (order_statuses_hash[status].keys[-1] >= prev_status_minute)
 					end
+				end
+
+				unless start_minute.blank?
+					employee_id = order_statuses_hash[status[:id]][start_minute]["-1"][0]
 				end
 			end
 
 
 			if start_minute.blank?
 				order.failed_to_schedule("could not find a start minute for status : #{status}")
+				puts " - could not find a start minute -"
+				exit(1)
 				order.save
 				return
 			end
 
-			employee_id = order_statuses_hash[status][start_minute][0]
 
 			update_request = {
 				script: {
@@ -1051,14 +1091,24 @@ class Minute
 					inline: '''
 						for(employee in ctx._source.employees){
 					        if(employee["id"] == params.employee_id){
-					        	Map booking = new HashMap();
-						        booking.put("report_ids",params.report_ids);
-						        booking.put("status_id",params.status_id);
-						        booking.put("order_id",params.order_id);
-						        booking.put("count",params.count);
-						        booking.put("priority",(employee.bookings.length));
-					        	employee["bookings"].add(booking);
-					        	employee["bookings_score"] = employee["bookings_score"] + 1;
+					        	if(params.merge_order == 1){
+					        		for(booking in employee.bookings){
+					        			if(booking["priority"] == params.bookings_priority){
+					        				booking["report_ids"].addAll(params.report_ids);
+					        				booking["count"]+= params.report_ids.length;
+					        			}	
+					        		}
+					        	}
+					        	else{
+						        	Map booking = new HashMap();
+							        booking.put("report_ids",params.report_ids);
+							        booking.put("status_id",params.status_id);
+							        booking.put("order_id",params.order_id);
+							        booking.put("count",params.count);
+							        booking.put("priority",(employee.bookings.length));
+						        	employee["bookings"].add(booking);
+						        	employee["bookings_score"] = employee["bookings_score"] + 1;
+					        	}
 					        }
 
 					      }
@@ -1066,9 +1116,11 @@ class Minute
 					params: {
 						employee_id: employee_id,
 						order_id: order.id,
-						status_id: status,
+						status_id: status[:id],
 						report_ids: report_ids,
-						count: status_count
+						count: status_count,
+						merge_order: merge_order,
+						bookings_priority: bookings_priority.to_i
 					}		
 				}
 			}
@@ -1079,9 +1131,12 @@ class Minute
 				}
 			}
 
+			puts "the update request is:"
+			puts update_request.to_s
 
 			add_bulk_item(update_request)
 
+=begin
 			employee_block_duration.times do |k|
 
 				## for each employee here,
@@ -1147,14 +1202,14 @@ class Minute
 
 				add_bulk_item(update_request)
 			end
-
+=end
 
 			prev_status_minute = start_minute
 			prev_status_id = status
 			start_minute = nil
 
 		end
-=end
+
 		flush_bulk
 
 		order.scheduled_successfully

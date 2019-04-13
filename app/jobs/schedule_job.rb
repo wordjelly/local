@@ -26,6 +26,9 @@ class ScheduleJob < ActiveJob::Base
   ## 1 => object_class
   ## the object calls the schedule method on itself.
   def perform(args)
+    ## first refresh the index.
+    Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
     obj = args[1].constantize.find(args[0])
     obj.schedule
     Minute.flush_bulk

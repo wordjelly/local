@@ -1,6 +1,22 @@
 {
-	"controllers" : [
+	"controllers" : 
 		{
+			"users" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : false
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : false
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : true
+					}
+				]
+			},
 			"patients" : {
 				"actions" : [
 					{
@@ -14,14 +30,11 @@
 							{
 								"group_name" : "doctors",
 								"unpermitted_parameters" : []
-							},
-							{
-
 							}
 						]
 					}
 				]
 			}
 		}
-	]
+	
 }

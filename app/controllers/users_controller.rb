@@ -1,3 +1,2 @@
 class UsersController < BaseController
-
 end

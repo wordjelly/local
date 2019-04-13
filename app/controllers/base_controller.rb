@@ -1,5 +1,8 @@
 class BaseController < ApplicationController
 
+	before_filter :get_action_permissions
+	before_filter :proceed_to_action?
+
 	def new
 		instance = get_resource_class.new(get_model_params)
 		instance_variable_set("@#{controller_name}",instance)
@@ -30,7 +33,6 @@ class BaseController < ApplicationController
 	def proceed_to_action?
 		if @action_permissions["requires_authentication"] == true
 			if is_authenticated?
-				
 				## attributes to exclude are set here.
 				## and used in the permitted params.
 				## 
@@ -49,7 +51,7 @@ class BaseController < ApplicationController
 	end
 
 	def get_action_permissions
-		@action_permissions = $permissions["controllers"][controller_name]["actions"].select{|c| c["action_name"] == action_name }
+		@action_permissions = $permissions["controllers"][controller_name]["actions"].select{|c| c["action_name"] == action_name }[0]
 		@action_permissions
 	end
 
@@ -72,5 +74,7 @@ class BaseController < ApplicationController
 	def permitted_params
 		params.permit(get_resource_class.permitted_params)
 	end
+
+	
 
 end
