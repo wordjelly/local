@@ -126,6 +126,12 @@ class BookMinuteTest < ActiveSupport::TestCase
       	@status_zero = Status.new(name: "At Collection Site", priority: 0, parent_ids: [@r1_id, @r2_id, @r3_id])
 	    @status_zero.save
 
+	    @status_one = Status.new(name: "", priority: 0, parent_ids: [@r2_id])
+	    @status_one.save
+
+	    @status_two = Status.new(name: "At Collection Site", priority: 0, parent_ids: [@r1_id, @r2_id, @r3_id])
+	    @status_two.save
+
 	    
 	end
 
@@ -169,6 +175,7 @@ class BookMinuteTest < ActiveSupport::TestCase
 	  	end
 =end
 
+=begin
 	test "uses existing order status if it is available" do 
 
 		Minute.create_index! force: true
@@ -214,17 +221,63 @@ class BookMinuteTest < ActiveSupport::TestCase
 	      puts " ORDER HAS ERRORS "
 	    end	    
 
-	    ## so it has merged this order.
-	    ## why ?
-	    ## because the status matches.
-	    ## but within only one minute.
-	    ## now lets do a test
-	    ## where it has to do three different statuses
-	    ## each about 10 minutes long.
-	    ## and then see how things go, over 60 minutes
-	    ## lets keep two employees.
-	    ## first solve the null problems.
+	    ## assertion is pending hereof's.
+	    ## 
+	   
 	end
+=end
+
+	test "first books minute 1 and minute 20 for employee 1, for statuses 1 and 3, then books minute 10 for status 2 for any employee, and adds the report to the same two bookings at minute 1 and minute 20" do 
+
+		Minute.create_index! force: true
+		Minute.create_multiple_test_minutes(30,3,[@status_zero.id.to_s,@status_one.id.to_s,@status_two.id.to_s])		
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+		o = Order.new
+	    o.patient_id = "test_patient"
+	    o.template_report_ids = [@r1_id,@r3_id]
+	    o.start_time = Time.utc(1970,1,1,0,0,0)
+	    if o.errors.empty?
+	      puts "SAVING ORDER IT HAS NO ERRORS."
+	     # o.run_callbacks(:save)
+	      response = o.save
+	      puts o.errors.full_messages.to_s
+	      puts response.to_s
+
+	    else
+	      puts " ORDER HAS ERRORS "
+	    end
+
+	    exit(1)
+
+		o = Order.find(o.id.to_s)
+	    o.patient_id = "test_patient"
+	    o.template_report_ids = [@r1_id,@r2_id,@r3_id]
+		o.start_time = Time.utc(1970,1,1,0,0,0)
+	    if o.errors.empty?
+	      puts "SAVING ORDER IT HAS NO ERRORS."
+	     # o.run_callbacks(:save)
+	      response = o.save
+	      puts o.errors.full_messages.to_s
+	      puts response.to_s
+
+	    else
+	      puts " ORDER HAS ERRORS "
+	    end	 
+	end
+
+## gotta debug some search queries.
+## then we move to the rest of it.
+## give ajay the api endpoint.
+## for user interactions.
+## deploy local to remote.
+
+=begin
+	test "marks statuses as booked retrospectively" do 
+
+
+	end
+=end
 
 =begin
 	test "books two minutes" do 

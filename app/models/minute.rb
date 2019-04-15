@@ -266,9 +266,16 @@ class Minute
 		Minute.flush_bulk
 	end
 
-	def self.create_multiple_test_minutes(total_mins,employee_count,statuses)
-		## if we remove a report, then all those things have to also
-		## be removed.
+	def self.create_multiple_test_minutes(total_mins,employee_count,status_ids,start_minute = 0)
+		total_mins.times do |min|
+			m = Minute.new(number: (min + start_minute), working: 1, employees: [], id: (min + start_minute).to_s)
+			employee_count.times do |employee|
+				e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
+				m.employees << e
+			end
+			Minute.add_bulk_item(m)
+		end
+		Minute.flush_bulk
 	end
 
 
@@ -517,6 +524,50 @@ class Minute
 
 	end
 
+	## @param[Hash] s : status has.
+	## expected to have a symbol key called :id
+	## 
+	def self.employee_agg(s)
+		employee_agg = {
+			employee_id: {
+				terms: {
+					field: "employees.employee_id",
+					size: 1,
+					order: {workload: "asc"}
+				},
+				aggs: {
+					workload: {
+						min: {
+							field: "employees.bookings_score"
+						}
+					},
+					status_bookings: {
+						nested: {
+							path: "employees.bookings"
+						},
+						aggs: {
+							this_status: {
+								filter: {
+									term: {
+										"employees.bookings.status_id".to_sym => s[:id]
+									}
+								},
+								aggs: {
+									booking_priority: {
+										terms: {
+											field: "employees.bookings.bookings_priority",
+											order: {"_key".to_sym => "asc"}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	end
+
 	## @args[Hash] : hash of arguments
 	## 1.required_statuses: 
 	## each status must have
@@ -545,14 +596,14 @@ class Minute
 
 		query = {
 			bool: {
-				must: [
+				should: [
 
 				]
 			}
 		}
 
 		args[:required_statuses].map{|c|
-			query[:bool][:must] << {
+			query[:bool][:should] << {
 				bool: {
 					must: [
 						{
@@ -642,219 +693,185 @@ class Minute
 			}
 		}
 
-		#puts "the queries are:"
-		#puts JSON.pretty_generate(query)
-
-		status_results = {}
-
-		query_and_aggs = 
-			{
-				query: query,
-			  	aggs: {
-			    	required_status: {
-			      		nested: {
-			        		path: "employees"
-			      		},
-			      		aggs: {
-			      		booked_statuses: {
-			      			nested: {
-			      				path: "employees.bookings"
-			      			},
-			      			aggs: {
-			      				this_order: {
-				      				filter: {
-				      					term: {
-				      						"employees.bookings.order_id".to_sym => args[:order_id]
-				      					}
-				      				},
-				      				aggs: {
-				      					this_order_statuses: {
-					      					terms: {
-					      						field: "employees.bookings.status_id",
-					      						include: args[:required_statuses].map{|c| c[:id]}
-					      					},
-					      					aggs: {
-					      						minute: {
-					      							reverse_nested: {},
-					      							aggs: {
-					      								minute_id: {
-							                  				terms: {
-							                    				field: "number",
-							                    				order: {"_key".to_sym => "asc"}
-							                  				},
-							                  				aggs: {
-								                    			employees: {
-									                      			nested: {
-									                        			path: "employees"
-									                      			},
-									                      			aggs: {
-									                        			emp_id: {
-									                          				terms: {
-									                            				field: "employees.employee_id",
-									                            				size: 10,
-									                            				order: {
-									                              					bookings_score: "asc"
-									                            				}
-									                         				},
-									                          				aggs: {
-									                            				bookings_score: {
-										                              				min: {
-										                                				field: "employees.bookings_score"
-										                              				}
-									                            				},
-									                            				bookings: {
-									                            					nested: {
-									                            						path: "employees.bookings",
-
-									                            					},
-									                            					aggs: {
-									                            						bookings_priority: {
-									                            							min: {field: "employees.bookings.priority"}
-									                            						}
-									                            					}
-									                            				}
-									                          				}
-									                        			}
-
-									                      			}
-								                    			}
-							                  				}
-							                			}
-					      							}
-					      						}
-					      					}
-				      					}
-				      				}
-			      				}
-			      			}
-			      		},
-			        	status_id: {
-				          		terms: {
-				            		field: "employees.status_ids",
-				            		include: args[:required_statuses].map{|c| c[:id]}
-				          		},
-				          		aggs: {
-				            		minute: {
-				              			reverse_nested: {},
-				              			aggs: {
-				                			minute_id: {
-				                  				terms: {
-				                    				field: "number",
-				                    				order: {"_key".to_sym => "asc"}
-				                  				},
-				                  				aggs: {
-					                    			employees: {
-						                      			nested: {
-						                        			path: "employees"
-						                      			},
-						                      			aggs: {
-						                        			emp_id: {
-						                          				terms: {
-						                            				field: "employees.employee_id",
-						                            				size: 10,
-						                            				order: {
-						                              					bookings_score: "asc"
-						                            				}
-						                         				},
-						                          				aggs: {
-						                            				bookings_score: {
-							                              				min: {
-							                                				field: "employees.bookings_score"
-							                              				}
-						                            				}
-						                          				}
-						                        			}
-
-						                      			}
-					                    			}
-				                  				}
-				                			}
-				              			}
-				            		}
-				          		}
-			        		}
-			      		}
-			    	}
-			  	}
-			}
-
-		#puts JSON.pretty_generate(query_and_aggs)
-
-		response = search(query_and_aggs)
-
-		## structure of the status_results hash is .
-		## status_id => {minute_id => {booking_priority => [employee_ids]}}
-		## this also means that we will be ignoring these results in the second aggregation
-		## or there will be a duplication.
-		## so that filter will have to be applied to the head of the second aggregation
-		puts " --------------- THESE ARE THE BOOKED STATUSES ------"		
-		puts response.response.aggregations.required_status.booked_statuses.to_s
-		puts " ----------------- done ----------------- "
-		response.response.aggregations.required_status.status_id.buckets.each do |status_id_bucket|
-			status_id = status_id_bucket["key"]
-			status_results[status_id] = {}
-			status_id_bucket.minute.minute_id.buckets.each do |minute_bucket|
-				minute = minute_bucket["key"]
-				employee_ids = minute_bucket.employees.emp_id.buckets.map{|c|
-					c["key"]
+		aggs = {
+			
+		}
+		
+		args[:required_statuses].each do |s|
+			aggs[s[:id]] = {
+				terms: {
+					field: "number",
+					size: s[:to] - s[:from]
+				},
+				aggs: {
+					with_order_filter: {
+						nested: {
+							path: "employees"
+						},
+						aggs: {
+							with_order_filter_bookings: {
+								nested: {
+									path: "employees.bookings"
+								},
+								aggs: {
+									order_filter: {
+										filter: {
+											term: {
+												"employees.bookings.order_id".to_sym => args[:order_id]
+											}
+										},
+										aggs: {
+											employees: {
+												reverse_nested: {
+													path: "employees"
+												},
+												aggs: employee_agg(s)
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					without_order_filter: {
+						nested: {
+							path: "employees"
+						},
+						aggs: employee_agg(s)
+					}
 				}
-				status_results[status_id][minute] ||= {"-1".to_sym => nil}
-				 
-				status_results[status_id][minute]["-1".to_sym] = employee_ids
-			end
+			}
 		end
 
-		puts "^^^^^^^^^^^^^^^The status results after the initial^^^^^^^^^^^^^^^^^^^^"
-		puts JSON.pretty_generate(status_results)
+		query_and_aggs = 
+		{
+			query: query,
+			aggs: aggs
+		}
 
-
-		unless response.response.aggregations.required_status.booked_statuses.blank?
-			
-			response.response.aggregations.required_status.booked_statuses.this_order.this_order_statuses.buckets.each do |status_id_bucket|
-			
-				status_id = status_id_bucket["key"]
-				puts "the status id is: #{status_id}"
-				status_id_bucket.minute.minute_id.buckets.each do |minute_bucket|
+		puts "the aggs are:"
+		puts JSON.pretty_generate(aggs)
+		#puts JSON.pretty_generate(query_and_aggs)
+		search_results = search(query_and_aggs)
+		puts "these are the aggregations."
+		puts search_results.response.aggregations.to_s
+		status_results = {}
+		args[:required_statuses].each do |status|
+			status_id = status[:id]
+			status_results[status_id] = {}
+			if !search_results.response.aggregations.send(status_id).blank?
+				search_results.response.aggregations.send(status_id).buckets.each do |minute_bucket|
 					minute = minute_bucket["key"]
-					puts "teh minute is: #{minute}"
-					employee_ids_to_bookings_priority = {}
-					puts "the minute bucket employees is:"
-					puts minute_bucket.employees.emp_id.to_s
-					minute_bucket.employees.emp_id.buckets.map{|c|
-						unless c.bookings.bookings_priority["value"].blank?
-							employee_ids_to_bookings_priority[c["key"]] = c.bookings.bookings_priority["value"].to_i
-						end
+					status_results[status_id][minute] = {
+						:with_order => {},
+						:without_order => {}
 					}
-					puts "employee id to bookings id:"
-					puts employee_ids_to_bookings_priority
-					employee_ids_to_bookings_priority.keys.each do |eid|
-						 
-						status_results[status_id][minute]["-1".to_sym].delete(eid)
-					
-						status_results[status_id][minute][employee_ids_to_bookings_priority[eid].to_s.to_sym] ||= []
-						status_results[status_id][minute][employee_ids_to_bookings_priority[eid].to_s.to_sym] << eid
+					puts minute_bucket.to_s
+					#exit(1)
+					minute_bucket.with_order_filter.with_order_filter_bookings.order_filter.employees.employee_id.buckets.each do |eid|
+							employee_id = eid["key"]
+							status_results[status_id][minute][:with_order][employee_id] = []
+							eid.status_bookings.this_status.booking_priority.buckets.each do |booking_priority_bucket|
+								booking_priority = booking_priority_bucket["key"]
+								status_results[status_id][minute][:with_order][employee_id] << booking_priority
+							end
+						
 					end
-					puts "the hash becomes:"
-					puts employee_ids_to_bookings_priority.to_s
-					puts " --------- doen iteration ----------"
+
+					minute_bucket.without_order_filter.employee_id.buckets.each do |eid|
+
+						employee_id = eid["key"]
+						status_results[status_id][minute][:without_order][employee_id] = []
+						eid.status_bookings.this_status.booking_priority.buckets.each do |booking_priority_bucket|
+							booking_priority = booking_priority_bucket["key"]
+							status_results[status_id][minute][:without_order][employee_id] << booking_priority
+						end
+
+					end
+
 				end
 			end
 		end
 
+		args[:required_statuses].each do |status|
+				
+			prev_end_minute = 0
 
-		status_results.keys.each do |sk|
-			status_results[sk].keys.each do |skk|
-				status_results[sk][skk] = (status_results[sk][skk].sort_by{|k,v|
-					k.to_s.to_i
-				}).reverse.to_h
+			if status_results[status[:id]]
+				existing_order_bookings = status_results[status[:id]].keys.select{|c|
+					!c[:with_order].blank?
+				}
+				other_bookings = status_results[status[:id]].keys.select{|c| !c[:without_order].blank?}
+				unless existing_order_bookings.blank?
+					nearest_minute = get_best_minute(prev_end_minute,existing_order_bookings)
+				else
+					nearest_minute = get_best_minute(prev_end_minute,other_bookings)
+					
+				end
+			else
 			end
 		end
+	end
 
-		puts "----------------------------------"
-		puts JSON.pretty_generate(status_results)
-		puts "----------------------------------"
+	## so now comes the path of the subsequent minute blocking;
+	## and the previous minute blocking.
+	## block subsequent minutes for the same employee.
+	## status must have an employee block duration.
+	## status must have a status block duration.
+	## minutes before and after, this, for this duration 
+	## have to be blocked for this status.
+	## add a booking for that status, at max capacity
+	## for all employees
+	## and some kind of reason, like preblock.
+	## and another one saying, post-block.
+	## status must have a previous minute
 
-		status_results.deep_stringify_keys
+	def self.build_update_script_for_booking(minute,employee_id,booking_priority,order_id,report_ids,status_id)
+
+		update_script = 
+		{
+			script: {
+				lang: "painless",
+				inline: '''
+				for(employee in ctx._source.employees){
+					if(employee["employee_id"] == params.employee_id){
+						if(params.booking_priority == null){
+
+							Map booking = new HashMap();
+							booking.put("report_ids",params.report_ids);
+							booking.put("status_id",params.status_id);
+							booking.put("order_id",params.order_id);
+					        booking.put("priority",(employee.bookings.length));
+				        	employee["bookings"].add(booking);
+							employee["bookings_score"] = employee["bookings_score"] + 1;
+						}
+						else{
+							for(booking in employee.bookings){
+								if(booking["priority"] == params.booking_priority){
+									booking["order_id"].add(params.order_id)
+									booking["report_ids"].addAll(params.report_ids)
+								}
+							}
+						}
+					}
+				}
+				'''
+			}
+		}
+
+		## add the udpate request.
+		## build the pre_block and post_block update requests
+		## as well.
+
+	end
+
+	def get_best_minute(prev_end_minute,available_minutes)
+		nearest_minute = available_minutes.select{|c| c >= prev_end_minute}
+		if nearest_minute.blank?
+			available_minutes[-1]
+		else
+			nearest_minute
+		end
 	end
 
 	#######################################################
@@ -1000,8 +1017,13 @@ class Minute
 		## if the first status is itself not there.
 		## it doesn't matter, we piggyback in totum.
 
+		puts "the order statuses hash."
+		puts JSON.pretty_generate(order_statuses_hash)
+
 		required_statuses.each do |status|
-				
+		
+			puts "required status is"
+			puts status.to_s
 			## so how many things are registerd.
 			## we want to say that 
 			## if someone is already doing this status.
@@ -1020,6 +1042,9 @@ class Minute
 			merge_order = 0
 			start_minute = nil
 			
+			## so what is the problem here exactly ?
+
+
 			last_minute = order_statuses_hash[status[:id]].keys.select{|c|
 				order_statuses_hash[status[:id]][c].size > 1
 			}
@@ -1059,14 +1084,17 @@ class Minute
 					start_minute = order_statuses_hash[status[:id]].keys[0]
 				else
 					viable_minutes = order_statuses_hash[status[:id]].keys.select{|c|
-						c >= (prev_status_minute + status_duration)
+						c.to_i >= (prev_status_minute.to_i + status_duration.to_i)
 					}
 					unless viable_minutes.blank?
 						start_minute = viable_minutes[0]
 					else
 						## as long as the start minute is at least greater than the 
 						## the previous status minute.
-						start_minute = order_statuses_hash[status[:id]].keys[-1] if (order_statuses_hash[status].keys[-1] >= prev_status_minute)
+						puts "the status id is: #{status[:id]}"
+						puts "the order statuses hash keys are"
+						puts order_statuses_hash.keys.to_s
+						start_minute = order_statuses_hash[status[:id]].keys[-1] if (order_statuses_hash[status[:id]].keys[-1].to_i >= prev_status_minute.to_i)
 					end
 				end
 

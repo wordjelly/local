@@ -1,22 +1,51 @@
-<ul class="collapsible">
-    <li>
-      <div class="collapsible-header"><i class="material-icons">filter_drama</i>Sign In</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-    <li>
-      <div class="collapsible-header"><i class="material-icons">place</i>Sign Up</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-    <li>
-      <div class="collapsible-header"><i class="material-icons">whatshot</i>Resend Confirmation Message</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-    <li>
-      <div class="collapsible-header"><i class="material-icons">whatshot</i>Forgot Password</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-    <li>
-      <div class="collapsible-header"><i class="material-icons">whatshot</i>Reset Password</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-</ul>
+<%= form_for @user do |f| %>
+
+  <%= f.text_field :mobile_number %>
+  <%= f.label :mobile_number %>
+
+  <div class="sign_up">
+    <%= f.text_field :email %>
+    <%= f.label :email %>
+  </div>
+
+  <div class="sign_in">
+    <%= f.text_field :password %>
+    <%= f.label :password %>
+  </div>
+
+  <div class="sign_up">
+    <%= f.text_field :password_confirmation %>
+    <%= f.label :password_confirmation %>
+  </div>
+
+  <% if @user.pending_mobile_confirmation? %>
+    <div class="confirm_otp">
+      <%= f.text_field :otp %>
+      <%= f.label :otp %>
+    </div>
+
+    <div class="resend_otp">
+      <p>
+        <label>
+          <input type="checkbox" value="<%= @user.resend_otp %>" name="user[resend_otp]"/>
+          <span>Resend Otp</span>
+        </label>
+      </p>
+    </div>
+  <% end %>
+
+  <!-- it saves this as the action -->
+  <!-- there will be mass assignment each time -->
+  <div class="forgot_password">
+    <%= f.check_box :forgot_password %>
+    <%= f.label :forgot_password %>
+  </div>
+
+  <div class="reset_password">
+    <%= f.check_box :forgot_password_token %>
+    <%= f.label :forgot_password_token %>
+  </div>
+
+  <%= f.submit "Submit" %>
+
+<% end %>

@@ -5,15 +5,20 @@
 				"actions" : [
 					{
 						"action_name" : "new",
-						"requires_authentication" : false
+						"requires_authentication" : "no"
 					},
 					{
 						"action_name" : "create",
-						"requires_authentication" : false
+						"requires_authentication" : "no"
+					},
+					{
+						"action_name" : "sign_in_options",
+						"requires_authentication" : "no"
 					},
 					{
 						"action_name" : "update",
-						"requires_authentication" : true
+						"requires_authentication" : "optional",
+						"parameters_allowed_on_non_authenticated_user": ["otp","resend_otp","forgot_password","logged_in_at","forgot_password_token","new_password"]
 					}
 				]
 			},

@@ -679,8 +679,10 @@ class Order
 	##
 	###########################################################
 	def schedule
-			
-		puts "the schedule action is: #{schedule_action}"
+		
+		#Elasticsearch::Persistence.client.indices.refresh index: "pathofast-minutes"
+		## refresh the minutes index.
+
 
 		## something like scheduled for reports a,b,c
 		## could not schedule, with start time.
@@ -715,11 +717,16 @@ class Order
 
 			args = {:required_statuses => []}
 			statuses_to_reports_hash.keys.each_with_index {|status,key|
-				
+					
+				puts "prev from is: #{prev_from}"
+				puts "prev to is: #{prev_to}"
+
 				status_details = {}
 
 				status_details[:id] = status
 				status_details[:maximum_capacity] = statuses_to_reports_hash[status][:maximum_capacity]
+				status_details[:duration] = statuses_to_reports_hash[status][:duration]
+
 
 				if key == 0
 					status_details[:from] = (self.start_time.to_i/60)
@@ -729,10 +736,15 @@ class Order
 					status_details[:to] = prev_to + prev_duration
 				end
 
+				puts "the status details from and to are:"
+				puts "status: #{status}"
+				puts status_details.to_s
 				prev_from = status_details[:from]
 				prev_to = status_details[:to]
 				prev_duration = status_details[:duration]
 				
+				puts "prev from and to becomes: #{prev_from}, and #{prev_to}"
+
 				args[:required_statuses] << status_details
 
 				
