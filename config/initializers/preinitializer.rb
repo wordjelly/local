@@ -66,11 +66,13 @@ Auth.configure do |config|
 	##
 	##
 	########################################################
+	es_port = 9200
 	if Rails.env.production?
 	  es_user = ENV["REMOTE_ES_USER"] 
 	  es_password = ENV["REMOTE_ES_PASSWORD"]
 	  host = {host: ENV["REMOTE_ES_HOST"], scheme: 'https', port: ENV["REMOTE_ES_PORT"]}
 	  host.merge!({user: es_user, password: es_password})
+	  es_port = ENV["REMOTE_ES_PORT"]
 	else
 	  host = {host: 'localhost', scheme: 'https', port: 9200}
 	end
