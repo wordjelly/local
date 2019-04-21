@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+
+  mount_routes Auth.configuration.auth_resources
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -30,7 +33,13 @@ Rails.application.routes.draw do
   resources :images
   resources :equipment
   resources :tags
-  resources :users
+  resources :users do 
+    collection do
+      get :sign_in_options
+    end
+  end
+
+  #get 'users/sign_in_options' => "users#sign_in_options", as: "sign_in_options"
 
   get 'search' => 'search#search'
   get 'search/type_selector' => 'search#type_selector'

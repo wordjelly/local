@@ -1,12 +1,12 @@
 class BaseController < ApplicationController
 
+	respond_to :js, :html, :json
 	before_filter :get_action_permissions
 	before_filter :get_user_group_permissions
 	before_filter :proceed_to_action?
 	before_filter :set_model, :only => [:show,:update,:destroy,:edit]
 
 	def new
-		session.delete("@#{get_resource_name}".to_sym)
 		instance = get_resource_class.new(get_model_params)
 		instance_variable_set("@#{get_resource_name}",instance)
 	end
@@ -32,8 +32,8 @@ class BaseController < ApplicationController
 			}
 		}
 
-		if session[:user]
-			query[:bool][:must] << {terms: {owner_ids: session[:user].organization_ids}}
+		if user = get_user
+			query[:bool][:must] << {terms: {owner_ids: user.organization_ids}}
 		end
 
 		results = get_resource_class.search(query)
@@ -53,47 +53,45 @@ class BaseController < ApplicationController
 
 	def create
 		instance = get_resource_class.new(get_model_params.except(@attributes_to_exclude))
-		if session[:user]
+		if user = get_user
 			if instance.respond_to? :organization_ids
-				instance.organization_ids << session[:user].organization_id
+				instance.organization_ids << user.organization_id
 			end
 		end
 		instance.save
-		session[get_resource_name.to_sym] = instance
+		instance_variable_set("@#{get_resource_name}",instance)
 	end
 
-	## 
+
 
 	def update
-		instance_variable_get("@#{get_resource_name}").send("merge",get_model_params)
+		instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
 		instance_variable_get("@#{get_resource_name}").send("save")
 	end
 
 	def set_model
 
 		query = {
-			query: {
-				bool: {
-					must: [
-						{
-							ids: {
-								values: [params[:id]]
-							}
+			bool: {
+				must: [
+					{
+						ids: {
+							values: [params[:id]]
 						}
-					]
-				}
+					}
+				]
 			}
 		}
 
-		if session[:user]
-			query[:bool][:must] << {terms: {owner_ids: session[:user].organization_ids}}
+		if user = get_user
+			query[:bool][:must] << {terms: {owner_ids: user.organization_ids}}
 		end
 
-		results = get_resource_class.search(query)
+		results = get_resource_class.search({query: query})
 
 		if results.response.hits.hits.size > 0
-			obj = get_resource_class.new(result.response.hits.hits[0]["_source"])
-			obj.id = result.response.hits.hits[0]["_id"]
+			obj = get_resource_class.new(results.response.hits.hits[0]["_source"])
+			obj.id = results.response.hits.hits[0]["_id"]
 			obj.run_callbacks(:find)
 			instance_variable_set("@#{get_resource_name}",obj)
 		else
@@ -123,13 +121,13 @@ class BaseController < ApplicationController
 	###############################################################
 	def authenticate(args)
 		## if a username and password has been provided.
-		if (params[:mobile_number] && params[:password])
-			u = User.find(params[:mobile_number])
+		if (params[:id] && params[:password])
+			u = User.find(params[:id])
 			begin
-				u.sign_in(params[:password])
+				u.sign_in_admin(params[:password])
 				session[:user] = u
-			rescue
-				## fail.
+			rescue => e
+				puts e.to_s
 			end
 		elsif (params[:mobile_number] && params[:access_token])
 			u = User.find(mobile_number)
@@ -147,6 +145,10 @@ class BaseController < ApplicationController
 		end
 	end
 
+	## let me just get sign up working.
+	## then sign in and forgot, resend.
+	## 
+
 	def authorize
 		!@user_group_permissions.blank?
 	end
@@ -157,8 +159,16 @@ class BaseController < ApplicationController
 	#end
 
 	def get_action_permissions
+		#puts "the action name is:"
+		#puts action_name.to_s
 		@action_permissions = $permissions["controllers"][controller_name]["actions"].select{|c| c["action_name"] == action_name }[0]
 		@action_permissions
+		#puts "permissions--------"
+		#puts $permissions.to_s
+		#puts "controller name----------"
+		#puts controller_name.to_s
+		#puts "action permissions set as:"
+		#puts @action_permissions
 	end
 
 	def get_user_group_permissions
@@ -173,7 +183,13 @@ class BaseController < ApplicationController
 
 
 	def get_user
-		session[:user]
+		if session[:user]
+			u = User.find(session[:user].id.to_s)
+			session[:user] = u
+			u
+		else
+			nil
+		end
 	end
 
 	def get_resource_name
@@ -185,7 +201,24 @@ class BaseController < ApplicationController
 	end
 
 	def get_model_params
-		permitted_params.fetch(controller_path.classify.downcase.to_sym,{})
+		attributes = permitted_params.fetch(controller_path.classify.downcase.to_sym,{})
+		unless get_user.blank?
+			## there is an authenticated user.
+			if @user_group_permissions
+				## if it has some permissions.
+				## keep only those parameters which are not unpermitted.
+				unless @user_group_permissions.unpermitted_parameters.blank?
+					return attributes.keep_if{|k,v|  !@user_group_permissions.unpermitted_parameters.include? k}
+				end
+			end
+		else
+			## no user has been authenticated.
+			## if there are some optional parameters, allow only these.
+			if @action_permissions["parameters_allowed_on_non_authenticated_user"]
+				return attributes.keep_if{|k,v| @action_permissions["parameters_allowed_on_non_authenticated_user"].include? k}
+			end
+		end
+		return attributes
 	end
 
 	def permitted_params

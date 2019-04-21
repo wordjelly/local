@@ -35,4 +35,20 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  ## Local MailServer Configuration : eg. for Mailcatcher
+  config.action_mailer.default_url_options = { :host => 'localhost:5000' }
+  
+  #config.action_mailer.delivery_method = :smtp
+  #config.action_mailer.smtp_settings = {:address => "localhost", :port => 1025}
+
+  ### Mailgun configuration.
+  
+  config.action_mailer.delivery_method = :mailgun
+  config.action_mailer.mailgun_settings = {
+    api_key: 'key-6263360b078081b625182ff17d7a92fd',
+    #domain: 'sandboxc0248205473845c3a998e44941ee503e.mailgun.org'
+    domain: 'pathofast.com'
+  }
+  
 end

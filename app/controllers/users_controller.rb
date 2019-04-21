@@ -1,23 +1,19 @@
 class UsersController < BaseController
-	def proceed_to_action?
-		@attributes_to_exclude = []
-		if @action_permissions["requires_authentication"] == true
-			if session[:user]
-				if session[:user].confirmed?
-					@attributes_to_exclude = ["password","password_confirmation"]
-				else
-					
-				end
-				true
-			else
-				false
+
+	def create
+		super
+		respond_to do |format|
+			format.html do 
+				redirect_to sign_in_options_users_path(user: @user.attributes.except(:password))
 			end
-		else
-			true
+			format.json do 
+				render :json => {user: @user.to_json}
+			end
 		end
 	end
 
 	def sign_in_options
-		
+		instance = get_resource_class.new(get_model_params)
+		instance_variable_set("@#{get_resource_name}",instance)
 	end
 end

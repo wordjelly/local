@@ -1,5 +1,4 @@
 require 'elasticsearch/persistence/model'
-
 class Test	
 	
 	include Elasticsearch::Persistence::Model

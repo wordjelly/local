@@ -1,0 +1,24 @@
+<%= form_for @user,:method => :put, :html => {:id => "sign_in_options"} do |f| %>
+
+	<%= f.text_field :mobile_number %>
+	<%= f.label :mobile_number %>
+
+	<% if @user.pending_mobile_confirmation? %>
+		<h6>Enter The Otp received on your mobile</h6>
+		<%= f.text_field :otp %>
+		<%= f.label :otp %>
+		<%= f.check_box :resend_otp, id:"resend_otp" %>
+		<%= f.label "Resend Otp", for:"resend_otp", id:"resend_otp_id" %>
+	<% else %>
+		<%= text_field_tag :password %>
+		<%= label_tag :password %>
+		<%= f.hidden_field :logged_in_time, :value => Time.now.to_i %>
+	<% end %>
+
+	<%= f.hidden_field :skip_background_job, :value => nil %>
+
+	<%= f.submit "Submit", :style => "display:none;" %>
+  	<a class="waves-effect waves-light btn" id="submit_sign_in_options">Submit Form</a>
+
+
+<% end %>

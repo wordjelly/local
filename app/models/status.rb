@@ -43,6 +43,11 @@ class Status
 	## REQUIRED
 	attribute :maximum_capacity, Integer, :default => 10
 
+	## when this status is run, how much does the overall capacity reduce by, for the time duration.
+	## i think this method should be placed on status itself.
+	## so how to add this to block structure ?
+	## 
+	attribute :lot_size, Integer, default: 1
 
 	attr_accessor :tag_name
 
@@ -771,6 +776,56 @@ class Status
 		{reports: reports, statuses: statuses}
 
 	end	
+
+	## @return[Hash] : duration_and_statuses
+	## @structure
+	## [{duration: x, statuses: [status_id_one,status_id_two]}]
+	def self.group_statuses_by_duration
+		query =  {
+			match_all: {
+
+			}
+		}
+		aggs = {
+			durations: {
+				terms: {
+					field: "duration",
+					order: {
+						"_key".to_sym => "_asc"
+					}
+				},
+				aggs: {
+					statuses: {
+						terms: {
+							field: "_id"
+						}
+					}
+				}
+			}
+		}
+
+		search_results = Status.search({
+			query: query,
+			aggs: aggs
+		})
+
+		duration_and_statuses = []
+
+		search_results.response.aggregations.durations.buckets.each do |duration_bucket|
+
+			duration = duration_bucket["key"]
+
+			statuses = duration_bucket.statuses.buckets.map{|c|
+				c = c["key"]
+			}
+
+			duration_and_statuses << {duration: duration, statuses: statuses}
+
+		end
+
+		return duration_and_statuses
+
+	end
 
 
 end

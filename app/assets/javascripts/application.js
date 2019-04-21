@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require cloudinary
+//= require auth/auth_modals_and_navbar.js
 //= require_tree .
 
 $(document).ready(function(){

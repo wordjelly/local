@@ -5,6 +5,7 @@ module Concerns::OwnersConcern
 	included do 
 
 		attribute :owner_ids, Array, mapping: {type: 'keyword'}
+		
 		attr_accessor :created_by_user
 
 		before_save do |document|
@@ -13,6 +14,5 @@ module Concerns::OwnersConcern
 		end
 
 	end
-
 
 end

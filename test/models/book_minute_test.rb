@@ -126,13 +126,19 @@ class BookMinuteTest < ActiveSupport::TestCase
       	@status_zero = Status.new(name: "At Collection Site", priority: 0, parent_ids: [@r1_id, @r2_id, @r3_id])
 	    @status_zero.save
 
-	    @status_one = Status.new(name: "", priority: 0, parent_ids: [@r2_id])
+	    ## it will find the statuses in order.
+	    ## it has found the wrong status.
+	    ## for some reason.
+	    ## it hsould h
+
+	    @status_one = Status.new(name: "", priority: 1, parent_ids: [@r2_id])
 	    @status_one.save
 
-	    @status_two = Status.new(name: "At Collection Site", priority: 0, parent_ids: [@r1_id, @r2_id, @r3_id])
+	    @status_two = Status.new(name: "At Collection Site", priority: 2, parent_ids: [@r1_id, @r2_id, @r3_id])
 	    @status_two.save
 
-	    
+	    ## why is it not adding correctly.
+
 	end
 
 =begin
@@ -227,7 +233,7 @@ class BookMinuteTest < ActiveSupport::TestCase
 	end
 =end
 
-	test "first books minute 1 and minute 20 for employee 1, for statuses 1 and 3, then books minute 10 for status 2 for any employee, and adds the report to the same two bookings at minute 1 and minute 20" do 
+	test "uses existing order" do 
 
 		Minute.create_index! force: true
 		Minute.create_multiple_test_minutes(30,3,[@status_zero.id.to_s,@status_one.id.to_s,@status_two.id.to_s])		
@@ -248,7 +254,7 @@ class BookMinuteTest < ActiveSupport::TestCase
 	      puts " ORDER HAS ERRORS "
 	    end
 
-	    exit(1)
+	    
 
 		o = Order.find(o.id.to_s)
 	    o.patient_id = "test_patient"
@@ -264,6 +270,30 @@ class BookMinuteTest < ActiveSupport::TestCase
 	    else
 	      puts " ORDER HAS ERRORS "
 	    end	 
+
+	    ## first assert the merging.
+	    ## ill do that later.
+	    ## the status should specify
+	    ## reduce retrospective capacity
+	    ## reduce prospoe
+
+	end
+
+	test " -- does retrospective and prospective blocking -- " do 
+
+		## is there any preference for an existing order ?
+		## yes
+		## an employee who is doing an existing order will be preferred for the same status.
+		## how do we deal with capacity.
+		## that's the biggest issue.
+		## without adding bookings to all previous employees.
+		## a previous employee should not be able to start a 
+		## we have to add bookings for every employee
+		## or add status specific capacity updates .
+		## there are only two ways at this point.
+		## either where the remaining capacity is not mentioned.
+		## or the remaining capacity is within certain limits.
+
 	end
 
 ## gotta debug some search queries.

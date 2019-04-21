@@ -756,11 +756,11 @@ class Order
 			puts JSON.pretty_generate(args)
 
 			minute_slots = Minute.get_minute_slots(args)
-			puts "the minute slots are:"
-			puts JSON.pretty_generate(minute_slots)
+			#puts "the minute slots are:"
+			#puts JSON.pretty_generate(minute_slots)
 
 			## the required statuses is passed to the build_minute_request to be handled thereof.
-			Minute.build_minute_update_request_for_order(minute_slots,self,args)
+			#Minute.build_minute_update_request_for_order(minute_slots,self,args)
 
 			## so what should happen at the end of all this.
 

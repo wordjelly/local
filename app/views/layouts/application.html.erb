@@ -54,46 +54,18 @@
 </head>
 
 <body>
-<ul id="dropdown1" class="dropdown-content">
-  <li><%= link_to "Add New Item Type", new_item_type_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Status", new_status_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Location", new_location_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Patient", new_patient_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Report", new_report_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Order", new_order_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Test", new_test_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Employee", new_employee_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Item", new_item_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Item Requirement", new_item_requirement_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Item Group", new_item_group_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Equipment", new_equipment_path %></li>
-  <li class="divider"></li>
-  <li><%= link_to "Add New Tag", new_tag_path %></li>
-</ul>
-<nav>
-    <div class="nav-wrapper">
-      <a href="#" class="brand-logo">Pathofast</a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">Options<i class="material-icons right">arrow_drop_down</i></a></li>
-      </ul>
-    </div>
-</nav>
+
+
+<!-- for enabling the navbar -->
+<%= render :partial => "layouts/auth/navbar/navbar.html.erb" %>
 
 <div class="container">
 <%= render :partial => "search/search" %>
 <%= yield %>
 </div>
+
+<!-- for the sign in modals -->
+<%= render :partial => "layouts/auth/modals.html.erb" %>
 
 </body>
 </html>

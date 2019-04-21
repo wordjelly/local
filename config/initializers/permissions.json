@@ -5,20 +5,24 @@
 				"actions" : [
 					{
 						"action_name" : "new",
-						"requires_authentication" : "no"
+						"requires_authentication" : "no",
+						"groups" : []
 					},
 					{
 						"action_name" : "create",
-						"requires_authentication" : "no"
+						"requires_authentication" : "no",
+						"groups" : []
 					},
 					{
 						"action_name" : "sign_in_options",
-						"requires_authentication" : "no"
+						"requires_authentication" : "no",
+						"groups" : []
 					},
 					{
 						"action_name" : "update",
 						"requires_authentication" : "optional",
-						"parameters_allowed_on_non_authenticated_user": ["otp","resend_otp","forgot_password","logged_in_at","forgot_password_token","new_password"]
+						"parameters_allowed_on_non_authenticated_user": ["otp","resend_otp","forgot_password","logged_in_at","forgot_password_token","new_password","skip_background_job"],
+						"groups" : []
 					}
 				]
 			},

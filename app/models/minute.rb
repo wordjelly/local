@@ -55,7 +55,7 @@ class Minute
 					employee_id: {
 						type: "keyword"
 					},
-					status_ids: {
+					status_ids: { 
 						type: "keyword"
 					},
 					bookings_score: {
@@ -84,6 +84,23 @@ class Minute
 							},
 							tubes: {
 								type: 'keyword'
+							},
+							blocks: {
+								type: 'nested',
+								properties: {
+									minutes: {
+										type: 'integer'
+									},
+									status_ids: {
+										type: 'keyword'
+									},
+									employee_ids: {
+										type: 'keyword'
+									},
+									remaining_capacity: {
+										type: 'keyword'
+									}
+								}
 							}
 						}
 					}
@@ -96,7 +113,9 @@ class Minute
 	## if we remove some template reports
 	## then what about the tubes ?
 	## if the barcode is blank?
-	## 
+	## so we go for a method called update status capacities
+	## where we update the previous minutes, as remaining capacity.
+
 
 	def self.update_tube_barcode(report_ids,barcode)
 		## we want those minutes
@@ -526,7 +545,6 @@ class Minute
 
 	## @param[Hash] s : status has.
 	## expected to have a symbol key called :id
-	## 
 	def self.employee_agg(s)
 		employee_agg = {
 			employee_id: {
@@ -555,7 +573,7 @@ class Minute
 								aggs: {
 									booking_priority: {
 										terms: {
-											field: "employees.bookings.bookings_priority",
+											field: "employees.bookings.priority",
 											order: {"_key".to_sym => "asc"}
 										}
 									}
@@ -575,6 +593,9 @@ class Minute
 	## :to => an integer (minutes from epoch)
 	## :id => the id of the status 
 	## :maximum_capacity => an integer, the maximum number of these statuses that can be done at any given minute
+	## the number of reports that we have to set for this status.
+	## that should be set on the status itself.
+	## and after this we can easily calculate and set retrospective bookings.
 	## 2. order_id
 	## @return[Hash]
 =begin
@@ -587,12 +608,139 @@ class Minute
 	}
 =end
 
-	def self.get_minute_slots(args)
-		
-		## this is step one.
-		## now we have to define that range somewhere to
-		## be as wide as possible.
+	def self.minute_blocked?(status_id,employee_id,minute,blocked_minutes_hash)
+		false if blocked_minutes_hash[status_id].blank?
+		false if blocked_minutes_hash[status_id][minute].blank?
+		blocked_minutes_hash[status_id][minute].include? employee_id
+	end
 
+	def self.get_blocked_statuses_hash(args)
+
+		query = {
+			bool: {
+				must: [
+					{
+						range: {
+							number: {
+								gte: (args[:required_statuses][0][:from] - 480),
+								lte: (args[:required_statuses][0][:to] + 480)
+							}
+						}
+					},
+					{
+						nested: {
+							path: "employees",
+							query: {
+								nested: {
+									path: "employees.bookings",
+									query: {
+										exists: {
+											field: "employees.bookings.blocks"
+										}
+									}
+								}
+							}
+						}
+					}
+				]
+			}
+		}
+
+		aggs[:employees] = {
+			nested: {
+				path: "employees"
+			},
+			aggs: {
+				employee_bookings: {
+					nested: {
+						path: "employees.bookings"
+					},
+					aggs: {
+						employee_bookings_blockings: {
+							nested: {
+								path: "employees.bookings.blocks"
+							},
+							aggs: {
+								these_statuses: {
+									filter: {
+										terms: {
+											"employees.bookings.blocks.status_ids".to_sym => required_statuses.map{|c| c["id"]}
+										}
+									},
+									aggs: {
+										by_status: {
+											terms: {
+												field: "employees.bookings.blocks.status_ids"
+											},
+											aggs: {
+												remaining_capacity: {
+													min: {field: "employees.bookings.blocks.remaining_capacity"}
+												},
+												by_minute: {
+													terms: {
+														field: "employees.bookings.blocks.minutes"
+													},
+													aggs: {
+														by_employee_id: {
+															terms: {
+																field: "employees.bookings.blocks.employee_ids"
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		search_result = Minute.search({
+			query: query,
+			aggs:  aggs
+		})
+
+		blocked_minutes_hash = {}
+
+		search_results.response.aggregations.block.employees.employees_bookings.employees_bookings_blockings.these_statuses.by_status.buckets.each do |status_bucket|
+				status_id = status_bucket["key"]
+				blocked_minutes_hash[status_id] = {}
+				## add the remaining capacity for this status.
+				
+				status_bucket.by_minute.buckets.each do |minute_bucket|
+					minute = minute_bucket["key"]
+					blocked_minutes_hash[status_id][minute] = []
+					minute_bucket.by_employee_id.buckets.each do |employee_bucket|
+						employee_id = employee_bucket["key"]
+						blocked_minutes_hash[status_id][minute] << employee_id
+					end
+				end
+		end
+		
+		## status already has duration.
+		## we need lot size.
+		## and we need.
+
+		blocked_minutes_hash
+	end
+
+
+	def self.get_minute_slots(args)
+			
+		## to be used in the prospective and retrospective blocking 
+		## part.
+		statuses_and_durations = Status.group_statues_by_duration
+
+		## so assuming that we have a certain capacity for a status
+		## what needs to be done is that that capacity has to be reduced
+		## for all employees for subsequent minutes.
+		## somehow have to factor capacities into this.
+
+		order = Order.find(args[:order_id])
 
 		query = {
 			bool: {
@@ -609,8 +757,8 @@ class Minute
 						{
 							range: {
 								number: {
-									gte: c[:from],
-									lte: c[:to]
+									gte: (c[:from] - 480),
+									lte: (c[:to] + 480)
 								}
 							}
 						},
@@ -698,11 +846,15 @@ class Minute
 		}
 		
 		args[:required_statuses].each do |s|
+			
 			aggs[s[:id]] = {
 				terms: {
 					field: "number",
-					size: s[:to] - s[:from]
+					size: s[:to] - s[:from],
+					include: (s[:from].to_i..s[:to].to_i).to_a
 				},
+				## we have another agg.
+				## 
 				aggs: {
 					with_order_filter: {
 						nested: {
@@ -749,12 +901,11 @@ class Minute
 			aggs: aggs
 		}
 
-		puts "the aggs are:"
-		puts JSON.pretty_generate(aggs)
-		#puts JSON.pretty_generate(query_and_aggs)
+	
 		search_results = search(query_and_aggs)
-		puts "these are the aggregations."
-		puts search_results.response.aggregations.to_s
+		blocked_minutes_hash = get_blocked_statuses_hash(args)
+		#puts "these are the aggregations."
+		#puts search_results.response.aggregations.to_s
 		status_results = {}
 		args[:required_statuses].each do |status|
 			status_id = status[:id]
@@ -762,18 +913,23 @@ class Minute
 			if !search_results.response.aggregations.send(status_id).blank?
 				search_results.response.aggregations.send(status_id).buckets.each do |minute_bucket|
 					minute = minute_bucket["key"]
+
 					status_results[status_id][minute] = {
 						:with_order => {},
 						:without_order => {}
 					}
-					puts minute_bucket.to_s
-					#exit(1)
+					
 					minute_bucket.with_order_filter.with_order_filter_bookings.order_filter.employees.employee_id.buckets.each do |eid|
 							employee_id = eid["key"]
-							status_results[status_id][minute][:with_order][employee_id] = []
-							eid.status_bookings.this_status.booking_priority.buckets.each do |booking_priority_bucket|
-								booking_priority = booking_priority_bucket["key"]
-								status_results[status_id][minute][:with_order][employee_id] << booking_priority
+							## is this minute blocked for this status for this employee or not?
+							unless minute_blocked? (status_id,employee_id,minute,blocked_minutes_hash)
+
+								status_results[status_id][minute][:with_order][employee_id] = []
+								eid.status_bookings.this_status.booking_priority.buckets.each do |booking_priority_bucket|
+									booking_priority = booking_priority_bucket["key"]
+									status_results[status_id][minute][:with_order][employee_id] << booking_priority
+								end
+
 							end
 						
 					end
@@ -781,10 +937,14 @@ class Minute
 					minute_bucket.without_order_filter.employee_id.buckets.each do |eid|
 
 						employee_id = eid["key"]
-						status_results[status_id][minute][:without_order][employee_id] = []
-						eid.status_bookings.this_status.booking_priority.buckets.each do |booking_priority_bucket|
-							booking_priority = booking_priority_bucket["key"]
-							status_results[status_id][minute][:without_order][employee_id] << booking_priority
+						unless minute_blocked? (status_id,employee_id,minute,blocked_minutes_hash)
+
+							status_results[status_id][minute][:without_order][employee_id] = []
+							eid.status_bookings.this_status.booking_priority.buckets.each do |booking_priority_bucket|
+								booking_priority = booking_priority_bucket["key"]
+								status_results[status_id][minute][:without_order][employee_id] << booking_priority
+							end
+
 						end
 
 					end
@@ -793,40 +953,103 @@ class Minute
 			end
 		end
 
+		#puts status_results.to_s
+
 		args[:required_statuses].each do |status|
 				
 			prev_end_minute = 0
 
 			if status_results[status[:id]]
 				existing_order_bookings = status_results[status[:id]].keys.select{|c|
-					!c[:with_order].blank?
+					#puts "c is:"
+					#puts c.to_s
+					!status_results[status[:id]][c][:with_order].blank?
+					#!c[:with_order].blank?
 				}
-				other_bookings = status_results[status[:id]].keys.select{|c| !c[:without_order].blank?}
+				other_bookings = status_results[status[:id]].keys.select{|c| !status_results[status[:id]][c][:without_order].blank?}
 				unless existing_order_bookings.blank?
 					nearest_minute = get_best_minute(prev_end_minute,existing_order_bookings)
+					#puts  "******************************************************"
+
+					#puts "the nearest minute is:"
+					#puts nearest_minute.to_s
+
+					#puts "the nearest minute hash is:"
+					#puts status_results[status[:id]][nearest_minute]
+
+					#puts  "******************************************************"
+
+					employee_id = status_results[status[:id]][nearest_minute][:with_order].keys[0]
+					booking_priority = nil
+					unless status_results[status[:id]][nearest_minute][:with_order][employee_id].blank?
+						booking_priority = status_results[status[:id]][nearest_minute][:with_order][employee_id][0].to_s.to_i
+					end
+					build_update_script_for_booking(nearest_minute,employee_id,booking_priority,order.id.to_s,order.report_ids_to_add,status[:id])
+					#block_previous_minutes(minute,status[:id])
+					#block_subsequent_minutes(minute,status[:id])
 				else
 					nearest_minute = get_best_minute(prev_end_minute,other_bookings)
-					
+					#puts "other bookings nearest minute #{nearest_minute}"
+					#puts other_bookings[nearest_minute].to_s
+					employee_id = status_results[status[:id]][nearest_minute][:without_order].keys[0]	
+					booking_priority = nil
+					unless status_results[status[:id]][nearest_minute][:without_order][employee_id].blank?
+						booking_priority = status_results[status[:id]][nearest_minute][:without_order][employee_id][0].to_s.to_i
+					end	
+					build_update_script_for_booking(nearest_minute,employee_id,booking_priority,order.id.to_s,order.report_ids_to_add,status[:id])			
 				end
+
 			else
 			end
 		end
+
+		flush_bulk
 	end
 
-	## so now comes the path of the subsequent minute blocking;
-	## and the previous minute blocking.
-	## block subsequent minutes for the same employee.
-	## status must have an employee block duration.
-	## status must have a status block duration.
-	## minutes before and after, this, for this duration 
-	## have to be blocked for this status.
-	## add a booking for that status, at max capacity
-	## for all employees
-	## and some kind of reason, like preblock.
-	## and another one saying, post-block.
-	## status must have a previous minute
-
 	def self.build_update_script_for_booking(minute,employee_id,booking_priority,order_id,report_ids,status_id)
+
+		## status has
+		## block_all_employees_from_starting_this_status
+		## block_this_employee_from_starting_this_status
+		## block_all_employees_from_starting_other_statuses
+		## block_this_employee_from_starting_other_statuses
+		## first we calculate for the present employee.
+		## since he will not be able to do anything,
+		## or any status, going back eight hours.
+		## this will become a huge update, as it is minute 
+		## wise.
+		## status duration -> 100 minutes
+		## status duration -> 200 minutes
+		## any status which has 
+		## status ordered by duration.
+		## 2 minutes ->
+		## 5 minutes ->
+		## 10 minutes ->
+		## 20 minutes -> (now minus 20 minutes - range, for all statuses, for this employee)
+		## 30 minutes ->
+		## 40 minutes ->
+		## 50 minutes ->
+		## 1 hour ->
+		## 2 hours ->
+		## whatever.
+		## so we group the statuses like that.
+		## and we institute blocks, backwards
+		## and for other employees.
+		## we will also have to derive the capacities
+		## from the blocks.
+		## okay so blocks, can be there, but with a remaining capacity
+		## that way it can be done better.
+		## so blocks, who all ?
+		## all ,
+		## with what 
+		## how to add the capacities to this.
+		## we have to block only this status.
+		## right ?
+		## for eg if i start doing a centrifuge.
+		## no other employee can start doing a centrifuge.
+		## for the duration of the centrifuge.
+		## in the time it takes to complete one cycle.
+		## here is where the question of capacities comes up.
 
 		update_script = 
 		{
@@ -836,41 +1059,59 @@ class Minute
 				for(employee in ctx._source.employees){
 					if(employee["employee_id"] == params.employee_id){
 						if(params.booking_priority == null){
-
 							Map booking = new HashMap();
 							booking.put("report_ids",params.report_ids);
 							booking.put("status_id",params.status_id);
-							booking.put("order_id",params.order_id);
-					        booking.put("priority",(employee.bookings.length));
+							booking.put("order_id",[params.order_id]);
+					        booking.put("priority",employee.bookings.length);
 				        	employee["bookings"].add(booking);
 							employee["bookings_score"] = employee["bookings_score"] + 1;
 						}
 						else{
 							for(booking in employee.bookings){
 								if(booking["priority"] == params.booking_priority){
-									booking["order_id"].add(params.order_id)
-									booking["report_ids"].addAll(params.report_ids)
+									booking["order_id"].add(params.order_id);
+									booking["report_ids"].addAll(params.report_ids);
 								}
 							}
 						}
 					}
 				}
-				'''
+				''',
+				params: {
+					minute: minute,
+					employee_id: employee_id,
+					booking_priority: booking_priority,
+					order_id: order_id,
+					report_ids: report_ids,
+					status_id: status_id
+				}	
 			}
 		}
 
-		## add the udpate request.
-		## build the pre_block and post_block update requests
-		## as well.
+		update_request = {
+			update: {
+				_index: index_name, _type: document_type, _id: minute, data: update_script
+			}
+		}
+
+		add_bulk_item(update_request)
+	end
+
+	def self.block_previous_minutes
 
 	end
 
-	def get_best_minute(prev_end_minute,available_minutes)
+	def self.block_subsequent_minutes
+
+	end
+
+	def self.get_best_minute(prev_end_minute,available_minutes)
 		nearest_minute = available_minutes.select{|c| c >= prev_end_minute}
 		if nearest_minute.blank?
 			available_minutes[-1]
 		else
-			nearest_minute
+			nearest_minute[0]
 		end
 	end
 

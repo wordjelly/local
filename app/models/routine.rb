@@ -1,6 +1,6 @@
 require 'elasticsearch/persistence/model'
 class Routine < Report
-
+	include Elasticsearch::Persistence::Model
 	attribute :is_routine, Integer, :default => 1
 
 	## routine is actually a status

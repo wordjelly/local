@@ -18,34 +18,7 @@
     <%= f.label :password_confirmation %>
   </div>
 
-  <% if @user.pending_mobile_confirmation? %>
-    <div class="confirm_otp">
-      <%= f.text_field :otp %>
-      <%= f.label :otp %>
-    </div>
-
-    <div class="resend_otp">
-      <p>
-        <label>
-          <input type="checkbox" value="<%= @user.resend_otp %>" name="user[resend_otp]"/>
-          <span>Resend Otp</span>
-        </label>
-      </p>
-    </div>
-  <% end %>
-
-  <!-- it saves this as the action -->
-  <!-- there will be mass assignment each time -->
-  <div class="forgot_password">
-    <%= f.check_box :forgot_password %>
-    <%= f.label :forgot_password %>
-  </div>
-
-  <div class="reset_password">
-    <%= f.check_box :forgot_password_token %>
-    <%= f.label :forgot_password_token %>
-  </div>
-
   <%= f.submit "Submit" %>
+  
 
 <% end %>

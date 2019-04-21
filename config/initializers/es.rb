@@ -6,5 +6,8 @@ $remote_es_client = Elasticsearch::Client.new hosts: [ remote_host], headers: {"
 #host = {host: '192.168.1.2', scheme: 'http', port: 9200}
 host = {host: 'localhost', scheme: 'http', port: 9200}
 
-
-Elasticsearch::Persistence.client = Elasticsearch::Client.new hosts: [ host], headers: {"Content-Type" => "application/json" }, request: { timeout: 145 }
+if Rails.env.production?
+	Elasticsearch::Persistence.client = Elasticsearch::Client.new hosts: [ remote_host], headers: {"Content-Type" => "application/json" }, request: { timeout: 145 }
+else
+	Elasticsearch::Persistence.client = Elasticsearch::Client.new hosts: [ host], headers: {"Content-Type" => "application/json" }, request: { timeout: 145 }
+end
