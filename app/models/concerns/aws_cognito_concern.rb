@@ -1,6 +1,6 @@
 require 'elasticsearch/persistence/model'
 
-module Concerns::EsBulkIndexConcern
+module Concerns::AwsCognitoConcern
   extend ActiveSupport::Concern
 
   included do
