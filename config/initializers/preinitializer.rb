@@ -78,7 +78,7 @@ Auth.configure do |config|
 	  host.merge!({user: es_user, password: es_password})
 	  es_port = ENV["REMOTE_ES_PORT"]
 	else
-	  host = {host: 'localhost', scheme: 'https', port: 9200}
+	  host = {host: 'localhost', scheme: 'http', port: 9200}
 	end
 
 	Mongoid::Elasticsearch.prefix = Auth.configuration.brand_name.downcase + "_"

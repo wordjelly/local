@@ -9,7 +9,6 @@ class ApplicationController < ActionController::Base
 
 
   def set_image_instance_variable
-    ## $u is the UUID instance generated in the initializer
   	@image = Image.new(:id => $u.generate)
   end
 
