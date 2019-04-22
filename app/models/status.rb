@@ -46,7 +46,7 @@ class Status
 	## when this status is run, how much does the overall capacity reduce by, for the time duration.
 	## i think this method should be placed on status itself.
 	## so how to add this to block structure ?
-	## 
+	## okay so we have lot_size
 	attribute :lot_size, Integer, default: 1
 
 	attr_accessor :tag_name
@@ -358,6 +358,11 @@ class Status
 								duration: {
 									terms: {
 										field: "duration"
+									}
+								},
+								lot_size: {
+									max: {
+										field: "lot_size"
 									}
 								}
 							}

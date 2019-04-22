@@ -739,7 +739,7 @@ class Minute
 		## what needs to be done is that that capacity has to be reduced
 		## for all employees for subsequent minutes.
 		## somehow have to factor capacities into this.
-
+		## so we have to aggregate by lot_size also.
 		order = Order.find(args[:order_id])
 
 		query = {
