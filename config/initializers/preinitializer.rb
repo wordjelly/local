@@ -1,7 +1,11 @@
 Auth.configure do |config|
 
 	config.mount_path = "/authenticate"
-	
+		
+	## get this working with the api.
+	## for authentication.
+	## then move to 
+
 	config.auth_resources = {
     	"User" => {
 	    	:nav_bar => true,
