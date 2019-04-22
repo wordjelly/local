@@ -1085,7 +1085,7 @@ GEM
       ruby-progressbar
     wj-payuindia (0.1.1)
     wkhtmltopdf-binary (0.12.4)
-    wordjelly-auth (1.4.4)
+    wordjelly-auth (1.4.5)
       aws-sdk
       cloudinary
       daemons
