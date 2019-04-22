@@ -84,5 +84,11 @@ Rails.application.configure do
     config.logger = ActiveSupport::TaggedLogging.new(logger)
   end
 
+  config.action_mailer.delivery_method = :mailgun
+  config.action_mailer.mailgun_settings = {
+    api_key: ENV["MAILGUN_API_KEY"],
+    #domain: 'sandboxc0248205473845c3a998e44941ee503e.mailgun.org'
+    domain: 'pathofast.com'
+  }
   
 end
