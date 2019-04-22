@@ -116,6 +116,7 @@ class Routine < Report
 	## range of time when it is possible to end doing this in the day.
 	attribute :end_time, Date
 
+=begin
 	attribute :schedules, type: "nested", properties: {
 			start_time: {
 				type: "date"
@@ -130,7 +131,7 @@ class Routine < Report
 				type: "keyword"
 			}
 	}
-
+=end
 
 	
 end
