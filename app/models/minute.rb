@@ -115,8 +115,6 @@ class Minute
 	## if the barcode is blank?
 	## so we go for a method called update status capacities
 	## where we update the previous minutes, as remaining capacity.
-
-
 	def self.update_tube_barcode(report_ids,barcode)
 		## we want those minutes
 		## where the report ids is there
@@ -230,10 +228,10 @@ class Minute
 			minute_bucket.employees.employee_ids.bookings_with_reports.back_to_employees.employee_ids.buckets.each do |employee_id_bucket|
 				employee_id = employee_id_bucket["key"]
 				bookings_priority = employee_id_bucket.back_to_bookings.booking_priority["value"]
-				puts "the employee id bucket is:"
-				puts employee_id_bucket.to_s
-				puts "the bookings priority is:"
-				puts bookings_priority.to_s
+				#puts "the employee id bucket is:"
+				#puts employee_id_bucket.to_s
+				#puts "the bookings priority is:"
+				#puts bookings_priority.to_s
 				minute_hash[minute_id][employee_id] = bookings_priority.to_i
 			end
 
@@ -608,11 +606,12 @@ class Minute
 	}
 =end
 
-	def self.minute_blocked?(status_id,employee_id,minute,blocked_minutes_hash)
+	def self.minute_blocked(status_id,employee_id,minute,blocked_minutes_hash)
 		false if blocked_minutes_hash[status_id].blank?
 		false if blocked_minutes_hash[status_id][minute].blank?
 		blocked_minutes_hash[status_id][minute].include? employee_id
 	end
+
 
 	def self.get_blocked_statuses_hash(args)
 
@@ -733,7 +732,7 @@ class Minute
 			
 		## to be used in the prospective and retrospective blocking 
 		## part.
-		statuses_and_durations = Status.group_statues_by_duration
+		statuses_and_durations = Status.group_statuses_by_duration
 
 		## so assuming that we have a certain capacity for a status
 		## what needs to be done is that that capacity has to be reduced
@@ -853,8 +852,6 @@ class Minute
 					size: s[:to] - s[:from],
 					include: (s[:from].to_i..s[:to].to_i).to_a
 				},
-				## we have another agg.
-				## 
 				aggs: {
 					with_order_filter: {
 						nested: {
@@ -922,7 +919,7 @@ class Minute
 					minute_bucket.with_order_filter.with_order_filter_bookings.order_filter.employees.employee_id.buckets.each do |eid|
 							employee_id = eid["key"]
 							## is this minute blocked for this status for this employee or not?
-							unless minute_blocked? (status_id,employee_id,minute,blocked_minutes_hash)
+							unless minute_blocked(status_id,employee_id,minute,blocked_minutes_hash)
 
 								status_results[status_id][minute][:with_order][employee_id] = []
 								eid.status_bookings.this_status.booking_priority.buckets.each do |booking_priority_bucket|
@@ -937,7 +934,7 @@ class Minute
 					minute_bucket.without_order_filter.employee_id.buckets.each do |eid|
 
 						employee_id = eid["key"]
-						unless minute_blocked? (status_id,employee_id,minute,blocked_minutes_hash)
+						unless minute_blocked(status_id,employee_id,minute,blocked_minutes_hash)
 
 							status_results[status_id][minute][:without_order][employee_id] = []
 							eid.status_bookings.this_status.booking_priority.buckets.each do |booking_priority_bucket|
@@ -1098,14 +1095,7 @@ class Minute
 		add_bulk_item(update_request)
 	end
 
-	def self.block_previous_minutes
-
-	end
-
-	def self.block_subsequent_minutes
-
-	end
-
+	
 	def self.get_best_minute(prev_end_minute,available_minutes)
 		nearest_minute = available_minutes.select{|c| c >= prev_end_minute}
 		if nearest_minute.blank?
@@ -1404,74 +1394,6 @@ class Minute
 			puts update_request.to_s
 
 			add_bulk_item(update_request)
-
-=begin
-			employee_block_duration.times do |k|
-
-				## for each employee here,
-				## for the block duration
-				if block_other_employees == 1
-					puts "block other employees"
-					## in this case, 
-					## it means that no one else can do this statust till the end.
-					## as well as this employee
-					## its basically a status block.
-					request_details = {
-						script: {
-							lang: "painless",
-							inline: '''
-								for(employee in ctx._source.employees){
-							        employee.status_ids.remove(employee.status_ids.indexOf(params.status_id))
-							      }
-							''',
-							params: {
-								status_id: status
-							}		
-						}
-					}
-
-					## here we don't do k + 1.
-					## here we do only
-					update_request = {
-						update: {
-							_index: index_name, _type: document_type, _id: (start_minute + k).to_s, data: request_details
-						}
-					}
-
-					add_bulk_item(update_request)
-
-				end
-
-				## we basically make the employee ineligible for these statuses.
-				puts "got that we have to block the employee in subsequent minutes."
-
-				request_details = {
-					script: {
-						lang: "painless",
-						inline: '''
-							for(employee in ctx._source.employees){
-								if(employee["id"] == params.employee_id)
-						        employee.bookings_score = 11;
-						      }
-						''',
-						params: {
-							status_id: status,
-							employee_id: employee_id
-						}		
-					}
-				}
-
-				puts "start minute + k is: #{start_minute + k}"
-
-				update_request = {
-					update: {
-						_index: index_name, _type: document_type, _id: (start_minute + k + 1).to_s, data: request_details
-					}
-				}
-
-				add_bulk_item(update_request)
-			end
-=end
 
 			prev_status_minute = start_minute
 			prev_status_id = status

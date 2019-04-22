@@ -796,7 +796,7 @@ class Status
 				terms: {
 					field: "duration",
 					order: {
-						"_key".to_sym => "_asc"
+						"_key".to_sym => "asc"
 					}
 				},
 				aggs: {
