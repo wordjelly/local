@@ -824,6 +824,7 @@ class Status
 				c = c["key"]
 			}
 
+			#
 			duration_and_statuses << {duration: duration, statuses: statuses}
 
 		end
