@@ -1,10 +1,10 @@
 class BaseController < ApplicationController
 
 	respond_to :js, :html, :json
-	before_filter :get_action_permissions
-	before_filter :get_user_group_permissions
-	before_filter :proceed_to_action?
-	before_filter :set_model, :only => [:show,:update,:destroy,:edit]
+	before_action :get_action_permissions
+	before_action :get_user_group_permissions
+	before_action :proceed_to_action?
+	before_action :set_model, :only => [:show,:update,:destroy,:edit]
 
 	def new
 		instance = get_resource_class.new(get_model_params)
