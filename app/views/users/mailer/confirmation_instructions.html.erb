@@ -1,0 +1,4 @@
+<h4>Thanks for Signing up for an account!</h4>
+<h5>To confirm your account, please click on the link below</h5>
+<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+<h5>If you did not sign up/request this email, please ignore it.</h5>

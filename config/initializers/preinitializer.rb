@@ -30,7 +30,7 @@ Auth.configure do |config|
   	}
 
 	config.host_name = ENV["HOST_NAME"]
-
+	config.mailer_class = "PathofastMailer"
 	## => google oauth details
 	## app : jmaps-1/OAuth 2.0 client IDs/pathofast
 	## account : bhargav.r.raut

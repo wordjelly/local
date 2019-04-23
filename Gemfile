@@ -13,6 +13,8 @@ gem 'wkhtmltopdf-binary'
 gem 'chronic'
 gem 'aws-sdk'
 gem 'virtus'
+gem 'premailer-rails'
+
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails'

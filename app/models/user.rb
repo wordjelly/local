@@ -1,7 +1,10 @@
+#require "elasticsearch/persistence/model"
 class User 
 
 	include Auth::Concerns::UserConcern
 	include Auth::Concerns::SmsOtpConcern
+  include Concerns::OrganizationConcern
+
 
   create_es_index(INDEX_DEFINITION)
 	
@@ -54,7 +57,6 @@ class User
             
         else
           puts "no r."
-          
         end
       end
     end
