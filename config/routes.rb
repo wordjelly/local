@@ -33,12 +33,8 @@ Rails.application.routes.draw do
   resources :images
   resources :equipment
   resources :tags
-  resources :users do 
-    collection do
-      get :sign_in_options
-    end
-  end
-
+  #resources :users 
+  resources :organizations
   #get 'users/sign_in_options' => "users#sign_in_options", as: "sign_in_options"
 
   get 'search' => 'search#search'

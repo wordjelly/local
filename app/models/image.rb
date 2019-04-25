@@ -38,10 +38,10 @@ class Image
   ##
   ##
   ###########################################################  
-  attribute :parent_id, String
-  attribute :parent_class, String
-  attribute :active, Boolean  
-  attribute :custom_coordinates, String
+  attribute :parent_id, String, mapping: {type: 'keyword'}
+  attribute :parent_class, String, mapping: {type: 'keyword'}
+  attribute :active, Boolean
+  attribute :custom_coordinates, String, mapping: {type: 'keyword'}
   attr_accessor :signed_request
   attr_accessor :timestamp
   attr_accessor :public_id

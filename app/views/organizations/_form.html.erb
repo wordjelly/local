@@ -1,0 +1,22 @@
+<%= render :partial => "/organizations/change_logo_message" %>
+<%= form_for @organization do |f| %>
+
+	<%= f.text_field :name %>
+	<%= f.label :name %>
+
+	<%= f.text_field :address %>
+	<%= f.label :address %>
+
+	<%= f.text_field :phone_number %>
+	<%= f.label :phone_number %>
+
+	<%= f.text_field :description %>
+	<%= f.label :description %>
+
+	<% unless @organization.new_record? %>
+    	<%= render :partial => "images/image", locals: {model: @organization} %>
+  	<% end %>
+
+	<%= f.submit "Submit" %>
+
+<% end %>

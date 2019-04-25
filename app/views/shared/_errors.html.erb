@@ -1,12 +1,15 @@
-<% if !model.errors.full_messages.empty? %>
-	<div class="card" id="errors">
-		<div class="card-content">
-			<div class="card-title">
-				There were errors while performing the action
+<!-- an instance variable called @errors is defined in the create and update actions of the base_controller_concern, and this partial is incorporated in the main layout of the application -->
+<% if defined? @errors %>
+	<% if !@errors.full_messages.empty? %>
+		<div class="card" id="errors">
+			<div class="card-content">
+				<div class="card-title">
+					There were errors while performing the action
+				</div>
+				<% @errors.full_messages do |err| %>
+					<div><%= err %></div>
+				<% end %>
 			</div>
-			<% model.errors.full_messages do |err| %>
-				<div><%= err %></div>
-			<% end %>
 		</div>
-	</div>
+	<% end %>
 <% end %>

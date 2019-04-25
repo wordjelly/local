@@ -2,12 +2,39 @@
 class User 
 
 	include Auth::Concerns::UserConcern
-	include Auth::Concerns::SmsOtpConcern
+	
+  include Auth::Concerns::SmsOtpConcern
+  
   include Concerns::OrganizationConcern
 
+  create_es_index({
+        index_name: "pathofast-users",
+        index_options:  {
+                settings:  {
+                index: Auth::Concerns::EsConcern::AUTOCOMPLETE_INDEX_SETTINGS
+              },
+                mappings: {
+                  "document" => Auth::Concerns::EsConcern::AUTOCOMPLETE_INDEX_MAPPINGS
+            }
+        }
+  })
 
-  create_es_index(INDEX_DEFINITION)
-	
+  ## so we now will be able to search for users with organization ids.
+
+  PATIENT = "Patient"
+
+  LAB_OWNER = "Lab Owner"
+
+  DOCTOR = "Doctor"
+
+  field :role, type: String, :default => PATIENT
+
+  ## so let me design the organization controller.
+  ## first let us design the user roles.
+  ## for the base controller.
+  ## inclusive of permissions.
+  ## if he creates, he can add all the details of that organization.
+
 	##########################################################
 	##
 	##
@@ -61,6 +88,15 @@ class User
       end
     end
 
-	
+	  def as_indexed_json(options={})
+        {
+            tags: self.tags,
+            public: self.public,
+            document_type: Auth::OmniAuth::Path.pathify(self.class.name.to_s),
+            resource_id: self.resource_id,
+            resource_class: self.resource_class,
+            organization_id: self.organization_id
+        }
+    end
 	
 end

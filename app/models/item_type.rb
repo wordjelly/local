@@ -5,6 +5,8 @@ class ItemType
 
 	index_name "pathofast-item-types"
 
+	## somehwer
+
 	attribute :name, String
 	validates_presence_of :name
 

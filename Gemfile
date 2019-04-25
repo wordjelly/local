@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-#gem 'wordjelly-auth', path: '/home/bhargav/Github/Auth'
-gem 'wordjelly-auth'
+gem 'wordjelly-auth', path: '/home/bhargav/Github/Auth'
+#gem 'wordjelly-auth'
 gem 'ox'
 gem 'down'
 gem 'nokogiri'

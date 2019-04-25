@@ -3,12 +3,18 @@ module Concerns::OrganizationConcern
 	extend ActiveSupport::Concern
 
 	included do 
+
 		field :organization_id, type: String
+
+		field :verified_as_belonging_to_organization, type: Boolean, :default => false
 
 		attr_accessor :organization
 		
 		after_find do |document|
 			unless document.organization_id.blank?
+				## search for an organization with this id,
+				## that has this user in the user_ids
+				## which is only possible if he was verified.
 				search_results = Organization.search({
 					query: {
 						bool: {
@@ -31,7 +37,7 @@ module Concerns::OrganizationConcern
 				unless search_results.response.hits.hits.blank?
 					
 					self.organization = Organization.new(search_results.response.hits.hits.first["_source"])
-					self.organization.id = search_results.response.hits.hits.first["_id"]
+					#self.organization.id = search_results.response.hits.hits.first["_id"]
 
 				end
 

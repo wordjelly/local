@@ -60,8 +60,12 @@
 <%= render :partial => "layouts/auth/navbar/navbar.html.erb" %>
 
 <div class="container">
-<%= render :partial => "search/search" %>
-<%= yield %>
+  <%= render :partial => "search/search" %>
+  <!-- expects an instance variable called @errors -->
+  <%= render :partial => "shared/errors" %>
+  <!-- expects an instance variable called @images -->
+  <%= render :partial => "/images/index" %>
+  <%= yield %>
 </div>
 
 <!-- for the sign in modals -->

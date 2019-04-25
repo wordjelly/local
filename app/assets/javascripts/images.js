@@ -1,8 +1,18 @@
+function loadImage(path, width, height, target) {
+    $('<img src="'+ path +'">').load(function() {
+      $(this).width(width).height(height).appendTo(target);
+    });
+}
+
 document.addEventListener("turbolinks:load", function() {
   $('#upload_widget_opener').cloudinary_upload_widget(
   get_widget_options(),
-  function(error, result) { console.log(error, result) });
-})
+  function(error, result) { 
+     var results_array = result[0];
+     var secure_url = results_array["secure_url"];
+     loadImage(secure_url,90,60,"#uploaded_image");
+  });
+});
 
 var get_widget_options = function(){
   var cropping = $("#cropping").data('cropping') || "server";

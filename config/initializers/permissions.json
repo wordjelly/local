@@ -1,6 +1,40 @@
 {
 	"controllers" : 
 		{
+			"organizations" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "no",
+						"groups" : []
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "no",
+						"groups" : []
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"groups" : [
+							{
+								"group_name" : "lab_owner",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"groups" : [
+							{
+								"group_name" : "lab_owner",
+								"unpermitted_parameters" : []
+							}
+						]
+					}
+				]		
+			},
 			"users" : {
 				"actions" : [
 					{

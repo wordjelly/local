@@ -19,7 +19,7 @@ class ImagesController < ApplicationController
 				render "show"
 			end
 			format.text do 
-				render :text => @image.signed_request[:signature]
+				render :plain => @image.signed_request[:signature]
 			end
 		end
 	end
