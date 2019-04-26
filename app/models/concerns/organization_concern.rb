@@ -61,7 +61,7 @@ module Concerns::OrganizationConcern
 	end
 
 	def get_organization_logo_url
-		return "/assets/default_logo.svg" if self.organization.blank?
+		return Organization::DEFAULT_LOGO_URL if self.organization.blank?
 		return self.organization.logo_url
 	end
 

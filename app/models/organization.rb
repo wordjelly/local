@@ -6,8 +6,8 @@ class Organization
 
 	index_name "pathofast-organizations"
 
+	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
-
 	include Concerns::OwnersConcern
 
 	DEFAULT_LOGO_URL = "/assets/default_logo.svg"
@@ -20,8 +20,9 @@ class Organization
 
 	attribute :description, String, mapping: {type: 'keyword'}
 
+	attribute :user_ids, Array, mapping: {type: 'keyword'}, default: []
 
-	attribute :user_ids, Array, mapping: {type: 'keyword'}
+	attribute :rejected_user_ids, Array, mapping: {type: 'keyword'}, default: []
 
 	attr_accessor :users_pending_approval
 
@@ -100,6 +101,7 @@ class Organization
 	end	
 
 
+
 	after_find do |document|
 		# show those users who are not yet approved for 
 		# this organization.
@@ -126,14 +128,18 @@ class Organization
 			}
 		})
 
+		result.results.each do |res|
+			
+		end
+
 		document.users_pending_approval ||= result.results
-		
+		document.users_pending_approval ||= []
 
 	end
 
 	## so these are the permitted params.
 	def self.permitted_params
-		[:id,{:organization => [:name, :description, :address,:phone_number, {:user_ids => []}] }]
+		[:id,{:organization => [:name, :description, :address,:phone_number, {:user_ids => []}, {:rejected_user_ids => []}] }]
 	end
 
 end

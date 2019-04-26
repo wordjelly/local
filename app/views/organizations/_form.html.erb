@@ -17,6 +17,15 @@
     	<%= render :partial => "images/image", locals: {model: @organization} %>
   	<% end %>
 
+  	<!-- to show the approved users, and delete them if required -->
+  	<%= render :partial => "/shared/display_array", locals: {model: @organization, multiple_el: "user_ids", multiple_objects: "users"} %>
+
+  	<!-- to show the rejected users and delete them if required -->
+  	<%= render :partial => "/shared/display_array", locals: {model: @organization, multiple_el: "rejected_user_ids", multiple_objects: "users"} %>
+
+  	<!-- to show the pending users and delete them if required -->
+	<%= render :partial => "/organizations/users_pending_approval_form_partial" %>  	
+
 	<%= f.submit "Submit" %>
 
 <% end %>

@@ -56,7 +56,13 @@
 <body>
 
 
-<!-- for enabling the navbar -->
+<% content_for :nav_links do %>
+    
+<% end %>
+
+<!-- from creation to adding users, to etc etc -->
+<!-- protection of search -->
+
 <%= render :partial => "layouts/auth/navbar/navbar.html.erb" %>
 
 <div class="container">

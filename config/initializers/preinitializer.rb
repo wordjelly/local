@@ -61,6 +61,8 @@ Auth.configure do |config|
 	}
 
 
+	config.profiles_controller = "profiles"
+	
 	########################################################
 	##
 	##

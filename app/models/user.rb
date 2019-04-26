@@ -13,9 +13,47 @@ class User
                 settings:  {
                 index: Auth::Concerns::EsConcern::AUTOCOMPLETE_INDEX_SETTINGS
               },
-                mappings: {
-                  "document" => Auth::Concerns::EsConcern::AUTOCOMPLETE_INDEX_MAPPINGS
-            }
+              mappings: {
+                  "document" => {
+                      properties: {
+                        tags:  {
+                            type: "text",
+                            analyzer: "nGram_analyzer",
+                            search_analyzer: "whitespace_analyzer"
+                          },
+                          public: {
+                            type: "keyword"
+                          },
+                          resource_id: {
+                            type: "keyword"
+                          },
+                          document_type: {
+                            type: "keyword"
+                          },
+                          organization_id: {
+                            type: "keyword"
+                          },
+                          role: {
+                            type: "keyword"
+                          },
+                          first_name: {
+                            type: "keyword"
+                          },
+                          last_name: {
+                            type: "keyword"
+                          },
+                          address: {
+                            type: "keyword"
+                          },
+                          sex: {
+                            type: "keyword"
+                          },
+                          date_of_birth: {
+                            type: "date"
+                          }
+                      }
+                  }
+              }
         }
   })
 
@@ -89,14 +127,7 @@ class User
     end
 
 	  def as_indexed_json(options={})
-        {
-            tags: self.tags,
-            public: self.public,
-            document_type: Auth::OmniAuth::Path.pathify(self.class.name.to_s),
-            resource_id: self.resource_id,
-            resource_class: self.resource_class,
-            organization_id: self.organization_id
-        }
+        self.attributes.merge({document_type: Auth::OmniAuth::Path.pathify(self.class.name.to_s)}).except(:_id)
     end
 	
 end

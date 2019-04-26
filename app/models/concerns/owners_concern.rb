@@ -10,11 +10,9 @@ module Concerns::OwnersConcern
 
 		before_save do |document|
 			if document.class.name == "Organization"
-				## if the document is an organization.
-				## set its owner id, as its own id.
-				## basically anybody with that organization can edit it.
-				document.id.to_s ||= document.name
-				document.owner_ids ||= [document.id.to_s]
+				if document.owner_ids.blank?
+					document.owner_ids = [document.id.to_s]
+				end
 			else
 				document.owner_ids << created_by_user.organization_ids unless created_by_user.blank?
 			end

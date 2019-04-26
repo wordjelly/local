@@ -1,0 +1,28 @@
+<ul class="collection with-header">
+    <li class="collection-header"><h4>User Details</h4></li>
+    <% unless @profile_resource.organization_id.blank? %>
+   		<% @organization = Organization.find(@profile_resource.organization_id) %>
+    	<li class="collection-item"><div>Organization: <%= link_to @organization.name, organization_path(@organization.id.to_s) %></div></li>
+    <% end %>
+    <li class="collection-item">
+    	<div> First Name: <%= @profile_resource.first_name %>
+    	</div>
+    </li>
+    <li>
+    	<div> Last Name: <%= @profile_resource.last_name %>
+    	</div>
+    </li>
+    <li>
+    	<div> Date of Birth
+    	</div>
+    </li>
+    <li>
+    	<div> Gender 
+    	</div>
+    </li>
+    <li class="collection-item"><div>Role: <%= @profile_resource.role %></div></li>
+    <li class="collection-item"><div>Email: <%= @profile_resource.email %></div></li>
+    <li class="collection-item"><div>Phone Number: <%= @profile_resource.additional_login_param %></div></li>
+</ul>
+
+<%= link_to "Edit", edit_profile_path(:id => @profile_resource.id.to_s, :resource => "users") %>

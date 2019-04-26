@@ -1,6 +1,7 @@
 function navbar_search(query_string){
+		var search_url = window.location.origin + "/app_search";
 		$.get(
-		{url : window.location.origin + "/search",
+		{url : search_url,
 		 data: { 
 		    query: query_string
 		 },
@@ -36,21 +37,4 @@ var highlight = function() {
 	var strings = $("#search").val().split(/\s+/);
 	$(".search_result").mark(strings);
 
-	/**
-	$.each(strings,function(index,string){
-		
-		$(".search_result").each(function () {
-		
-		// this is not going to be easy.
-		var matchStart = $(this).html().toLowerCase().indexOf("" + string.toLowerCase() + "");
-		
-		var matchEnd = matchStart + string.length - 1;
-		
-		var beforeMatch = $(this).html().slice(0, matchStart);
-		var matchText = $(this).html().slice(matchStart, matchEnd + 1);
-		var afterMatch = $(this).html().slice(matchEnd + 1);
-		$(this).html(beforeMatch + "<span class='yellow'>" + matchText + "</span>" + afterMatch);
-		});
-	});
-	**/	
 }

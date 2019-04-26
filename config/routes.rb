@@ -37,7 +37,7 @@ Rails.application.routes.draw do
   resources :organizations
   #get 'users/sign_in_options' => "users#sign_in_options", as: "sign_in_options"
 
-  get 'search' => 'search#search'
+  get 'app_search' => 'search#search'
   get 'search/type_selector' => 'search#type_selector'
   get 'make_payment' => 'statuses#make_payment'
 

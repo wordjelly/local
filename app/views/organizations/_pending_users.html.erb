@@ -1,0 +1,12 @@
+<h5>Employees Pending Approval</h5>
+<% unless @organization.users_pending_approval.blank? %>
+	<ul class="collection">
+
+		<% @organization.users_pending_approval.each do |user| %>
+				
+			<li class="collection-item"><%= user.full_name %></li>
+
+		<% end %>
+
+	</ul>
+<% end %>

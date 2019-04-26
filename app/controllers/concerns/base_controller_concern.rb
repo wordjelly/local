@@ -66,6 +66,7 @@ module Concerns::BaseControllerConcern
 			instance_variable_set("#{get_resource_name.pluralize}",[])
 		end
 	end
+	
 
 	def create
 
@@ -116,9 +117,21 @@ module Concerns::BaseControllerConcern
 			}
 		}
 
+		## owner id clause is added only if 
+		## this should have worked.
+		## i need to see the organization owner ids.
+		## and the current user organization id.
+		## the owner id was not added before save.
+		## first have to see why that is not working.
+
 		if current_user
-			query[:bool][:must] << {terms: {owner_ids: current_user.organization_id}} unless current_user.organization_id.blank?
+			query[:bool][:must] << {term: {owner_ids: current_user.organization_id}} unless current_user.organization_id.blank?
 		end
+
+		puts "the query sent for set_model is:"
+		puts JSON.pretty_generate(query)
+
+		puts "the resource class is: #{get_resource_class}"
 
 		results = get_resource_class.search({query: query})
 
