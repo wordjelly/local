@@ -117,16 +117,10 @@ module Concerns::BaseControllerConcern
 			}
 		}
 
-		## owner id clause is added only if 
-		## this should have worked.
-		## i need to see the organization owner ids.
-		## and the current user organization id.
-		## the owner id was not added before save.
-		## first have to see why that is not working.
+		## so we append authorization to the query if it is required.
 
-		if current_user
-			query[:bool][:must] << {term: {owner_ids: current_user.organization_id}} unless current_user.organization_id.blank?
-		end
+		query = add_authorization_clause(query) (if @action_permissions["requires_authorization"] == "yes")
+
 
 		puts "the query sent for set_model is:"
 		puts JSON.pretty_generate(query)
@@ -144,6 +138,7 @@ module Concerns::BaseControllerConcern
 			end
 			instance_variable_set("@#{get_resource_name}",obj)
 		else
+			not_found("no such model exists, or the current user does not have authorization to interact with the model")
 		end
 	end
 
@@ -165,11 +160,32 @@ module Concerns::BaseControllerConcern
 	##
 	##
 	###############################################################
+	## @param[Hash] query: the query for checking if the user has access to this resource, when the query enters this function, it is simply looking for a resource with the provided id. Eg: if you are in the OrganizationsController, it is looking for an organization with the provided id.
+	## The def will first check if there is a current user, otherwise will throw an error.
+	## then will check fi the current user even has an organization id, otherwise will throw an error
+	## then checks if the current_user has been verified as belonging to that organization, otherwise, will throw an error.
+	## last, if all above conditions have passed it will add the clause 
+	## @return[Hash] : the updated query, to include only those resources, that have 
+	def add_authorization_clause(query)
+		if current_user
+			unless current_user.organization_id.blank?
+				if current_user.verified_as_belonging_to_organization.blank?
+					not_found("user has not been verified as belonging to his claimed organization id , and this needs authorization #{controller_name}##{action_name}")
+				else
+					query[:bool][:must] << {term: {owner_ids: current_user.organization_id}}
+				end 
+			else
+				not_found("user does not have an organization_id, and authorization is necessary for this #{controller_name}##{action_name}")
+			end
+		else
+			not_found("no current user, authorization is necessary for this #{controller_name}##{action_name}")
+		end
+
+		query
+	end
 
 	## let me just get sign up working.
 	## then sign in and forgot, resend.
-	## 
-
 	def authorize
 		!@user_group_permissions.blank?
 	end
@@ -185,13 +201,7 @@ module Concerns::BaseControllerConcern
 	
 		not_found("Please define permissions for : #{controller_name}##{action_name}") if @action_permissions.blank?
 
-		if @action_permissions["requires_authentication"] == "yes"
-			#TCONDITIONS = {:only => action_name.to_sym}
-			#what about invoking some code in the beginning
-			#of the controller.
-			#defining this from the actions.
-			#
-		end
+		
 		@action_permissions
 
 	end

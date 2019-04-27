@@ -128,12 +128,18 @@ class Organization
 			}
 		})
 
+		puts result.results.to_s
+
+		puts "came to after find to set the users pending approval."
+
+		document.users_pending_approval ||= []
 		result.results.each do |res|
-			
+			puts "the user pending approval is: #{res}"
+			document.users_pending_approval << res
 		end
 
-		document.users_pending_approval ||= result.results
-		document.users_pending_approval ||= []
+		#document.users_pending_approval ||= result.results
+		#document.users_pending_approval ||= []
 
 	end
 

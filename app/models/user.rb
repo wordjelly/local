@@ -127,7 +127,25 @@ class User
     end
 
 	  def as_indexed_json(options={})
-        self.attributes.merge({document_type: Auth::OmniAuth::Path.pathify(self.class.name.to_s)}).except(:_id)
+        self.attributes.merge({document_type: Auth::OmniAuth::Path.pathify(self.class.name.to_s)}).except("_id")
+    end
+
+    def self.create_test_user_with_email(email)
+      u = User.new
+      u.email = email
+      u.password = "cocostan111"
+      u.password_confirmation = "cocostan111"
+      u.confirm
+      u.save
+      puts u.errors.full_messsages unless u.errors.full_messages.blank?
+    end
+
+    def self.create_test_users
+      User.es.index.delete
+      User.es.index.create
+      User.delete_all
+      create_test_user_with_email("bhargav.r.raut@gmail.com")
+      create_test_user_with_email("icantremember111@gmail.com")
     end
 	
 end
