@@ -24,6 +24,21 @@ class ProfilesController < Auth::ProfilesController
   		end
 	end
 
+	## time to check for authorization.
+	## or first i can make a patient's controller.
+	## and see how to assign an order to it.
+	## remember that the patient id, is what is going through
+	## we can create a patient for the user also.
+	## and use him throughout.
+	## basically a given user is going to be linked to multiple patients.
+	## who owns the patient ?
+	## creating organization and once it has been verified, the
+	## user itself.
+	## the user's organization id, should be his own id.
+	## do that on create.
+	## 
+
+
 
 	private
 	def permitted_params

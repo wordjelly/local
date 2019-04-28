@@ -76,7 +76,7 @@ module Concerns::BaseControllerConcern
 		
 		instance.save
 
-		@errors = instance.errors
+		set_errors_instance_variable(instance)
 		
 		instance_variable_set("@#{get_resource_name}",instance)
 
@@ -102,6 +102,8 @@ module Concerns::BaseControllerConcern
 	def update
 		instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
 		instance_variable_get("@#{get_resource_name}").send("save")
+		set_errors_instance_variable
+		set_alert_instance_variable
 	end
 
 	def set_model
@@ -116,30 +118,33 @@ module Concerns::BaseControllerConcern
 				]
 			}
 		}
-
-		## so we append authorization to the query if it is required.
-
 		query = add_authorization_clause(query) (if @action_permissions["requires_authorization"] == "yes")
-
-
-		puts "the query sent for set_model is:"
-		puts JSON.pretty_generate(query)
-
-		puts "the resource class is: #{get_resource_class}"
-
 		results = get_resource_class.search({query: query})
-
 		if results.response.hits.hits.size > 0
 			obj = get_resource_class.find(results.response.hits.hits[0]["_id"])
 			obj.run_callbacks(:find)
-			## loads the images as an instance variable.
-			if obj.images.size > 0
-				instance_variable_set("@images",obj.images)
-			end
+			set_images_instance_variable(obj)
+			set_alert_instance_variable(obj)
 			instance_variable_set("@#{get_resource_name}",obj)
 		else
 			not_found("no such model exists, or the current user does not have authorization to interact with the model")
 		end
+	end
+
+	def set_images_instance_variable(obj)
+		if obj.images.size > 0
+			instance_variable_set("@images",obj.images)
+		end
+	end
+
+	def set_alert_instance_variable(obj)
+		if obj.respond_to? :alert
+			instance_variable_set("@alert",obj.alert)
+		end
+	end
+
+	def set_errors_instance_variable(obj)
+		instance_variable_set("@errors",obj.errors)
 	end
 
 	## so we have to give the fallback as none on that action.
@@ -165,17 +170,51 @@ module Concerns::BaseControllerConcern
 	## then will check fi the current user even has an organization id, otherwise will throw an error
 	## then checks if the current_user has been verified as belonging to that organization, otherwise, will throw an error.
 	## last, if all above conditions have passed it will add the clause 
+	## so now it will work out.
+	## so if you create a patient,
+	## lets say an organization creates a patient
+	## we use the email/phone to search for an existing user
+	## if the patient is not verified, then we add the user id, to it.
+	## so prospective user id is added to patient.
+	## if there is no user, id, then what happens?
+	## simple callback
+	## so the organization cannot create two patients with the same mobile number.
+	## or email.
+	## the patient id will be the organiztion_id_mobile_number of patient.
+	## so that way we get it unique, without really trying and put a validates_presence_of mobile number.
+	## so let's get on with the patient.
+	## after sign_up -> check for patients, where verified == false, and mobile_number is same, will have 
+	## we dont find an existing user -> we send a message to that mobile to sign up
+	## they sign up.
+	## 
 	## @return[Hash] : the updated query, to include only those resources, that have 
 	def add_authorization_clause(query)
 		if current_user
+			## check if the current user's id has been mntioned in the owner_ids of the resource.
+			query[:bool][:must] <<
+			{
+				bool: {
+					minimum_should_match: 1,
+					should: [
+						{
+							term: {
+								owner_ids: current_user.id.to_s
+							}
+						}
+					]
+				}
+			}
+
 			unless current_user.organization_id.blank?
 				if current_user.verified_as_belonging_to_organization.blank?
-					not_found("user has not been verified as belonging to his claimed organization id , and this needs authorization #{controller_name}##{action_name}")
+					puts "user is not verified as belonging to the given organization, so we cannot use its organization id to check for ownership"
+					##not_found("user has not been verified as belonging to his claimed organization id , and this needs authorization #{controller_name}##{action_name}")
 				else
-					query[:bool][:must] << {term: {owner_ids: current_user.organization_id}}
+					query[:bool][:must][1][:should] << {term: {owner_ids: current_user.organization_id}}
 				end 
 			else
-				not_found("user does not have an organization_id, and authorization is necessary for this #{controller_name}##{action_name}")
+				puts "the user does not have an organization id, so we cannot check for ownership using it."
+				#not_found("user does not have an organization_id, and authorization is necessary for this #{controller_name}##{action_name}")
 			end
 		else
 			not_found("no current user, authorization is necessary for this #{controller_name}##{action_name}")

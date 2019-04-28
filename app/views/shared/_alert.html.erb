@@ -1,11 +1,10 @@
-<% if show_logo_change_message?(@organization) %>
+<% if defined? @alert %>
 	<div class="row yellow">
 		<div class="col l1 m1 s1" style="padding-top:1rem;">
 			<i class="material-icons" style="font-size: 60px;">warning</i>
 		</div>
 		<div class="col l10 m10 s10">
-				<p>You are using the default logo!</p> 
-				<p>Add your own logo to your organization, by clicking on the Update Image button below</p>
+				<p><%= @alert %></p> 
 		</div>
 	</div>
 <% end %>

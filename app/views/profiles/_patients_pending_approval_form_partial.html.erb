@@ -1,0 +1,6 @@
+<ul class="collection">
+	<% @profile_resource.pending_patients ||= [] %>
+	<% @profile_resource.pending_patients.each do |patient| %>
+		<li class="collection-item"><%= patient.full_name %><span data-user-id="<%= user_id %>" class="blue-text accept_patient" style="margin-left: 20px;">Accept</span>|<span data-user-id="<%= user_id %>" class="red-text reject_patient">Reject</span></li>
+	<% end %>
+</ul>

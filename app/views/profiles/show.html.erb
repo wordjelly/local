@@ -24,5 +24,9 @@
     <li class="collection-item"><div>Email: <%= @profile_resource.email %></div></li>
     <li class="collection-item"><div>Phone Number: <%= @profile_resource.additional_login_param %></div></li>
 </ul>
+    
+<%= render :partial => "pending_patients" %>
+<%= render :partial => "approved_patients" %>
+<%= render :partial => "rejected_patients" %>
 
 <%= link_to "Edit", edit_profile_path(:id => @profile_resource.id.to_s, :resource => "users") %>

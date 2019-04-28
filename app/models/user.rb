@@ -57,7 +57,6 @@ class User
         }
   })
 
-  ## so we now will be able to search for users with organization ids.
 
   PATIENT = "Patient"
 
@@ -66,6 +65,12 @@ class User
   DOCTOR = "Doctor"
 
   field :role, type: String, :default => PATIENT
+
+  field :approved_patient_ids, type: Array, :default => []
+
+  field :rejected_patient_ids, type: Array, :default => []
+
+  attr_accessor :pending_patients
 
   ## so let me design the organization controller.
   ## first let us design the user roles.
@@ -130,6 +135,60 @@ class User
         self.attributes.merge({document_type: Auth::OmniAuth::Path.pathify(self.class.name.to_s)}).except("_id")
     end
 
+    ############################################################
+    ##
+    ## 
+    ## CALLBACKS
+    ##
+    ##
+    ############################################################
+    after_find do |document|
+      document.set_patients_pending_approval
+    end
+
+    ############################################################
+    ##
+    ##
+    ##
+    ## GET PENDING PATIENTS.
+    ##
+    ##
+    ############################################################
+    def set_patients_pending_approval
+      ## search patients, which are not in the ones rejected, 
+      ## and not in the ones approved
+      ## but have the same mobile number
+      search_results = Patient.search({
+        query: {
+          bool:{
+            must: [
+              {
+                term: {
+                  mobile_number: self.additional_login_param
+                }
+              }
+            ],
+            must_not: [
+              {
+                ids: {
+                  values: self.rejected_patient_ids
+                }
+              },
+              {
+                ids: {
+                  values: self.approved_patient_ids
+                }
+              }
+            ]
+          }
+        }
+      })
+      self.pending_patients = []
+      search_results.response.hits.hits.each do |hit|
+        self.pending_patients << Patient.find(hit["_id"])
+      end
+    end
+
     def self.create_test_user_with_email(email)
       u = User.new
       u.email = email
@@ -147,5 +206,7 @@ class User
       create_test_user_with_email("bhargav.r.raut@gmail.com")
       create_test_user_with_email("icantremember111@gmail.com")
     end
+
+
 	
 end

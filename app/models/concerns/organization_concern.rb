@@ -1,5 +1,6 @@
 module Concerns::OrganizationConcern
-
+	## this is only meant to be used with user.
+	## this is not meant to be used anywhere else.
 	extend ActiveSupport::Concern
 
 	included do 
@@ -9,7 +10,7 @@ module Concerns::OrganizationConcern
 		field :verified_as_belonging_to_organization, type: Boolean, :default => false
 
 		attr_accessor :organization
-		
+
 		after_find do |document|
 			unless document.organization_id.blank?
 				## search for an organization with this id,

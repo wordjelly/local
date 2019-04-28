@@ -9,6 +9,7 @@ class Organization
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
+	include Concerns::AlertConcern
 
 	DEFAULT_LOGO_URL = "/assets/default_logo.svg"
 
@@ -146,6 +147,19 @@ class Organization
 	## so these are the permitted params.
 	def self.permitted_params
 		[:id,{:organization => [:name, :description, :address,:phone_number, {:user_ids => []}, {:rejected_user_ids => []}] }]
+	end
+
+	############################################################
+	##
+	##
+	## OVERRIDDEN from ALERT_CONCERN
+	##
+	##
+	############################################################
+	def set_alert
+		if organization.logo_url == Organization::DEFAULT_LOGO_URL
+			self.alert = "You are using the default logo, please upload an image of your own logo"
+		end
 	end
 
 end

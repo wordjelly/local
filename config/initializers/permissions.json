@@ -50,35 +50,6 @@
 					}
 				]		
 			},
-			"users" : {
-				"actions" : [
-					{
-						"action_name" : "new",
-						"requires_authentication" : "no",
-						"requires_authorization" : "no",
-						"groups" : []
-					},
-					{
-						"action_name" : "create",
-						"requires_authentication" : "no",
-						"requires_authorization" : "no",
-						"groups" : []
-					},
-					{
-						"action_name" : "sign_in_options",
-						"requires_authentication" : "no",
-						"requires_authorization" : "no",
-						"groups" : []
-					},
-					{
-						"action_name" : "update",
-						"requires_authentication" : "optional",
-						"requires_authorization" : "no",
-						"parameters_allowed_on_non_authenticated_user": ["otp","resend_otp","forgot_password","logged_in_at","forgot_password_token","new_password","skip_background_job"],
-						"groups" : []
-					}
-				]
-			},
 			"patients" : {
 				"actions" : [
 					{
@@ -87,11 +58,72 @@
 						"requires_authorization" : "yes",
 						"groups" : [
 							{
-								"group_name" : "patients",
+								"group_name" : "patient",
 								"unpermitted_parameters" : []
 							},
 							{
-								"group_name" : "doctors",
+								"group_name" : "doctor",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "lab_owner",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes",
+						"groups" : [
+							{
+								"group_name" : "patient",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "doctor",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "lab_owner",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes",
+						"groups" : [
+							{
+								"group_name" : "patient",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "doctor",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "lab_owner",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes",
+						"groups" : [
+							{
+								"group_name" : "patient",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "doctor",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "lab_owner",
 								"unpermitted_parameters" : []
 							}
 						]
@@ -99,5 +131,4 @@
 				]
 			}
 		}
-	
 }

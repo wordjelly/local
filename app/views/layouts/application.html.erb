@@ -66,10 +66,13 @@
 <%= render :partial => "layouts/auth/navbar/navbar.html.erb" %>
 
 <div class="container">
+  <%= render :partial => "/navigation/options" %>
   <%= render :partial => "search/search" %>
-  <!-- expects an instance variable called @errors -->
-  <%= render :partial => "shared/errors" %>
-  <!-- expects an instance variable called @images -->
+  <!-- expects an instance variable called @errors[OPTIONAL] -->
+  <%= render :partial => "/shared/errors" %>
+  <!-- expects an instance variable called @alert[OPTIONAL] -->
+  <%= render :partial => "/shared/alert" %>
+  <!-- expects an instance variable called @images[OPTIONAL] -->
   <%= render :partial => "/images/index" %>
   <%= yield %>
 </div>

@@ -1,12 +1,10 @@
 class PatientsController  < UsersController
 
-	respond_to :html, :json, :js
+	include Concerns::BaseControllerConcern
 
-	## so we want get_model_class
-	## get get_permitted_params
-	## we can do all this here itself.
-	## only the views will change i think.
-	## which is preferable.
+	## now everything comes from the base controller concern.
+=begin
+	respond_to :html, :json, :js
 
 	def new
 		@patient = Patient.new
@@ -54,6 +52,6 @@ class PatientsController  < UsersController
 	def permitted_params
 		params.permit(:id , {:patient => [:first_name,:last_name,:date_of_birth,:email, :mobile_number, :area, :allergies, :anticoagulants, :diabetic, :asthmatic, :heart_problems]})
 	end
-
+=end
 
 end
