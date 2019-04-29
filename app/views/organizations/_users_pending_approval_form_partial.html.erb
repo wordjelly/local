@@ -1,6 +1,6 @@
 <ul class="collection">
 	<% @organization.users_pending_approval ||= [] %>
-	<% @organization.users_pending_approval.each do |user_id| %>
-		<li class="collection-item"><%= User.find(user_id).full_name %><span data-user-id="<%= user_id %>" class="blue-text accept_user" style="margin-left: 20px;">Accept</span>|<span data-user-id="<%= user_id %>" class="red-text reject_user">Reject</span></li>
+	<% @organization.users_pending_approval.each do |user| %>
+		<li class="collection-item"><%= user.full_name %><span data-user-id="<%= user.id.to_s %>" class="blue-text accept_user" style="margin-left: 20px;">Accept</span>|<span data-user-id="<%= user.id.to_s %>" class="red-text reject_user">Reject</span></li>
 	<% end %>
 </ul>

@@ -11,3 +11,5 @@ if Rails.env.production?
 else
 	Elasticsearch::Persistence.client = Elasticsearch::Client.new hosts: [ host], headers: {"Content-Type" => "application/json" }, request: { timeout: 145 }
 end
+
+User.delete_all
