@@ -3,6 +3,7 @@ class ProfilesController < Auth::ProfilesController
 	respond_to :json,:html,:js
 
 	def show
+		@profile_resource.m_client = self.m_client
 		respond_to do |format|
 			format.html do 
 				render :show
