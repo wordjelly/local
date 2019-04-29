@@ -1,5 +1,7 @@
 class ProfilesController < Auth::ProfilesController
-		
+	
+	respond_to :json,:html,:js
+
 	def edit
 	end
 
