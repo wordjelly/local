@@ -158,13 +158,34 @@ class User
       ## search patients, which are not in the ones rejected, 
       ## and not in the ones approved
       ## but have the same mobile number
+      ## we have either email or additional login param.
+      ## so we search for patients where either email is email or additional login param is additional login param.
+      should_clauses = []
+
+      if (self.email && self.confirmed?)
+        should_clauses << {
+          term: {
+            email: self.email
+          }
+        }
+      end
+
+      if ((self.additional_login_param) && (self.additional_login_param_status == 2))
+        should_clauses << {
+          term: {
+            mobile_number: self.additional_login_param
+          }
+        }
+      end
+
       search_results = Patient.search({
         query: {
           bool:{
             must: [
               {
-                term: {
-                  mobile_number: self.additional_login_param
+                bool: {
+                  minimum_should_match: 1,
+                  should: should_clauses
                 }
               }
             ],

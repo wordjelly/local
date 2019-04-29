@@ -157,9 +157,13 @@ class Organization
 	##
 	############################################################
 	def set_alert
-		if organization.logo_url == Organization::DEFAULT_LOGO_URL
+		## how do we delete it.
+		if self.images.blank?
 			self.alert = "You are using the default logo, please upload an image of your own logo"
 		end
 	end
+
+	## dob is not working in profiles page
+	## 
 
 end

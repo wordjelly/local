@@ -118,7 +118,13 @@ module Concerns::BaseControllerConcern
 				]
 			}
 		}
-		query = add_authorization_clause(query) (if @action_permissions["requires_authorization"] == "yes")
+		query = add_authorization_clause(query) if (@action_permissions["requires_authorization"] == "yes")
+		
+		## so only its own user has been added.
+
+		puts "query after adding authorization clause is:"
+		puts JSON.pretty_generate(query)
+
 		results = get_resource_class.search({query: query})
 		if results.response.hits.hits.size > 0
 			obj = get_resource_class.find(results.response.hits.hits[0]["_id"])

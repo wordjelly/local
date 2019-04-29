@@ -1,24 +1,3 @@
-add new patient.
-add tests to that patient (basically copy over the whole thing)
-add packages
-update the values of tests
-add tests to existing tubes
-lis connectivity
-auto print.
-lis update connectivity.
-checklist approval by dr.sneha
-report pdf generation, with signatures
-abnormal value highlighting
-total of test prices.
-
-## so first of all it should get enqueued.
-
-## after this reallot
-
-## then routine scheduling.
-
-## and then viewing the statuses
-
-## and updating them.
-
-## then UI for all of these.
+29/4/2019:
+1. date of birth selection UI not working with profiles_edit.
+2. adding organization id , and verified as true for the creator of the organization itself.
