@@ -2,6 +2,17 @@ class ProfilesController < Auth::ProfilesController
 	
 	respond_to :json,:html,:js
 
+	def show
+		respond_to do |format|
+			format.html do 
+				render :show
+			end
+			format.json do 
+				render :json => {user: @profile_resource.to_json}
+			end
+		end
+	end
+
 	def edit
 	end
 
