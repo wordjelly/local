@@ -9,7 +9,7 @@ class ProfilesController < Auth::ProfilesController
 				render :show
 			end
 			format.json do 
-				render :json => {user: @profile_resource.to_json}
+				render :json => {user: @profile_resource.attributes.slice(:first_name,:last_name,:date_of_birth,:address,:sex)}
 			end
 		end
 	end
