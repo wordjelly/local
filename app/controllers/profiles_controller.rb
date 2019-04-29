@@ -1,5 +1,5 @@
 class ProfilesController < Auth::ProfilesController
-	
+		
 	def edit
 	end
 
