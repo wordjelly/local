@@ -1,17 +1,17 @@
-function remove_verified_user_id = function(user_id){
+var remove_verified_user_id = function(user_id){
 
 }
 
-function add_verified_user_id = function(user_id){
+var add_verified_user_id = function(user_id){
 
 }
 
-function remove_rejected_user_id = function(user_id){
+var remove_rejected_user_id = function(user_id){
 
 }
 
-function add_rejected_user_id = function(user_id){
-	
+var add_rejected_user_id = function(user_id){
+
 }
 
 $(document).on('click','.accept_user',function(event){
