@@ -19,6 +19,9 @@ class ProfilesController < Auth::ProfilesController
 
 	def update
 
+		puts "the auth token before doing the update:"
+		puts @profile_resource.authentication_token
+		puts "-------------------------------------"
 		check_for_update(@profile_resource)
 
 		@profile_resource.assign_attributes(@resource_params)
@@ -27,7 +30,13 @@ class ProfilesController < Auth::ProfilesController
 
 		respond_to do |format|
   		  if @profile_resource.save
+  		  	  puts "the authentication token after doing the update"
+  		  	  #puts @profile_resource.authentication_token
+  		  	  k = User.find(@profile_resource.id.to_s)
+  		  	  puts k.authentication_token
+  		  	  
   		  	  flash[:notice] = "Success"
+  		  	  ## it should not regenerate the token after this actually.
 	  		  format.json {head :no_content}
 	  		  format.html {redirect_to profile_path({:id => @profile_resource.id.to_s, :resource => @profile_resource.class.name.pluralize.downcase.to_s})}
   		  else
