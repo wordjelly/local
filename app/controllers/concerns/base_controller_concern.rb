@@ -28,7 +28,22 @@ module Concerns::BaseControllerConcern
 	end
 
 	def show
-		## this just does set model and then renders show.
+		respond_to do |format|
+			format.html do 
+				if @errors.full_messages.empty?
+					render :show
+				else
+					render :new
+				end
+			end
+			format.json do 
+				if @errors.full_messages.empty?
+					render :json => {get_resource_name.to_sym => instance_variable_get("@#{get_resource_name}")}
+				else
+
+				end
+			end
+		end
 	end
 
 	def edit
@@ -90,7 +105,7 @@ module Concerns::BaseControllerConcern
 			end
 			format.json do 
 				if @errors.full_messages.empty?
-					render :json => {get_resource_name.to_sym => instance.to_json}
+					render :json => {get_resource_name.to_sym => instance}
 				else
 
 				end
