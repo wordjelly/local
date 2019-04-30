@@ -19,9 +19,9 @@ class ProfilesController < Auth::ProfilesController
 
 	def update
 
-		puts "the auth token before doing the update:"
-		puts @profile_resource.authentication_token
-		puts "-------------------------------------"
+		## so we skip the regeneration at this point.
+		@profile_resource.skip_authentication_token_regeneration = true
+		
 		check_for_update(@profile_resource)
 
 		@profile_resource.assign_attributes(@resource_params)
