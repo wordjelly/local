@@ -3,7 +3,7 @@ class HomeController < ApplicationController
 	respond_to :html
 
 	def index
-		#User.delete_all
+		User.delete_all
 	end	
 
 	# go over the entire api for sign in, sign up, forgot, resend

@@ -30,24 +30,16 @@ module Concerns::BaseControllerConcern
 	def show
 		respond_to do |format|
 			format.html do 
-				if @errors.full_messages.empty?
-					render :show
-				else
-					render :new
-				end
+				render :show
 			end
 			format.json do 
-				if @errors.full_messages.empty?
-					render :json => {get_resource_name.to_sym => instance_variable_get("@#{get_resource_name}")}
-				else
-
-				end
+				render :json => {get_resource_name.to_sym => instance_variable_get("@#{get_resource_name}")}
 			end
 		end
 	end
 
 	def edit
-		## same here.
+		
 	end
 
 	def index
