@@ -10,6 +10,8 @@ class Organization
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
+	include Concerns::MissingMethodConcern
+
 
 	DEFAULT_LOGO_URL = "/assets/default_logo.svg"
 
@@ -26,6 +28,8 @@ class Organization
 	attribute :rejected_user_ids, Array, mapping: {type: 'keyword'}, default: []
 
 	attr_accessor :users_pending_approval
+	attr_accessor :verified_users
+	attr_accessor :rejected_users
 
 	validates_presence_of :address
 
@@ -139,8 +143,19 @@ class Organization
 			document.users_pending_approval << res
 		end
 
-		#document.users_pending_approval ||= result.results
-		#document.users_pending_approval ||= []
+		document.verified_users = []
+		document.user_ids.each do |uid|
+
+			document.verified_users << User.find(uid)
+
+		end
+
+		document.rejected_users = []
+		document.rejected_user_ids.each do |ruid|
+
+			document.rejected_users << User.find(ruid)
+
+		end
 
 	end
 

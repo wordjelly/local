@@ -1,16 +1,20 @@
 class OrdersController < ApplicationController
-	
-	respond_to :html, :json, :js
+	include Concerns::BaseControllerCOncern
 
-	def new
-		@order = Order.new
-	end
+	#respond_to :html, :json, :js
 
-	def edit
-		@order = Order.find(params[:id])
-		@order.run_callbacks(:find)
-	end
+	#def new
+	#	@order = Order.new
+	#end
 
+	#def edit
+	#	@order = Order.find(params[:id])
+	#	@order.run_callbacks(:find)
+	#end
+
+	# can we autoassing a name to it, and then do name id.
+	# as that ?
+	# good idea.
 	def create
 		@order = Order.new(id: SecureRandom.hex(10))
 

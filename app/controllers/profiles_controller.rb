@@ -76,6 +76,7 @@ class ProfilesController < Auth::ProfilesController
 	  				permitted_arr = [:organization_id, :role, :first_name, :last_name, :date_of_birth, :sex, :address]
 
 =begin
+
 	  				if current_signed_in_resource.is_admin?({:task => "resend_reset_password_link"})
 	  					permitted_params << [:created_by_admin]
 	  				end
@@ -83,9 +84,11 @@ class ProfilesController < Auth::ProfilesController
 	  				if current_signed_in_resource.is_admin?({:task => "create_admin"})
 	  					permitted_arr << [:admin, :created_by_admin, :android_token, :ios_token]
 	  				end
+
 	  				if current_signed_in_resource.is_admin?({:task => "create_worker"})
 	  					permitted_arr << [:step_id, :procedure_id, :worker, :action, :action_from, :action_to, :android_token, :ios_token]
 	  				end
+
 =end
 
 	  				permitted_arr = permitted_arr.flatten.uniq

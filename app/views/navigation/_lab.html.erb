@@ -1,0 +1,10 @@
+<div class="row" style="margin-bottom:1.4rem; margin-top:1.4rem">
+	<!-- show or create the organization -->
+	<% if current_user.has_organization? %>
+		<%= link_to current_user.organization.name, organization_path(current_user.organization.id.to_s) %>
+	<% else %>
+		<%= link_to "Create Your Lab", new_organization_path %>
+	<% end %>
+	<!-- create a patient -->
+	<%= link_to "Create Patient", new_patient_path %>
+</div>

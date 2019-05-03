@@ -1,5 +1,5 @@
 <tr>
-	<td><%= link_to @patient.name, patient_path(@patient.id.to_s) %></td>
+	<td><%= link_to @patient.full_name, patient_path(@patient.id.to_s) %></td>
 	<td><%= @patient.date_of_birth %></td>
 	<td><%= @patient.age %></td>
 	<td><%= @patient.sex %></td>

@@ -3,7 +3,7 @@ function remove_verified_user_id(user_id){
 }
 
 function add_verified_user_id(user_id,el){
-	el.parent().append("<input type='hidden' name='organization[user_ids][] id='" + $(this).attr("data-user-id") + "_verified' value='" + $(this).attr("data-user-id") + "' />");
+	el.parent().append("<input type='hidden' name='organization[user_ids][]' id='" + el.attr("data-user-id") + "_verified' value='" + el.attr("data-user-id") + "' />");
 	M.toast({html: 'User verified as belonging to this organization!'});
 }
 
@@ -12,7 +12,7 @@ function remove_rejected_user_id(user_id){
 }
 
 function add_rejected_user_id(user_id,el){
-	el.parent().append("<input type='hidden' name='organization[user_ids][] id='" + $(this).attr("data-user-id") + "_rejected' value='" + $(this).attr("data-user-id") + "' />");
+	el.parent().append("<input type='hidden' name='organization[rejected_user_ids][]' id='" + el.attr("data-user-id") + "_rejected' value='" + el.attr("data-user-id") + "' />");
 	M.toast({html: 'User rejected from belonging to this organization!'});
 }
 
@@ -25,3 +25,4 @@ $(document).on('click','.reject_user',function(event){
 	remove_verified_user_id($(this).attr("data-user-id"));
 	add_rejected_user_id($(this).attr("data-user-id"),$(this));
 });
+

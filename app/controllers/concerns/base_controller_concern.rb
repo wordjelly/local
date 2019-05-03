@@ -44,22 +44,36 @@ module Concerns::BaseControllerConcern
 
 	def index
 		query = {
-			query: {
-				bool: {
-					must: [
-						{
-							match_all: {}
-						}
-					]
-				}
+			bool: {
+				must: [
+					{
+						match_all: {}
+					}
+				]
 			}
 		}
 
+		## either has the organization id, or its own id.
+		## i also need to sort out permissions for searchability.
 		if current_user
-			query[:bool][:must] << {terms: {owner_ids: current_user.organization_id}}
+			if current_user.belongs_to_organization?
+				query[:bool][:must] << {
+					term: {
+						owner_ids: current_user.organization_id
+					}
+				}
+			else
+				query[:bool][:must] << {
+					term: {
+						owner_ids: current_user.id.to_s
+					}
+				}
+			end
 		end
 
-		results = get_resource_class.search(query)
+		puts JSON.pretty_generate(query)
+
+		results = get_resource_class.search({query: query})
 
 		if results.response.hits.hits.size > 0
 			objects = results.response.hits.hits.map{|c|
@@ -68,9 +82,9 @@ module Concerns::BaseControllerConcern
 				obj.run_callbacks(:find)
 				obj
 			}
-			instance_variable_set("#{get_resource_name.pluralize}",objects)
+			instance_variable_set("@#{get_resource_name.pluralize}",objects)
 		else
-			instance_variable_set("#{get_resource_name.pluralize}",[])
+			instance_variable_set("@#{get_resource_name.pluralize}",[])
 		end
 	end
 	
@@ -109,8 +123,26 @@ module Concerns::BaseControllerConcern
 	def update
 		instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
 		instance_variable_get("@#{get_resource_name}").send("save")
-		set_errors_instance_variable
-		set_alert_instance_variable
+		set_errors_instance_variable(instance_variable_get("@#{get_resource_name}"))
+		set_alert_instance_variable(instance_variable_get("@#{get_resource_name}"))
+
+		respond_to do |format|
+			format.html do 
+				if @errors.full_messages.empty?
+					render :show
+				else
+					render :edit
+				end
+			end
+			format.json do 
+				if @errors.full_messages.empty?
+					render :json => {get_resource_name.to_sym => instance}
+				else
+					render :json => {get_resource_name.to_sym => instance, errors: @errors}
+				end
+			end
+		end
+
 	end
 
 	def set_model

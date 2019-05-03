@@ -93,7 +93,7 @@ class Image
     begin
       self.parent_class.constantize.find(self.parent_id)
     rescue
-      self.errors.ad(:parent_id,"the #{self.parent_class} does not exist, Create it before trying to add an image to it")
+      self.errors.add(:parent_id,"the #{self.parent_class} does not exist, Create it before trying to add an image to it")
     end
   end
 

@@ -45,6 +45,21 @@ class Order
 	attr_accessor :cloned_reports
 	attr_accessor :report_name
 	attr_accessor :report_ids_to_remove
+
+	def self.permitted_params
+		[:id,
+			{
+			 	:order => [
+			 		:start_time,
+			 		:item_group_id,
+			 		:item_group_action,
+			 		:patient_id,
+			 		{:template_report_ids => []},
+			 		:tubes => [:item_requirement_name, :patient_report_ids, :template_report_ids, :barcode, :occupied_space]
+			 	]
+			}
+		]
+	end
 		
 =begin
 

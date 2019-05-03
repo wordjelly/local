@@ -8,6 +8,47 @@ module Concerns::OwnersConcern
 		
 		attr_accessor :created_by_user
 
+		
+		validate :created_user_has_role
+		
+		validate :organization_users_are_enrolled_with_organization
+
+
+		### CHECKS THAT THERE IS A CREATED_USER, AND THAT IT HAS A ROLE.
+		def created_user_has_role
+			if self.created_by_user.blank?
+				self.errors.add(:created_by_user,"There is no creating user")
+			else
+				if self.created_by_user.role.blank?
+					self.errors.add(:created_by_user,"You don't have a role, please go to your profile link, and add a Role")
+				end
+			end
+		end
+
+		## CHECKS THAT IF THE ROLE IS OF AN ORGANIZATION, THEN THE USER IS VERIFIED, AS BELONGING TO IT.
+		## this ensures that only verified organization users can interact with resources. 
+		def organization_users_are_enrolled_with_organization
+			unless self.created_by_user.role.blank?
+				if self.created_by_user.is_an_organization_role?
+
+					## what if he is the organization owner ?
+					## is_organization_owner
+					## belongs_to_organization
+					if ((self.created_by_user.is_organization_owner?) || (self.created_by_user.belongs_to_organization?))
+						
+						
+					else
+
+						self.errors.add(:created_by_user,"You are currently not registered with an organization, Please join an organization or create an organization") if self.created_by_user.organization_id.blank?
+
+						self.errors.add(:created_by_user,"You haven't yet been verified as belonging to your organization, Please request the organization owner to verify you") if self.created_by_user.verified_as_belonging_to_organization.blank?
+
+					end
+
+				end
+			end
+		end
+
 		before_save do |document|
 			## when a document is being created
 			## the created_by_user's id is added to it.

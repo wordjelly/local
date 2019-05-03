@@ -3,18 +3,27 @@ class Patient
 
 	include Elasticsearch::Persistence::Model
 
+	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
+	include Concerns::MissingMethodConcern
 
 	index_name "pathofast-patients"	
 
+
 	## so in effect it can only create one user per mobile_number for one organization.
+	## if it does 
 	before_save do |document|
-		## the id is the organization id of the creating user + "_" + the mobile number of the document.
 		unless document.mobile_number.blank?
 			if document.id.blank?
 				unless document.created_by_user.blank?
-					document.id = document.created_by_user.organization_id + "_" + document.mobile_number
+					if document.created_by_user.is_an_organization_role?
+						unless document.created_by_user.organization_id.blank?
+							document.id = document.created_by_user.organization_id + "_" + document.mobile_number
+						end
+					else
+						document.id = document.mobile_number
+					end
 				end
 			end
 		end
@@ -117,15 +126,16 @@ class Patient
 
 	end
 
-	attribute :allergies, Integer, mapping: {type: 'integer'}
+	## can be either on or off
+	attribute :allergies, Integer, mapping: {type: 'keyword'}
 
-	attribute :anticoagulants, Integer, mapping: {type: 'integer'}
+	attribute :anticoagulants, Integer, mapping: {type: 'keyword'}
 
-	attribute :diabetic, Integer, mapping: {type: 'integer'}
+	attribute :diabetic, Integer, mapping: {type: 'keyword'}
 
-	attribute :asthmatic, Integer, mapping: {type: 'integer'}
+	attribute :asthmatic, Integer, mapping: {type: 'keyword'}
 
-	attribute :heart_problems, Integer, mapping: {type: 'integer'}
+	attribute :heart_problems, Integer, mapping: {type: 'keyword'}
 
 	attribute :medications_list, Array, mapping: {type: 'keyword'}
 		
@@ -181,7 +191,7 @@ class Patient
 	end
 
 	def self.permitted_params
-		[:id , {:patient => [:first_name,:last_name,:date_of_birth,:email, :mobile_number, :address, :allergies, :anticoagulants, :diabetic, :asthmatic, :heart_problems, {:medications_list => []}]}]
+		[:id , {:patient => [:first_name,:last_name,:date_of_birth, :sex, :email, :mobile_number, :address, :allergies, :anticoagulants, :diabetic, :asthmatic, :heart_problems, {:medications_list => []}]}]
 	end
 
 end

@@ -21,7 +21,7 @@
 						"requires_authorization" : "yes",
 						"groups" : [
 							{
-								"group_name" : "lab_owner",
+								"group_name" : "lab",
 								"unpermitted_parameters" : []
 							}
 						]
@@ -32,7 +32,7 @@
 						"requires_authorization" : "yes",
 						"groups" : [
 							{
-								"group_name" : "lab_owner",
+								"group_name" : "lab",
 								"unpermitted_parameters" : []
 							}
 						]
@@ -43,7 +43,7 @@
 						"requires_authorization" : "yes",
 						"groups" : [
 							{
-								"group_name" : "lab_owner",
+								"group_name" : "lab",
 								"unpermitted_parameters" : []
 							}
 						]
@@ -66,7 +66,7 @@
 								"unpermitted_parameters" : []
 							},
 							{
-								"group_name" : "lab_owner",
+								"group_name" : "lab",
 								"unpermitted_parameters" : []
 							}
 						]
@@ -85,7 +85,7 @@
 								"unpermitted_parameters" : []
 							},
 							{
-								"group_name" : "lab_owner",
+								"group_name" : "lab",
 								"unpermitted_parameters" : []
 							}
 						]
@@ -104,7 +104,7 @@
 								"unpermitted_parameters" : []
 							},
 							{
-								"group_name" : "lab_owner",
+								"group_name" : "lab",
 								"unpermitted_parameters" : []
 							}
 						]
@@ -123,7 +123,25 @@
 								"unpermitted_parameters" : []
 							},
 							{
-								"group_name" : "lab_owner",
+								"group_name" : "lab",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"groups" : [
+							{
+								"group_name" : "patient",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "doctor",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "lab",
 								"unpermitted_parameters" : []
 							}
 						]

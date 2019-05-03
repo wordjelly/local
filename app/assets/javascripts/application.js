@@ -22,6 +22,9 @@ $(document).ready(function(){
     $('.modal').modal();
     $('.collapsible').collapsible();
     $('.dropdown-trigger').dropdown();
+    $('select').formSelect();
+    $('.datepicker').datepicker();
+    $('select').formSelect();
 });
 
           

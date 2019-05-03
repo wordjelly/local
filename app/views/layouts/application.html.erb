@@ -66,7 +66,10 @@
 <%= render :partial => "layouts/auth/navbar/navbar.html.erb" %>
 
 <div class="container">
-  <%= render :partial => "/navigation/options" %>
+  <!-- uses a helper method to determine the name of the partial to be shown -->
+  <!-- does it use the -->
+  
+  <%= render :partial => "/navigation/#{get_navigation_partial_name(current_user)}" %>
   <%= render :partial => "search/search" %>
   <!-- expects an instance variable called @errors[OPTIONAL] -->
   <%= render :partial => "/shared/errors" %>

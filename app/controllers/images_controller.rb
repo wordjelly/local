@@ -1,6 +1,11 @@
 class ImagesController < ApplicationController
-	
-	respond_to :html
+		
+	## to require basic api authentication for any controller.
+	include Auth::Concerns::DeviseConcern
+	before_action :do_before_request
+
+	respond_to :html, :json
+
 
 	def new
 		@image = Image.new(permitted_params["image"])
@@ -14,12 +19,24 @@ class ImagesController < ApplicationController
 	def create
 		@image = Image.new(permitted_params["image"])
 		@image.save
+		@errors = @image.errors
 		respond_to do |format|
 			format.html do 
 				render "show"
 			end
+			format.json do 
+				if @errors.full_messages.blank?
+					render :json => {signature: @image.signed_request[:signature], errors: @errors.full_messages}
+				else
+					render :json => {signature: nil, errors: @errors.full_messages}
+				end
+			end
 			format.text do 
-				render :plain => @image.signed_request[:signature]
+				if @errors.full_messages.blank?
+					render :plain => @image.signed_request[:signature]
+				else
+					render :plain => @errors.full_messages.to_s
+				end
 			end
 		end
 	end

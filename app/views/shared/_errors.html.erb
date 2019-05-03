@@ -6,9 +6,7 @@
 				<div class="card-title">
 					There were errors while performing the action
 				</div>
-				<% @errors.full_messages do |err| %>
-					<div><%= err %></div>
-				<% end %>
+				<div><%= @errors.full_messages.to_s %></div>	
 			</div>
 		</div>
 	<% end %>

@@ -1,5 +1,12 @@
 <ul class="collection with-header">
     <li class="collection-header"><h4>User Details</h4></li>
+    <!-- how do i know who is the owner of the organization -->
+    <!-- look for an organization, where this user is in the owner ids -->
+    <!-- then he is the owner -->
+    <!-- ther should also be a link to my organization -->
+    <!-- in the dashboard -->
+    <!-- either the user has an organization verified id -->
+    <!-- or there is an organiation with him as the owner -->
     <% unless @profile_resource.organization_id.blank? %>
    		<% @organization = Organization.find(@profile_resource.organization_id) %>
     	<li class="collection-item"><div>Organization: <%= link_to @organization.name, organization_path(@organization.id.to_s) %></div></li>

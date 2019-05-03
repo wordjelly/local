@@ -58,14 +58,6 @@ class User
   })
 
 
-  PATIENT = "Patient"
-
-  LAB_OWNER = "Lab Owner"
-
-  DOCTOR = "Doctor"
-
-  field :role, type: String, :default => PATIENT
-
   field :approved_patient_ids, type: Array, :default => []
 
   field :rejected_patient_ids, type: Array, :default => []
@@ -210,12 +202,23 @@ class User
       end
     end
 
+    ##############################################
+    ##
+    ##
+    ##
+    ## METHODS TO GENERATE DUMMY USERS.
+    ##
+    ##
+    ##
+    ##############################################
+      
     def self.create_test_user_with_email(email)
       u = User.new
       u.email = email
       u.password = "cocostan111"
       u.password_confirmation = "cocostan111"
       u.confirm
+      puts u.errors.full_messsages unless u.errors.full_messages.blank?
       u.save
       puts u.errors.full_messsages unless u.errors.full_messages.blank?
     end
@@ -228,6 +231,6 @@ class User
       create_test_user_with_email("icantremember111@gmail.com")
     end
 
-
+    alias name full_name
 	
 end

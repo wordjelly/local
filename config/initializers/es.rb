@@ -16,7 +16,7 @@ end
 
 
 ["Employee","Item","ItemGroup","ItemRequirement","ItemType","Location","NormalRange","Order","Patient","Report","Status","Test","Image","Minute","Organization"].each do |cls|
-	unless Elasticsearch::Persistence.client.indices.exists? index: cls 
+	unless Elasticsearch::Persistence.client.indices.exists? index: cls.constantize.index_name
 		cls.constantize.send("create_index!",{force: true})
 	end
 end
