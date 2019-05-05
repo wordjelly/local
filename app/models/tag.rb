@@ -2,6 +2,11 @@ require 'elasticsearch/persistence/model'
 class Tag
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::NameIdConcern
+	include Concerns::ImageLoadConcern
+	include Concerns::OwnersConcern
+	include Concerns::AlertConcern
+	include Concerns::MissingMethodConcern
 
 	index_name "pathofast-tags"
 
@@ -48,7 +53,6 @@ class Tag
 	  	} do
 
 	    mapping do
-	      
 		    indexes :name, type: 'keyword', fields: {
 		      	:raw => {
 		      		:type => "text",
@@ -57,7 +61,11 @@ class Tag
 		      	}
 		    }
 		end
+	end
 
+
+	def self.permitted_params
+		[:id , {:tag => [:name]}]
 	end
 
 end

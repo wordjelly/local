@@ -1,10 +1,27 @@
 class ReportsController < ApplicationController
-	
+		
+	include Concerns::BaseControllerConcern
+
+	## We can have report templates, for any user.
+	## so that is report index/
+	## what are the permissions -> none.
+	## what are the 
+
+=begin
 	respond_to :html, :json, :js
+
 
 	def new
 		@report = Report.new
 	end
+
+	## or we can have a simple clone all reports as is.
+	## and then we have them for the organization from the word go.
+	## there we can display the report templates from different
+	## organizations.
+	## so if we want to show a template, if we want to search.
+	## then if you click on a report, you want to see its tests
+	## 
 
 	def edit
 		@report = Report.find(params[:id])
@@ -73,6 +90,7 @@ class ReportsController < ApplicationController
 		pp
 	end
 
+
 	## its going to be an ajax request anyways.
 	## if we make another controller it won't matter.
 	## so here it has to refer to tests, and item requirements, 
@@ -83,5 +101,6 @@ class ReportsController < ApplicationController
 		params.permit(:id , {:report => [:name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_id_action, :price, {:status_ids => []}, {:tag_ids => []} ,{:test_ids => []}, {:item_requirement_ids => []}, :patient_id, :template_report_id ]})
 	end
 
+=end
 
 end

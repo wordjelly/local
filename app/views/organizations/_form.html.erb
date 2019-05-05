@@ -23,7 +23,16 @@
   	<%= render :partial => "/shared/display_array", locals: {model: @organization, multiple_el: "rejected_user_ids", multiple_objects: "rejected_users"} %>
 
   	<!-- to show the pending users and delete them if required -->
-	<%= render :partial => "/organizations/users_pending_approval_form_partial" %>  	
+	<%= render :partial => "/organizations/users_pending_approval_form_partial" %> 
+
+
+	<!-- add the various staff types in your organization -->
+	<!-- add this to the organizations attribute_accessors -->
+	<%= f.text_field :role_name , :data => {:autocomplete_type => "tags", :multiple => true, :multiple_element_name => "organization[role_ids][]"}, :autocomplete => "off" %>
+
+	<%= f.label :role_name %>
+
+	<%= render :partial => "/shared/display_array", locals: {model: @order, multiple_el: "role_ids", multiple_objects: "tags"} %> 	
 
 	<%= f.submit "Submit" %>
 

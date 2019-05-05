@@ -2,11 +2,15 @@ require 'elasticsearch/persistence/model'
 class Test	
 	
 	include Elasticsearch::Persistence::Model
+	include Concerns::NameIdConcern
+	include Concerns::ImageLoadConcern
+	include Concerns::OwnersConcern
+	include Concerns::AlertConcern
+	include Concerns::MissingMethodConcern
 		
 	index_name "pathofast-tests"
 
 	attr_accessor :normal_ranges
-
 	## this is set when the tests are loaded, while viewing the report.
 	## if the report id is set on the test, then in its options, we give a link to remove the test from that report, as an update.
 	## the same is done for item requirements.
@@ -14,6 +18,13 @@ class Test
 	## we give the test name.
 	## and add the data attribute by default on that input element.
 	attr_accessor :report_id
+
+	## so this is an array and will need to be added using 
+	## search like an array.
+	## since the names are the ids, 
+	## we can work with this.
+	## we can have autocomplete.
+	attribute :normal_range_ids, Array, default: []
 
 	attribute :template_test_id, String
 
@@ -47,7 +58,14 @@ class Test
 	## which mobile numbers to notify at every status change.
 	attribute :mobile_numbers, Array
 
+	## a list of factors causing elevated values
+	attribute :factors_causing_elevated_values, Array, mapping: {type: 'keyword'}, default: []
 
+	## a list of factors causing lower values.
+	attribute :factors_causing_low_values, Array, mapping: {type: 'keyword'}, :default => []
+	
+	## references
+	attribute :references, Array, mapping: {type: 'keyword'}, default: []
 	##############################################################
 	##
 	##
@@ -86,6 +104,19 @@ class Test
 	##
 	##############################################################
 	attr_accessor :checklists_to_be_approved
+
+	##############################################################
+	##
+	##
+	## CALLBACKS
+	##
+	##
+	##############################################################
+	after_find do |document|
+
+		document.load_normal_ranges
+
+	end
 
 	##############################################################
 	##
@@ -203,16 +234,23 @@ class Test
 
 	    end
 	end
+
+	## now in order to remove the normal range, we just have to update it like that.
+	## array update.
+	## so i need to move to typeselector.
+	## searching on name.
+	## just like we are doing in report for some stuff.
+	## same way in test for normal_ranges.
 	
 	def load_normal_ranges
 		results = NormalRange.search({
 			query: {
-				term: {
-					test_id: self.id.to_s
+				ids: {
+					values: self.normal_range_ids
 				}
 			}
 		})
-		self.normal_ranges = results.response.hits.hits
+		self.normal_ranges = results.response.hits.hits.map{|c| NormalRange.find(c["_id"])}
 	end
 
 	def clone(patient_id)
@@ -224,6 +262,10 @@ class Test
 
 		patient_test
 
+	end
+
+	def self.permitted_params
+		[:id , {:test => [:name,:lis_code,:description,:price]}]
 	end
 
 end

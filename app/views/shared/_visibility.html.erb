@@ -1,0 +1,3 @@
+<!-- expects a local variable called 'f' which is the form object -->
+<!-- expects that the model which the form refers to is implementing the Concerns::OwnersConcern -->
+<%= f.select :public , [["My Organization",Concerns::OwnersConcern::IS_PRIVATE.to_s],["Anyone",Concerns::OwnersConcern::IS_PUBLIC.to_s]], {include_blank: "Viewership restricted to", disabled: '', selected: ''} %>

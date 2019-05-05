@@ -12,7 +12,6 @@ class Organization
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
 
-
 	DEFAULT_LOGO_URL = "/assets/default_logo.svg"
 
 	attribute :name, String, mapping: {type: 'keyword'}
@@ -27,6 +26,19 @@ class Organization
 
 	attribute :rejected_user_ids, Array, mapping: {type: 'keyword'}, default: []
 
+	## the different roles that can be there in this organizations.
+	## basically searches the public tags or the tags of this organization
+	attribute :role_ids, Array, mapping: {type: 'keyword'}
+
+	## for the role_ids.
+	## now give a way for the user to choose a role while joining the organization
+	## i can give a dropdown, we say join -> it can open a modal
+	## and show the roles of that organization.
+	## so lets do that.
+	## suppose there are no roles.
+	## so we add that as a validation while creating the organization.
+
+	attr_accessor :role_name
 	attr_accessor :users_pending_approval
 	attr_accessor :verified_users
 	attr_accessor :rejected_users
@@ -35,6 +47,11 @@ class Organization
 
 	validates_presence_of :phone_number
 
+	## max types of employees in an organization can be 10.
+	validates_length_of :role_ids, :minimum => 1, :maximum => 10
+	## so this means you have to make some roles while creating the organization.
+	## so lets start with that
+	## before that get tags working.
 
 	settings index: { 
 	    number_of_shards: 1, 

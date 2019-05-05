@@ -2,7 +2,6 @@
 <% unless model.send(multiple_el).blank? %>
 	<ul class="collection">
 		<% model.send(multiple_el).each_with_index {|item,key| %>
-			<% puts "doing item i: #{item}" %>
 			<li class='collection-item'> 
 				<% if model.send(multiple_objects)[key].respond_to? :name %>
 					<%= model.send(multiple_objects)[key].name %>

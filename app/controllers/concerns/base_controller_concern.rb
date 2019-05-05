@@ -21,9 +21,10 @@ module Concerns::BaseControllerConcern
     end
 
     def new
-    	#puts "teh get model params are:"
-    	#puts get_model_params.to_s
+    	puts "teh get model params are:"
+    	puts get_model_params.to_s
 		instance = get_resource_class.new(get_model_params)
+		instance.run_callbacks(:find)
 		instance_variable_set("@#{get_resource_name}",instance)
 	end
 
@@ -99,6 +100,8 @@ module Concerns::BaseControllerConcern
 
 		set_errors_instance_variable(instance)
 		
+		instance.run_callbacks(:find)
+
 		instance_variable_set("@#{get_resource_name}",instance)
 
 		respond_to do |format|
@@ -125,6 +128,7 @@ module Concerns::BaseControllerConcern
 		instance_variable_get("@#{get_resource_name}").send("save")
 		set_errors_instance_variable(instance_variable_get("@#{get_resource_name}"))
 		set_alert_instance_variable(instance_variable_get("@#{get_resource_name}"))
+		instance_variable_get("@#{get_resource_name}").send("run_callbacks","find".to_sym)
 
 		respond_to do |format|
 			format.html do 
@@ -146,6 +150,11 @@ module Concerns::BaseControllerConcern
 	end
 
 	def set_model
+		## either public or private
+		## either the resource is public.
+		## or it is a private resource and we have to be the owner.
+		## so it should have been public.
+
 		query = {
 			bool: {
 				must: [
@@ -153,16 +162,30 @@ module Concerns::BaseControllerConcern
 						ids: {
 							values: [params[:id]]
 						}
+					},
+					{
+						bool: {
+							minimum_should_match: 1,
+							should: [
+								{
+									term: {
+										public: 1
+									}
+								}
+							]
+						}
 					}
 				]
 			}
 		}
+
+		## this is added as a must clause.
+		## but here only we have to add that as an optional.
 		query = add_authorization_clause(query) if (@action_permissions["requires_authorization"] == "yes")
 		
 		## so only its own user has been added.
-
-		puts "query after adding authorization clause is:"
-		puts JSON.pretty_generate(query)
+		 puts "query after adding authorization clause is:"
+		 puts JSON.pretty_generate(query)
 
 		results = get_resource_class.search({query: query})
 		if results.response.hits.hits.size > 0
@@ -234,20 +257,15 @@ module Concerns::BaseControllerConcern
 	## 
 	## @return[Hash] : the updated query, to include only those resources, that have 
 	def add_authorization_clause(query)
+		puts "is there a current user?"
+		puts current_user.to_s
 		if current_user
 			## check if the current user's id has been mntioned in the owner_ids of the resource.
-			query[:bool][:must] <<
-			{
-				bool: {
-					minimum_should_match: 1,
-					should: [
-						{
-							term: {
-								owner_ids: current_user.id.to_s
-							}
-						}
-					]
-				}
+			query[:bool][:must][1][:bool][:should] <<
+			{		
+				term: {
+					owner_ids: current_user.id.to_s
+				}	
 			}
 
 			unless current_user.organization_id.blank?
@@ -309,7 +327,10 @@ module Concerns::BaseControllerConcern
 	end
 
 	def get_model_params
-		attributes = permitted_params.fetch(controller_path.classify.downcase.to_sym,{})
+		puts "The controller path is:"
+		puts controller_path.to_s
+		puts "the class is:#{controller_path.classify.downcase.to_sym}"
+		attributes = permitted_params.fetch(controller_path.classify.underscore.downcase.to_sym,{})
 		puts "the attributes become:"
 		puts attributes.to_s
 		if current_user

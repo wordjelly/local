@@ -1,10 +1,57 @@
 <div class="row" style="margin-bottom:1.4rem; margin-top:1.4rem">
 	<!-- show or create the organization -->
-	<% if current_user.has_organization? %>
-		<%= link_to current_user.organization.name, organization_path(current_user.organization.id.to_s) %>
-	<% else %>
-		<%= link_to "Create Your Lab", new_organization_path %>
-	<% end %>
-	<!-- create a patient -->
-	<%= link_to "Create Patient", new_patient_path %>
+	<a class='dropdown-trigger btn' href='#' data-target='organization'>Organization</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='patients'>Patients</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='report_templates'>Report Templates</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='test_templates'>Test Templates</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='roles_and_tags'>Roles and Tags</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='packages'>Packages</a>
+
+	<ul id='organization' class='dropdown-content'>
+		<% if current_user.has_organization? %>
+			<li><i class="material-icons">view_module</i><%= link_to current_user.organization.name, organization_path(current_user.organization.id.to_s) %></li>
+		<% else %>
+			<li><i class="material-icons">view_module</i><%= link_to "Create Your Lab", new_organization_path %></li>
+		<% end %>
+	</ul>
+
+	<ul id='patients' class='dropdown-content'>
+		<% if current_user.owns_or_belongs_to_organization? %>
+			<li><i class="material-icons">view_module</i><%= link_to "Create Patient", new_patient_path %></li>
+
+			<li><i class="material-icons">view_module</i><%= link_to "View All Patients", patients_path %></li>
+		<% end %>
+	</ul>	
+
+	
+	<ul id='report_templates' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Templates", reports_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Report Template", new_report_path %></li>
+	</ul>
+
+	<ul id='test_templates' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Templates", tests_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Test Template", new_test_path %></li>
+	</ul>
+
+	<!-- okay so now next is create the tag -->
+	<!-- then go to organization and add at least one -->
+	<!-- then go to join organization and specify a role -->
+	<!-- validate that in the profile -->
+	<ul id='roles_and_tags' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Roles/Tags", tags_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Role/Tag", new_tag_path %></li>
+	</ul>
+
+	<ul id='roles_and_tags' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Roles/Tags", tags_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Role/Tag", new_tag_path %></li>
+	</ul>
+		
+
 </div>

@@ -1,0 +1,4 @@
+<tr>
+	<td><%= link_to @package.name, package_path(@package.id.to_s) %></td>
+	<td><%= render :partial => "packages/options" %></td>
+</tr>

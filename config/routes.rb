@@ -38,7 +38,7 @@ Rails.application.routes.draw do
   #get 'users/sign_in_options' => "users#sign_in_options", as: "sign_in_options"
 
   get 'app_search' => 'search#search'
-  get 'search/type_selector' => 'search#type_selector'
+  get 'app_search/type_selector' => 'search#type_selector'
   get 'make_payment' => 'statuses#make_payment'
 
   root 'home#index'

@@ -1,5 +1,8 @@
 class NormalRangesController < ApplicationController
 	
+	include Concerns::BaseControllerConcern
+
+=begin
 	respond_to :html
 
 	def new
@@ -40,9 +43,12 @@ class NormalRangesController < ApplicationController
 	def index
 
 	end
+=end
 
+=begin
 	def permitted_params
 		params.permit(:id,{:normal_range => [:test_id, :test_name, :min_age, :max_age, :sex]})
 	end
+=end
 
 end

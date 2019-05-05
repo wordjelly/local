@@ -1,5 +1,8 @@
 class TagsController  < ApplicationController
 
+	include Concerns::BaseControllerConcern
+
+=begin
 	respond_to :html, :json, :js
 
 	def new
@@ -51,6 +54,6 @@ class TagsController  < ApplicationController
 	def permitted_params
 		params.permit(:id , {:tag => [:name]})
 	end
-
+=end
 
 end

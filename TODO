@@ -1,3 +1,54 @@
 29/4/2019:
 1. date of birth selection UI not working with profiles_edit.
 2. adding organization id , and verified as true for the creator of the organization itself.
+3. add views and controller for packages, with versioning.
+
+# so first change the architecture of test to ensure that it needs to be have the normal range ids added to it directly.
+# for that give a search box.
+# for name id -> ensure organization 
+
+create reports,
+make tests,
+make normal ranges, } 1 hour (by 1 pm.)
+
+
+
+make packages, } 1 hour (by 3 pm) - done, 
+
+in the report -> a nested object for rates for each organization that can be customized.
+
+what is next?
+--- organization -> enforce the presence of some roles
+--- user joining organization -> enforce it to have a role
+--- versioned concern, ensure that verification is by the required number of users of those roles
+--- tests, reports, normal_ranges
+
+clone/customize reporst/tests/ranges } 1 hour (by 2 pm.)
+
+reports :
+-- image,
+-- nested object for customization of rates.
+-- sit in doctors rooms.
+
+
+require an image to be compulsory for a report, } 15 mins
+
+generate a pdf of an individual report, 
+generate a pdf of a given group of reports, 
+generate a pdf of abnormal findings, 
+with final letterhead and formatting of the issuing organization, making sure everything looks good.
+=> 1.5 hours } 5 pm.
+
+generate a chart of the report values over time } 1 hour : 6 pm.
+
+finalize how to enter values of a report manually, 
+
+have a doctor's signature for the report, 
+or more than one, 
+
+cross checking values module for report entry/with challenges about patient information.
+
+item groups, items , item_requirements, status definition.
+
+-- imagine a utopian system where i finish all this in one day --
+and from tomorrow how to only deal with bookings and schedules part.

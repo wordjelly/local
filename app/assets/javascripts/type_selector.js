@@ -11,7 +11,7 @@ $(document).on('keypress','input:text',function(e){
 	}
 	else{
 		$.get({
-			url: "/search/type_selector",
+			url: "/app_search/type_selector",
 			data: {
 				type: autocomplete_type,
 				query: 	input_value

@@ -2,18 +2,28 @@ module Concerns::OwnersConcern
 
 	extend ActiveSupport::Concern
 
+	## 1 -> public
+	## 0 -> not public.
+	## set_model in base_controller_concern, adds an or clause as public -> 1, for every query.
+	## so that if a model is there, where the requesting user is not the creating user, or belonging to the creating organization, it can still see this record, if this record is public.
+	## this will also help at search time, the same clause can be used.
+	PUBLIC_OPTIONS = [0,1]
+
+	IS_PUBLIC = 1
+
+	IS_PRIVATE = 0
+
 	included do 
 
 		attribute :owner_ids, Array, mapping: {type: 'keyword'}
 		
 		attr_accessor :created_by_user
 
-		
 		validate :created_user_has_role
 		
 		validate :organization_users_are_enrolled_with_organization
 
-
+		attribute :public, Integer, mapping: {type: 'integer'}, default: Concerns::OwnersConcern::IS_PRIVATE
 		### CHECKS THAT THERE IS A CREATED_USER, AND THAT IT HAS A ROLE.
 		def created_user_has_role
 			if self.created_by_user.blank?
@@ -35,8 +45,8 @@ module Concerns::OwnersConcern
 					## is_organization_owner
 					## belongs_to_organization
 					if ((self.created_by_user.is_organization_owner?) || (self.created_by_user.belongs_to_organization?))
-						
-						
+
+
 					else
 
 						self.errors.add(:created_by_user,"You are currently not registered with an organization, Please join an organization or create an organization") if self.created_by_user.organization_id.blank?

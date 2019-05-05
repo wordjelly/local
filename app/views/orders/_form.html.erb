@@ -2,6 +2,7 @@
 	<%= render :partial => "shared/errors", locals: {model: @order} %>
 	<%= form_for @order, :html => {:class => "order_form"} do |f| %>
 
+		
 		<div class="card">
 			<div class="card-content">
 			<div class="card-title">
@@ -14,8 +15,10 @@
 
 				<%= f.hidden_field :patient_id %>
 
+				<!-- this is what you need for normal ranges -->
 				<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true, :multiple_element_name => "order[template_report_ids][]"}, :autocomplete => "off" %>
 				<%= f.label :report_name %>
+
 				<%= render :partial => "/shared/display_array", locals: {model: @order, multiple_el: "template_report_ids", multiple_objects: "reports"} %>
 			</div>
 		</div>

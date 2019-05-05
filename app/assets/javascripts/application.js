@@ -27,4 +27,12 @@ $(document).ready(function(){
     $('select').formSelect();
 });
 
-          
+$(document).on('turbolinks:load', function() {
+	$('.tabs').tabs();
+    $('.modal').modal();
+    $('.collapsible').collapsible();
+    $('.dropdown-trigger').dropdown();
+    $('select').formSelect();
+    $('.datepicker').datepicker();
+    $('select').formSelect();
+});

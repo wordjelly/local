@@ -2,12 +2,25 @@
 
 	<%= form_for @report, :html => {:class => "report_form"} do |f| %>
 
+		<%= render :partial => "/shared/visibility", locals: {f: f} %>
+
+
+		<!-- so for eg: esat-6 becomes a value -->
+		<!-- may have to be calculated from another test -->
+		<!-- so we have to be able to define expressions -->
+		<!-- how to not enforce that clause if it is an update action ? -->
+
 		<%= f.text_field :name %>
 		<%= f.label :name %>
 
 		<%= f.number_field :price %>
 		<%= f.label :price %>
 
+		<!-- today's target -->
+		
+		<!-- who can create reports -->
+		<!-- the lab can create reports -->
+		<!-- we have to use some kind of dropdown -->
 		<!-- the autocomplete is done on this -->
 		<!-- the hit id is taken from this and set as the test_id in the fields below -->
 		<!-- for this will have to give the item requirement a name -->

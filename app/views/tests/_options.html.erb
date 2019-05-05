@@ -1,6 +1,8 @@
 <span>
 	<%= link_to "Edit", edit_test_path(@test.id.to_s) %>
+	<%= link_to "Add Normal Range", new_normal_range_path(normal_range: {test_id: @test.id.to_s}) %>
 </span>
 <% if @test.report_id %>
 	<%= link_to "Remove Test From Report", report_path({id: @test.report_id, report: {test_id_action: "remove", test_id: @test.id.to_s}}), :method => :put %>
 <% end %>
+<!-- here we should be able to show the array of normal ranges -->

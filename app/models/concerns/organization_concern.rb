@@ -148,4 +148,8 @@ module Concerns::OrganizationConcern
     	has_organization? && !self.organization_id.blank? && !self.verified_as_belonging_to_organization.blank?
     end
 
+    def owns_or_belongs_to_organization?
+   		is_organization_owner? || belongs_to_organization? 	
+    end
+
 end

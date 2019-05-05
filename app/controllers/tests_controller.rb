@@ -1,5 +1,10 @@
 class TestsController < ApplicationController
 	
+	include Concerns::BaseControllerConcern
+
+
+=begin
+
 	respond_to :html, :json, :js
 
 	def new
@@ -49,5 +54,6 @@ class TestsController < ApplicationController
 		params.permit(:id , {:test => [:name,:lis_code,:description,:price]})
 	end
 
+=end
 
 end

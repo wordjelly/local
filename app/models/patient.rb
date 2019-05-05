@@ -2,15 +2,16 @@ require 'elasticsearch/persistence/model'
 class Patient
 
 	include Elasticsearch::Persistence::Model
-
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
 
+	SEX = ["Male","Female","Transgender","All"]
+
 	index_name "pathofast-patients"	
 
-
+	## we will have to give that option everywhere else as well.
 	## so in effect it can only create one user per mobile_number for one organization.
 	## if it does 
 	before_save do |document|
