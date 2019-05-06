@@ -37,6 +37,15 @@ module Concerns::VersionedConcern
 			#@permitted_params = [:versions => {:attributes_string, {:verified_by_users => []}, :verified, :verification_time, :creation_time}]
 		#end
 
+		before_save do |document|
+
+			## we dont permit verification time.
+			## if the last version has come in as verified 1
+			## then we set the verified time as now.
+			## otherwise we set the verified time as 
+
+		end
+
 	end
 
 
@@ -47,16 +56,6 @@ module Concerns::VersionedConcern
 			end
 		end
 	end
-
-	before_save do |document|
-
-		## we dont permit verification time.
-		## if the last version has come in as verified 1
-		## then we set the verified time as now.
-		## otherwise we set the verified time as 
-
-	end
-
 
 	def accept_as_verified?
 		## will check the verified users, 
