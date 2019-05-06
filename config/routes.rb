@@ -35,6 +35,7 @@ Rails.application.routes.draw do
   resources :tags
   #resources :users 
   resources :organizations
+  resources :packages
   #get 'users/sign_in_options' => "users#sign_in_options", as: "sign_in_options"
 
   get 'app_search' => 'search#search'
