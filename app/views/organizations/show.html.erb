@@ -17,7 +17,12 @@
       <div class="card-action">
         <%= link_to "Edit", edit_organization_path(@organization.id.to_s) %>
         <!-- now comes the little issue about permissions -->
-        <%= link_to "Join This Organization", profile_path(:id => current_user.id.to_s, :resource => "users", :user => {:organization_id => @organization.id.to_s}), :method => :put %>
+        
+        <div class="join_organization">
+          <% @organization.employee_roles.each do |role| %>
+              <%= link_to "Join This Organization", profile_path(:id => current_user.id.to_s, :resource => "users", :user => {:organization_id => @organization.id.to_s}), :method => :put %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>

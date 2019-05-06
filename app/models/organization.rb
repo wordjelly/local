@@ -39,14 +39,23 @@ class Organization
 	## so we add that as a validation while creating the organization.
 
 	attr_accessor :role_name
+	attr_accessor :employee_roles
+
 	attr_accessor :users_pending_approval
 	attr_accessor :verified_users
 	attr_accessor :rejected_users
+
 
 	validates_presence_of :address
 
 	validates_presence_of :phone_number
 
+	## so there have to be some roles.
+	## let me make the ui to accept a role.
+	## can i launch a modal ?
+	## on show organization.
+	## with a link with the role.
+	## so user has to have something called an organization_role_id.
 	## max types of employees in an organization can be 10.
 	validates_length_of :role_ids, :minimum => 1, :maximum => 10
 	## so this means you have to make some roles while creating the organization.
@@ -125,8 +134,25 @@ class Organization
 
 
 	after_find do |document|
-		# show those users who are not yet approved for 
-		# this organization.
+		document.load_users_pending_approval
+		document.load_verified_users
+		document.load_rejected_users
+		document.load_employee_roles
+	end
+
+	## so these are the permitted params.
+	def self.permitted_params
+		[:id,{:organization => [:name, :description, :address,:phone_number, {:user_ids => []}, {:rejected_user_ids => []}] }]
+	end
+
+	############################################################
+	##
+	##
+	## CALLBACK METHODS.
+	##
+	##
+	############################################################
+	def load_users_pending_approval
 		result = User.es.search({
 			body: {
 				query: {
@@ -150,37 +176,42 @@ class Organization
 			}
 		})
 
-		puts result.results.to_s
+		#puts result.results.to_s
 
-		puts "came to after find to set the users pending approval."
-
-		document.users_pending_approval ||= []
+		#puts "came to after find to set the users pending approval."
+		self.users_pending_approval ||= []
 		result.results.each do |res|
 			puts "the user pending approval is: #{res}"
-			document.users_pending_approval << res
-		end
-
-		document.verified_users = []
-		document.user_ids.each do |uid|
-
-			document.verified_users << User.find(uid)
-
-		end
-
-		document.rejected_users = []
-		document.rejected_user_ids.each do |ruid|
-
-			document.rejected_users << User.find(ruid)
-
+			self.users_pending_approval << res
 		end
 
 	end
 
-	## so these are the permitted params.
-	def self.permitted_params
-		[:id,{:organization => [:name, :description, :address,:phone_number, {:user_ids => []}, {:rejected_user_ids => []}] }]
+	def load_verified_users
+		self.verified_users = []
+		self.user_ids.each do |uid|
+			self.verified_users << User.find(uid)
+		end
 	end
 
+	def load_rejected_users
+		self.rejected_users = []
+		self.rejected_user_ids.each do |ruid|
+
+			self.rejected_users << User.find(ruid)
+
+		end
+	end
+
+	def load_employee_roles
+		self.employee_roles ||= []
+		self.role_ids.each do |rid|
+			self.employee_roles << Tag.find(rid)
+		end
+	end	
+	## can we have a dropdown ?
+	## for a checkbox ?
+	## 
 	############################################################
 	##
 	##

@@ -72,8 +72,10 @@ class ProfilesController < Auth::ProfilesController
 		
 	  		Auth.configuration.auth_resources.keys.each do |model|
 	  			if current_signed_in_resource  
-	  			
-	  				permitted_arr = [:organization_id, :role, :first_name, :last_name, :date_of_birth, :sex, :address]
+	  				
+	  				## so this is an employee_role_id.
+	  				## that is now permitted.
+	  				permitted_arr = [:organization_id, :role, :first_name, :last_name, :date_of_birth, :sex, :address,:employee_role_id]
 
 =begin
 

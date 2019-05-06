@@ -21,6 +21,21 @@ module Concerns::OrganizationConcern
 
 		field :role, type: String, :default => PATIENT
 
+		field :employee_role_id, type: String
+
+		## so this means if you add an organization id
+		## it wants a role.
+		## now do you go with modal or what ?
+		## first of all in profiles_controller we need 
+		## employee_role_id to be permitted.
+		## go for modal on organization page.
+		## load by ajax the options of that organization ?
+		## or we can show that as a dropdown slideout.
+		## both will go by ajax.
+		## We already have loaded the roles.
+
+		validates_presence_of :employee_role_id, :if => Proc.new{|c| !c.organization_id.blank?}
+
 		attr_accessor :organization
 
 		after_find do |document|
