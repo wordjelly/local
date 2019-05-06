@@ -16,7 +16,6 @@
       </div>
       <div class="card-action">
         <%= link_to "Edit", edit_organization_path(@organization.id.to_s) %>
-        <!-- now comes the little issue about permissions -->
         <%= link_to "Join Organization",  "#", {:class => "join_organziation_trigger"} %>
         <div class="join_organization">
           <% @organization.employee_roles.each do |role| %>

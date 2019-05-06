@@ -31,7 +31,7 @@ module ApplicationHelper
 
 	def get_navigation_partial_name(current_user)
 		partial_name = nil
-		puts "current user role: #{current_user.role}" if current_user
+		#puts "current user role: #{current_user.role}" if current_user
 		partial_name =  "no_user" if current_user.blank?
 		partial_name =  "user_no_role" if current_user.role.blank?
 		partial_name =  current_user.role
