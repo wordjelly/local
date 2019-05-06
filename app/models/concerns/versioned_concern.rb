@@ -31,11 +31,11 @@ module Concerns::VersionedConcern
 		## if it is there, otherwise will define it.
 		## this can be read finally in the permitted params def.
 		## lets put this in normal range and see.
-		if defined? @permitted_params
-			@permitted_params.merge([:versions => {:attributes_string, {:verified_by_users => []}, :verified, :verification_time, :creation_time}])
-		else
-			@permitted_params = [:versions => {:attributes_string, {:verified_by_users => []}, :verified, :verification_time, :creation_time}]
-		end
+		#if defined? @permitted_params
+			#@permitted_params.merge([:versions => {:attributes_string, {:verified_by_users => []}, :verified, :verification_time, :creation_time}])
+		#else
+			#@permitted_params = [:versions => {:attributes_string, {:verified_by_users => []}, :verified, :verification_time, :creation_time}]
+		#end
 
 	end
 
