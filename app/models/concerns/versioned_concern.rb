@@ -13,24 +13,17 @@ module Concerns::VersionedConcern
 
 	included do 
 
-		attribute :versions, Array[Hash], mapping: {type: 'nested',properties: {
-				attributes_string: {
-					type: 'keyword'
-				},
-				verified_by_users: {
-					type: 'keyword'
-				},
-				verified: {
-					type: 'keyword'
-				},
-				verification_time: {
-					type: 'date'
-				},
-				creation_time: {
-					type: 'date'
-				}
-			}
-		}
+		attribute :versions, Array[Hash]
+
+		mapping do 
+			indexes :versions, type: 'nested' do 
+				indexes :attributes_string, type: 'keyword'
+				indexes :verified_by_users, type: 'keyword'
+				indexes :verified, type: 'keyword'
+				indexes :verification_time, type: 'date'
+				indexes :creation_time, type: 'date'
+			end
+		end
 
 		validate :last_version_adjudicated?
 
