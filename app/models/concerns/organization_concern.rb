@@ -102,8 +102,11 @@ module Concerns::OrganizationConcern
 	## returns false unless there is an organization.
 	## then checks if the user is there in the user_ids, of the organization, and returns the result of the checking that.
 	def set_verified_as_belonging_to_organization
-		self.verified_as_belonging_to_organization = false unless self.organization
-		self.verified_as_belonging_to_organization = (self.organization.user_ids.include? self.id.to_s)
+		if self.organization
+			self.verified_as_belonging_to_organization = (self.organization.user_ids.include? self.id.to_s)
+		else
+			self.verified_as_belonging_to_organization = false 
+		end
 	end
 
 
