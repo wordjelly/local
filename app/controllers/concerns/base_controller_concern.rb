@@ -98,6 +98,12 @@ module Concerns::BaseControllerConcern
 			
 		instance.created_by_user = current_user if current_user
 		
+		if instance.respond_to? :versions
+			v = Version.new(attributes_string: JSON.generate(get_model_params))
+			v.assign_control_doc_number
+			instance.versions.push(v.attributes)
+		end
+
 		instance.save
 
 		set_errors_instance_variable(instance)
@@ -132,39 +138,29 @@ module Concerns::BaseControllerConcern
 		
 		if instance_variable_get("@#{get_resource_name}").respond_to? :versions
 			
-			## now you want to change a particular version.
-			## so incoming will be a version.
-			## today i finish this any which wya.
-			## so lets say that we are updating a version as verified.
-			## we have to first compare, if this is a version verification.
-			## we are updating an existing version.
-			## It checks if it has a verification time.
-			## it checks if the existing version is verified or not.
-			## if not, then it will check the incoming for verification, if yes, then it doesn't make a new version.
-			## if there is any change in the last version(verified by has changed, then will apply that, and move forward, if it leads to verification -> will apply those changes, if it leads to deverification -> will apply the attributes of the previous verified version)
-			## if there are changes to something other than the version, will make a new version and add it.
-			## model params will by default not include versions or will they?
-			## let it include versions.
-			## changes made will work out.
-			## without any isseus.
-			## get the last version in the instance variable.
-			## on creation a version will have to be made.
-			## since that itself has to get verified.
-			## so that is the first thing.
-			## then on update, it checks if this is a simple verification -> in that case doesnt update the version.
-			## otherwise will add a new version.
-			## with the model params, as they are.
-			## first merge the model params with version params dynamically.
-			## then modify create to make a version
-			## then move to work on the update scripts.
-			## and write the tests.
+			v = Version.new(attributes_string: JSON.generate(get_model_params))
 
-			v = Version.new(attributes_string: JSON.generate(get_model_params), creation_time: Time.now.to_i)
+			v.assign_control_doc_number
 
-			## add this method on version.
-			## and pass in the verifiers.
-			#what is the minimum verifiers for the org
-			#if v.verifiers.size > ## the minimum necessary verifiers for the organization -> then 
+			## if you add him as accepted
+			## you remove him as rejected and vice versa.
+			## so that's all there is in the versions form.
+			## in effect we only have the latest version to play with.
+			## you see the latest version, and have two buttons:
+			## accept/reject
+			## so first we check if he is in either.
+			## otherwise we render the accept and reject buttons.
+			## clicking accept will remove a thing with an id called rejected
+			## and vice versa.
+			## and if he wants to sit on the fence, he gets a button called stay neutral.
+			## so lets say we give three buttons.
+			## accept, reject, none.
+			## we give a simple dropdown.
+			## just give three links
+			## accept, reject, neutral
+			## if he says neutral, remove anything with either acecpt/reject
+			## if he says accept,
+
 			instance_variable_get("@#{get_resource_name}").send("versions").push(v.attributes)
 
 		else
