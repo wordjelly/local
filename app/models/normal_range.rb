@@ -110,10 +110,9 @@ class NormalRange
 	def self.permitted_params
 		base = [:id,{:normal_range => [:name, :test_id, :test_name, :min_age_years,:min_age_months,:min_age_weeks,:min_age_days, :max_age_years, :max_age_months,:max_age_days, :max_age_hours, :sex, :count, :grade, :machine, :kit, :reference]}]
 		if defined? @permitted_params
-		
-		else
-
+			base[:normal_range] << @permitted_params
 		end
+		puts "the permitted params become: #{base}"
 		base
 	end
 

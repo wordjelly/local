@@ -133,9 +133,33 @@ module Concerns::BaseControllerConcern
 		if instance_variable_get("@#{get_resource_name}").respond_to? :versions
 			
 			## now you want to change a particular version.
-			## so 
+			## so incoming will be a version.
+			## today i finish this any which wya.
+			## so lets say that we are updating a version as verified.
+			## we have to first compare, if this is a version verification.
+			## we are updating an existing version.
+			## It checks if it has a verification time.
+			## it checks if the existing version is verified or not.
+			## if not, then it will check the incoming for verification, if yes, then it doesn't make a new version.
+			## if there is any change in the last version(verified by has changed, then will apply that, and move forward, if it leads to verification -> will apply those changes, if it leads to deverification -> will apply the attributes of the previous verified version)
+			## if there are changes to something other than the version, will make a new version and add it.
+			## model params will by default not include versions or will they?
+			## let it include versions.
+			## changes made will work out.
+			## without any isseus.
+			## get the last version in the instance variable.
+			## on creation a version will have to be made.
+			## since that itself has to get verified.
+			## so that is the first thing.
+			## then on update, it checks if this is a simple verification -> in that case doesnt update the version.
+			## otherwise will add a new version.
+			## with the model params, as they are.
+			## first merge the model params with version params dynamically.
+			## then modify create to make a version
+			## then move to work on the update scripts.
+			## and write the tests.
 
-			v = Version.new(attributes_string: JSON.generate(get_model_params), creation_time: Time.now.to_i, verified_by_users: )
+			v = Version.new(attributes_string: JSON.generate(get_model_params), creation_time: Time.now.to_i)
 
 			## add this method on version.
 			## and pass in the verifiers.

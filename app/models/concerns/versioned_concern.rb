@@ -11,6 +11,8 @@ module Concerns::VersionedConcern
 	
 	REJECTED = "off"
 
+	@permitted_params = {:versions => [:verified_by_users]}
+
 	included do 
 
 		attribute :versions, Array[Hash]
@@ -22,8 +24,13 @@ module Concerns::VersionedConcern
 				indexes :verified, type: 'keyword'
 				indexes :verification_time, type: 'date'
 				indexes :creation_time, type: 'date'
+				indexes :control_doc_number, type: 'keyword'
 			end
 		end
+
+		## after_initialize, we want the version to automatically get a control_doc_number.
+		## before_save ?
+		## 
 
 		validate :last_version_adjudicated?
 
