@@ -104,6 +104,7 @@ class Test
 	##
 	##############################################################
 	attr_accessor :checklists_to_be_approved
+	attr_accessor :normal_range_name
 
 	##############################################################
 	##

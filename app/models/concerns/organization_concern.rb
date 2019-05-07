@@ -17,30 +17,28 @@ module Concerns::OrganizationConcern
 
 		field :organization_id, type: String
 
-		field :verified_as_belonging_to_organization, type: Boolean, :default => false
+		## this is set after find, from the loaded organization.
+		attr_accessor :verified_as_belonging_to_organization	
 
 		field :role, type: String, :default => PATIENT
 
 		field :employee_role_id, type: String
 
-		## so this means if you add an organization id
-		## it wants a role.
-		## now do you go with modal or what ?
-		## first of all in profiles_controller we need 
-		## employee_role_id to be permitted.
-		## go for modal on organization page.
-		## load by ajax the options of that organization ?
-		## or we can show that as a dropdown slideout.
-		## both will go by ajax.
-		## We already have loaded the roles.
+		## so that verified is never going to be true.
+		## we are updating that on the organization side.
+		## verified has to be set after find.
+		## 
 
 		validates_presence_of :employee_role_id, :if => Proc.new{|c| !c.organization_id.blank?}
 
 		attr_accessor :organization
+		attr_accessor :employee_role
 
 		after_find do |document|
 			document.get_organization_created_by_user
 			document.get_organization_to_which_user_belongs
+			document.set_verified_as_belonging_to_organization
+			document.load_employee_role
 		end
 	end
 
@@ -98,7 +96,14 @@ module Concerns::OrganizationConcern
 
 			end
 		end
+	end
 
+	## sets the value of the attr_accessor :verifed_as_belonging_to_organization
+	## returns false unless there is an organization.
+	## then checks if the user is there in the user_ids, of the organization, and returns the result of the checking that.
+	def set_verified_as_belonging_to_organization
+		self.verified_as_belonging_to_organization = false unless self.organization
+		self.verified_as_belonging_to_organization = (self.organization.user_ids.include? self.id.to_s)
 	end
 
 
@@ -165,6 +170,13 @@ module Concerns::OrganizationConcern
 
     def owns_or_belongs_to_organization?
    		is_organization_owner? || belongs_to_organization? 	
+    end
+
+    ## so this is the employee role.
+    def load_employee_role
+    	unless self.employee_role_id.blank?
+    		self.employee_role = Tag.find(self.employee_role_id)
+    	end
     end
 
 end

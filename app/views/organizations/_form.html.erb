@@ -12,6 +12,8 @@
 	<%= f.text_field :description %>
 	<%= f.label :description %>
 
+
+
 	<% unless @organization.new_record? %>
     	<%= render :partial => "images/image", locals: {model: @organization} %>
   	<% end %>
@@ -32,7 +34,10 @@
 
 	<%= f.label :role_name %>
 
-	<%= render :partial => "/shared/display_array", locals: {model: @order, multiple_el: "role_ids", multiple_objects: "tags"} %> 	
+	<%= render :partial => "/shared/display_array", locals: {model: @organization, multiple_el: "role_ids", multiple_objects: "employee_roles"} %> 	
+
+	<%= f.number_field :verifiers %>
+	<%= f.label :verifiers %>
 
 	<%= f.submit "Submit" %>
 

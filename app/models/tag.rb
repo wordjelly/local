@@ -13,6 +13,13 @@ class Tag
 	attribute :name, String
 	validates_presence_of :name
 
+	EMPLOYEE_TAG = "employee"
+	COLLECTION_TAG = "collection"
+	TAG_TYPES = [EMPLOYEE_TAG,COLLECTION_TAG]
+
+	attribute :tag_type, String
+	validates_presence_of :tag_type
+
 	settings index: { 
 	    number_of_shards: 1, 
 	    number_of_replicas: 0,
@@ -65,7 +72,7 @@ class Tag
 
 
 	def self.permitted_params
-		[:id , {:tag => [:name]}]
+		[:id , {:tag => [:name, :tag_type]}]
 	end
 
 end

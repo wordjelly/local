@@ -35,7 +35,7 @@ module ApplicationHelper
 		elsif current_user.role.blank?
 			"user_no_role"
 		else
-			current_user.role
+			current_user.role.downcase
 		end
 	end
 

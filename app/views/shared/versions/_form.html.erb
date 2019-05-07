@@ -1,2 +1,19 @@
-<!-- gives some partials to enter the requirement of the number of users and roles to say something is verified -->
-<!-- this is specified at a record level, and includes a default. -->
+<!-- expects a local called 'f', the form object of the model -->
+<% f.fields_for :versions do |version| %>
+	<%= version.text_field :attributes_string, readonly: true %>
+	<%= version.label :attributes_string %>
+	<% version.verified_by_users.each do |user| %>
+		<%= version.text_field user.id.to_sym, :class => "verified_by_user_id", :id => "verified_by_user_id_#{user.id.to_s}" %>
+		<!-- clicking this takes the user id and finds an element iwth id of "verified_by_user_id_#{the_user_id}" -->
+		<%= link_to "Reject", "#", :class => "reject_version", :data => {:user_id => user.id.to_s} %>
+	<% end %>
+	<%= link_to "Verify", "#", :data => {:attribute_name => f.class.name.downcase.underscore.singularize + "[versions]" + "[]" + "verified_by_user_ids" + "[]", :user_id => current_user.id.to_s}, :class => "verify_version" %>
+	<%= version.text_field :verified, readonly: true %>
+	<%= version.label :verified %>
+
+	<%= version.text_field :verification_time, readonly: true %>
+	<%= version.label :verification_time %>
+
+	<%= version.text_field :creation_time, readonly: true %>
+	<%= version.label :creation_time %>
+<% end %>

@@ -20,6 +20,8 @@ module Concerns::BaseControllerConcern
 		before_action :set_model, :only => [:show,:update,:destroy,:edit]
     end
 
+    ## now we go for the versioning.
+
     def new
     	puts "teh get model params are:"
     	puts get_model_params.to_s
@@ -120,11 +122,31 @@ module Concerns::BaseControllerConcern
 				end
 			end
 		end
-
 	end
 
+
 	def update
-		instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
+		if current_user
+			instance_variable_get("@#{get_resource_name}").send("created_by_user=",current_user) 
+		end
+		
+		if instance_variable_get("@#{get_resource_name}").respond_to? :versions
+			
+			## now you want to change a particular version.
+			## so 
+
+			v = Version.new(attributes_string: JSON.generate(get_model_params), creation_time: Time.now.to_i, verified_by_users: )
+
+			## add this method on version.
+			## and pass in the verifiers.
+			#what is the minimum verifiers for the org
+			#if v.verifiers.size > ## the minimum necessary verifiers for the organization -> then 
+			instance_variable_get("@#{get_resource_name}").send("versions").push(v.attributes)
+
+		else
+			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
+		end
+
 		instance_variable_get("@#{get_resource_name}").send("save")
 		set_errors_instance_variable(instance_variable_get("@#{get_resource_name}"))
 		set_alert_instance_variable(instance_variable_get("@#{get_resource_name}"))
@@ -259,6 +281,8 @@ module Concerns::BaseControllerConcern
 	def add_authorization_clause(query)
 		puts "is there a current user?"
 		puts current_user.to_s
+		puts "the query currently is:"
+		puts JSON.pretty_generate(query)
 		if current_user
 			## check if the current user's id has been mntioned in the owner_ids of the resource.
 			query[:bool][:must][1][:bool][:should] <<
@@ -273,7 +297,7 @@ module Concerns::BaseControllerConcern
 					puts "user is not verified as belonging to the given organization, so we cannot use its organization id to check for ownership"
 					##not_found("user has not been verified as belonging to his claimed organization id , and this needs authorization #{controller_name}##{action_name}")
 				else
-					query[:bool][:must][1][:should] << {term: {owner_ids: current_user.organization_id}}
+					query[:bool][:must][1][:bool][:should] << {term: {owner_ids: current_user.organization_id}}
 				end 
 			else
 				puts "the user does not have an organization id, so we cannot check for ownership using it."
@@ -352,7 +376,13 @@ module Concerns::BaseControllerConcern
 	end
 
 	def permitted_params
-		params.permit(get_resource_class.permitted_params).to_h
+		#puts "the resource class is: #{get_resource_class}"
+		#puts "the params defined in the resource ---------->"
+		#puts get_resource_class.permitted_params.to_s
+		k = params.permit(get_resource_class.permitted_params).to_h
+		#puts "the permitted params are:"
+		#puts k.to_s
+		k
 	end
 
 

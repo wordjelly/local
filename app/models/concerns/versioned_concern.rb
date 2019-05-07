@@ -50,9 +50,16 @@ module Concerns::VersionedConcern
 
 
 	def last_version_adjudicated?
+		puts "the versions are:"
+		puts self.versions.to_s
+		## if the length is > 1
+		## then we say that we cannot have this.
+		## one can go through.
 		unless self.versions.blank?
-			if self.versions[-1][:verified].blank?
-				self.errors.add(:versions,"the last version of this document has to either be VERIFIED or REJECTED before further changes can be made")
+			if self.versions.size > 1
+				if JSON.parse(self.versions[-1])[:verified].blank?
+					self.errors.add(:versions,"the last version of this document has to either be VERIFIED or REJECTED before further changes can be made")
+				end
 			end
 		end
 	end

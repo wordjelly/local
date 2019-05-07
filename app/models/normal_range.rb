@@ -5,9 +5,11 @@ class NormalRange
 	include Elasticsearch::Persistence::Model
 
 	include Concerns::NameIdConcern
+	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::VersionedConcern
 
 	index_name "pathofast-normal-ranges"
 
@@ -53,7 +55,7 @@ class NormalRange
 
 	attribute :grade, String, mapping: {type: 'keyword'}
 
-	attribute :count, String, mapping: {type: 'integer'}
+	attribute :count, String, mapping: {type: 'keyword'}
 
 	attribute :name, String, mapping: {type: 'keyword'}
 
@@ -86,28 +88,11 @@ class NormalRange
 		end
 	end
 
-	## before doing any of this, we need to decide about our versioning strategy.
-	## if it requires verification, then has to dump the attributes into a json string, and wait for verification.
-	## then apply them if is accepted as verified.
-	## how does this work exactly ?
-	## if dr.sneha makes a change, someone else has to be there to verify it, anyone can create some change, but it will first have to be verified.
-	## and what level user can verify it, will have to also be defined.
-	## this doesnt affect authentication.
-	## or authorization, just verification.
-	## do i go for it or not ?
-	## does it need to be on report also ?
-	## how would it work with creation ?
-	## doesn't hold for creation.
-	## so suppose i made a new normal range, and added it to test.
-	## then does that have to be verified ?
-	## so that is an architecture issue from test side.
-	## we can give a hook to search for normal ranges where test id is the same, but again we have the issue of id names.
-	## different organizations, can have this issue also.
-	## when you say name_id -> you can cause a lot of problems.
+	
+
 	before_save do |document|
 		document.set_min_and_max_age
 	end
-
 	###########################################################
 	##
 	##
@@ -116,7 +101,9 @@ class NormalRange
 	##
 	###########################################################
 	def set_min_and_max_age
+		self.min_age = (self.min_age_years*365*24) + (self.min_age_months*31*24) + (self.min_age_days*24) + self.min_age_hours
 
+		self.max_age = (self.max_age_years*365*24) + (self.max_age_months*31*24) + (self.max_age_days*24) + self.max_age_hours
 	end
 
 
@@ -127,6 +114,7 @@ class NormalRange
 		else
 
 		end
+		base
 	end
 
 end

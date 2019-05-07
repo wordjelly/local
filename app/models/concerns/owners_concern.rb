@@ -20,8 +20,8 @@ module Concerns::OwnersConcern
 		attr_accessor :created_by_user
 
 		validate :created_user_has_role
-		
-		validate :organization_users_are_enrolled_with_organization
+			
+		validate :organization_users_are_enrolled_with_organization, :unless => Proc.new{|c| (c.new_record? && c.class.name == "Organization")}
 
 		attribute :public, Integer, mapping: {type: 'integer'}, default: Concerns::OwnersConcern::IS_PRIVATE
 		### CHECKS THAT THERE IS A CREATED_USER, AND THAT IT HAS A ROLE.
@@ -35,15 +35,17 @@ module Concerns::OwnersConcern
 			end
 		end
 
+		## assign public roles by default.
+
 		## CHECKS THAT IF THE ROLE IS OF AN ORGANIZATION, THEN THE USER IS VERIFIED, AS BELONGING TO IT.
 		## this ensures that only verified organization users can interact with resources. 
 		def organization_users_are_enrolled_with_organization
 			unless self.created_by_user.role.blank?
 				if self.created_by_user.is_an_organization_role?
 
-					## what if he is the organization owner ?
-					## is_organization_owner
-					## belongs_to_organization
+					puts "the role is an organization role."
+					puts "is organization owner: #{self.created_by_user.is_organization_owner?}"
+					puts "belongs to an organization: #{self.created_by_user.belongs_to_organization?}"
 					if ((self.created_by_user.is_organization_owner?) || (self.created_by_user.belongs_to_organization?))
 
 

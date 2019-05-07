@@ -26,20 +26,19 @@ class Organization
 
 	attribute :rejected_user_ids, Array, mapping: {type: 'keyword'}, default: []
 
+	## how many users are necessary to verify any change in a document that
+	## includes the versioned Concern.
+	attribute :verifiers, Integer, mapping: {type: 'integer'}, default: 2
+
 	## the different roles that can be there in this organizations.
 	## basically searches the public tags or the tags of this organization
 	attribute :role_ids, Array, mapping: {type: 'keyword'}
 
-	## for the role_ids.
-	## now give a way for the user to choose a role while joining the organization
-	## i can give a dropdown, we say join -> it can open a modal
-	## and show the roles of that organization.
-	## so lets do that.
-	## suppose there are no roles.
-	## so we add that as a validation while creating the organization.
+	## loaded from role_ids.
+	attr_accessor :employee_roles
 
 	attr_accessor :role_name
-	attr_accessor :employee_roles
+
 
 	attr_accessor :users_pending_approval
 	attr_accessor :verified_users
@@ -57,7 +56,7 @@ class Organization
 	## with a link with the role.
 	## so user has to have something called an organization_role_id.
 	## max types of employees in an organization can be 10.
-	validates_length_of :role_ids, :minimum => 1, :maximum => 10
+	#validates_length_of :role_ids, :minimum => 1, :maximum => 10
 	## so this means you have to make some roles while creating the organization.
 	## so lets start with that
 	## before that get tags working.
@@ -131,7 +130,10 @@ class Organization
 
 	end	
 
-
+	before_save do |document|
+		document.public = Concerns::OwnersConcern::IS_PUBLIC
+		document.assign_employee_roles
+	end
 
 	after_find do |document|
 		document.load_users_pending_approval
@@ -142,7 +144,7 @@ class Organization
 
 	## so these are the permitted params.
 	def self.permitted_params
-		[:id,{:organization => [:name, :description, :address,:phone_number, {:user_ids => []}, {:rejected_user_ids => []}] }]
+		[:id,{:organization => [:name, :description, :address,:phone_number, {:user_ids => []}, :role_name,  {:role_ids => []}, {:rejected_user_ids => []}] }]
 	end
 
 	############################################################
@@ -209,9 +211,29 @@ class Organization
 			self.employee_roles << Tag.find(rid)
 		end
 	end	
-	## can we have a dropdown ?
-	## for a checkbox ?
-	## 
+	
+	def assign_employee_roles
+		if self.role_ids.blank?
+			self.role_ids = []
+			request = Tag.search({
+				size: 10,
+				query: {
+					bool: {
+						must: [
+							{
+								term: {
+									tag_type: Tag::EMPLOYEE_TAG
+								}
+							}
+						]
+					}
+				}
+			})	
+			request.response.hits.hits.each do |hit|
+				self.role_ids << hit["_id"]
+			end	
+		end
+	end
 	############################################################
 	##
 	##
@@ -221,8 +243,12 @@ class Organization
 	############################################################
 	def set_alert
 		## how do we delete it.
+		self.alert = ""
 		if self.images.blank?
-			self.alert = "You are using the default logo, please upload an image of your own logo"
+			self.alert += "1.You are using the default logo, please upload an image of your own logo"
+		end
+		if self.role_ids.blank?
+			self.alert += "2. Please add some employee roles by visiting TAGS, these will be added to your organization."
 		end
 	end
 
