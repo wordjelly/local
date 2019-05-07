@@ -99,7 +99,12 @@ module Concerns::BaseControllerConcern
 		instance.created_by_user = current_user if current_user
 		
 		if instance.respond_to? :versions
-			v = Version.new(attributes_string: JSON.generate(get_model_params))
+			## so this is the default behaviour.
+			## now how to incorporate a challenge to have it verified.
+			## i can specify a verification parameter
+			## that is if you are accepting a version, then you have to provide a value for any number of custom parameters,  parameter, and it can be evaluated in the verified by users thign.
+			## 
+			v = Version.new(attributes_string: JSON.generate(get_model_params.merge(:verified_by_user_ids => [current_user.id.to_s], :rejected_by_user_ids => [])))
 			v.assign_control_doc_number
 			instance.versions.push(v.attributes)
 		end
@@ -138,30 +143,45 @@ module Concerns::BaseControllerConcern
 		
 		if instance_variable_get("@#{get_resource_name}").respond_to? :versions
 			
-			v = Version.new(attributes_string: JSON.generate(get_model_params))
+			if ((instance_variable_get("@#{get_resource_name}").verified_by_user_ids_changed?(get_model_params[:verified_by_user_ids])) || (instance_variable_get("@#{get_resource_name}").verified_by_user_ids_changed?(get_model_params[:rejected_by_user_ids])))
 
-			v.assign_control_doc_number
+				## only thing which remains is seeing if it changed by anything other than the current user
+				## because that is not allowed.
 
-			## if you add him as accepted
-			## you remove him as rejected and vice versa.
-			## so that's all there is in the versions form.
-			## in effect we only have the latest version to play with.
-			## you see the latest version, and have two buttons:
-			## accept/reject
-			## so first we check if he is in either.
-			## otherwise we render the accept and reject buttons.
-			## clicking accept will remove a thing with an id called rejected
-			## and vice versa.
-			## and if he wants to sit on the fence, he gets a button called stay neutral.
-			## so lets say we give three buttons.
-			## accept, reject, none.
-			## we give a simple dropdown.
-			## just give three links
-			## accept, reject, neutral
-			## if he says neutral, remove anything with either acecpt/reject
-			## if he says accept,
+				v = Version.new(attributes_string: JSON.generate(instance_variable_get("@#{get_resource_name}").attributes.merge(verified_by_user_ids: get_model_params[:verified_by_user_ids], rejected_by_user_ids: get_model_params[:rejected_by_user_ids])))
 
-			instance_variable_get("@#{get_resource_name}").send("versions").push(v.attributes)
+				v.assign_control_doc_number
+
+				## check the password parameters.
+				## this can be done at this stage.
+				## if you are passing in a verified.
+				## we can have that as an attribute accessor on version, all the model params.
+				## so if you are saying yes to verified.
+				## it can evaluate the incoming hash against a previous version.
+				## did anything else change ?
+				## that's pretty straightforward to implement.
+				## like did a given set of parameters stay the same.
+				## we can call them truth parameters.
+				## which will 
+				unless v.tampering?(instance_variable_get("@#{get_resource_name}").non_tamperables,instance_variable_get("@#{get_resource_name}").versions[-1],get_model_params,instance_variable_get("@#{get_resource_name}").class.name)
+
+					instance_variable_get("@#{get_resource_name}").send("versions").push(v.attributes)
+
+				end
+
+			else
+
+				if self.verified_or_rejected?
+					## so any further changes are considered to be accepted by the creator.
+					v = Version.new(attributes_string: JSON.generate(get_model_params.merge(:verified_by_user_ids => [current_user.id.to_s], rejected_by_user_ids => [])))
+
+					v.assign_control_doc_number
+
+					instance_variable_get("@#{get_resource_name}").send("versions").push(v.attributes)
+
+				end
+
+			end		
 
 		else
 			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
