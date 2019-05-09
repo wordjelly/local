@@ -8,23 +8,20 @@ module Concerns::BaseControllerConcern
 
     included do
         respond_to :js, :html, :json
-        #puts "actions needing authentication"
-        #puts $permissions["controllers"][controller_name]["actions"].to_s
-        #puts $permissions["controllers"][controller_name]["actions"].select{|c| c["requires_authentication"] != "no"}
-        
-        #puts " ---------------------------------------------- "
         @tconditions = {:only => $permissions["controllers"][controller_name]["actions"].select{|c| c["requires_authentication"] != "no"}.map{|c| c["action_name"].to_sym}}
+        #puts "the conditions here:#{@tconditions}"
 		before_action :get_action_permissions
     	include Auth::Concerns::DeviseConcern
     	include Auth::Concerns::TokenConcern
+    	before_action :do_before_request, @tconditions
 		before_action :set_model, :only => [:show,:update,:destroy,:edit]
     end
 
     ## now we go for the versioning.
 
     def new
-    	puts "teh get model params are:"
-    	puts get_model_params.to_s
+    	#puts "teh get model params are:"
+    	#puts get_model_params.to_s
 		instance = get_resource_class.new(get_model_params)
 		instance.run_callbacks(:find)
 		instance_variable_set("@#{get_resource_name}",instance)
@@ -95,6 +92,7 @@ module Concerns::BaseControllerConcern
 	def create
 
 		instance = get_resource_class.new(get_model_params.except(@attributes_to_exclude))
+		instance.verified_by_user_ids = [current_user.id.to_s]
 			
 		instance.created_by_user = current_user if current_user
 		
@@ -103,7 +101,6 @@ module Concerns::BaseControllerConcern
 			## now how to incorporate a challenge to have it verified.
 			## i can specify a verification parameter
 			## that is if you are accepting a version, then you have to provide a value for any number of custom parameters,  parameter, and it can be evaluated in the verified by users thign.
-			## 
 			v = Version.new(attributes_string: JSON.generate(get_model_params.merge(:verified_by_user_ids => [current_user.id.to_s], :rejected_by_user_ids => [])))
 			v.assign_control_doc_number
 			instance.versions.push(v.attributes)
@@ -137,13 +134,20 @@ module Concerns::BaseControllerConcern
 
 
 	def update
+		puts " --------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+		puts "the params are:"
+		puts params.to_s
+
+		puts "the model params are:"
+		puts get_model_params.to_s
+
 		if current_user
 			instance_variable_get("@#{get_resource_name}").send("created_by_user=",current_user) 
 		end
 		
 		if instance_variable_get("@#{get_resource_name}").respond_to? :versions
 			
-			if ((instance_variable_get("@#{get_resource_name}").verified_by_user_ids_changed?(get_model_params[:verified_by_user_ids])) || (instance_variable_get("@#{get_resource_name}").verified_by_user_ids_changed?(get_model_params[:rejected_by_user_ids])))
+			if ((instance_variable_get("@#{get_resource_name}").verified_user_ids_changed?(get_model_params[:verified_by_user_ids])) || (instance_variable_get("@#{get_resource_name}").rejected_user_ids_changed?(get_model_params[:rejected_by_user_ids])))
 
 				## only thing which remains is seeing if it changed by anything other than the current user
 				## because that is not allowed.
@@ -171,7 +175,7 @@ module Concerns::BaseControllerConcern
 
 			else
 
-				if self.verified_or_rejected?
+				if instance_variable_get("@#{get_resource_name}").verified_or_rejected?
 					## so any further changes are considered to be accepted by the creator.
 					v = Version.new(attributes_string: JSON.generate(get_model_params.merge(:verified_by_user_ids => [current_user.id.to_s], rejected_by_user_ids => [])))
 
@@ -202,9 +206,9 @@ module Concerns::BaseControllerConcern
 			end
 			format.json do 
 				if @errors.full_messages.empty?
-					render :json => {get_resource_name.to_sym => instance}
+					render :json => {get_resource_name.to_sym => instance_variable_get("@#{get_resource_name}")}
 				else
-					render :json => {get_resource_name.to_sym => instance, errors: @errors}
+					render :json => {get_resource_name.to_sym => instance_variable_get("@#{get_resource_name}"), errors: @errors}
 				end
 			end
 		end
@@ -246,8 +250,11 @@ module Concerns::BaseControllerConcern
 		query = add_authorization_clause(query) if (@action_permissions["requires_authorization"] == "yes")
 		
 		## so only its own user has been added.
-		 puts "query after adding authorization clause is:"
-		 puts JSON.pretty_generate(query)
+		#puts "query after adding authorization clause is:"
+		#puts JSON.pretty_generate(query)
+
+		#puts "resource class is:"
+		#puts get_resource_class.to_s
 
 		results = get_resource_class.search({query: query})
 		if results.response.hits.hits.size > 0
@@ -319,10 +326,10 @@ module Concerns::BaseControllerConcern
 	## 
 	## @return[Hash] : the updated query, to include only those resources, that have 
 	def add_authorization_clause(query)
-		puts "is there a current user?"
-		puts current_user.to_s
-		puts "the query currently is:"
-		puts JSON.pretty_generate(query)
+		#puts "is there a current user?"
+		#puts current_user.to_s
+		#puts "the query currently is:"
+		#puts JSON.pretty_generate(query)
 		if current_user
 			## check if the current user's id has been mntioned in the owner_ids of the resource.
 			query[:bool][:must][1][:bool][:should] <<
@@ -391,22 +398,22 @@ module Concerns::BaseControllerConcern
 	end
 
 	def get_model_params
-		puts "The controller path is:"
-		puts controller_path.to_s
-		puts "the class is:#{controller_path.classify.downcase.to_sym}"
+		#puts "The controller path is:"
+		#puts controller_path.to_s
+		#puts "the class is:#{controller_path.classify.downcase.to_sym}"
 		attributes = permitted_params.fetch(controller_path.classify.underscore.downcase.to_sym,{})
-		puts "the attributes become:"
-		puts attributes.to_s
+		#puts "the attributes become:"
+		#puts attributes.to_s
 		if current_user
-			puts "there is a current user."
+			#puts "there is a current user."
 			if @user_group_permissions
-				puts "there are user group permissions"
+				#puts "there are user group permissions"
 				unless @user_group_permissions.unpermitted_parameters.blank?
 					return attributes.keep_if{|k,v|  !@user_group_permissions.unpermitted_parameters.include? k}
 				end
 			end
 		else
-			puts "there is no current user"
+			#puts "there is no current user"
 			if @action_permissions["parameters_allowed_on_non_authenticated_user"]
 				return attributes.keep_if{|k,v| @action_permissions["parameters_allowed_on_non_authenticated_user"].include? k}
 			end

@@ -1,3 +1,48 @@
+PATH
+  remote: /home/bhargav/Github/Auth
+  specs:
+    wordjelly-auth (1.5.0)
+      aws-sdk
+      cloudinary
+      daemons
+      delayed_job_mongoid
+      devise
+      dotenv-rails
+      elasticsearch-persistence (= 5.0.2)
+      googl
+      hashids
+      hashie
+      i18n
+      kaminari-actionview
+      kaminari-mongoid
+      materialize-sass (~> 1.0.0.rc1)
+      momentjs-rails
+      mongoid-autoinc
+      mongoid-geospatial
+      mongoid_versioned_atomic
+      omniauth
+      omniauth-facebook
+      omniauth-google-oauth2
+      omniauth-linkedin
+      omniauth-twitter
+      rails
+      rails-controller-testing
+      recaptcha (= 4.9.0)
+      redis (= 3.3.1)
+      remotipart
+      sass-rails
+      simple_token_authentication
+      sinatra
+      turbolinks
+      typhoeus
+      underscore-rails
+      valid_url
+      wj-jquery-rails (>= 4.2.2.1)
+      wj-mailgun-ruby (>= 1.1.7)
+      wj-mongoid-elasticsearch (~> 0.0.7)
+      wj-payuindia (>= 0.1.1)
+      xpath (= 2.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -1100,49 +1145,9 @@ GEM
       ruby-progressbar
     wj-payuindia (0.1.1)
     wkhtmltopdf-binary (0.12.4)
-    wordjelly-auth (1.4.9)
-      aws-sdk
-      cloudinary
-      daemons
-      delayed_job_mongoid
-      devise
-      dotenv-rails
-      elasticsearch-persistence (= 5.0.2)
-      googl
-      hashids
-      hashie
-      i18n
-      kaminari-actionview
-      kaminari-mongoid
-      materialize-sass (~> 1.0.0.rc1)
-      momentjs-rails
-      mongoid-autoinc
-      mongoid-geospatial
-      mongoid_versioned_atomic
-      omniauth
-      omniauth-facebook
-      omniauth-google-oauth2
-      omniauth-linkedin
-      omniauth-twitter
-      rails
-      rails-controller-testing
-      recaptcha (= 4.9.0)
-      redis (= 3.3.1)
-      remotipart
-      sass-rails
-      simple_token_authentication
-      sinatra
-      turbolinks
-      typhoeus
-      underscore-rails
-      valid_url
-      wj-jquery-rails (>= 4.2.2.1)
-      wj-mailgun-ruby (>= 1.1.7)
-      wj-mongoid-elasticsearch (~> 0.0.7)
-      wj-payuindia (>= 0.1.1)
-      xpath (= 2.1.0)
     xpath (2.1.0)
       nokogiri (~> 1.3)
+    youtube_rails (1.2.2)
 
 PLATFORMS
   ruby
@@ -1172,7 +1177,8 @@ DEPENDENCIES
   web-console
   wicked_pdf (= 1.1.0)
   wkhtmltopdf-binary
-  wordjelly-auth
+  wordjelly-auth!
+  youtube_rails
 
 BUNDLED WITH
    1.16.6

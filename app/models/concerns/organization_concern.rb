@@ -45,6 +45,7 @@ module Concerns::OrganizationConcern
 	###############################################
 	##
 	##
+	##
 	## GETTING THE USER'S ORGANIZATION, OR THE ORGANIZATION THAT HE HAS CREATED
 	## THESE TWO ARE FIRED AFTER_FIND
 	##

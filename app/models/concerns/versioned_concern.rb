@@ -13,7 +13,7 @@ module Concerns::VersionedConcern
 
 	included do 
 
-		@permitted_params = [:verified_by_user_ids, :rejected_by_user_ids]
+		@permitted_params = [{:verified_by_user_ids => []}, {:rejected_by_user_ids => []}]
 
 		attribute :versions, Array[Hash]
 		attribute :verified_by_user_ids, Array, mapping: {type: 'keyword'}, :default => []
@@ -42,7 +42,7 @@ module Concerns::VersionedConcern
 	end
 
 	def version_rejected?
-		self.rejected_by_user_ids > 0
+		self.rejected_by_user_ids.size > 0
 	end
 
 	def version_verified?(created_by_user)
@@ -80,6 +80,11 @@ module Concerns::VersionedConcern
 	##
 	#########################################################
 	def verified_user_ids_changed?(new_verified_by_user_ids)
+		#puts "the self verified by user ids are:"
+		#puts self.verified_by_user_ids.to_s
+
+		#puts "the new verifeid by user ids are"
+		#puts new_verified_by_user_ids.to_s
 
 		(self.verified_by_user_ids - new_verified_by_user_ids | new_verified_by_user_ids - self.verified_by_user_ids) != []
 
@@ -87,13 +92,30 @@ module Concerns::VersionedConcern
 
 	def rejected_user_ids_changed?(new_rejected_by_user_ids)
 
+		#puts "self rejected by user ids:"
+		#puts self.rejected_by_user_ids.to_s
+
+		#puts "new rejected by user ids"
+		#puts new_rejected_by_user_ids.to_s
+
+		#puts "---------------------------"
+		if new_rejected_by_user_ids.blank?
+			new_rejected_by_user_ids = []
+		end
+
 		(self.rejected_by_user_ids - new_rejected_by_user_ids | new_rejected_by_user_ids - self.rejected_by_user_ids) != []
 
 	end
 	
 	def verified_or_rejected?
 		return false if self.versions.blank?
-		obj = self.new(JSON.parse(self.versions[-1][:attributes_string]))
+		#puts "the self versions are:"
+		#puts self.versions.to_s
+		#puts self.versions[-1]
+		## so these are coming as strings.
+		## we can deep_symbolize.
+		v = Version.new(self.versions[-1])
+		obj = self.class.new(JSON.parse(v.attributes_string))
 		obj.version_rejected? || obj.version_verified?(self.created_by_user)
 	end
 

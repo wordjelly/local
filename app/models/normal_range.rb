@@ -111,9 +111,10 @@ class NormalRange
 		base = [:id,{:normal_range => [:name, :test_id, :test_name, :min_age_years,:min_age_months,:min_age_weeks,:min_age_days, :max_age_years, :max_age_months,:max_age_days, :max_age_hours, :sex, :count, :grade, :machine, :kit, :reference]}]
 		if defined? @permitted_params
 			base[1][:normal_range] << @permitted_params
+			base[1][:normal_range].flatten!
 		end
-		## so permitted params will include whatever the fuck you want here.
-		## can put this in all the implementing models.
+		puts "the base becomes:"
+		puts base.to_s
 		base
 	end
 

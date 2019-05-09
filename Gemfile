@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-#gem 'wordjelly-auth', path: '/home/bhargav/Github/Auth'
-gem 'wordjelly-auth'
+gem 'wordjelly-auth', path: '/home/bhargav/Github/Auth'
+#gem 'wordjelly-auth'
 gem 'ox'
 gem 'down'
 gem 'nokogiri'
@@ -14,6 +14,7 @@ gem 'chronic'
 gem 'aws-sdk'
 gem 'virtus'
 gem 'premailer-rails'
+gem 'youtube_rails'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
