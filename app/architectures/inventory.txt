@@ -1,0 +1,9 @@
+Inventory Architecture:
+
+1. Item type -> for eg: Serum Seperator Tube 5 ml.
+2. Item -> Usually Individual
+3. Incoming package -> consists of items bundled together.
+4. Item Order -> 
+5. Kits/Reagents
+6. Suppliers
+7. Item Requirement, and statuses -> which have their own item requirement definitions, and how exactly is this currently working out.

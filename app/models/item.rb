@@ -10,6 +10,7 @@ class Item
 
 	index_name "pathofast-items"
 
+	## so the root of everything is the item type.
 	attribute :item_type, String
 	validates_presence_of :item_type
 
