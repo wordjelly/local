@@ -9,6 +9,7 @@ class Inventory::ItemTransfer
 	include Concerns::MissingMethodConcern
 
 	index_name "pathofast-inventory-item-transfers"
+	document_type "inventory/item-transfer"
 
 	attribute :name, String, mapping: {type: 'keyword'}
 	validates_presence_of :name

@@ -108,7 +108,7 @@ module Concerns::BaseControllerConcern
 		## if the name is not present, will do nothing.
 		## for any date, it should default to nil if blank.
 		## 
-		instance.arrived_on = nil
+		#instance.arrived_on = nil
 		instance.send("assign_id_from_name") if instance.respond_to? :assign_id_from_name
 
 		if instance.respond_to? :versions

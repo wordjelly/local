@@ -7,6 +7,8 @@ class Inventory::Comment
 	include Concerns::MissingMethodConcern
 	
 	index_name "pathofast-inventory-comments"
+	document_type "inventory/comment"
+
 
 	attribute :transaction_id, String, mapping: {type: 'keyword'}
 	validate :transaction_id_exists
