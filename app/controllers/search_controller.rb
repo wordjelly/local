@@ -64,7 +64,7 @@ class SearchController < ApplicationController
 		response = Elasticsearch::Persistence.client.search index: "pathofast-*", body: build_query
 		mash = Hashie::Mash.new response 
 		@search_results = mash.hits.hits.map{|c|
-			c = c["_type"].gsub(/\-/,'_').singularize.camelize.constantize.new(c["_source"].merge(:id => c["_id"]))
+			c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
 			c
 		}
 	end
@@ -79,7 +79,7 @@ class SearchController < ApplicationController
 		response = Elasticsearch::Persistence.client.search index: "pathofast-#{@type}", body: build_query
 		mash = Hashie::Mash.new response 
 		@search_results = mash.hits.hits.map{|c|
-			c = c["_type"].camelize.constantize.new(c["_source"].merge(:id => c["_id"]))
+			c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
 			c
 		}
 		puts @search_results.to_s

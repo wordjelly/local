@@ -52,3 +52,16 @@ item groups, items , item_requirements, status definition.
 
 -- imagine a utopian system where i finish all this in one day --
 and from tomorrow how to only deal with bookings and schedules part.
+
+----------------------------------------------------------------
+
+1. transfers can be done for any transaction or item, or item group by any party.
+2. a party from another organization cannot transfer from the primary organization to himself.
+3. item is utilized when assigned to a patient, or marked as utilized.
+4. item has to be detached from an existing item group before being reattached to another item group.
+5. CRUD pages for comment, item_type, item_transfer and transaction, let me start with controllers for these also, at this stage.
+6. basic def to calculate depleted stock.
+7. how to deal with combi kits (how to barcode individual items?)
+8. generating a written code for transaction items, so that we don't have to stick barcodes on them, or can we ?
+9. how to solve date of opening of bottles (item modification)
+10. automatic setting of routines to check stocks of items assigned to individual members/persons, should be able to sort this in one day.

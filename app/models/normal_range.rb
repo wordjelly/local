@@ -118,4 +118,4 @@ class NormalRange
 		base
 	end
 
-end
+end 

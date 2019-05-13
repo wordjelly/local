@@ -15,9 +15,9 @@ class Version
 		self.control_doc_number
 	end	
 
-	## true if the model param are different for non_tamperable_parameters 
+	## true if the model param are different for non_tamperable_parasmeters 
 	def tampering?(non_tamperable_parameters, previous_version, model_params, obj_class)
-		prev_obj = obj_class.constantize.new(JSON.parse(previous_version))
+		prev_obj = obj_class.constantize.new(previous_version)
 		tampering = false
 		non_tamperable_parameters.each do |p|
 			if prev_obj.send(p.to_sym) != model_params.send(p.to_sym)

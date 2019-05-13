@@ -1,0 +1,28 @@
+<table>
+        <thead>
+          <tr>
+              <th>Id</th>
+              <th>Name</th>
+              <th>Virtual Units</th>
+              <th>Barcode Required</th>
+              <th>Suppliers</th>
+              <th>Manufacturer Name</th>
+              <th>Options</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        	<%= render :partial => "/inventory/item_types/show" %>
+        </tbody>
+        <!-- pending stock -->
+        <%= render :partial => "/inventory/item_types/stock" %>
+
+
+        <!-- orders -->
+        <!-- if you can make index responsive by js, then ajax can be sent -->
+        <!-- so there is no transactions page ? -->
+        <!-- we have to be able to paginate the orders -->
+        <!-- so we go to orders index , but show some orders here -->
+        <!-- individual items, or item groups, latest created first, 30 -->
+        <!-- place to scan barcode should be on any page -->
+</table>

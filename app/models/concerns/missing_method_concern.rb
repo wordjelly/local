@@ -13,6 +13,14 @@ module Concerns::MissingMethodConcern
 			end
 		end
 
+		def object_exists?(obj_class,id)
+			begin
+				obj_class.constantize.find(id)
+			rescue
+				false
+			end
+		end
+
 	end
 
 end

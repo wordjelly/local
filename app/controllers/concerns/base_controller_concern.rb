@@ -8,9 +8,13 @@ module Concerns::BaseControllerConcern
 
     included do
         respond_to :js, :html, :json
+        before_action :get_action_permissions
+        puts "the controller name is:"
+        puts controller_name.to_s
+        if $permissions["controllers"][controller_name].blank?
+        	raise ActionController::RoutingError.new("Please set permissions for this controller")
+        end
         @tconditions = {:only => $permissions["controllers"][controller_name]["actions"].select{|c| c["requires_authentication"] != "no"}.map{|c| c["action_name"].to_sym}}
-        #puts "the conditions here:#{@tconditions}"
-		before_action :get_action_permissions
     	include Auth::Concerns::DeviseConcern
     	include Auth::Concerns::TokenConcern
     	before_action :do_before_request, @tconditions
@@ -92,9 +96,25 @@ module Concerns::BaseControllerConcern
 	def create
 
 		instance = get_resource_class.new(get_model_params.except(@attributes_to_exclude))
-		instance.verified_by_user_ids = [current_user.id.to_s]
-			
+		## this is an attribute accessor.	
 		instance.created_by_user = current_user if current_user
+			
+		## this is an actual attribute.
+		## useful to know who created the document.
+		## it is defined in owners concern.
+		instance.created_by_user_id = current_user.id.to_s if current_user
+		## do the name id setting here itself.
+		## this assigns the id from the name if the name is present.
+		## if the name is not present, will do nothing.
+		## for any date, it should default to nil if blank.
+		## 
+		instance.arrived_on = nil
+		instance.send("assign_id_from_name") if instance.respond_to? :assign_id_from_name
+
+		if instance.respond_to? :versions
+			instance.verified_by_user_ids = [current_user.id.to_s]
+		end
+		
 		
 		if instance.respond_to? :versions
 			## so this is the default behaviour.
@@ -124,9 +144,9 @@ module Concerns::BaseControllerConcern
 			end
 			format.json do 
 				if @errors.full_messages.empty?
-					render :json => {get_resource_name.to_sym => instance}
+					render :json => {get_resource_name.to_sym => instance}, :status => 201
 				else
-
+					render :json => {get_resource_name.to_sym => instance}, :status => 304
 				end
 			end
 		end
@@ -206,9 +226,9 @@ module Concerns::BaseControllerConcern
 			end
 			format.json do 
 				if @errors.full_messages.empty?
-					render :json => {get_resource_name.to_sym => instance_variable_get("@#{get_resource_name}")}
+					render :json => {get_resource_name.to_sym => instance_variable_get("@#{get_resource_name}")}, status: 204
 				else
-					render :json => {get_resource_name.to_sym => instance_variable_get("@#{get_resource_name}"), errors: @errors}
+					render :json => {get_resource_name.to_sym => instance_variable_get("@#{get_resource_name}"), errors: @errors}, status: 304
 				end
 			end
 		end
@@ -369,7 +389,7 @@ module Concerns::BaseControllerConcern
 	#end
 
 	def get_action_permissions
-		
+		#puts "came to get action permissions."
 		@action_permissions = $permissions["controllers"][controller_name]["actions"].select{|c| c["action_name"] == action_name }[0]
 	
 		not_found("Please define permissions for : #{controller_name}##{action_name}") if @action_permissions.blank?
@@ -400,8 +420,8 @@ module Concerns::BaseControllerConcern
 	def get_model_params
 		#puts "The controller path is:"
 		#puts controller_path.to_s
-		#puts "the class is:#{controller_path.classify.downcase.to_sym}"
-		attributes = permitted_params.fetch(controller_path.classify.underscore.downcase.to_sym,{})
+		puts "the class symbol is:#{controller_path.classify.underscore.downcase.to_sym}"
+		attributes = permitted_params.fetch(controller_path.classify.demodulize.underscore.downcase.to_sym,{})
 		#puts "the attributes become:"
 		#puts attributes.to_s
 		if current_user

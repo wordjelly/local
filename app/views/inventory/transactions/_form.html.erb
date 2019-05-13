@@ -1,0 +1,82 @@
+<%= form_for @transaction, as: :transaction do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Basic Details of this Range
+			</div>
+			<%= f.text_field :item_type_id, readonly: true %>
+			<%= f.label :item_type_id %>
+		</div>
+	</div>
+
+	<!-- okay so enable date picker on this -->
+	<!-- from datepicker like profile -->
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Supplier Information
+			</div>
+			<% if !@transaction.item_type.suppliers.blank? %>
+				<%= f.select :supplier_id , @transaction.item_type.suppliers.map{|pk| [pk.name,pk.id.to_s]}, {include_blank: "Choose a supplier for this item", disabled: '', selected: ''} %>
+			<% end %>
+				
+			<%= f.text_field :more_information %>
+			<%= f.label :more_information %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Quantities
+			</div>
+			<%= f.number_field :quantity_ordered %>
+			<%= f.label :quantity_ordered %>
+
+			<%= f.number_field :quantity_received %>
+			<%= f.label :quantity_received %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Ordered And Arrival Dates
+			</div>
+			<%= f.text_field :expected_date_of_arrival, :class => "datepicker" %>
+			<%= f.label :expected_date_of_arrival %>
+
+			<%= f.text_field :arrived_on, :class => "datepicker" %>
+			<%= f.label :arrived_on %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Receipt/Challan
+			</div>
+			<%= f.number_field :price, step: :any %>
+			<%= f.label :price %>
+			<!-- select from payment mode options -->
+			<%= f.select :payment_mode , Inventory::Transaction::PAYMENT_MODES.map{|pk| [pk,pk]}, {include_blank: "Choose your mode of payment for this item", disabled: '', selected: ''} %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Image of Received Item & Receipt/Challan
+				Upload Two seperate Images.
+				<% unless @transaction.new_record? %>
+					<%= render :partial => "images/image", locals: {model: @transaction} %>
+				<% end %>
+			</div>
+		</div>
+	</div>
+	<%= f.submit "Submit" %>
+<% end %>

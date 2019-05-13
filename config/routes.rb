@@ -33,9 +33,17 @@ Rails.application.routes.draw do
   resources :images
   resources :equipment
   resources :tags
-  #resources :users 
   resources :organizations
   resources :packages
+  ## or we just go to item_types index.
+  ## there we can sort based on running stock or something like that
+  ## 
+  namespace :inventory do 
+    resources :item_types
+    resources :item_transfers
+    resources :comments
+    resources :transactions
+  end
   #get 'users/sign_in_options' => "users#sign_in_options", as: "sign_in_options"
 
   get 'app_search' => 'search#search'

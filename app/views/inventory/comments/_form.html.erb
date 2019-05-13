@@ -1,0 +1,22 @@
+<%= form_for @comment do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Basic Details of this Range
+			</div>
+
+			<%= f.text_field :transaction_id, readonly: true %>
+			<%= f.label :transaction_id %>
+
+			<%= f.text_field :comment_text %>
+			<%= f.label :comment_text %>
+
+		</div>
+	</div>
+	
+	<%= f.submit "Submit" %>
+
+<% end %>

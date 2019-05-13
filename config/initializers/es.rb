@@ -15,7 +15,7 @@ end
 ## create all the indices if they don't exist.
 
 
-["Employee","Item","ItemGroup","ItemRequirement","ItemType","Location","NormalRange","Order","Patient","Report","Status","Test","Image","Minute","Organization"].each do |cls|
+["Employee","Item","ItemGroup","ItemRequirement","Inventory::ItemType","Inventory::ItemTransfer","Inventory::Transaction","Inventory::Comment","Location","NormalRange","Order","Patient","Report","Status","Test","Image","Minute","Organization"].each do |cls|
 	unless Elasticsearch::Persistence.client.indices.exists? index: cls.constantize.index_name
 		cls.constantize.send("create_index!",{force: true})
 	end

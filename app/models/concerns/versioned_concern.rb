@@ -49,8 +49,10 @@ module Concerns::VersionedConcern
 		self.verified_by_user_ids.size >= created_by_user.organization.verifiers
 	end
 
+	## so they send you a serum aliquot -> and you have a 
+
 	def test_version(index)
-		obj = self.new(JSON.parse(self.versions[index][:attributes_string]))
+		obj = self.class.new(JSON.parse(Version.new(self.versions[index]).attributes_string))
 		if index == 0
 			self.apply_version(obj)
 			self.active = 0
@@ -80,11 +82,13 @@ module Concerns::VersionedConcern
 	##
 	#########################################################
 	def verified_user_ids_changed?(new_verified_by_user_ids)
-		#puts "the self verified by user ids are:"
-		#puts self.verified_by_user_ids.to_s
+		puts "the self verified by user ids are:"
+		puts self.verified_by_user_ids.to_s
 
-		#puts "the new verifeid by user ids are"
-		#puts new_verified_by_user_ids.to_s
+		puts "the new verifeid by user ids are"
+		puts new_verified_by_user_ids.to_s
+		## it has to send what was already there.
+		new_verified_by_user_ids ||= []
 
 		(self.verified_by_user_ids - new_verified_by_user_ids | new_verified_by_user_ids - self.verified_by_user_ids) != []
 

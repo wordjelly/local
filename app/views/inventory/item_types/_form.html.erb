@@ -1,0 +1,50 @@
+<%= form_for @item_type, as: :item_type do |f| %>
+	
+	<!-- so lets just try to create this first -->
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Basic Details of this Item Type
+			</div>
+
+			<%= f.text_field :name %>
+			<%= f.label :name %>
+
+			<%= f.select :barcode_required , Inventory::ItemType::BARCODE_OPTIONS.map{|pk| [pk,pk]}, {include_blank: "Does this Item Need A Barcode", disabled: '', selected: ''} %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				How Many Units are Included in This Item?
+				For eg: In one kit of TSH, there are 100 tests.
+				For eg: One EDTA Tube, is 1 tube.
+			</div>
+			<%= f.number_field :virtual_units %>
+			<%= f.label :virtual_units %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Organizations That Supply This Item
+			</div>
+			<%= f.text_field :supplier_name , :data => {:autocomplete_type => "organizations", :multiple => true, :multiple_element_name => "item_type[supplier_ids][]"}, :autocomplete => "off" %>
+			<%= f.label :supplier_name %>
+			<%= render :partial => "/shared/display_array", locals: {model: @item_type, multiple_el: "supplier_ids", multiple_objects: "organizations"} %>
+
+			<%= f.text_field :manufacturer_name %>
+			<%= f.label :manufacturer_name %>
+
+		</div>
+	</div>
+
+
+	
+	<%= f.submit "Submit" %>
+
+<% end %>

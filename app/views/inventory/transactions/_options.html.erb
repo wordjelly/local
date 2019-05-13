@@ -1,0 +1,9 @@
+<!-- remove range -->
+<span>
+	<%= link_to "Delete", comment_path(@comment.id.to_s), :method => :delete %>
+</span>
+
+<!-- edit range -->
+<span style="margin-left: 10px;">
+	<%= link_to "Edit", edit_comment_path(@comment.id.to_s) %>
+</span>

@@ -19,6 +19,10 @@ module Concerns::OwnersConcern
 		
 		attr_accessor :created_by_user
 
+		## set in the create action in base_controller_concern
+		## it is the created_by_user id.
+		attribute :created_by_user_id
+
 		validate :created_user_has_role
 			
 		validate :organization_users_are_enrolled_with_organization, :unless => Proc.new{|c| (c.new_record? && c.class.name == "Organization")}

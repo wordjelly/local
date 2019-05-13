@@ -74,7 +74,10 @@ module Concerns::OrganizationConcern
 	## and not rejected ?
 	## for what, let him see that as well.
 	def get_organization_to_which_user_belongs
+		puts "trying to get the organization to which the user belongs"
 		if self.organization.blank?
+			puts "its organization is blank."
+			puts "its organization id is: #{self.organization_id}"
 			unless self.organization_id.blank?
 				search_results = Organization.search({
 					query: {
