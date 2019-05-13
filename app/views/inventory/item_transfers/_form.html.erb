@@ -14,10 +14,34 @@
 			<%= f.text_field :from_location_id, :data => {:autocomplete_type => "locations"} %>
 			<%= f.label :from_location_id %>
 
-			<!-- who do we give the item to -->
-			<!-- and who do we take the item from -->
-			<!-- it is taken from its last accessor -->
-			<!-- it is given to -->
+			<!-- if left blank, it will assume that it is you, and will check the previous transfer -->
+			<%= f.text_field :from_user_id %>
+			<%= f.label :from_user_id %>
+
+			<!-- this is applicable if item_id or itme_group_id is not provided, in which case the transaction id has to be provided. -->
+			<%= f.numeric_field :item_quantity %>
+			<%= f.label :item_quantity %>
+
+
+
+			<!-- so this is where things become complicated -->
+			<!-- how to transfer three tubes of a patient -->
+			<!-- from a lab to some other place -->
+			<!-- scan barcode -->
+			<!-- get current location id -->
+			<!-- say transfer -->
+			<!-- to which location -->
+			<!-- that can be searched/selected from a dropdown -->
+			<!-- from which user ? -->
+			<!-- scan QR code -->
+			<!-- that's the user -->
+			<!-- then to user(self) -->
+			<!-- that is always self -->
+			<!-- then that's it -->
+			<!-- will check if that user id is indeed the owner of that item at the last transfer -->
+			<!-- now it may be an item_group/item/or a bunch of transaction items -->
+			<!-- in that case -->
+			<!-- if its not got a barcode, then it has to be done from the transaction -->
 
 		</div>
 	</div>

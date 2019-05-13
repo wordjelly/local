@@ -2,6 +2,9 @@ class SearchController < ApplicationController
 	
 	respond_to :html, :json, :js
 
+	## Add the all field mapping.
+	## 
+
 	def build_query
 
 		should_clauses = [
@@ -41,10 +44,15 @@ class SearchController < ApplicationController
 				bool: {
 					must: [
 						{
+							match_phrase_prefix: {
+								"_all".to_sym => params[:query]
+							}
+=begin
 							multi_match: {
 								query: params[:query],
 								fields: []
 							}
+=end
 						},
 						{
 							bool: {

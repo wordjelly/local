@@ -20,4 +20,13 @@ class Inventory::Comment
 		self.errors.add(:transaction_id, "this transaction id does not exist") unless object_exists?("Inventory::Transaction",self.transaction_id)
 	end
 
+	def self.permitted_params
+		base = [:id,{:comment => [:transaction_id, :comment_text]}]
+		if defined? @permitted_params
+			base[1][:comment] << @permitted_params
+			base[1][:comment].flatten!
+		end
+		base
+	end
+
 end

@@ -27,6 +27,9 @@ module Concerns::VersionedConcern
 			indexes :versions, type: 'nested' do 
 				indexes :attributes_string, type: 'keyword'
 				indexes :control_doc_number, type: 'keyword'
+				indexes :created_at, type: 'date'
+				indexes :updated_at, type: 'date'
+				indexes :id, type: 'keyword'
 			end
 		end
 

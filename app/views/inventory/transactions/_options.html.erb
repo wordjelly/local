@@ -1,9 +1,17 @@
 <!-- remove range -->
 <span>
-	<%= link_to "Delete", comment_path(@comment.id.to_s), :method => :delete %>
+	<%= link_to "Delete", inventory_transaction_path(@transaction.id.to_s), :method => :delete %>
 </span>
 
 <!-- edit range -->
 <span style="margin-left: 10px;">
-	<%= link_to "Edit", edit_comment_path(@comment.id.to_s) %>
+	<%= link_to "Edit", edit_inventory_transaction_path(@transaction.id.to_s) %>
+</span>
+
+<span style="margin-left: 10px;">
+	<%= link_to "Add Comment", new_inventory_comment_path({comment: {transaction_id: @transaction.id.to_s}}) %>
+</span>
+
+<span style="margin-left: 10px;">
+	<%= link_to "See All Comments", inventory_comments_path({comment: {transaction_id: @transaction.id.to_s}}) %>
 </span>

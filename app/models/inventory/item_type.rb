@@ -72,13 +72,16 @@ class Inventory::ItemType
 
 	    mapping do
 	      
-		    indexes :name, type: 'keyword', fields: {
-		      	:raw => {
-		      		:type => "text",
-		      		:analyzer => "nGram_analyzer",
-		      		:search_analyzer => "whitespace_analyzer"
-		      	}
-		    }
+		    indexes :name,
+		     	type: 'keyword',
+		     	fields: {
+			      	:raw => {
+			      		:type => "text",
+			      		:analyzer => "nGram_analyzer",
+			      		:search_analyzer => "whitespace_analyzer"
+			      	}
+		    	},
+		    	copy_to: '_all'
 		end
 
 	end

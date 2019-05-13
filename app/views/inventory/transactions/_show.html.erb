@@ -1,7 +1,25 @@
-<tr>
-	<td><%= link_to @comment.id.to_s, test_path(@comment.id.to_s) %></td>
-	<td><%= @comment.transaction_id %></td>
-	<td><%= @comment.comment_text %></td>
-	<td><%= @comment.created_by_user_id %></td>
-	<td><%= render :partial => "/inventory/comments/options" %></td>
-</tr>
+<div class="card">
+	<div class="card-content">
+		<div class="card-title">
+			<%= link_to @transaction.id.to_s, inventory_transaction_path(@transaction.id.to_s) %>
+		</div>
+		<div>
+			<% if @transaction.supplier.blank? %>
+				No Supplier Has Been set for this order
+			<% else %>
+				<%= @transaction.supplier.name %>		
+			<% end %>
+		</div>
+		<div>
+			<%= @transaction.more_information %>
+		</div>
+		<div>Quantity Ordered: <%= @transaction.quantity_ordered %></div>
+		<div>Quantity Received: <%= @transaction.quantity_received %></div>
+		<div>Expected Date of Arrival: <%= @transaction.expected_date_of_arrival %></div>
+		<div>Price : <%= @transaction.price %></div>
+		<div>Payment Mode: <%= @transaction.payment_mode %></div>
+	</div>
+	<div class="card-action">
+		<%= render :partial => "/inventory/transactions/options" %>
+	</div>
+</div>

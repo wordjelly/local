@@ -15,34 +15,24 @@ class Inventory::ItemTransfer
 	validates_presence_of :name
 
 	attribute :to_location_id, String, mapping: {type: 'keyword'}
-	validate :from_location_id_exists
 
 	attribute :from_location_id, String, mapping: {type: 'keyword'}
-	validate :to_location_id_exists
+	
 
 	attribute :from_user_id, String, mapping: {type: 'keyword'}
-	validate :from_user_id_exists
+	
 
-	attribute :to_user_id, String, mapping: {type: 'keyword'}
-	validate :to_user_id_exists
-
-
+	## this has to be got before_save
+	## from the item_ids/item_group_ids
+	## unless it is already provided.
 	attribute :transaction_ids, Array, mapping: {type: 'keyword'}
+	validates_presence_of :transaction_ids, :if => Proc.new{|c| (c.item_id.blank? && c.item_group_id.blank?)}
 
 	## if only a transaction is provided, then we have to have the item quantity, and we have to have the previous item transfer id, or it has to be the first transaction.
 	attribute :item_quantity, Integer
-
-	## if its an item_id, there will be only one transaction id.
-	attribute :item_id, String, mapping: {type: 'keyword'}
-
-	## if its an item_group -> there will be multiple transactions, one for each item in the item_group.
-	attribute :item_group_id, String, mapping: {type: 'keyword'}
-
-	## this is optional.
-	attribute :previous_item_transfer_id, String, mapping: {type: 'keyword'}
 	
 
-
+	attribute :barcode, String, mapping: {type: 'keyword'}
 	###########################################################33
 	##
 	##
@@ -50,10 +40,6 @@ class Inventory::ItemTransfer
 	##
 	##
 	############################################################
-	def from_location_id_exists
-		self.errors.add(:from_location_id, "this id does not exist") unless object_exists?("Location",self.from_location_id)
-	end
-
 	def to_location_id_exists
 		self.errors.add(:to_location_id, "this id does not exist") unless object_exists?("Location",self.to_location_id)
 	end
@@ -61,19 +47,6 @@ class Inventory::ItemTransfer
 	def from_user_id_exists
 		self.errors.add(:from_user_id, "this id does not exist") unless object_exists?("User",self.from_user_id)
 	end
-
-	def to_user_id_exists
-		self.errors.add(:to_user_id, "this id does not exist") unless object_exists?("User",self.to_user_id)
-	end
-
-	def transaction_id_exists
-		self.errors.add(:transaction_id, "this id does not exist") unless object_exists?("Inventory::Transaction",self.transaction_id)
-	end
-
-	def previous_item_transfer_id_exists
-		self.errors.add(:previous_item_transfer_id, "this id does not exist") unless object_exists?("Inventory::ItemTransfer",self.previous_item_transfer_id)
-	end
-
 	############################################################
 	##
 	##
@@ -82,16 +55,62 @@ class Inventory::ItemTransfer
 	##
 	##
 	############################################################
+	before_save do |document|
+
+		## get the transaction ids for the 
+		## get the previous transfer
+		## check if that user, and the from_user is the same or not.
+		## 
+		## get the current holding user, and set it as from that user.
+	end
+
+	def build_query
+		{
+			size: 1,
+			query: {
+				ids: {
+					values: [self.barcode]
+				}
+			}
+		}
+	end
+
+	def set_transaction_ids
+		unless self.barcode.blank?
+			response = Elasticsearch::Persistence.client.search index: "pathofast-item-*", body: build_query
+			mash = Hashie::Mash.new response 
+			@search_results = mash.hits.hits.map{|c|
+				c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
+				c
+			}
+			## these are the search results
+			## there will be only one.
+			## that is the item_group or whatever
+			## we have to set its transaction id.
+			## we call the method on item_group
+			## and item
+			## called get_transaction.
+		end
+	end
 
 	def add_recipients_organization_id_to_all_items_transferred
-
 		## when you do a transfer that refers to a transaction.
 		## or for an item individually
 		## or for an item group.
 		## then it will have the barcodes.
 		## but if its for a transaction, and that transaction involves barcoded items, then you cannot do the transfer.
 		## if it does not involve the barcoded items, then you can transfer but then you can only transfer
+	end
 
+	def self.permitted_params
+		base = [:id,{:item_type => [:to_location_id, :from_user_id, {:transaction_ids => []}, :item_quantity, :barcode]}]
+		if defined? @permitted_params
+			base[1][:item_type] << @permitted_params
+			base[1][:item_type].flatten!
+		end
+		#puts "the base becomes:"
+		#puts base.to_s
+		base
 	end
 
 end

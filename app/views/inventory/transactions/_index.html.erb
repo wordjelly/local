@@ -1,18 +1,4 @@
-<table>
-        <thead>
-          <tr>
-              <th>Comment Id</th>
-              <th>Transaction Id</th>
-              <th>Comment Text</th>
-              <th>Comment By</th>
-              <th>Options</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <% @comments.each do |cm| %>
-           <% @comment = cm %>
-           <%= render :partial => "show" %>
-          <% end %>
-        </tbody>
-</table>
+<% @transactions.each do |cm| %>
+	<% @transaction = cm %>
+	<%= render :partial => "show" %>
+<% end %>

@@ -31,6 +31,7 @@ class Inventory::Transaction
 
 	##we need a supplier id.
 	attribute :supplier_id, String, mapping: {type: 'keyword'}
+	attr_accessor :supplier
 
 	##we need a quantity ordered
 	attribute :quantity_ordered, Float
@@ -62,28 +63,30 @@ class Inventory::Transaction
 	##############################################################
 	after_find do |document|
 		document.load_item_type
+		document.load_supplier
 	end
+
 
 	## override the nameidconcern.
 	## after this, comments and item_transfers
 	## then items and item_groups
 	## and then we are done with inventory more or less
 	def assign_id_from_name
-		puts "Came to assign id from name"
+		#puts "Came to assign id from name"
 		if self.name.blank?
-			puts "name is blank"
+			#puts "name is blank"
 			## EDTA/ORGANIZATION-NAME/ORDER/DATETIME
 			self.load_item_type
-			puts "item type name is: #{self.item_type.name}"
-			puts "created by user organization:"
-			puts self.created_by_user.organization.to_s
+			#puts "item type name is: #{self.item_type.name}"
+			#puts "created by user organization:"
+			#puts self.created_by_user.organization.to_s
 		
 			self.name = self.item_type.name + "/" + self.created_by_user.organization.name + "/" + self.class.name + "/" + Time.now.strftime('%-d/%-m/%Y/%-l:%M%P')
-			puts "name becomes: "
-			puts self.name
+			#puts "name becomes: "
+			#puts self.name
 			self.id = self.name
-			puts "id becomes:"
-			puts self.id.to_s
+			#puts "id becomes:"
+			#puts self.id.to_s
 		end
 	end
 
@@ -91,6 +94,12 @@ class Inventory::Transaction
 		unless self.item_type_id.blank?
 			self.item_type = Inventory::ItemType.find(self.item_type_id)
 			self.item_type.run_callbacks(:find)
+		end
+	end
+
+	def load_supplier
+		unless self.supplier_id.blank?
+			self.supplier = Organization.find(self.supplier_id)
 		end
 	end
 
@@ -103,4 +112,6 @@ class Inventory::Transaction
 		base
 	end
 
+	
+	
 end

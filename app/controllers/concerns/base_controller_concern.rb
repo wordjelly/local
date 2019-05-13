@@ -47,6 +47,10 @@ module Concerns::BaseControllerConcern
 	end
 
 	def index
+
+		
+		
+
 		query = {
 			bool: {
 				must: [
@@ -56,6 +60,32 @@ module Concerns::BaseControllerConcern
 				]
 			}
 		}
+
+		## uses the params sent into the action to make a query.
+		## so simple filters can be automatically added to the query by just adding them to the url.
+		q = get_model_params
+		q.keys.each do |key|
+			unless q[key].blank?
+				if q[key].is_a? Array
+					query[:bool][:must] << {
+						terms: {
+							key.to_sym => q[key]
+						}
+					}
+				else 
+					query[:bool][:must] << {
+						term: {
+							key.to_sym => q[key]
+						}
+					}
+				end
+			end
+		end
+
+		## what about merging query params
+		## for eg:
+		## term queries
+		## for any passed in params.
 
 		## either has the organization id, or its own id.
 		## i also need to sort out permissions for searchability.
@@ -125,6 +155,8 @@ module Concerns::BaseControllerConcern
 			v.assign_control_doc_number
 			instance.versions.push(v.attributes)
 		end
+
+		puts JSON.pretty_generate(instance.attributes)
 
 		instance.save
 
