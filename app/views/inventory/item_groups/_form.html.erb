@@ -1,0 +1,42 @@
+<%= form_for @item_group, as: :item_group do |f| %>
+  
+  <div class="card">
+  	<div class="card-content">
+      <div class="card-title">
+        Basic Details Of Item Group
+      </div>
+      <%= f.text_field :barcode %>
+    	<%= f.label :barcode %>
+
+    	<%= f.text_field :group_type, :data => {:autocomplete_type => "tags"} %>
+    	<%= f.label :group_type %>
+    </div> 
+  </div>
+
+  <div class="card">
+    <div class="card-content">
+      <div class="card-title">
+        Components
+      </div>
+      <% @item_group.item_ids.each do |item_id| %>
+        <input type="text" name="item_group[item_ids][]" data-autocomplete-type="inventory-items" value="<%= item_id %>" />
+        <div class="add_item_id">
+          <i class="material-icons">add</i>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-content">
+      <div class="card-title">
+        Location
+      </div>
+      <%= f.text_field :location_id, :data => {:autocomplete_type => "locations"} %>
+      <%= f.label :location_id %>
+    </div>
+  </div>
+  
+	<%= f.submit "Submit" %>
+
+<% end %>

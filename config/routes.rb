@@ -35,14 +35,17 @@ Rails.application.routes.draw do
   resources :tags
   resources :organizations
   resources :packages
-  ## or we just go to item_types index.
-  ## there we can sort based on running stock or something like that
-  ## 
+  
+  ## not from item_type
+  ## you have to order it first
+  ## and only from a trasaction can you create it.
   namespace :inventory do 
     resources :item_types
     resources :item_transfers
     resources :comments
     resources :transactions
+    resources :item_groups
+    resources :items
   end
   #get 'users/sign_in_options' => "users#sign_in_options", as: "sign_in_options"
 

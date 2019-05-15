@@ -15,3 +15,7 @@
 <span style="margin-left: 10px;">
 	<%= link_to "See All Comments", inventory_comments_path({comment: {transaction_id: @transaction.id.to_s}}) %>
 </span>
+
+<span style="margin-left: 10px;">
+	<%= link_to "Add Item", new_inventory_item_path({item: {transaction_id: @transaction.id.to_s}}) %>
+</span>

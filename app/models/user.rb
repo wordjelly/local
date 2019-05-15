@@ -5,7 +5,7 @@ class User
 	
   include Auth::Concerns::SmsOtpConcern
   
-  include Concerns::OrganizationConcern
+  #include Concerns::OrganizationConcern
 
   create_es_index({
         index_name: "pathofast-users",

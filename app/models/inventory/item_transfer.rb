@@ -55,11 +55,22 @@ class Inventory::ItemTransfer
 	##
 	##
 	############################################################
+	## lets say we are initializing a transfer, in that case, we are gonna scan a barcode
+	## we are going to scan a user id.
+	## if we don't have these two we don't go forward.
+	## either we enforce this, or if the user is in the same organization, we can ignore it.
+	## cross organization changes, require transfer verification.
+	## internally it is optional.
+	## as long as he is scanning it is enough.
 	before_save do |document|
-
 		## get the transaction ids for the 
 		## get the previous transfer
 		## check if that user, and the from_user is the same or not.
+		## so first i will have to do pathofast-items.
+		## and item types
+		## before proceeding with this.
+		## the transaction is also got automatically.
+		## make this non-binding.
 		## 
 		## get the current holding user, and set it as from that user.
 	end
@@ -83,13 +94,6 @@ class Inventory::ItemTransfer
 				c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
 				c
 			}
-			## these are the search results
-			## there will be only one.
-			## that is the item_group or whatever
-			## we have to set its transaction id.
-			## we call the method on item_group
-			## and item
-			## called get_transaction.
 		end
 	end
 
