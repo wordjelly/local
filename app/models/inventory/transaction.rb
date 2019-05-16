@@ -1,6 +1,7 @@
 require 'elasticsearch/persistence/model'
 class Inventory::Transaction
 	include Elasticsearch::Persistence::Model
+	include Concerns::BarcodeConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern

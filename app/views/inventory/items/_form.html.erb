@@ -1,22 +1,57 @@
-<%= form_for @comment, as: :comment do |f| %>
+<%= form_for @item, as: :item do |f| %>
 	
 	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+		
+	<% unless @item.new_record? %>
+		<%= render :partial => "images/image", locals: {model: @item} %>
+	<% end %>
 
 	<div class="card">
 		<div class="card-content">
 			<div class="card-title">
-				Details
+				Origin Details
 			</div>
 
-			<%= f.text_field :transaction_id, readonly: true %>
+			<%= f.text_field :item_type_id, :readonly => true %>
+			<%= f.label :item_type_id %>
+
+			<%= f.text_field :transaction_id, :readonly => true %>
 			<%= f.label :transaction_id %>
 
-			<%= f.text_field :comment_text %>
-			<%= f.label :comment_text %>
+			<%= f.text_field :barcode %>
+			<%= f.label :barcode %>
+
+			<%= f.text_field :location_id, :data => {:autocomplete_type => "locations"} %>
+			<%= f.label :location_id %>
 
 		</div>
 	</div>
-	
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Expiry Details
+			</div>
+			<!-- this can be set from the transaction itself -->
+			<%= f.text_field :expiry_date, :class => "datepicker" %>
+			<%= f.label :expiry_date %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Details of Item Contents - Only to be filled If some contents have been added to the item.
+			</div>
+			<span>Filled Amount</span>
+			<%= f.number_field :filled_amount, :step => :any %>
+			<%= f.label :filled_amount %>
+			<span>What is the expiry date of the contents filled in the tube</span>
+			<%= f.text_field :contents_expiry_date, :class => "datepicker" %>
+			<%= f.label :contents_expiry_date %>
+		</div>
+	</div>
+		
 	<%= f.submit "Submit" %>
 
 <% end %>

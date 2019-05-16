@@ -1,6 +1,7 @@
 class Inventory::ItemGroup
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::BarcodeConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
@@ -10,8 +11,16 @@ class Inventory::ItemGroup
 	index_name "pathofast-inventory-item-groups"
 	document_type "inventory/item-group"
 
+	## so it wants to make a barcode.
+	## it has to first create one.
+	## if it goes through, then proceed otherwise forget it.
+	## we make another object called a barcode.
+	## and then we proceed.
 	## What else
 	## what about the transactions.
+	## it creates a barcode document.
+	## then it creates this document.
+	## so that ensures uniqueness across all indices.
 
 	attr_accessor :items
 
@@ -21,8 +30,6 @@ class Inventory::ItemGroup
 	attribute :location_id, String, mapping: {type: 'keyword'}
 
 	attribute :item_ids, Array
-
-	attribute :name, String
 
 	attribute :barcode, String
 	## group type needs autocomplete
@@ -170,13 +177,11 @@ class Inventory::ItemGroup
 	##
 	########################################################
 	def self.permitted_params
-		base = [:id,{:item_type => [:to_location_id, :from_user_id, {:transaction_ids => []}, :item_quantity, :barcode]}]
+		base = [:id,{:item_group => [:location_id, {:item_ids => []}, :barcode, :group_type]}]
 		if defined? @permitted_params
 			base[1][:item_type] << @permitted_params
 			base[1][:item_type].flatten!
 		end
-		#puts "the base becomes:"
-		#puts base.to_s
 		base
 	end
 

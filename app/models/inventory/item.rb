@@ -3,6 +3,7 @@ require 'elasticsearch/persistence/model'
 class Inventory::Item
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::BarcodeConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
@@ -10,8 +11,13 @@ class Inventory::Item
 	include Concerns::MissingMethodConcern
 
 	index_name "pathofast-inventory-items"
-	document_type "inventory/item"
+	document_type "inventory/item"	
 
+	## its gonna be called barcode
+	## and the index name is going to be 
+	## is there no other way?
+	## 
+	## anything with a barcode has to have this in place.
 	## so the root of everything is the item type.
 	attribute :item_type_id, String, mapping: {type: 'keyword'}
 	validates_presence_of :item_type_id
@@ -37,20 +43,21 @@ class Inventory::Item
 
 	attr_accessor :reports
 
-	#def set_id_from_barcode
-	#	self.id = self.barcode unless self.barcode.blank?
-	#end
+	attr_accessor :item_group_id
 
-	## so we did barcode uniqueness
-	## now we have to go for 
-
+	## what if the barcode of an item_group is the same as an item
+	## or a transaction?
+	## anything that has a barcode is going to have to share
+	## the same index.
+	## and a common index name.
+	## add a barcode concern.
+	## define the index there.
+	## otherwise we are fucked.
+	## we have to have methods 	to add items to groups.
+	## and remove items from groups.
 	after_find do |document|
-		res = document.get_statuses
-		document.statuses = res[:statuses]
-		document.reports = res[:reports]
+		document.load_statuses_and_reports
 	end
-
-
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -105,7 +112,7 @@ class Inventory::Item
 
 	end	
 
-	def get_statuses
+	def load_statuses_and_reports
 		search_results = Order.search({
 			_source: false,
 			query: {
@@ -132,17 +139,38 @@ class Inventory::Item
 		end	
 		
 		## so here we send this as the query.
-		Status.gather_statuses({
+		res = Status.gather_statuses({
 			ids: {
 				values: patient_report_ids
 			}
 		})
 
+		self.statuses = res[:statuses]
+		self.reports = res[:reports]
 	end
 
 	def update_status(template_status_id)
 
 	end
+
+	########################################################
+	##
+	##
+	## permitted params.
+	##
+	##
+	########################################################
+	def self.permitted_params
+		base = [:id,{:item => [:item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date]}]
+		if defined? @permitted_params
+			base[1][:item] << @permitted_params
+			base[1][:item].flatten!
+		end
+		#puts "the base becomes:"
+		#puts base.to_s
+		base
+	end
+
 	########################################################
 	##
 	##

@@ -1,4 +1,3 @@
-<!-- remove range -->
 <span>
 	<%= link_to "Delete", inventory_transaction_path(@transaction.id.to_s), :method => :delete %>
 </span>
@@ -17,5 +16,9 @@
 </span>
 
 <span style="margin-left: 10px;">
-	<%= link_to "Add Item", new_inventory_item_path({item: {transaction_id: @transaction.id.to_s}}) %>
+	<%= link_to "Add Item", new_inventory_item_path({item: {transaction_id: @transaction.id.to_s, item_type_id: @transaction.item_type_id.to_s}}) %>
+</span>
+
+<span style="margin-left: 10px;">
+	<%= link_to "See All Items", inventory_items_path({item: {:transaction_id => @transaction.id.to_s}}) %>
 </span>

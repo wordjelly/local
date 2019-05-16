@@ -158,7 +158,7 @@ module Concerns::BaseControllerConcern
 
 		puts JSON.pretty_generate(instance.attributes)
 
-		instance.save
+		instance.save(op_type: 'create')
 
 		set_errors_instance_variable(instance)
 		

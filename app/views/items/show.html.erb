@@ -1,22 +1,4 @@
-<table>
-        <thead>
-          <tr>
-              <th>Id</th>
-              <th>Item Type</th>
-              <th>Location</th>
-              <th>Filled Amount</th>
-              <th>Expiry Date</th>
-              <th>Expiry Date of Contents</th>
-              <th>Barcode</th>
-              <th>Images</th>
-              <th>Options</th>
-          </tr>
-        </thead>
-
-        <tbody>
-        	<%= render :partial => "show" %>
-        </tbody>
-</table>
+<%= render :partial => "/inventory/items/show" %>
 <!-- lets see how this goes -->
 <!-- so this is the item -->
 <%= render :partial => "/reports/with_statuses", locals: {reports: @item.reports, statuses: @item.statuses} %>

@@ -19,11 +19,12 @@
         Components
       </div>
       <% @item_group.item_ids.each do |item_id| %>
-        <input type="text" name="item_group[item_ids][]" data-autocomplete-type="inventory-items" value="<%= item_id %>" />
-        <div class="add_item_id">
-          <i class="material-icons">add</i>
-        </div>
+        <!-- so this is a problem -->
+        <input type="text" name="item_group[item_ids][]" data-autocomplete-type="inventory/items" value="<%= item_id %>" />
       <% end %>
+      <div class="add_item_id">
+        <i class="material-icons">add</i>
+      </div>
     </div>
   </div>
 

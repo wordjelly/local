@@ -54,7 +54,6 @@
 		<li><i class="material-icons">view_module</i><%= link_to "See All Roles/Tags", packages_path %></li>
 		<li><i class="material-icons">view_module</i><%= link_to "Add New Role/Tag", new_package_path %></li>
 	</ul>
-
 	<!-- do i need an inventories controller -->
 	<!-- what should it show -->
 	<!-- three tabs -->
@@ -63,7 +62,9 @@
 	<!-- so see the item type, there see its orders, see related items, see transfers of those items -->
 	<ul id='inventory' class='dropdown-content'>
 		<li><i class="material-icons">view_module</i><%= link_to "View Inventory", inventory_item_types_path %></li>
-		<li><i class="material-icons">view_module</i><%= link_to "Add New Item To Inventory", new_inventory_item_type_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Item-Type To Inventory", new_inventory_item_type_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Create New Item-Group To Inventory", new_inventory_item_group_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Item-Groups", inventory_item_groups_path %></li>
 	</ul>
 	
 </div>

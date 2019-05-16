@@ -1,7 +1,31 @@
-<tr>
-	<td><%= link_to @comment.id.to_s, test_path(@comment.id.to_s) %></td>
-	<td><%= @comment.transaction_id %></td>
-	<td><%= @comment.comment_text %></td>
-	<td><%= @comment.created_by_user_id %></td>
-	<td><%= render :partial => "/inventory/comments/options" %></td>
-</tr>
+<div class="card">
+	<div class="card-content">
+		<div class="card-title">
+			Item Group Details
+		</div>
+		<div>Barcode: <%= @item_group.barcode %></div>
+		<div>Location: <%= @item_group.location_id %></div>
+		<table>
+			<thead>
+				<th>Item Type</th>
+				<th>Transaction Id</th>
+				<th>Barcode</th>
+				<th>Expiry Date</th>
+				<th>Filled Amount</th>
+				<th>Filled Contents Expiry</th>
+			</thead>
+			<tbody>
+				<% @item_group.items.each do |item| %>
+					<tr>
+						<td><%= item.item_type %></td>
+						<td><%= item.transaction_id %></td>
+						<td><%= item.barcode %></td>
+						<td><%= item.expiry_date %></td>
+						<td><%= item.filled_amount %></td>
+						<td><%= item.contents_expiry_date %></td>
+					</tr>
+				<% end %>
+			</tbody>		
+		</table>		
+	</div>
+</div>

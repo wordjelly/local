@@ -14,3 +14,7 @@
 <span style="margin-left: 10px;">
 	<%= link_to "See All Orders", inventory_transactions_path({transaction: {:item_type_id => @item_type.id.to_s}}) %>
 </span>
+
+<span style="margin-left: 10px;">
+	<%= link_to "See All Items", inventory_items_path({item: {:item_type_id => @item_type.id.to_s}}) %>
+</span>
