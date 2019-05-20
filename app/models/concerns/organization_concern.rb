@@ -5,22 +5,26 @@ module Concerns::OrganizationConcern
 
 	included do 
 
-		PATIENT = "patient"
+		#PATIENT = "patient"
 
-	  	LAB = "lab"
+	  	#LAB = "lab"
 
-	  	DOCTOR = "doctor"
+	  	#DOCTOR = "doctor"
 
-	  	CORPORATE = "corporate"
+	  	#CORPORATE = "corporate"
 
-	  	ROLES = [PATIENT,DOCTOR,LAB,CORPORATE]
+	  	#ROLES = [PATIENT,DOCTOR,LAB,CORPORATE]
 
 		field :organization_id, type: String
 
 		## this is set after find, from the loaded organization.
 		attr_accessor :verified_as_belonging_to_organization	
 
-		field :role, type: String, :default => PATIENT
+		## this is getting set on the user
+		## that doesn't make any sense
+		## it should be a part of the organization
+		## and the employee role should be seperate.
+		#field :role, type: String, :default => PATIENT
 
 		field :employee_role_id, type: String
 
@@ -65,6 +69,8 @@ module Concerns::OrganizationConcern
 
 				self.organization = Organization.find(search_results.response.hits.hits.first["_id"])
 
+				self.verified_as_belonging_to_organization = true
+
 			end
 		end
 	end
@@ -106,26 +112,28 @@ module Concerns::OrganizationConcern
 	## returns false unless there is an organization.
 	## then checks if the user is there in the user_ids, of the organization, and returns the result of the checking that.
 	def set_verified_as_belonging_to_organization
-		if self.organization
-			self.verified_as_belonging_to_organization = (self.organization.user_ids.include? self.id.to_s)
-		else
-			self.verified_as_belonging_to_organization = false 
+		if self.verified_as_belonging_to_organization.blank?
+			if self.organization
+				self.verified_as_belonging_to_organization = (self.organization.user_ids.include? self.id.to_s)
+			else
+				self.verified_as_belonging_to_organization = false 
+			end
 		end
 	end
 
 
 	def get_organization_name
-		return ENV["DEFAULT_LAB_NAME"] if self.organization.blank?
+		return ENV["LIS_NAME"] if self.organization.blank?
 		return self.organization.name
 	end
 
 	def get_organization_phone_number
-		return ENV["DEFAULT_LAB_PHONE"] if self.organization.blank?
+		return ENV["LIS_PHONE"] if self.organization.blank?
 		return self.organization.phone_number
 	end
 
 	def get_organization_address
-		return ENV["DEFAULT_LAB_ADDRESS"] if self.organization.blank?
+		return ENV["LIS_ADDRESS"] if self.organization.blank?
 		return self.organization.address
 	end
 
@@ -133,29 +141,6 @@ module Concerns::OrganizationConcern
 		return Organization::DEFAULT_LOGO_URL if self.organization.blank?
 		return self.organization.logo_url
 	end
-
-	def is_an_organization_role?
-      (is_a_lab? || is_a_doctor? || is_a_corporate?)
-    end
-
-    def is_a_patient?
-       ((!self.role.blank?) && (self.role == self.class::PATIENT))
-    end
-
-
-    def is_a_lab?
-      ((!self.role.blank?) && (self.role == self.class::LAB))
-    end
-
-
-    def is_a_doctor?
-      ((!self.role.blank?) && (self.role == self.class::DOCTOR))
-    end
-
-
-    def is_a_corporate?
-      ((!self.role.blank?) && (self.role == self.class::CORPORATE))
-    end
 
     ## if an organization attribute was found for it.
     def has_organization?
@@ -175,14 +160,27 @@ module Concerns::OrganizationConcern
     	has_organization? && !self.organization_id.blank? && !self.verified_as_belonging_to_organization.blank?
     end
 
+    
+
     def owns_or_belongs_to_organization?
    		is_organization_owner? || belongs_to_organization? 	
     end
+
 
     ## so this is the employee role.
     def load_employee_role
     	unless self.employee_role_id.blank?
     		self.employee_role = Tag.find(self.employee_role_id)
+    	end
+    end
+
+    ## a user can transfer an object, if its organization owns
+    ## that item, or it is the creator of that object.
+    def can_transfer?(obj)
+    	if obj.owner_ids.include? self.organization.id.to_s
+    		return true
+    	elsif obj.owner_ids.include? self.id.to_s
+    		return true
     	end
     end
 

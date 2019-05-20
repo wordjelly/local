@@ -1,18 +1,14 @@
 <table>
         <thead>
           <tr>
-              <th>Comment Id</th>
-              <th>Transaction Id</th>
-              <th>Comment Text</th>
-              <th>Comment By</th>
-              <th>Options</th>
+              <%= render :partial => "/inventory/item_transfers/table_headers" %>
           </tr>
         </thead>
 
         <tbody>
-          <% @comments.each do |cm| %>
-           <% @comment = cm %>
-           <%= render :partial => "show" %>
+          <% @item_transfers.each do |cm| %>
+           <% @item_transfer = cm %>
+           <%= render :partial => "/inventory/item_transfers/show" %>
           <% end %>
         </tbody>
 </table>

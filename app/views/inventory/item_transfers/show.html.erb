@@ -1,15 +1,11 @@
 <table>
         <thead>
           <tr>
-              <th>Comment Id</th>
-              <th>Transaction Id</th>
-              <th>Comment Text</th>
-              <th>Comment By</th>
-              <th>Options</th>
+              <%= render :partial => "/inventory/item_transfers/table_headers" %>
           </tr>
         </thead>
 
         <tbody>
-        	<%= render :partial => "/inventory/comments/show" %>
+        	<%= render :partial => "/inventory/item_transfers/show" %>
         </tbody>
 </table>

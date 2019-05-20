@@ -2,9 +2,8 @@
   <div class="container">
     <div class="row">
       <div class="col l6 s12">
-        <h5 class="white-text"><%= @resource.get_organization_name %></h5>
-        <p class="grey-text text-lighten-4"><%= @resource.get_organization_address %></p>
-        <p class="grey-text text-lighten-4"><%= @resource.get_organization_phone_number %></p>
+        <h5 class="white-text"></h5>
+        <p class="grey-text text-lighten-4"><%= ENV["LIS_NAME"] %></p>
       </div>
       <div class="col l4 offset-l2 s12">
         <ul>
@@ -15,7 +14,8 @@
   </div>
   <div class="footer-copyright">
     <div class="container"> 
-    © 2019 - 2021 Copyright Pathofast Lab Information System
+    © 2019 - 2021 Copyright
+    <a class="grey-text text-lighten-4 right" href="#!"><%= ENV["LIS_HOME_PAGE"] %></a>
     </div>
   </div>
 </footer>

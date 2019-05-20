@@ -557,6 +557,22 @@
 						]
 					}
 				]
+			},
+			"search" : {
+				"actions" : [
+					{
+						"action_name" : "search",
+						"requires_authentication" : "no",
+						"requires_authorization" : "no",
+						"groups" : []
+					},
+					{
+						"action_name" : "type_selector",
+						"requires_authentication" : "no",
+						"requires_authorization" : "no",
+						"groups" : []
+					}
+				]
 			}
 		}
 }

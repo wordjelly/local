@@ -1,6 +1,7 @@
 require 'elasticsearch/persistence/model'
 class Inventory::Comment
 	include Elasticsearch::Persistence::Model
+	include Concerns::AllFieldsConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
@@ -10,10 +11,10 @@ class Inventory::Comment
 	document_type "inventory/comment"
 
 
-	attribute :transaction_id, String, mapping: {type: 'keyword'}
+	attribute :transaction_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	validate :transaction_id_exists
 
-	attribute :comment_text, String, mapping: {type: 'text'}
+	attribute :comment_text, String, mapping: {type: 'text', copy_to: "search_all"}
 	validates_presence_of :comment_text
 
 	def transaction_id_exists

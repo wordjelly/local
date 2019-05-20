@@ -1,3 +1,12 @@
 <div class="row" style="margin-bottom:1.4rem; margin-top:1.4rem">
-	<%= link_to "Add A User Role", edit_profile_path(:id => @profile_resource.id.to_s, :resource => "users") %>
+	<a class='dropdown-trigger btn' href='#' data-target='organization'>Organization</a>
+
+	<ul id='organization' class='dropdown-content'>
+		<% if current_user.has_organization? %>
+			<li><i class="material-icons">view_module</i><%= link_to current_user.organization.name, organization_path(current_user.organization.id.to_s) %></li>
+		<% else %>
+			<li><i class="material-icons">view_module</i><%= link_to "Create Your Lab", new_organization_path %></li>
+		<% end %>
+	</ul>
+	
 </div>

@@ -5,27 +5,28 @@
 		</div>
 		<div>Barcode: <%= @item_group.barcode %></div>
 		<div>Location: <%= @item_group.location_id %></div>
+		<h6>Item Definitions</h6>
 		<table>
 			<thead>
 				<th>Item Type</th>
-				<th>Transaction Id</th>
-				<th>Barcode</th>
+				<th>Quantity</th>
 				<th>Expiry Date</th>
-				<th>Filled Amount</th>
-				<th>Filled Contents Expiry</th>
+				<th>Options</th>
 			</thead>
 			<tbody>
-				<% @item_group.items.each do |item| %>
+				<% @item_group.item_definitions.each do |id| %>
 					<tr>
-						<td><%= item.item_type %></td>
-						<td><%= item.transaction_id %></td>
-						<td><%= item.barcode %></td>
-						<td><%= item.expiry_date %></td>
-						<td><%= item.filled_amount %></td>
-						<td><%= item.contents_expiry_date %></td>
+						<td><%= id["item_type_id"] %></td>
+						<td><%= id["quantity"] %></td>
+						<td><%= id["expiry_date"] %></td>
+						<td><%= link_to "Add Item", new_inventory_item_path(:item => {:item_group_id => @item_group.id.to_s, :item_type_id => id["item_type_id"],:expiry_date => id["expiry_date"], :transaction_id => @item_group.transaction_id})%>
+							<%= link_to "See All Items", inventory_items_path(:item => {:item_group_id => @item_group.id.to_s, :expiry_date => id["expiry_date"], :item_type_id => id["item_type_id"], :transaction_id => @item_group.transaction_id}) %></td>
 					</tr>
 				<% end %>
 			</tbody>		
 		</table>		
+	</div>
+	<div class="card-action">
+		<%= render :partial => "/inventory/item_groups/options" %>
 	</div>
 </div>

@@ -105,6 +105,7 @@ module Concerns::BaseControllerConcern
 			end
 		end
 
+		puts "index action final query is--------------->"
 		puts JSON.pretty_generate(query)
 
 		results = get_resource_class.search({query: query})

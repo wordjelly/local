@@ -33,9 +33,6 @@ class User
                           organization_id: {
                             type: "keyword"
                           },
-                          role: {
-                            type: "keyword"
-                          },
                           first_name: {
                             type: "keyword"
                           },

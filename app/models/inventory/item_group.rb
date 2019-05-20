@@ -1,6 +1,7 @@
 class Inventory::ItemGroup
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::AllFieldsConcern
 	include Concerns::BarcodeConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
@@ -25,13 +26,22 @@ class Inventory::ItemGroup
 	attr_accessor :items
 
 	## this is auto assigned from the barcode.
-	attribute :name, String, mapping: {type: 'keyword'}
+	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	## so here we want to scan the location id or have an autocomplete on it?
-	attribute :location_id, String, mapping: {type: 'keyword'}
+	attribute :location_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
 	attribute :item_ids, Array
 
+	attribute :total_tests, Integer, mapping: {type: 'integer'}
+
 	attribute :barcode, String
+
+	attribute :item_definitions, Array[Hash]
+
+	attribute :transaction_id, String, mapping: {type: 'keyword'}
+	
+	## so we can order here.
+	## and we can also create the items.
 	## group type needs autocomplete
 	## barcode also needs autocomplete.
 	attribute :group_type, String
@@ -91,59 +101,29 @@ class Inventory::ItemGroup
 		end
 	end
 
-	settings index: { 
-	    number_of_shards: 1, 
-	    number_of_replicas: 0,
-	    analysis: {
-		      	filter: {
-			      	nGram_filter:  {
-		                type: "nGram",
-		                min_gram: 2,
-		                max_gram: 20,
-		               	token_chars: [
-		                   "letter",
-		                   "digit",
-		                   "punctuation",
-		                   "symbol"
-		                ]
-			        }
-		      	},
-	            analyzer:  {
-	                nGram_analyzer:  {
-	                    type: "custom",
-	                    tokenizer:  "whitespace",
-	                    filter: [
-	                        "lowercase",
-	                        "asciifolding",
-	                        "nGram_filter"
-	                    ]
-	                },
-	                whitespace_analyzer: {
-	                    type: "custom",
-	                    tokenizer: "whitespace",
-	                    filter: [
-	                        "lowercase",
-	                        "asciifolding"
-	                    ]
-	                }
-	            }
-	    	}
-	  	} do
+	
+    mapping do
+      
+	    indexes :name, type: 'keyword', fields: {
+	      	:raw => {
+	      		:type => "text",
+	      		:analyzer => "nGram_analyzer",
+	      		:search_analyzer => "whitespace_analyzer"
+	      	}
+	    },
+	    copy_to: "search_all"
 
+	    indexes :item_definitions, type: 'nested' do 
+	    	indexes :item_type_id, type: 'keyword'
+	    	indexes :quantity, type: 'integer'
+	    	indexes :expiry_date, type: 'date'
+	    end
 
-	    mapping do
-	      
-		    indexes :name, type: 'keyword', fields: {
-		      	:raw => {
-		      		:type => "text",
-		      		:analyzer => "nGram_analyzer",
-		      		:search_analyzer => "whitespace_analyzer"
-		      	}
-		    }
+	end
 
-		end
-
-	end	
+	## how do we clone this?
+	## first give the UI Interface.
+		
 
 	def load_associated_items
 		self.items ||= []
@@ -177,7 +157,21 @@ class Inventory::ItemGroup
 	##
 	########################################################
 	def self.permitted_params
-		base = [:id,{:item_group => [:location_id, {:item_ids => []}, :barcode, :group_type]}]
+		base = [
+				:id,
+				{:item_group => 
+					[
+						:location_id, 
+						{
+							:item_definitions => [
+								:item_type_id, :quantity
+							]
+						},
+				    	:barcode, 
+				    	:group_type
+					]
+				}
+			]
 		if defined? @permitted_params
 			base[1][:item_type] << @permitted_params
 			base[1][:item_type].flatten!
@@ -197,5 +191,29 @@ class Inventory::ItemGroup
 			self.id = self.name = self.barcode
 		end
 	end
+
+
+	########################################################
+	##
+	##
+	## METHOD OVERRIDEN FROM OWNER'S CONCERN.
+	## THIS METHOD SHOULD BE CALLED ON UPDATE, IN CASE 
+	## SOME ITEMS ARE REMOVED/ADDED.
+	## BUT WHO CAN ADD/REMOVE ?
+	##
+	########################################################
+	def add_owner(user_id)
+		begin
+			u = User.find(user_id)
+			self.owner_ids << u.organization.id.to_s
+			self.items.each do |item|
+				item.add_owner(user_id)
+			end
+			self.save
+		rescue
+			self.errors.add(:owner_ids, "could not add the recipient to the owner ids of the object #owners_concern.rb")
+		end
+	end
+
 
 end

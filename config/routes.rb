@@ -35,6 +35,7 @@ Rails.application.routes.draw do
   resources :tags
   resources :organizations
   resources :packages
+  resources :barcodes
   
   ## not from item_type
   ## you have to order it first

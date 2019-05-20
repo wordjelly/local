@@ -1,6 +1,9 @@
 require 'elasticsearch/persistence/model'
+
 class Inventory::Transaction
+
 	include Elasticsearch::Persistence::Model
+	include Concerns::AllFieldsConcern
 	include Concerns::BarcodeConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
@@ -19,7 +22,7 @@ class Inventory::Transaction
 	
 	document_type "inventory/transaction"
 
-	attribute :name, String, mapping: {type: 'keyword'}
+	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	## this has to have an existing item_type
 	## it has to have verification by two verifiers
 	## it has to have 
@@ -29,6 +32,13 @@ class Inventory::Transaction
 	## and only then we go forward.
 	## how do we get taht?
 	## load if not present.
+
+	## here we get the item_group_id
+	## if received date is set, and was not set before
+	## will cause an item_group to be created and will redirect to its
+	## page.
+	## so we have to ovverride the transactions controller for this.
+	## 
 
 	##we need a supplier id.
 	attribute :supplier_id, String, mapping: {type: 'keyword'}

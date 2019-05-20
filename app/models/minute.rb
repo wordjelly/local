@@ -10,6 +10,12 @@ class Minute
 	attribute :number, Integer
 	attribute :employees, Array[Hash]
 
+	## we have to work with copy_to 
+	## and we have to work with 
+	## so we have the all field concern.
+	## add that to all the models.
+	## via a concern.
+	## then do copy_to wherever you need it.
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -1407,12 +1413,9 @@ class Minute
 
 	end
 
-
-
 	def self.build_minute_update_request_for_routine()
 
 	end
-
 
 	## @param[Hash] reallotment_details : A hash which contains, the following keys:
 	## => reallot_to : [String] id of the employee to which to reallot

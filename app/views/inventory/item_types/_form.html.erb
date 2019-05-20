@@ -30,20 +30,11 @@
 
 	<div class="card">
 		<div class="card-content">
-			<div class="card-title">
-				Organizations That Supply This Item
-			</div>
-			<%= f.text_field :supplier_name , :data => {:autocomplete_type => "organizations", :multiple => true, :multiple_element_name => "item_type[supplier_ids][]"}, :autocomplete => "off" %>
-			<%= f.label :supplier_name %>
-			<%= render :partial => "/shared/display_array", locals: {model: @item_type, multiple_el: "supplier_ids", multiple_objects: "organizations"} %>
-
 			<%= f.text_field :manufacturer_name %>
 			<%= f.label :manufacturer_name %>
 
 		</div>
 	</div>
-
-
 	
 	<%= f.submit "Submit" %>
 

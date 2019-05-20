@@ -12,19 +12,26 @@
     	<%= f.label :group_type %>
     </div> 
   </div>
-
+  <!-- so if we clone it , we can add the actual items -->
+  <!-- you have to be able to permit it and also allow transfers and item creations on parts of it -->
+  <% @item_group.item_definitions.each do |i_def| %>
+    <div class="card item_definition">
+      <div class="card-content">
+        <div class="card-title">
+          <input type="text" name="item_group[item_definitions][][item_type_id]" data-autocomplete-type="item-types" value="<%= i_def["item_type_id"] %>" />
+          <label for="item_group[item_definitions][][item_type_id]">Item Type Id</label>
+          <input type="text" name="item_group[item_definitions][][quantity]" value="<%= i_def["quantity"] %>" />
+          <label for="item_group[item_definitions][][quantity]">Quantity</label>
+          <input type="text" name="item_group[item_definitions][][expiry_date]" class="datepicker" />
+          <label for="item_group[item_definitions][][expiry_date]">Expiry Date</label>
+          <span><i class="material-icons remove_item_definition">clear</i>Remove Item Definition</span>
+        </div>
+      </div>
+    </div>  
+  <% end %>
   <div class="card">
     <div class="card-content">
-      <div class="card-title">
-        Components
-      </div>
-      <% @item_group.item_ids.each do |item_id| %>
-        <!-- so this is a problem -->
-        <input type="text" name="item_group[item_ids][]" data-autocomplete-type="inventory/items" value="<%= item_id %>" />
-      <% end %>
-      <div class="add_item_id">
-        <i class="material-icons">add</i>
-      </div>
+      <span><i class="material-icons add_item_definition">add</i>Add Item Definition</span>
     </div>
   </div>
 

@@ -3,7 +3,7 @@ require 'elasticsearch/persistence/model'
 class NormalRange
 	
 	include Elasticsearch::Persistence::Model
-
+	include Concerns::AllFieldsConcern
 	include Concerns::NameIdConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
@@ -12,6 +12,7 @@ class NormalRange
 
 	index_name "pathofast-packages"
 
+	attribute :name, String, mapping: {type: 'keyword'}
 	attr_accessor :report_name
 	attribute :report_ids, Array, mapping: {type: 'keyword'}
 	attribute :base_price, Float

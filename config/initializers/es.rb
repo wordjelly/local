@@ -12,10 +12,7 @@ else
 	Elasticsearch::Persistence.client = Elasticsearch::Client.new hosts: [ host], headers: {"Content-Type" => "application/json" }, request: { timeout: 145 }
 end
 
-## create all the indices if they don't exist.
-
-
-["Employee","Item","ItemGroup","ItemRequirement","Inventory::ItemType","Inventory::ItemTransfer","Inventory::Transaction","Inventory::Comment","Location","NormalRange","Order","Patient","Report","Status","Test","Image","Minute","Organization"].each do |cls|
+["Employee","Inventory::Item","Inventory::ItemGroup","ItemRequirement","Inventory::ItemType","Inventory::ItemTransfer","Inventory::Transaction","Inventory::Comment","Location","NormalRange","Order","Patient","Report","Status","Test","Image","Minute","Organization","Day"].each do |cls|
 	unless Elasticsearch::Persistence.client.indices.exists? index: cls.constantize.index_name
 		cls.constantize.send("create_index!",{force: true})
 	end

@@ -1,51 +1,41 @@
-<%= form_for @comment do |f| %>
+<%= form_for @item_transfer do |f| %>
 	
 	<%= render :partial => "/shared/visibility", locals: {f: f} %>
 
 	<div class="card">
 		<div class="card-content">
 			<div class="card-title">
-				Location Details
+				Transfer to Location
 			</div>
-
 			<%= f.text_field :to_location_id, :data => {:autocomplete_type => "locations"} %>
 			<%= f.label :to_location_id %>
-
-			<%= f.text_field :from_location_id, :data => {:autocomplete_type => "locations"} %>
-			<%= f.label :from_location_id %>
-
-			<!-- if left blank, it will assume that it is you, and will check the previous transfer -->
-			<%= f.text_field :from_user_id %>
-			<%= f.label :from_user_id %>
-
-			<!-- this is applicable if item_id or itme_group_id is not provided, in which case the transaction id has to be provided. -->
-			<%= f.numeric_field :item_quantity %>
-			<%= f.label :item_quantity %>
-
-
-
-			<!-- so this is where things become complicated -->
-			<!-- how to transfer three tubes of a patient -->
-			<!-- from a lab to some other place -->
-			<!-- scan barcode -->
-			<!-- get current location id -->
-			<!-- say transfer -->
-			<!-- to which location -->
-			<!-- that can be searched/selected from a dropdown -->
-			<!-- from which user ? -->
-			<!-- scan QR code -->
-			<!-- that's the user -->
-			<!-- then to user(self) -->
-			<!-- that is always self -->
-			<!-- then that's it -->
-			<!-- will check if that user id is indeed the owner of that item at the last transfer -->
-			<!-- now it may be an item_group/item/or a bunch of transaction items -->
-			<!-- in that case -->
-			<!-- if its not got a barcode, then it has to be done from the transaction -->
-
 		</div>
 	</div>
-	
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Transfer to User
+			</div>
+			<%= f.text_field :to_user_id %>
+			<%= f.label :to_user_id %>
+		</div>
+	</div>
+
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Item Details
+			</div>
+			<%= f.number_field :item_quantity %>
+			<%= f.label :item_quantity %>
+
+			<%= f.text_field :barcode %>
+			<%= f.label :barcode %>
+		</div>
+	</div>
+
 	<%= f.submit "Submit" %>
 
 <% end %>

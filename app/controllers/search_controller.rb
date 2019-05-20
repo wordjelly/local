@@ -1,9 +1,6 @@
 class SearchController < ApplicationController
 	
-	respond_to :html, :json, :js
-
-	## Add the all field mapping.
-	## 
+	include Concerns::BaseControllerConcern
 
 	def build_query
 
@@ -33,26 +30,17 @@ class SearchController < ApplicationController
 
 		end
 
-		## the query ensures that we search for something
-		## that either belongs to the querying organization or
-		## is a public record.
-		## either of these is ok.
-
-		{
-			size: 10,
+		query = {
+			size: 100,
 			query:  {
 				bool: {
 					must: [
 						{
-							match_phrase_prefix: {
-								"_all".to_sym => params[:query]
-							}
-=begin
+
 							multi_match: {
 								query: params[:query],
-								fields: []
+								fields: ["search_all"]
 							}
-=end
 						},
 						{
 							bool: {
@@ -65,6 +53,10 @@ class SearchController < ApplicationController
 			}
 		}
 
+		puts "making query"
+		puts JSON.pretty_generate(query)
+
+		query
 
 	end
 
@@ -72,6 +64,9 @@ class SearchController < ApplicationController
 		response = Elasticsearch::Persistence.client.search index: "pathofast-*", body: build_query
 		mash = Hashie::Mash.new response 
 		@search_results = mash.hits.hits.map{|c|
+			puts "the search result is:"
+			puts c["_source"]
+			puts c["_type"]
 			c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
 			c
 		}

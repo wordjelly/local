@@ -2,6 +2,7 @@ require 'elasticsearch/persistence/model'
 class Patient
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::AllFieldsConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
@@ -48,13 +49,13 @@ class Patient
 	##
 	##
 	###########################################################
-	attribute :first_name, String
+	attribute :first_name, String, mapping: {type: 'keyword', copy_to: 'search_all'}
 	validates_presence_of :first_name
 
-	attribute :last_name, String
+	attribute :last_name, String, mapping: {type: 'keyword', copy_to: 'search_all'}
 	validates_presence_of :last_name
 
-	attribute :mobile_number, String
+	attribute :mobile_number, String, mapping: {type: 'keyword', copy_to: 'search_all'}
 	validates_presence_of :mobile_number
 
 	attribute :date_of_birth, DateTime

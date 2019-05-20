@@ -3,6 +3,7 @@ require 'elasticsearch/persistence/model'
 class Inventory::Item
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::AllFieldsConcern
 	include Concerns::BarcodeConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
@@ -19,13 +20,15 @@ class Inventory::Item
 	## 
 	## anything with a barcode has to have this in place.
 	## so the root of everything is the item type.
-	attribute :item_type_id, String, mapping: {type: 'keyword'}
+	attribute :item_type_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	validates_presence_of :item_type_id
 
-	attribute :transaction_id, String, mapping: {type: 'keyword'}
+	attribute :item_group_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
+
+	attribute :transaction_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	validates_presence_of :transaction_id
 
-	attribute :name, String, mapping: {type: 'keyword'}
+	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
 	attribute :location_id, String, mapping: {type: 'keyword'}
 
@@ -45,72 +48,55 @@ class Inventory::Item
 
 	attr_accessor :item_group_id
 
-	## what if the barcode of an item_group is the same as an item
-	## or a transaction?
-	## anything that has a barcode is going to have to share
-	## the same index.
-	## and a common index name.
-	## add a barcode concern.
-	## define the index there.
-	## otherwise we are fucked.
-	## we have to have methods 	to add items to groups.
-	## and remove items from groups.
+	validate :transaction_has_received_items
+
+	validate :transaction_has_items_left
+	
 	after_find do |document|
 		document.load_statuses_and_reports
 	end
 
-	settings index: { 
-	    number_of_shards: 1, 
-	    number_of_replicas: 0,
-	    analysis: {
-		      	filter: {
-			      	nGram_filter:  {
-		                type: "nGram",
-		                min_gram: 2,
-		                max_gram: 20,
-		               	token_chars: [
-		                   "letter",
-		                   "digit",
-		                   "punctuation",
-		                   "symbol"
-		                ]
-			        }
-		      	},
-	            analyzer:  {
-	                nGram_analyzer:  {
-	                    type: "custom",
-	                    tokenizer:  "whitespace",
-	                    filter: [
-	                        "lowercase",
-	                        "asciifolding",
-	                        "nGram_filter"
-	                    ]
-	                },
-	                whitespace_analyzer: {
-	                    type: "custom",
-	                    tokenizer: "whitespace",
-	                    filter: [
-	                        "lowercase",
-	                        "asciifolding"
-	                    ]
-	                }
-	            }
-	    	}
-	  	} do
+	
+    mapping do
+      
+	    indexes :name, type: 'keyword', fields: {
+	      	:raw => {
+	      		:type => "text",
+	      		:analyzer => "nGram_analyzer",
+	      		:search_analyzer => "whitespace_analyzer"
+	      	}
+	    },
+	    copy_to: "search_all"
 
-	    mapping do
-	      
-		    indexes :name, type: 'keyword', fields: {
-		      	:raw => {
-		      		:type => "text",
-		      		:analyzer => "nGram_analyzer",
-		      		:search_analyzer => "whitespace_analyzer"
-		      	}
-		    }
+	end
 
-		end
-
-	end	
+	## so order one kit of tb gold.
+	## then does it have individual components ?
+	## the transaction may have ten such kits.
+	## each kit has individual items.
+	## do they have to be barcoded individually?
+	## so add_item should come on 
+	## where to configure number of tests ?
+	## on bundle or item_type?
+	## or what?
+	## or that is at a transaction level?
+	## do we make a kit ?
+	## item bundle.
+	## and it has a number of virtual units.
+	## i can just add that to item_type?
+	## or make a seperate model.
+	## so now the transaction has ten kits.
+	## now we want to add items 
+	## to what?
+	## item types.
+	## item group also has many items/item_types basically.
+	## if we want to transfer item_groups
+	## so in item_groups add item_types
+	## we can just make it 
+	## Add transactions on item groups
+	## and give the item group a definition of the group.
+	## 
+	
 
 	def load_statuses_and_reports
 		search_results = Order.search({
@@ -161,7 +147,7 @@ class Inventory::Item
 	##
 	########################################################
 	def self.permitted_params
-		base = [:id,{:item => [:item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date]}]
+		base = [:id,{:item => [:item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date]}]
 		if defined? @permitted_params
 			base[1][:item] << @permitted_params
 			base[1][:item].flatten!

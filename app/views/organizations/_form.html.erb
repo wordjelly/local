@@ -12,7 +12,7 @@
 	<%= f.text_field :description %>
 	<%= f.label :description %>
 
-
+	<%= f.select :role , Organization::ROLES.map{|c| [c,c]}, {include_blank: "Organization Type", disabled: '', selected: ''} %>
 
 	<% unless @organization.new_record? %>
     	<%= render :partial => "images/image", locals: {model: @organization} %>

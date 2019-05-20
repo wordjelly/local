@@ -21,6 +21,9 @@
 			<%= f.text_field :barcode %>
 			<%= f.label :barcode %>
 
+			<%= f.text_field :item_group_id, :readonly => true %>
+			<%= f.label :item_group_id %>
+
 			<%= f.text_field :location_id, :data => {:autocomplete_type => "locations"} %>
 			<%= f.label :location_id %>
 

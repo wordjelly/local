@@ -22,3 +22,15 @@
 <span style="margin-left: 10px;">
 	<%= link_to "See All Items", inventory_items_path({item: {:transaction_id => @transaction.id.to_s}}) %>
 </span>
+
+<span>
+	<!-- how many items to shift -->
+	<%= link_to "Shift Items to Location", new_inventory_item_transfer_path({item_transfer: {to_user_id: current_user.id.to_s, transaction_ids: [@transaction.id.to_s]}}) %>
+</span>
+
+<span>
+	<!-- same thing should be there for item group and also for item -->
+	<!-- first lets' finish for transaction -->
+	<!-- what if you are not the originating user, doesnt matter, from user is the same in both cases, to user will be filled later. -->
+	<%= link_to "Give Items to Another User", new_inventory_item_transfer_path({item_transfer: {transaction_ids: [@transaction.id.to_s]}}) %>
+</span>

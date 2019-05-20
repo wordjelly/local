@@ -30,12 +30,21 @@ module ApplicationHelper
 	end	
 
 	def get_navigation_partial_name(current_user)
+		#if current_user.blank?
+		#	"no_user"
+		#elsif current_user.role.blank?
+		#	"user_no_role"
+		#else
+		#	current_user.role.downcase
+		#end
 		if current_user.blank?
 			"no_user"
-		elsif current_user.role.blank?
-			"user_no_role"
 		else
-			current_user.role.downcase
+			if current_user.owns_or_belongs_to_organization?
+				current_user.organization.role
+			else
+				"user_no_role"
+			end
 		end
 	end
 

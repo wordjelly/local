@@ -3,7 +3,7 @@ require 'elasticsearch/persistence/model'
 class NormalRange
 	
 	include Elasticsearch::Persistence::Model
-
+	include Concerns::AllFieldsConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
@@ -57,7 +57,7 @@ class NormalRange
 
 	attribute :count, String, mapping: {type: 'keyword'}
 
-	attribute :name, String, mapping: {type: 'keyword'}
+	attribute :name, String, mapping: {type: 'keyword', copy_to: 'search_all'}
 
 	attribute :machine, String, mapping: {type: 'keyword'}
 

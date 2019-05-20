@@ -15,8 +15,6 @@
 	<%= f.text_field :sex %>
 	<%= f.label :sex %>
 
-	<%= f.select :role , User::ROLES.map{|pk| [pk,pk]}, {include_blank: "Choose Your Role", disabled: '', selected: ''} %>
-
 	<br>
 
 	<%= render :partial => "/profiles/patients_pending_approval_form_partial" %>
