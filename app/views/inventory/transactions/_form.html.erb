@@ -7,8 +7,8 @@
 			<div class="card-title">
 				Basic Details of this Range
 			</div>
-			<%= f.text_field :item_type_id, readonly: true %>
-			<%= f.label :item_type_id %>
+			<%= f.text_field :supplier_item_group_id, readonly: true %>
+			<%= f.label :supplier_item_group_id %>
 		</div>
 	</div>
 
@@ -17,10 +17,7 @@
 			<div class="card-title">
 				Supplier Information
 			</div>
-			<% if !@transaction.item_type.suppliers.blank? %>
-				<%= f.select :supplier_id , @transaction.item_type.suppliers.map{|pk| [pk.name,pk.id.to_s]}, {include_blank: "Choose a supplier for this item", disabled: '', selected: ''} %>
-			<% end %>
-				
+			<%= f.text_field :supplier_id, :readonly => true %>
 			<%= f.text_field :more_information %>
 			<%= f.label :more_information %>
 		</div>

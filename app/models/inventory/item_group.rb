@@ -12,6 +12,10 @@ class Inventory::ItemGroup
 	index_name "pathofast-inventory-item-groups"
 	document_type "inventory/item-group"
 
+	## lets keep all the ids like this
+	## organization_name/document_type/date/{name- if it exists?}
+	## then at least the name can be created.
+	## and camelize the whole thing.
 	## so it wants to make a barcode.
 	## it has to first create one.
 	## if it goes through, then proceed otherwise forget it.
@@ -22,8 +26,9 @@ class Inventory::ItemGroup
 	## it creates a barcode document.
 	## then it creates this document.
 	## so that ensures uniqueness across all indices.
-
 	attr_accessor :items
+
+	attribute :cloned_from_item_group_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
 	## this is auto assigned from the barcode.
 	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
@@ -39,20 +44,35 @@ class Inventory::ItemGroup
 	attribute :item_definitions, Array[Hash]
 
 	attribute :transaction_id, String, mapping: {type: 'keyword'}
+	attr_accessor :transaction
 	
+	attribute :supplier_id, String, mapping: {type: 'keyword'}
+
+	## the supplier id will be the self.
+	## unless it is provided.
+	## in that case, if we are cloning.
+	## then we have to specify it.
 	## so we can order here.
 	## and we can also create the items.
 	## group type needs autocomplete
 	## barcode also needs autocomplete.
 	attribute :group_type, String
 	validates_presence_of :group_type
-	validate :items_not_assigned_to_another_similar_type_group
-	validate :all_items_exist
+	#validate :items_not_assigned_to_another_similar_type_group
+	#validate :all_items_exist
 
-	def set_id_from_barcode
-		self.id = self.barcode unless self.barcode.blank?
+	before_save do |document|
+		if document.supplier_id.blank?
+			document.supplier_id = document.created_by_user.organization.id.to_s
+		end
 	end
 
+	after_find do |document|
+		document.load_transaction
+	end
+
+	
+=begin
 	def all_items_exist
 		self.item_ids.each do |iid|
 			begin
@@ -100,7 +120,7 @@ class Inventory::ItemGroup
 			self.errors.add(:item_ids, "some of these items have already been assigned to other item groups")
 		end
 	end
-
+=end
 	
     mapping do
       
@@ -135,6 +155,13 @@ class Inventory::ItemGroup
 		end
 	end
 
+	def load_transaction
+		if self.transaction.blank?
+			self.transaction = Inventory::Transaction.find(self.transaction_id) unless self.transaction_id.blank?
+			self.transaction.run_callbacks(:find) unless self.transaction_id.blank?
+		end
+	end
+
 	def prepare_items_to_add_to_order
 		load_associated_items 
 		response = {
@@ -161,10 +188,11 @@ class Inventory::ItemGroup
 				:id,
 				{:item_group => 
 					[
+						:name,
 						:location_id, 
 						{
 							:item_definitions => [
-								:item_type_id, :quantity
+								:item_type_id, :quantity, :expiry_date
 							]
 						},
 				    	:barcode, 
@@ -187,8 +215,24 @@ class Inventory::ItemGroup
 	##
 	########################################################
 	def assign_id_from_name
-		if self.id.blank?			
-			self.id = self.name = self.barcode
+		puts "is the self id blank?"
+		puts self.id.to_s
+		if self.id.blank?
+			## so here the barcode is being used as the id.
+			## let us use some common sense if possible		
+			## barcode cannot be set on item_groups in this way
+			## this barcode will also be copied to the local one.
+			## okay so suppose that item has a barcode.
+			## what is the new barcode.
+			## till it has been assigned it has no barcode. 
+			##self.id = self.name = self.barcode
+			##barcode can be added later.
+			self.id = self.created_by_user.organization.id.to_s + "--" + Time.now.to_s + "--" + self.class.name.to_s + "--" + self.name.to_s + "--" + BSON::ObjectId.new.to_s
+			self.id += "--" + self.barcode unless self.barcode.blank?
+
+			puts "set the id of self to : #{self.id.to_s}"
+		else
+			puts "teh self id is not blank."
 		end
 	end
 

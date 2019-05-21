@@ -19,6 +19,17 @@
 		<div>Price : <%= @transaction.price %></div>
 		<div>Payment Mode: <%= @transaction.payment_mode %></div>
 	</div>
+	<!-- can you add items, till you add a barcode to it -->
+	<% if !@transaction.received? %>
+		<% @item_group = @transaction.supplier_item_group %>
+		<%= render :partial => "/inventory/item_groups/show" %>
+	<% else %>
+		<% @transaction.local_item_groups.each do |lg| %>
+			<% @item_group = lg %>
+			<%= render :partial => "/inventory/item_groups/show" %>
+		<% end %>
+	<% end %>
+	
 	<div class="card-action">
 		<%= render :partial => "/inventory/transactions/options" %>
 	</div>

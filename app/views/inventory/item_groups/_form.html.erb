@@ -5,9 +5,15 @@
       <div class="card-title">
         Basic Details Of Item Group
       </div>
+      <div>REQUIRED</div>
+      <%= f.text_field :name %>
+      <%= f.label :name %>
+
+      <div>OPTIONAL</div>
       <%= f.text_field :barcode %>
     	<%= f.label :barcode %>
 
+      <div>OPTIONAL</div>
     	<%= f.text_field :group_type, :data => {:autocomplete_type => "tags"} %>
     	<%= f.label :group_type %>
     </div> 

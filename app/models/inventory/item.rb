@@ -20,10 +20,20 @@ class Inventory::Item
 	## 
 	## anything with a barcode has to have this in place.
 	## so the root of everything is the item type.
+	## the item type needs to be internal?
+	## so we have supplier item types and 
+	## what about the local item types?
+	## this will be the same.
+	## it is not cloned.
 	attribute :item_type_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	validates_presence_of :item_type_id
 
-	attribute :item_group_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
+	attribute :supplier_item_group_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
+
+	## we need also an internal item_group_id.
+	## how does this play out?
+	## we don't add items on transactions.
+	## this is done on item groups.
 
 	attribute :transaction_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	validates_presence_of :transaction_id
@@ -46,7 +56,6 @@ class Inventory::Item
 
 	attr_accessor :reports
 
-	attr_accessor :item_group_id
 
 	validate :transaction_has_received_items
 
@@ -147,7 +156,7 @@ class Inventory::Item
 	##
 	########################################################
 	def self.permitted_params
-		base = [:id,{:item => [:item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date]}]
+		base = [:id,{:item => [:supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date]}]
 		if defined? @permitted_params
 			base[1][:item] << @permitted_params
 			base[1][:item].flatten!

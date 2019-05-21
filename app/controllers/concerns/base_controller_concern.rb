@@ -187,12 +187,12 @@ module Concerns::BaseControllerConcern
 
 
 	def update
-		puts " --------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
-		puts "the params are:"
-		puts params.to_s
+		#puts " --------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+		#puts "the params are:"
+		#puts params.to_s
 
-		puts "the model params are:"
-		puts get_model_params.to_s
+		#puts "the model params are:"
+		#puts get_model_params.to_s
 
 		if current_user
 			instance_variable_get("@#{get_resource_name}").send("created_by_user=",current_user) 
@@ -243,6 +243,8 @@ module Concerns::BaseControllerConcern
 		else
 			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
 		end
+
+		
 
 		instance_variable_get("@#{get_resource_name}").send("save")
 		set_errors_instance_variable(instance_variable_get("@#{get_resource_name}"))

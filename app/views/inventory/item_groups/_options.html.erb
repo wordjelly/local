@@ -2,8 +2,12 @@
 	<%= link_to "Delete", inventory_item_group_path(@item_group.id.to_s), :method => :delete %>
 </span>
 
-<!-- edit range -->
-<!-- when we go to comments index, we want it filtered by transaction id -->
 <span style="margin-left: 10px;">
 	<%= link_to "Edit", edit_inventory_item_group_path(@item_group.id.to_s) %>
 </span>
+
+
+<span style="margin-left: 10px;">
+	<%= link_to "Order", new_inventory_transaction_path(transaction: {supplier_item_group_id: @item_group.id.to_s, supplier_id: @item_group.supplier_id}) %>
+</span>
+

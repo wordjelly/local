@@ -10,7 +10,7 @@ class Inventory::Transaction
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
-	include Concerns::VersionedConcern
+	#include Concerns::VersionedConcern
 
 	CHEQUE = "CHEQUE"
 	CASH = "CASH"
@@ -23,24 +23,13 @@ class Inventory::Transaction
 	document_type "inventory/transaction"
 
 	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
-	## this has to have an existing item_type
-	## it has to have verification by two verifiers
-	## it has to have 
-	attribute :item_type_id, String, mapping: {type: 'keyword'}
-	attr_accessor :item_type
-	## so we load the item type for this.
-	## and only then we go forward.
-	## how do we get taht?
-	## load if not present.
 
-	## here we get the item_group_id
-	## if received date is set, and was not set before
-	## will cause an item_group to be created and will redirect to its
-	## page.
-	## so we have to ovverride the transactions controller for this.
-	## 
+	## this is the incoming.
+	## should i name it as such.
+	attribute :supplier_item_group_id,String, mapping: {type: 'keyword', copy_to: "search_all"}
+	attr_accessor :supplier_item_group
+	attr_accessor :local_item_groups
 
-	##we need a supplier id.
 	attribute :supplier_id, String, mapping: {type: 'keyword'}
 	attr_accessor :supplier
 
@@ -73,8 +62,9 @@ class Inventory::Transaction
 	##
 	##############################################################
 	after_find do |document|
-		document.load_item_type
+		document.load_supplier_item_group
 		document.load_supplier
+		document.load_local_item_groups
 	end
 
 
@@ -87,12 +77,12 @@ class Inventory::Transaction
 		if self.name.blank?
 			#puts "name is blank"
 			## EDTA/ORGANIZATION-NAME/ORDER/DATETIME
-			self.load_item_type
+			self.load_supplier_item_group
 			#puts "item type name is: #{self.item_type.name}"
 			#puts "created by user organization:"
 			#puts self.created_by_user.organization.to_s
 		
-			self.name = self.item_type.name + "/" + self.created_by_user.organization.name + "/" + self.class.name + "/" + Time.now.strftime('%-d/%-m/%Y/%-l:%M%P')
+			self.name = self.supplier_item_group.name + "/" + self.created_by_user.organization.name + "/" + self.class.name + "/" + Time.now.strftime('%-d/%-m/%Y/%-l:%M%P')
 			#puts "name becomes: "
 			#puts self.name
 			self.id = self.name
@@ -101,10 +91,80 @@ class Inventory::Transaction
 		end
 	end
 
-	def load_item_type
-		unless self.item_type_id.blank?
-			self.item_type = Inventory::ItemType.find(self.item_type_id)
-			self.item_type.run_callbacks(:find)
+	## callbacks will be run, only we skip the finding of the transaction again.
+	## since we already have access to the transaction.
+	## so in the show callback we directly set the transaction from here itself.
+	def load_supplier_item_group
+		unless self.supplier_item_group_id.blank?
+			if self.supplier_item_group.blank?
+				self.supplier_item_group = Inventory::ItemGroup.find(self.supplier_item_group_id)
+				self.supplier_item_group.transaction = self
+				self.supplier_item_group.run_callbacks(:find)
+			end
+		end
+	end
+
+	def load_local_item_groups
+		response = Inventory::ItemGroup.search({
+			query: {
+				bool: {
+					must: [
+						{
+							term: {
+								transaction_id: self.id.to_s
+							}
+						},
+						{
+							term: {
+								cloned_from_item_group_id: self.supplier_item_group_id
+							}
+						}
+					]
+				}
+			}
+		})
+
+		puts "teh local item group is:" 
+		puts response.results.size.to_s
+		self.local_item_groups = []
+		response.results.each do |hit|
+			local_item_group = Inventory::ItemGroup.find(hit.id.to_s)
+			local_item_group.run_callbacks(:find)	
+			self.local_item_groups << local_item_group
+		end
+	end
+
+
+	## quantity received is not getting properly updated.
+	## this will take the supplier_item_group.
+	## and make a new item_group out of it.
+	## this is expected to happen after save.
+	## for tomorrow first he needs to set the organization
+	## he needs an image for that.
+	## he also needs to ask for the role of the organization.
+	## so lets see if this works.
+	def clone_local_item_groups
+		## there can be n such groups.
+		self.quantity_received.to_i.times do 
+			local_item_group = Inventory::ItemGroup.new(self.supplier_item_group.attributes.except(:id,:barcode))
+			local_item_group.created_by_user = self.created_by_user
+			local_item_group.cloned_from_item_group_id = self.supplier_item_group.id.to_s
+			local_item_group.transaction_id = self.id.to_s
+			local_item_group.assign_id_from_name
+			begin
+				local_item_group.save(op_type: "create")
+				puts "the local item group was created."
+				puts "the errors are:"
+				puts local_item_group.errors.full_messages
+				puts "its id is"
+				puts local_item_group.id.to_s
+				unless local_item_group.errors.blank?
+					self.errors.add(:local_item_groups, local_item_group.errors.full_messages.to_s)
+				end
+			rescue => e
+				puts e.to_s
+				self.errors.add(:local_item_groups, "someone else tried to create an item group at the same time on your organization")
+			end
 		end
 	end
 
@@ -115,7 +175,7 @@ class Inventory::Transaction
 	end
 
 	def self.permitted_params
-		base = [:id,{:transaction => [:item_type_id, :supplier_id, :quantity_ordered, :more_information,:expected_date_of_arrival, :arrived_on, :price, :payment_mode, :quantity_received]}]
+		base = [:id,{:transaction => [:supplier_item_group_id, :supplier_id, :quantity_ordered, :more_information,:expected_date_of_arrival, :arrived_on, :price, :payment_mode, :quantity_received]}]
 		if defined? @permitted_params
 			base[1][:transaction] << @permitted_params
 			base[1][:transaction].flatten!
@@ -123,6 +183,28 @@ class Inventory::Transaction
 		base
 	end
 
-	
-	
+	###########################################################
+	##
+	##
+	## UTILITY METHOD
+	##
+	##
+	###########################################################
+	def received?
+		!self.quantity_received.blank?
+	end
+
+
+	before_save do |document|
+		puts "document is received check?"
+		puts document.quantity_received.to_s
+		if document.received?
+			puts "document is received."
+			if document.local_item_groups.blank?
+				puts "local item group is blank."
+				document.clone_local_item_groups
+			end
+		end
+	end
+		
 end
