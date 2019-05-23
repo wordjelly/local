@@ -10,6 +10,7 @@ class Inventory::Item
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::TransferConcern
 
 	index_name "pathofast-inventory-items"
 	document_type "inventory/item"	
@@ -28,12 +29,19 @@ class Inventory::Item
 	attribute :item_type_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	validates_presence_of :item_type_id
 
+	## so this is also to be having a local_item_group_id.
+	## that is also important at this stage.
+
 	attribute :supplier_item_group_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
 	## we need also an internal item_group_id.
 	## how does this play out?
 	## we don't add items on transactions.
 	## this is done on item groups.
+	attribute :local_item_group_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
+
+	## what happens after this?
+	## where to add this, inside the local item group.
 
 	attribute :transaction_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	validates_presence_of :transaction_id
@@ -56,10 +64,12 @@ class Inventory::Item
 
 	attr_accessor :reports
 
+	#validate :transaction_has_received_items
 
-	validate :transaction_has_received_items
-
-	validate :transaction_has_items_left
+	## so the root item group has to be defined.
+	## here that is the main thingy
+	## 
+	#validate :transaction_has_items_left
 	
 	after_find do |document|
 		document.load_statuses_and_reports
@@ -156,13 +166,11 @@ class Inventory::Item
 	##
 	########################################################
 	def self.permitted_params
-		base = [:id,{:item => [:supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date]}]
+		base = [:id,{:item => [:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date]}]
 		if defined? @permitted_params
 			base[1][:item] << @permitted_params
 			base[1][:item].flatten!
 		end
-		#puts "the base becomes:"
-		#puts base.to_s
 		base
 	end
 

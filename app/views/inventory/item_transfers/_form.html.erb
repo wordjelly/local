@@ -28,11 +28,25 @@
 			<div class="card-title">
 				Item Details
 			</div>
-			<%= f.number_field :item_quantity %>
-			<%= f.label :item_quantity %>
+			<%= f.number_field :quantity %>
+			<%= f.label :quantity %>
+		</div>
+	</div>
 
-			<%= f.text_field :barcode %>
-			<%= f.label :barcode %>
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Model Id
+			</div>
+			<%= f.number_field :model_id, :readonly => true %>
+			<%= f.label :model_id %>
+		</div>
+		<div class="card-content">
+			<div class="card-title">
+				Model Class
+			</div>
+			<%= f.number_field :model_class, :readonly => true %>
+			<%= f.label :model_class %>
 		</div>
 	</div>
 

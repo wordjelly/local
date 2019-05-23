@@ -174,14 +174,6 @@ module Concerns::OrganizationConcern
     	end
     end
 
-    ## a user can transfer an object, if its organization owns
-    ## that item, or it is the creator of that object.
-    def can_transfer?(obj)
-    	if obj.owner_ids.include? self.organization.id.to_s
-    		return true
-    	elsif obj.owner_ids.include? self.id.to_s
-    		return true
-    	end
-    end
+    
 
 end

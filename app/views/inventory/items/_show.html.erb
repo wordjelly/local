@@ -20,11 +20,18 @@
 		<div>Filled Amount: <%= @item.filled_amount %></div>
 		<div>Contents Expiry Date: <%= @item.contents_expiry_date %></div>
 		
-		<% if @item.item_group_id %>
-			<div>Item Group Id: <%= link_to @item.item_group_id, inventory_item_group_path(@item.item_group_id) %></div>
+		<% if @item.local_item_group_id %>
+			<div>Item Group Id: <%= link_to @item.local_item_group_id, inventory_item_group_path(@item.local_item_group_id) %></div>
 		<% end %>
 	</div>
 	<div class="card-action">
 		<%= render :partial => "/inventory/items/options" %>
 	</div>
+	<!-- now move to item_transfer -->
 </div>
+
+<!-- we need some links to check the following -->
+<!-- transactions -->
+<!-- item_groups -->
+<!-- that are ours -->
+<!-- items -->

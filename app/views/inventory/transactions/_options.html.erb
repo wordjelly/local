@@ -31,3 +31,12 @@
 	<!-- what if you are not the originating user, doesnt matter, from user is the same in both cases, to user will be filled later. -->
 	<%= link_to "Give Items to Another User", new_inventory_item_transfer_path({item_transfer: {transaction_ids: [@transaction.id.to_s]}}) %>
 </span>
+
+<% unless @transaction.received? %>
+	<span>
+		<%= link_to "Mark As Delivered", inventory_transaction_path(id: @transaction.id.to_s, transaction: @transaction.attributes.except(:id).merge(:quantity_received => @transaction.quantity_ordered)), method: :put %>
+	</span>
+<% end %>
+<!-- now the next step is to add items, and have all the details on them -->
+
+<%= render :partial => "/inventory/item_transfers/item_transfer_verbs", locals: {model: @transaction} %>

@@ -10,6 +10,26 @@
 				<%= @transaction.supplier.name %>		
 			<% end %>
 		</div>
+
+		<!-- now we come to item transfer protocols -->
+		<!-- pick up item -->
+		<!-- give item to user -->
+		<!-- keep item -->
+		<!-- you can pick it up -->
+		<!-- you can give it to someone -->
+		<!-- what about location transfer -->
+		<!-- transfer transaction -->
+		<!-- transfer item_group -->
+		<!-- transfer item -->
+		<!-- pick up item group -->
+		<!-- pick up , keep, give -->
+		<!-- transfer item to location -->
+		<!-- give item to person -->
+		<!-- pick up transfers to me -->
+		<!-- keep item at location -->
+		<!-- give item to person -->
+		<!-- so these are the item transfer verbs -->
+
 		<div>
 			<%= @transaction.more_information %>
 		</div>
@@ -18,17 +38,19 @@
 		<div>Expected Date of Arrival: <%= @transaction.expected_date_of_arrival %></div>
 		<div>Price : <%= @transaction.price %></div>
 		<div>Payment Mode: <%= @transaction.payment_mode %></div>
+		<div><span class="toggle_item_groups"><i class="material-icons" style="vertical-align:bottom">details</i>Show Item Groups</span></div>
 	</div>
-	<!-- can you add items, till you add a barcode to it -->
-	<% if !@transaction.received? %>
-		<% @item_group = @transaction.supplier_item_group %>
-		<%= render :partial => "/inventory/item_groups/show" %>
-	<% else %>
-		<% @transaction.local_item_groups.each do |lg| %>
-			<% @item_group = lg %>
+	<div class="item_groups" style="display:none;">
+		<% if !@transaction.received? %>
+			<% @item_group = @transaction.supplier_item_group %>
 			<%= render :partial => "/inventory/item_groups/show" %>
+		<% else %>
+			<% @transaction.local_item_groups.each do |lg| %>
+				<% @item_group = lg %>
+				<%= render :partial => "/inventory/item_groups/show" %>
+			<% end %>
 		<% end %>
-	<% end %>
+	</div>
 	
 	<div class="card-action">
 		<%= render :partial => "/inventory/transactions/options" %>

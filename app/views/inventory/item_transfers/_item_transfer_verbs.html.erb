@@ -1,0 +1,16 @@
+<%= link_to new_inventory_item_transfer_path(item_transfer: {model_id: model.id.to_s, model_class: model.class.name.to_s, to_user_id: current_user.id.to_s}) do  %>
+	<i class="material-icons">merge_type</i>
+	Pick Up
+<% end %>
+
+<!-- requries a local called model -->
+<%= link_to new_inventory_item_transfer_path(item_transfer: {model_id: model.id.to_s, model_class: model.class.name.to_s, to_user_id: current_user.id.to_s}) do  %>
+	<i class="material-icons">play_for_work</i>
+	Keep
+<% end %>
+
+<%= link_to new_inventory_item_transfer_path(item_transfer: {model_id: model.id.to_s, model_class: model.class.name.to_s}) do  %>
+	<i class="material-icons">chevron_right</i>
+	Give To Another Person
+<% end %>
+

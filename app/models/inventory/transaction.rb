@@ -125,11 +125,17 @@ class Inventory::Transaction
 		})
 
 		puts "teh local item group is:" 
+		
 		puts response.results.size.to_s
+		
 		self.local_item_groups = []
+		
 		response.results.each do |hit|
 			local_item_group = Inventory::ItemGroup.find(hit.id.to_s)
+			## this is important to avoid an endless loop.
+			local_item_group.transaction = self
 			local_item_group.run_callbacks(:find)	
+			## here assign the current transaction.
 			self.local_item_groups << local_item_group
 		end
 	end

@@ -8,6 +8,8 @@ class Inventory::ItemGroup
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::TransferConcern
+
 
 	index_name "pathofast-inventory-item-groups"
 	document_type "inventory/item-group"
@@ -26,6 +28,7 @@ class Inventory::ItemGroup
 	## it creates a barcode document.
 	## then it creates this document.
 	## so that ensures uniqueness across all indices.
+	## so its currently not showing the item groups in the transaction.
 	attr_accessor :items
 
 	attribute :cloned_from_item_group_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
@@ -69,8 +72,15 @@ class Inventory::ItemGroup
 
 	after_find do |document|
 		document.load_transaction
+		document.load_associate_item_counts
 	end
 
+	validate :item_definitions_unique
+	### TODO.
+	### the same item_type_id is not added twice to a given item group.
+	def item_definitions_unique
+
+	end
 	
 =begin
 	def all_items_exist
@@ -138,22 +148,40 @@ class Inventory::ItemGroup
 	    	indexes :quantity, type: 'integer'
 	    	indexes :expiry_date, type: 'date'
 	    end
-
 	end
 
-	## how do we clone this?
-	## first give the UI Interface.
-		
-
-	def load_associated_items
-		self.items ||= []
-		self.item_ids.each do |iid|
-			begin
-				self.items << Inventory::Item.find(iid)
-			rescue
-			end
+	def load_associate_item_counts
+		search_request = Inventory::Item.search({
+			query: {
+				term: {
+					local_item_group_id: self.id.to_s
+				}
+			},
+			aggregations: {
+				item_type: {
+					terms: {
+						field: "item_type_id"
+					}
+				}
+			}
+		})
+		search_request.response.aggregations.item_type.buckets.each do |item_type_bucket|
+			item_type_id = item_type_bucket["key"]
+			self.item_definitions.map{|item_definition|
+				if item_definition["item_type_id"] == item_type_id
+					item_definition["total_items_created"] = item_type_bucket["doc_count"]
+				end
+			}
 		end
 	end
+
+	## okay so now should have a link to see those items
+	## so it will be an index request to item.
+	## see all items will query.
+	## that works.
+	## next is item transfer , and validation requirements.
+	## so now let me look at comments.
+	## when you view all the transactions, please give a dropdown for the local item groups.
 
 	def load_transaction
 		if self.transaction.blank?
@@ -236,7 +264,14 @@ class Inventory::ItemGroup
 		end
 	end
 
-
+	## what is there in transfer?
+	## just give the item from one person to another.
+	## or transfer location
+	## or pick up.
+	## after this i go to item requirement and status 
+	## and steps
+	## and routines.
+	## last we come to reports and orders.	
 	########################################################
 	##
 	##

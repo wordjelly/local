@@ -12,3 +12,9 @@
 <span style="margin-left: 10px;">
 	<%= link_to "Go To Item Type", inventory_item_type_path(@item.item_type_id.to_s) %>
 </span>
+
+<span style="margin-left: 10px;">
+	<%= link_to "Go To Item Group", inventory_item_group_path(@item.local_item_group_id.to_s) %>
+</span>
+
+<%= render :partial => "/inventory/item_transfers/item_transfer_verbs", locals: {model: @item} %>

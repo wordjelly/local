@@ -23,6 +23,9 @@ module Concerns::OwnersConcern
 		## it is the created_by_user id.
 		attribute :created_by_user_id
 
+		## i think that will be the last organization.
+		attribute :currently_held_by_organization, String, mapping: {type: 'keyword'}
+
 		validate :created_user_exists
 			
 		validate :organization_users_are_enrolled_with_organization, :unless => Proc.new{|c| (c.new_record? && c.class.name == "Organization")}
@@ -102,6 +105,7 @@ module Concerns::OwnersConcern
 					unless document.created_by_user.organization.blank?
 						unless document.created_by_user.verified_as_belonging_to_organization.blank?
 							document.owner_ids << [document.created_by_user.organization.id.to_s]
+							document.currently_held_by_organization = created_by_user.organization.id.to_s
 						end
 					end
 				end
