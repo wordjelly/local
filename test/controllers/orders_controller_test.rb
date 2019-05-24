@@ -4,7 +4,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   	
   setup do 
 
-  	@t = Test.new(name: "MCV", lis_code: "MCV", price: 100)
+  @t = Test.new(name: "MCV", lis_code: "MCV", price: 100)
 	@t.save
 
 	@t2 = Test.new(name: "MCH", lis_code: "MCH", price: 100)

@@ -62,7 +62,6 @@ class Inventory::ItemTransfer
 	attribute :transaction_ids, Array, mapping: {type: 'keyword', copy_to: "search_all"}
 
 
-
 	attribute :model_id, String, mapping: {type: 'keyword', copy_to: 'search_all'}
 
 	attribute :model_class, String, mapping: {type: 'keyword', copy_to: 'search_all'}
@@ -168,7 +167,14 @@ class Inventory::ItemTransfer
 
 	## this should transfer shit easily.
 	## we can also remove, but upto this point, things should be pretty well established.
-	
+	## so now we come to item transfer testing.
+	## and the organization being added.
+	## let me write unit tests for this.
+	## then move to api finalization for inventory apis.
+	## that's the target for today.
+	## then move to item requirements and reports and statuses
+	## and the scheduling.
+	## we have to also give them the search endpoint.
 	def self.permitted_params
 		base = [:id,{:item_transfer => [:to_location_id, :to_user_id, :item_quantity, :model_id, :model_class, :quantity]}]
 		if defined? @permitted_params
