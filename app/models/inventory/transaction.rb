@@ -40,10 +40,10 @@ class Inventory::Transaction
 	attribute :more_information, String, mapping: {type: 'keyword'}
 
 	##we need an expected date of delivery by.
-	attribute :expected_date_of_arrival, Date
+	attribute :expected_date_of_arrival, Date, mapping: {type: 'date', format: 'yyyy-MM-dd'}
 
 	##we need an arrived on date
-	attribute :arrived_on, Date
+	attribute :arrived_on, Date, mapping: {type: 'date', format: 'yyyy-MM-dd'}
 
 	##we need charge
 	attribute :price, Float
@@ -75,19 +75,11 @@ class Inventory::Transaction
 	def assign_id_from_name
 		#puts "Came to assign id from name"
 		if self.name.blank?
-			#puts "name is blank"
-			## EDTA/ORGANIZATION-NAME/ORDER/DATETIME
+
 			self.load_supplier_item_group
-			#puts "item type name is: #{self.item_type.name}"
-			#puts "created by user organization:"
-			#puts self.created_by_user.organization.to_s
-		
-			self.name = self.supplier_item_group.name + "/" + self.created_by_user.organization.name + "/" + self.class.name + "/" + Time.now.strftime('%-d/%-m/%Y/%-l:%M%P')
-			#puts "name becomes: "
-			#puts self.name
+			self.name = self.created_by_user.organization.name + "/" + self.class.name + "/" + self.supplier_item_group.name + "/" + Time.now.strftime('%-d/%-m/%Y/%-l:%M%P') + BSON::ObjectId.new.to_s
+
 			self.id = self.name
-			#puts "id becomes:"
-			#puts self.id.to_s
 		end
 	end
 
@@ -152,7 +144,8 @@ class Inventory::Transaction
 	def clone_local_item_groups
 		## there can be n such groups.
 		self.quantity_received.to_i.times do 
-			local_item_group = Inventory::ItemGroup.new(self.supplier_item_group.attributes.except(:id,:barcode))
+			local_item_group = Inventory::ItemGroup.new(self.supplier_item_group.attributes.except(:id,:barcode,:owner_ids,:currently_held_by_organization))
+			## this should ideally be working.
 			local_item_group.created_by_user = self.created_by_user
 			local_item_group.cloned_from_item_group_id = self.supplier_item_group.id.to_s
 			local_item_group.transaction_id = self.id.to_s
@@ -164,6 +157,9 @@ class Inventory::Transaction
 				puts local_item_group.errors.full_messages
 				puts "its id is"
 				puts local_item_group.id.to_s
+				puts "the created by user email is:"
+				puts self.created_by_user.email.to_s
+				puts "-------------------------------"
 				unless local_item_group.errors.blank?
 					self.errors.add(:local_item_groups, local_item_group.errors.full_messages.to_s)
 				end

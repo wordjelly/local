@@ -23,7 +23,9 @@ $(document).ready(function(){
     $('.collapsible').collapsible();
     $('.dropdown-trigger').dropdown();
     $('select').formSelect();
-    $('.datepicker').datepicker();
+    $('.datepicker').datepicker({
+        format: "yyyy-MM-dd"
+    });
     $('select').formSelect();
 });
 
@@ -33,6 +35,8 @@ $(document).on('turbolinks:load', function() {
     $('.collapsible').collapsible();
     $('.dropdown-trigger').dropdown();
     $('select').formSelect();
-    $('.datepicker').datepicker();
+    $('.datepicker').datepicker({
+        format: "yyyy-MM-dd"
+    });
     $('select').formSelect();
 });

@@ -52,13 +52,13 @@ class Inventory::Item
 
 	attribute :filled_amount, Float
 
-	attribute :expiry_date, DateTime
+	attribute :expiry_date, Date, mapping: {type: 'date', format: 'yyyy-MM-dd'}
 	validates_presence_of :expiry_date
 
 	attribute :barcode, String
 	validates_presence_of :barcode
 
-	attribute :contents_expiry_date, DateTime	
+	attribute :contents_expiry_date, Date, mapping: {type: 'date', format: 'yyyy-MM-dd'}	
 
 	attr_accessor :statuses
 

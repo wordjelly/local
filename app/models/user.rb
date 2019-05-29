@@ -202,6 +202,18 @@ class User
     ##############################################
     ##
     ##
+    ## FOR PROFILE
+    ##
+    ##
+    ##############################################
+    def attributes_to_return_with_profile
+      ## why not return the organization
+      [:first_name,:last_name,:date_of_birth,:address,:sex,:organization]
+    end
+
+    ##############################################
+    ##
+    ##
     ##
     ## METHODS TO GENERATE DUMMY USERS.
     ##

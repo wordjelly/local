@@ -179,7 +179,7 @@ module Concerns::BaseControllerConcern
 				if @errors.full_messages.empty?
 					render :json => {get_resource_name.to_sym => instance}, :status => 201
 				else
-					render :json => {get_resource_name.to_sym => instance}, :status => 304
+					render :json => {get_resource_name.to_sym => instance, errors: @errors.full_messages.to_s}, :status => 404
 				end
 			end
 		end

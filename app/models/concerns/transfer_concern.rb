@@ -25,6 +25,13 @@ module Concerns::TransferConcern
     ## that item, or it is the creator of that object.
     ## @param[User] user: the current user.
     def can_transfer?(user)
+        puts "the owner ids are:"
+        puts self.owner_ids.to_s
+        puts "the user organization id is:"
+        puts user.organization.id.to_s
+        puts "the user id is:"
+        puts user.id.to_s
+        puts "-----------------------------------------------"
     	if self.owner_ids.include? user.organization.id.to_s
     		return true
     	elsif self.owner_ids.include? user.id.to_s
@@ -42,19 +49,10 @@ module Concerns::TransferConcern
     	end
     end
 
-    ## override in the object that implements this concern.
-    def get_components_for_transfer
-    	## so if its an item group get it.
-    	## etc.
-    	## if its a transaction, then get all the item groups.
-    	## and their constituents.
-    	## that's what an item transfer does.
-    end
-
     def build_add_owner_request(to_user)
     	source = """
-			ctx._source.owner_ids.add(params.organization_id)
-			cts._source.currently_held_by_organization = params.organization_id
+			ctx._source.owner_ids.add(params.organization_id);
+			ctx._source.currently_held_by_organization = params.organization_id;
 		"""
 
 		params = {organization_id: to_user.organization.id.to_s}
@@ -79,10 +77,22 @@ module Concerns::TransferConcern
     ## @param[User] current_user : the current user who is doing the interaction with the API.
     ## @param[User] to_user : the user to whom the document is being transferred.
     def transfer(current_user,to_user)
+        puts "transferring from------------->"
+        puts current_user.email.to_s
+        puts "transferring to:"
+        puts to_user.email.to_s
+        puts self.class.name.to_s
     	reqs = [
     		build_add_owner_request(to_user)
     	]
-    	if can_transfer?(current_user) && ownership_addition_necessary?(to_user)
+        puts "-------- calling transfer ------------- "
+        #puts "current user is: #{puts current_user.to_s}"
+        #puts "to user is: #{puts to_user.to_s}"
+        #puts "can transfer: #{puts can_transfer?(current_user)}"
+        #puts "ownership_addition_necessary : #{puts ownership_addition_necessary?(to_user)}"
+    	#puts "get components for transfer is:"
+        #puts get_components_for_transfer.to_s
+        if can_transfer?(current_user) && ownership_addition_necessary?(to_user)
     		get_components_for_transfer.each do |obj|
     			reqs.push(obj.transfer(current_user,to_user))
     		end
@@ -90,5 +100,8 @@ module Concerns::TransferConcern
     	reqs.flatten
     end
 
+    def get_components_for_transfer
+        []
+    end
 
 end

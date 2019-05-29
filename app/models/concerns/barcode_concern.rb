@@ -86,6 +86,7 @@ module Concerns::BarcodeConcern
 	  		self.barcode_object.delete unless self.barcode_object.blank?
 	  	end
 
+=begin
 	  	def transfer
 	  		
 	  		response = Inventory::ItemTransfer.search({
@@ -127,7 +128,7 @@ module Concerns::BarcodeConcern
 	  		## or a bare item type transfer also can be done.
 
 	  	end
-
+=end
   	end
 
 

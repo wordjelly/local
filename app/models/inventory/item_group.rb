@@ -146,7 +146,7 @@ class Inventory::ItemGroup
 	    indexes :item_definitions, type: 'nested' do 
 	    	indexes :item_type_id, type: 'keyword'
 	    	indexes :quantity, type: 'integer'
-	    	indexes :expiry_date, type: 'date'
+	    	indexes :expiry_date, type: 'date', format: "yyyy-MM-dd"
 	    end
 	end
 
@@ -294,5 +294,30 @@ class Inventory::ItemGroup
 		end
 	end
 
+
+	## @return[Array] : items -> array of Inventory::Item instances, which are a part of a transaction that was received.
+	## it searches for items that have this item_group as the local_item_group_id. 
+	## so it will only find those items, which were add to this group, after a transaction was done, and item_groups were received, and then items were added to it.
+	def get_components_for_transfer
+		items = []
+        search_request = Inventory::Item.search({
+			query: {
+				term: {
+					local_item_group_id: self.id.to_s
+				}
+			}
+		})
+		search_request.response.hits.hits.each do |hit|
+			item = Inventory::Item.new(hit["_source"])
+			item.id = hit["_id"]
+			item.run_callbacks(:find)
+			items << item
+		end
+		puts "the components for transfer are:"
+		puts "***************************************************************************************************************************************************************************"
+		puts items.to_s
+		puts "****************************************************************************************************************************************************************************"
+		items
+    end
 
 end

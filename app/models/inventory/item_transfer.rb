@@ -63,8 +63,10 @@ class Inventory::ItemTransfer
 
 
 	attribute :model_id, String, mapping: {type: 'keyword', copy_to: 'search_all'}
+	validates_presence_of :model_id
 
 	attribute :model_class, String, mapping: {type: 'keyword', copy_to: 'search_all'}
+	validates_presence_of :model_class
 
 
 	## give option at item.
@@ -144,10 +146,16 @@ class Inventory::ItemTransfer
 
 	def set_transferred_object
 		self.transferred_object = self.model_class.constantize.find(self.model_id)
-		self.transferred_object.run_callbacks(:after_find)
+		self.transferred_object.run_callbacks(:find)
 	end
 
-
+	def assign_id_from_name
+		set_transferred_object
+		if self.name.blank?
+			self.name = self.created_by_user.organization.name + "/" + self.class.name + "/" + self.transferred_object.id.to_s + "/" + Time.now.strftime('%-d/%-m/%Y/%-l:%M%P') + BSON::ObjectId.new.to_s
+			self.id = self.name
+		end
+	end
 	###########################################################
 	##
 	##
@@ -159,7 +167,9 @@ class Inventory::ItemTransfer
 	before_save do |document|
 		document.set_to_user
 		document.set_transferred_object
-		document.transferred_object.transfer(document.to_user).each do |update_request|
+		document.transferred_object.transfer(document.created_by_user,document.to_user).each do |update_request|
+			puts "the update request is:"
+			puts update_request.to_s
 			Inventory::ItemTransfer.add_bulk_item(update_request)
 		end
 		Inventory::ItemTransfer.flush_bulk
@@ -176,7 +186,7 @@ class Inventory::ItemTransfer
 	## and the scheduling.
 	## we have to also give them the search endpoint.
 	def self.permitted_params
-		base = [:id,{:item_transfer => [:to_location_id, :to_user_id, :item_quantity, :model_id, :model_class, :quantity]}]
+		base = [:id,{:item_transfer => [:to_location_id, :to_user_id, :quantity, :model_id, :model_class, :quantity, :reason]}]
 		if defined? @permitted_params
 			base[1][:item_type] << @permitted_params
 			base[1][:item_type].flatten!
