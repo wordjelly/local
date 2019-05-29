@@ -849,6 +849,12 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 	end
 
+	## okay so now next step is to finish the versioned ui.
+	## and the versioned updates.
+	## without that i can't go to reports.
+	## also add a stock option to item groups.
+	## the 
+
 =begin
 	test " transfers transaction and all its components to another organization -- " do 
 

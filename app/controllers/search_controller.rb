@@ -70,6 +70,15 @@ class SearchController < ApplicationController
 			c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
 			c
 		}
+		respond_to do |format|
+			format.js do 
+				render "search"
+			end
+			format.json do 
+				render :json => {search_results: @search_results}
+			end
+		end
+
 	end
 
 	def type_selector
@@ -85,8 +94,14 @@ class SearchController < ApplicationController
 			c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
 			c
 		}
-		puts @search_results.to_s
-		puts @search_results.size.to_s
+		respond_to do |format|
+			format.js do 
+				render "type_selector"
+			end
+			format.json do 
+				render :json => {search_results: @search_results}
+			end
+		end
 
 	end
 
