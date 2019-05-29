@@ -4,12 +4,13 @@ class ProfilesController < Auth::ProfilesController
 
 	def show
 		@profile_resource.m_client = self.m_client
+		puts @profile_resource.attributes_to_return_with_profile
 		respond_to do |format|
 			format.html do 
 				render :show
 			end
 			format.json do 
-				render :json => {user: @profile_resource.attributes.slice(@profile_resource.attributes_to_return_with_profile)}
+				render :json => {user: @profile_resource.attributes.slice(*@profile_resource.attributes_to_return_with_profile)}
 			end
 		end
 	end
