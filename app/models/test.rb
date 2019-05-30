@@ -10,6 +10,10 @@ class Test
 		
 	index_name "pathofast-tests"
 
+	## you cannot change anything to do with the parent.
+	## without versioning the parent itself.
+	## 
+
 	attr_accessor :normal_ranges
 	## this is set when the tests are loaded, while viewing the report.
 	## if the report id is set on the test, then in its options, we give a link to remove the test from that report, as an update.

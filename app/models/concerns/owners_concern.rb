@@ -130,8 +130,6 @@ module Concerns::OwnersConcern
 	## an item cannot be added to a transaction unless that transaction has received some items.
 	## secondly it has to know how many items were created from 
 	## that transaction.
-	## 
-
 	## so the transfer adds the item as an owner.
 	## now we have to decide what all can be modified.
 	## we can additionally define, what the original

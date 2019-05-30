@@ -9,13 +9,16 @@ class ProfilesController < Auth::ProfilesController
 			format.html do 
 				render :show
 			end
+			## so we can call as_json on it.
+			## or we can 
 			format.json do 
-				render :json => {user: @profile_resource.attributes.slice(*@profile_resource.attributes_to_return_with_profile)}
+				render :json => {user: @profile_resource.attributes_to_return_with_profile}
 			end
 		end
 	end
 
 	def edit
+		
 	end
 
 	def update

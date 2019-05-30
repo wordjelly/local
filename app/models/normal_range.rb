@@ -13,6 +13,10 @@ class NormalRange
 
 	index_name "pathofast-normal-ranges"
 
+	## this range will load the test.
+	## it doesn't need the test.
+	## will search a test, which has this as the normal range.
+	## and take that.
 	attribute :test_id, String
 
 	attr_accessor :test_name
@@ -86,6 +90,30 @@ class NormalRange
 
 			end
 		end
+	end
+
+	def load_test
+		## what if it is added to more than one test
+		## not allowed
+		## that validation has to be added at the test level.
+		## the problem is that if i edit my test, and i want to use the same normal range ?
+		## then it has to copy all the normal ranges also?
+		## this is all too complicated
+		## make it nested
+		## if they want to change anything, copy it new.
+		## its totally pointless and too complicated otherwise.
+		search_query = Test.search({
+			query: {
+				term: {
+					normal_ranges: self.id.to_s
+				}
+			}
+		})
+
+		search_query.response.hits.hits.each do |hit|
+
+		end
+
 	end
 
 	

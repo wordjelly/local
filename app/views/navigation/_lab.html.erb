@@ -8,6 +8,8 @@
 
 	<a class="dropdown-trigger btn" href="#" data-target='test_templates'>Test Templates</a>
 
+	<a class="dropdown-trigger btn" href="#" data-target='normal_range_templates'>Normal Range Templates</a>
+
 	<a class="dropdown-trigger btn" href="#" data-target='roles_and_tags'>Roles and Tags</a>
 
 	<a class="dropdown-trigger btn" href="#" data-target='packages'>Packages</a>
@@ -41,6 +43,14 @@
 		<li><i class="material-icons">view_module</i><%= link_to "Add New Test Template", new_test_path %></li>
 	</ul>
 
+	<!-- lets just integrate it to some level at least -->
+	<ul id='normal_range_templates' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Templates", normal_ranges_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Normal Range Template", new_normal_range_path %></li>
+	</ul>
+
+
+	<!-- machine kit is nothing may or may not be compulsory. -->
 	<!-- okay so now next is create the tag -->
 	<!-- then go to organization and add at least one -->
 	<!-- then go to join organization and specify a role -->

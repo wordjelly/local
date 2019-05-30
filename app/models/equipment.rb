@@ -2,6 +2,13 @@ require 'elasticsearch/persistence/model'
 
 class Equipment
 
+	## lets rename this to machine.
+	## it cannot be equipment number.
+	## that is a specific to a particular lab
+	## it has to be an equipment type.
+	## equipment type also comes from tags.
+	## or registered equipment names?
+	## we can search public equipment names.
 	include Elasticsearch::Persistence::Model
 
 	include Concerns::ImageLoadConcern

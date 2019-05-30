@@ -207,7 +207,7 @@ class User
     ##
     ##############################################
     def attributes_to_return_with_profile
-      [:first_name,:last_name,:date_of_birth,:address,:sex,:organization]
+      self.attributes.slice(*[:first_name,:last_name,:date_of_birth,:address,:sex,:organization]).merge(organization: self.organization)
     end
 
     ##############################################

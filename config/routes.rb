@@ -47,6 +47,7 @@ Rails.application.routes.draw do
     resources :transactions
     resources :item_groups
     resources :items
+    resources :machines
   end
   #get 'users/sign_in_options' => "users#sign_in_options", as: "sign_in_options"
 

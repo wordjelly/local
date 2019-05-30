@@ -730,6 +730,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 	end
 =end
 
+=begin
 	test " transfers item group and all its component items to the other organization " do 
 
 		item_type = Inventory::ItemType.new
@@ -848,18 +849,68 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		assert_equal @atif.organization.id.to_s, item.currently_held_by_organization
 
 	end
-
-	## okay so now next step is to finish the versioned ui.
-	## and the versioned updates.
-	## without that i can't go to reports.
-	## also add a stock option to item groups.
-	## the 
-
+=end
+	
 =begin
 	test " transfers transaction and all its components to another organization -- " do 
 
 	end
 =end
+		
+=begin
+	test " -- transferring items between local item groups, subtracts it from the existing item group and transfers it to the new item group -- " do 
+
+	end
+=end	
+	
+=begin
+	test " -- allows lab/hospital/doctor to create local item groups with new item types, and then populate them with items -- " do 
+
+	end
+=end	
+	
+	## when a report is copied, the equipment is not copied
+	## that report cannot be used till the equipment is chosen for it, and successfully copied over.
+	## equipment name
+	## model number
+	## serial number(not to be copied)
+	## id is organization/class/then whatever.
+	## 
+	## okay so the next step is going to be get on with 
+	## what exactly?
+	## move to normal range -> test -> report
+	## how to copy over when a new lab is created
+	## how to allow them to modify
+	## they should be able to add new tests and reports
+	## and also status 
+	## we also need equipment -> and all its bullshit.
+	## after that is done, i can move to order and patient.
+	## and the integration of status with inventory items.
+	## so basically
+	## status -> item requirement -> minute -> report -> test -> normal range -> order
+	## and last of all patient.
+	## so let's get the show on the road.
+	## so start with normal range.
+	## we have to refactor to add it to the test
+	## so how to copy the tests
+	## if i change one normal range?
+	## change the range -> owned by the current organization?
+	## otherwise use the one from the default organization.
+	## so we can create normal range.
+	## lets start with that.
+	## you will have to put the versioned concern ui first.
+	## does it need a machine id?
+	## why not just finish equipment and related issues today
+	## it has a maintainance schedule
+	## it has certificates, 
+	## it has an array of certifications (like IQ, OQ, PQ, Installation Certicicate)
+	## it has a maintainance log -> 
+	## it has a breakdown log ->
+	## and those are basically status routines.
+	## but i can make an equipment model and controller and some views quickly, to show some progress for the day.
+	## it should show which tests are done on it, by that organization, etc.
+	## it will be copied over to the organization.
+	## so will the reports on an as needed basis.
 
 
 end

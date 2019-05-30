@@ -7,6 +7,14 @@ class Location
 
 	attribute :name, String
 
+	attribute :spots, Array[Hash]
+
+	attribute :latitude, Float
+
+	attribute :longitude, Float
+
+	attribute :address, String, mapping: {type: 'keyword'}
+
 	settings index: { 
 	    number_of_shards: 1, 
 	    number_of_replicas: 0,
@@ -55,8 +63,38 @@ class Location
 		      		:search_analyzer => "whitespace_analyzer"
 		      	}
 		    }
+
+		    indexes :spots, type: 'nested' do 
+		    	indexes :tags, type: 'keyword'
+		    end
 		end
 
 	end
 	
+	## so these are the location and sub location attributes
+	## one location should be automatically created?
+	## from the organization address?
+	def self.permitted_params
+		base = [
+				:id,
+				{:location => 
+					[
+						:name,
+						:latitude,
+						:longitude,	
+						{
+							:spots => [
+								:tags
+							]
+						}
+					]
+				}
+			]
+		if defined? @permitted_params
+			base[1][:item_type] << @permitted_params
+			base[1][:item_type].flatten!
+		end
+		base
+	end
+
 end

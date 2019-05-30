@@ -11,41 +11,23 @@ class Report
 
 	index_name "pathofast-reports"
 
+	## so there is that template report id business
+	## that's ok.
+
 	attribute :template_report_id, String, mapping: {type: "keyword"}
 
-	attribute :test_ids, Array, mapping: {type: 'keyword'}, default: []
-
-	attr_accessor :test_name
-	attr_accessor :test_id_action
-	attr_accessor :test_id
-	attr_accessor :tests
+	#there's no need for all this.
+	#attribute :test_ids, Array, mapping: {type: 'keyword'}, default: []
+	#attr_accessor :test_name
+	#attr_accessor :test_id_action
+	#attr_accessor :test_id
+	#attr_accessor :tests
 
 	attribute :patient_id, String, mapping: {type: 'keyword'}
-	## it can have an owner
-	## it can also belong to an organization.
-	## those come from the owner .
-	## so we use owner concern.
-	## we take them to the reports
-	## we give them an option to choose the reports.
-	## that they need, and do a bulk clone, with their organization id.
-	## or on creating lab organization, clone all reports
-	## as a bulk call.
-	## both options are there.
-	## call clone, and with the owner_ids.
-	## provided that it doesn't exist for that organization.
-	## suppose some new reports, are added, then we have to clone 
-	## them for all the organizations ?
-	## that will be a massive bulk call.
-	## it just clones reports owned by pathofast.
-	## that's it, just changes the organization id.
-	## option b, if he changes something, then we have to be able to create a clone of that, and hook that into the clone call somehow.
-	## i think that is a better bet.
-	## reports index -> will go there.
-	## it has a customize button everywhere.
-	## we have to get into report creation.
-	## report index.
-	## report templates.
-	## so we have to aggregate
+	
+	attribute :tests, Array[Hash]
+
+	## patient id is there on report already.
 
 	attribute :name, String
 
@@ -54,23 +36,26 @@ class Report
 
 	attribute :item_requirement_ids, Array, mapping: {type: 'keyword'}, default: []
 
+	## do we need statuses on this ?
+	## or where do we define these ?
 	attribute :statuses, Array[Hash]
 
 	attribute :tag_ids, Array, mapping: {type: "keyword"}, default: []
 
-	attr_accessor :item_requirement_name
-	attr_accessor :item_requirement_id_action
-	attr_accessor :item_requirement_id
-	attr_accessor :item_requirements
+	#attr_accessor :item_requirement_name
+	#attr_accessor :item_requirement_id_action
+	#attr_accessor :item_requirement_id
+	#attr_accessor :item_requirements
 
 	attr_accessor :item_requirements_grouped_by_type
 	attr_accessor :patient
 
-	attr_accessor :tag_name
+	
+	#attr_accessor :tag_name
 
 	after_find do |document|
 		document.load_patient
-		document.load_tests
+		#document.load_tests
 		document.load_item_requirements
 	end
 
@@ -122,6 +107,89 @@ class Report
 		      		:search_analyzer => "whitespace_analyzer"
 		      	}
 		    }
+		    indexes :tests, type: 'nested', properties: {
+		    	name: {
+		    		type: 'keyword',
+		    		fields: {
+		    			:raw => {
+		    				:type => "text",
+				      		:analyzer => "nGram_analyzer",
+				      		:search_analyzer => "whitespace_analyzer"
+		    			}
+ 		    		}
+		    	},
+		    	lis_code: {
+		    		type: 'keyword'
+		    	},
+		    	description: {
+		    		type: 'keyword',
+		    		fields: {
+		    			:raw => {
+		    				:type => "text"
+		    			}
+		    		}
+		    	},
+		    	price: {
+		    		type: 'float'
+		    	},
+		    	verified: {
+		    		type: 'boolean'
+		    	},
+		    	references: {
+		    		type: 'keyword'
+		    	},
+		    	machine: {
+		    		type: 'keyword'
+		    	},
+		    	kit: {
+		    		type: 'keyword'
+		    	},
+		    	normal_ranges: {
+		    		type: "nested",
+		    		properties: {
+		    			min_age_years: {
+		    				type: "integer"
+		    			},
+		    			min_age_months: {
+		    				type: "integer"
+		    			},
+		    			min_age_days: {
+		    				type: "integer"
+		    			},
+		    			min_age_hours: {
+		    				type: "integer"
+		    			},
+		    			max_age_years: {
+		    				type: "integer"
+		    			},
+		    			max_age_months: {
+		    				type: "integer"
+		    			},
+		    			max_age_days: {
+		    				type: "integer"
+		    			},
+		    			max_age_hours: {
+		    				type: "integer"
+		    			},
+		    			sex: {
+		    				type: "keyword"
+		    			},
+		    			grade: {
+		    				type: "keyword"
+		    			},
+		    			count: {
+		    				type: "float"
+		    			}
+		    		}
+		    	}
+		    }	
+		    ## so how to check this shit.
+		    ## and how to show this shit.
+		    ## and how to permit this shit.
+		    ## all are there.
+		    ## will there be a patient value somewhere ?
+		    ## and a patient id ?
+		    ## does that need to be on the report?
 		    indexes :statuses, type: 'nested', properties: {
 		    	priority: {
 		    		type: "integer"
@@ -334,6 +402,8 @@ class Report
 		end	
 		queries
 	end
+
+	
 
 	def self.permitted_params
 		[:id , {:report => [:name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_id_action, :price, {:status_ids => []}, {:tag_ids => []} ,{:test_ids => []}, {:item_requirement_ids => []}, :patient_id, :template_report_id ]}]

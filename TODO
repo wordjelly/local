@@ -67,3 +67,11 @@ and from tomorrow how to only deal with bookings and schedules part.
 8. generating a written code for transaction items, so that we don't have to stick barcodes on them, or can we ?
 9. how to solve date of opening of bottles (item modification)
 10. automatic setting of routines to check stocks of items assigned to individual members/persons, should be able to sort this in one day.
+
+----------------------------------------------------------------
+pre populated tag types:
+
+1. do we have kits ?
+2. that should come from item groups.
+3. so there we autocomplete on item groups.
+4. 
