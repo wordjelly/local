@@ -18,7 +18,7 @@ class Inventory::Machine
 
 	attribute :serial_number, String, mapping: {type: 'keyword'}
 	attribute :model, String, mapping: {type: 'keyword'}
-	attribute :machine_classification, mapping: {type: 'keyword'}
+	attribute :machine_classification, String , mapping: {type: 'keyword'}
 	attribute :description, String, mapping: {type: 'keyword'}
 	attribute :asset_code, String, mapping: {type: 'keyword'}
 	attribute :service_engineers, Array[Hash]
