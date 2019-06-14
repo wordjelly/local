@@ -1,6 +1,76 @@
 {
 	"controllers" : 
 		{
+			"spots" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"locations" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
 			"machine_complaints" : {
 				"actions" : [
 					{
