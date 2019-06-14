@@ -1,0 +1,4 @@
+<% @machine_complaints.each do |cm| %>
+  <% @machine_complaint = cm %>
+  <%= render :partial => "/inventory/equipment/machine_complaints/show" %>
+<% end %>

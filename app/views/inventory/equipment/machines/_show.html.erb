@@ -1,0 +1,69 @@
+<div class="card">
+	<div class="card-content">
+		<div class="card-title blue-grey-text">
+			<%= @machine.name %>
+		</div>
+	</div>
+</div>
+
+<div class="row" style="padding-left: 2rem;">
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Machine Classification
+			</div>
+			<%= @machine.machine_classification %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Asset Code
+			</div>
+			<%= @machine.asset_code %>
+		</div>
+	</div>
+
+	<div class="row" style="padding-left: 2rem">
+		<div class="card">
+			<div class="card-content">
+				<div class="card-title">
+					Service Engineers
+				</div>
+			</div>
+		</div>
+		<% @machine.service_engineers.each do |eng| %>
+			<% @engineer = eng %>
+			<%= render :partial => "inventory/equipment/engineers/show" %>
+		<% end %>
+		<div class="card">
+			<div class="card-content">
+				<div class="card-title">
+					Sales Engineers
+				</div>
+			</div>
+		</div>
+		<% @machine.sales_engineers.each do |eng| %>
+			<% @engineer = eng %>
+			<%= render :partial => "inventory/equipment/engineers/show" %>
+		<% end %>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Options
+			</div>
+		</div>
+		<div class="card-action">
+			<%= render :partial => "/inventory/equipment/machines/options" %>
+		</div>
+	</div>
+</div>
+
+<!-- we need some links to check the following -->
+<!-- transactions -->
+<!-- item_groups -->
+<!-- that are ours -->
+<!-- items -->

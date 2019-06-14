@@ -2,41 +2,24 @@ Rails.application.routes.draw do
 
   mount_routes Auth.configuration.auth_resources
 
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
-
-  # You can have the root of your site routed with "root"
-  # root 'welcome#index'
-
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
-
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-  
-  resources :tests 
-  resources :patients
-  resources :reports
-  resources :normal_ranges
+  resources :reports  
   resources :patients
   resources :orders
-  resources :items
-  resources :item_groups
   resources :employees
-  resources :item_requirements
-  resources :item_types
   resources :statuses
-  resources :locations
   resources :images
-  resources :equipment
   resources :tags
   resources :organizations
   resources :packages
   resources :barcodes
   
+  namespace :geo do 
+    resources :locations
+    resources :spots
+  end
+
+
+  ## now after create add that there.
   ## not from item_type
   ## you have to order it first
   ## and only from a trasaction can you create it.
@@ -47,8 +30,16 @@ Rails.application.routes.draw do
     resources :transactions
     resources :item_groups
     resources :items
-    resources :machines
+    namespace :equipment do 
+      resources :machines
+      resources :machine_complaints
+      resources :solutions
+      resources :machine_certificates
+    end
   end
+  
+
+
   #get 'users/sign_in_options' => "users#sign_in_options", as: "sign_in_options"
 
   get 'app_search' => 'search#search'

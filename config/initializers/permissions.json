@@ -1,6 +1,111 @@
 {
 	"controllers" : 
 		{
+			"machine_complaints" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"machine_certificates" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"machines" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
 			"item_groups" : {
 				"actions" : [
 					{
@@ -413,6 +518,12 @@
 			},
 			"organizations" : {
 				"actions" : [
+					{
+						"action_name" : "index",
+						"requires_authentication" : "optional",
+						"requires_authorization" : "no",
+						"groups" : []
+					},
 					{
 						"action_name" : "new",
 						"requires_authentication" : "no",

@@ -1,0 +1,55 @@
+<div class="card">
+	<div class="card-content">
+		<div class="card-title blue-grey-text">
+			<%= @machine_certificate.name %>
+		</div>
+	</div>
+</div>
+
+<div class="row" style="padding-left: 2rem;">
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Certificate Type
+			</div>
+			<%= @machine_certificate.certificate_type %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Issued By
+			</div>
+			<%= @machine_certificate.issued_by %>
+		</div>
+	</div>
+
+	
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Machine Id
+			</div>
+			<%= @machine_certificate.machine_id %>
+		</div>
+	</div>
+	
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Options
+			</div>
+		</div>
+		<div class="card-action">
+			<%= render :partial => "/inventory/equipment/machine_certificates/options" %>
+		</div>
+	</div>
+</div>
+
+<!-- we need some links to check the following -->
+<!-- transactions -->
+<!-- item_groups -->
+<!-- that are ours -->
+<!-- items -->

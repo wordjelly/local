@@ -74,4 +74,28 @@ pre populated tag types:
 1. do we have kits ?
 2. that should come from item groups.
 3. so there we autocomplete on item groups.
-4. 
+
+-----
+
+Steps to give users multiple organizations:
+-------------------------------------------
+
+1. update form : done
+2. update organization to consider the members, while opting for the verified or rejected : doing.
+3. if member organization is deleted, it should be removed from the list of verified users in the parent organization.
+4. add organization header, and relevant organization selection to the base_controller_concern.
+5. add functionality to become a member of a higher organization
+6. add functionality for cascading.
+7. after all this is done, we move forwards.
+
+-- let me get all thsi out of theay
+
+this will take till night. 
+then we move to report test normal range.
+or i can do that first also.
+upto me.
+
+
+## so order -> package/report -> add/remove later -> assign tubes -> schedule -> report format -> notify
+## payment seperate 
+## routine we go for, from monday onwards

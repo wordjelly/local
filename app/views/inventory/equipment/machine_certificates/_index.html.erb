@@ -1,0 +1,4 @@
+<% @machine_certificates.each do |cm| %>
+  <% @machine_certificate = cm %>
+  <%= render :partial => "/inventory/equipment/machine_certificates/show" %>
+<% end %>

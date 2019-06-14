@@ -1,0 +1,12 @@
+<span>
+	<%= link_to "Delete", inventory_equipment_machine_complaint_path(@machine_complaint.id.to_s), :method => :delete %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "Edit", edit_inventory_equipment_machine_complaint_path(@machine_complaint.id.to_s) %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "Go To Machine", inventory_equipment_machine_path(@machine_complaint.machine_id) %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "See All Complaints", inventory_equipment_machine_complaints_path(machine_complaint: {machine_id: @machine_complaint.machine_id.to_s}) %>
+</span>

@@ -1,0 +1,7 @@
+<% model.locations.each do |location| %>
+	<% @location = location %>
+	<div class="location">
+		<%= render :partial => "/geo/locations/show" %>
+		<%= link_to "Delete This Location", geo_location_path(@location.id.to_s), method: :delete  do %><i class="material-icons">remove_circle_outline</i>Delete This Location<% end %>
+	</div>
+<% end %>

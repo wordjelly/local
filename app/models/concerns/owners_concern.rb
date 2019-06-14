@@ -54,59 +54,27 @@ module Concerns::OwnersConcern
 			
 			## related to organization.
 			## that means either he created an organization, or  
-			if self.created_by_user.has_organization?
-				if !self.created_by_user.owns_or_belongs_to_organization?
-					self.errors.add(:created_by_user,"you have not yet been verified as belonging to this organization")
-				end
+			if !self.created_by_user.has_organization?
+				self.errors.add(:created_by_user,"you have not yet been verified as belonging to this organization")
 			end
-
-=begin
-			unless self.created_by_user.owns_or_belongs_to_organization?
-				#self.errors.add(:)
-				self.errors.add(:created_by_user,"you need to ")
-			end
-			unless self.created_by_user.role.blank?
-				if self.created_by_user.is_an_organization_role?
-
-					puts "the role is an organization role."
-					puts "is organization owner: #{self.created_by_user.is_organization_owner?}"
-					puts "belongs to an organization: #{self.created_by_user.belongs_to_organization?}"
-					if ((self.created_by_user.is_organization_owner?) || (self.created_by_user.belongs_to_organization?))
-
-
-					else
-
-						self.errors.add(:created_by_user,"You are currently not registered with an organization, Please join an organization or create an organization") if self.created_by_user.organization_id.blank?
-
-						self.errors.add(:created_by_user,"You haven't yet been verified as belonging to your organization, Please request the organization owner to verify you") if self.created_by_user.verified_as_belonging_to_organization.blank?
-
-					end
-
-				end
-			end
-=end
 
 		end
 
-		before_save do |document|
-			## when a document is being created
-			## the created_by_user's id is added to it.
-			## secondly, the created_by_user's organization id is
-			## also added, if the organization has verified the user
-			if document.owner_ids.blank?
-				unless document.created_by_user.blank?
+		def add_owner_ids
+			if self.owner_ids.blank?
+				unless self.created_by_user.blank?
 					## in case the user is creating an organiztion,
 					## it will not have an organization id itself.
 					## since the organiztion has not yet even been created
 					## that's why we started the system of adding the creating users id
 					## to the owner ids of any document it creates. 
-					## 
-					document.owner_ids = [document.created_by_user.id.to_s]
-					unless document.created_by_user.organization.blank?
-						unless document.created_by_user.verified_as_belonging_to_organization.blank?
-							document.owner_ids << [document.created_by_user.organization.id.to_s]
-							document.currently_held_by_organization = created_by_user.organization.id.to_s
-						end
+					## this part will change a bit.
+					self.owner_ids = [self.created_by_user.id.to_s]
+					unless self.created_by_user.organization.blank?
+						
+						self.owner_ids << [self.created_by_user.organization.id.to_s]
+						self.currently_held_by_organization = created_by_user.organization.id.to_s
+						
 					end
 				end
 				## if the document is an organization, its own id 
@@ -114,15 +82,21 @@ module Concerns::OwnersConcern
 				## because when users belonging to this organization
 				## try to access it, they will be using their organization id 
 				## in the authorization query.
-				if document.class.name == "Organization"
-					if document.owner_ids.blank?
-						document.owner_ids = [document.id.to_s]
+				## okay this is understandable.
+				if self.class.name == "Organization"
+					if self.owner_ids.blank?
+						self.owner_ids << self.id.to_s
 					end
 				end
 			end
 		
-			document.owner_ids.flatten!
-		
+			self.owner_ids.flatten!
+		end
+
+		## this also should be methodized to enable overrides.
+
+		before_save do |document|
+			document.add_owner_ids
 		end
 
 	end
@@ -136,6 +110,7 @@ module Concerns::OwnersConcern
 	## creator's organization can modify, 
 	## and what other organizations can modify/.
 	## this can be defined in the permissions.
+	## refactor is completed.
 	def add_owner(user_id)
 		begin
 			u = User.find(user_id)
@@ -145,5 +120,6 @@ module Concerns::OwnersConcern
 			self.errors.add(:owner_ids, "could not add the recipient to the owner ids of the object #owners_concern.rb")
 		end
 	end
+
 
 end

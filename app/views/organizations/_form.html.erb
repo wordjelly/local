@@ -1,4 +1,6 @@
 <%= form_for @organization do |f| %>
+	
+	
 
 	<%= f.text_field :name %>
 	<%= f.label :name %>
@@ -11,6 +13,10 @@
 
 	<%= f.text_field :description %>
 	<%= f.label :description %>
+
+	<h6>If you are a sub-organization/branch, enter the name of the parent organization here.</h6>
+	<%= f.text_field :parent_id, :data => {:autocomplete_type => "organizations" } %>
+	<%= f.label :parent_id %>
 
 	<%= f.select :role , Organization::ROLES.map{|c| [c,c]}, {include_blank: "Organization Type", disabled: '', selected: ''} %>
 
@@ -39,6 +45,8 @@
 	<%= f.number_field :verifiers %>
 	<%= f.label :verifiers %>
 
+	<%= render :partial => "/shared/geo/add_location", locals: {f: f} %>
+	
 	<%= f.submit "Submit" %>
 
 <% end %>

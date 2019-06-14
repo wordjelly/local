@@ -17,16 +17,16 @@ class Report
 	attribute :template_report_id, String, mapping: {type: "keyword"}
 
 	#there's no need for all this.
-	#attribute :test_ids, Array, mapping: {type: 'keyword'}, default: []
-	#attr_accessor :test_name
-	#attr_accessor :test_id_action
-	#attr_accessor :test_id
-	#attr_accessor :tests
+	attribute :test_ids, Array, mapping: {type: 'keyword'}, default: []
+	attr_accessor :test_name
+	attr_accessor :test_id_action
+	attr_accessor :test_id
+	attr_accessor :tests
 
 	attribute :patient_id, String, mapping: {type: 'keyword'}
 	
 	attribute :tests, Array[Hash]
-
+	attribute :requirements, Array[Hash]
 	## patient id is there on report already.
 
 	attribute :name, String
@@ -107,6 +107,14 @@ class Report
 		      		:search_analyzer => "whitespace_analyzer"
 		      	}
 		    }
+		    indexes :requirements, type: 'nested', properties: {
+			    	item_category: {
+			    		type: 'keyword'
+			    	},
+			    	item_type_id: {
+			    		type: 'keyword'
+			    	}
+		    	}
 		    indexes :tests, type: 'nested', properties: {
 		    	name: {
 		    		type: 'keyword',
@@ -183,13 +191,7 @@ class Report
 		    		}
 		    	}
 		    }	
-		    ## so how to check this shit.
-		    ## and how to show this shit.
-		    ## and how to permit this shit.
-		    ## all are there.
-		    ## will there be a patient value somewhere ?
-		    ## and a patient id ?
-		    ## does that need to be on the report?
+=begin
 		    indexes :statuses, type: 'nested', properties: {
 		    	priority: {
 		    		type: "integer"
@@ -235,11 +237,13 @@ class Report
 		    		}
 		    	}
 		    }
+=end
 		end
 	end
 	
 	
 	before_save do |document|
+=begin
 		if document.test_id_action
 			unless document.test_id.blank?
 				if document.test_id_action == "add"
@@ -255,6 +259,7 @@ class Report
 				end
 			end
 		end
+=end
 	end
 
 	## so next step is simple.

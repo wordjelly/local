@@ -90,3 +90,9 @@ Auth.configure do |config|
 
 
 end
+
+SimpleTokenAuthentication.configure do |config|
+
+	config.permissions = $permissions
+
+end

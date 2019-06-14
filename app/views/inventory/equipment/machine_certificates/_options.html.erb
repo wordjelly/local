@@ -1,0 +1,12 @@
+<span>
+	<%= link_to "Delete", inventory_equipment_machine_certificate_path(@machine_certificate.id.to_s), :method => :delete %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "Edit", edit_inventory_equipment_machine_certificate_path(@machine_certificate.id.to_s) %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "Go To Machine", inventory_equipment_machine_path(@machine_certificate.machine_id) %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "See All Certificate", inventory_equipment_machine_certificates_path(machine_certificate: {machine_id: @machine_certificate.machine_id.to_s}) %>
+</span>

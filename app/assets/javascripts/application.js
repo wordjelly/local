@@ -24,7 +24,7 @@ $(document).ready(function(){
     $('.dropdown-trigger').dropdown();
     $('select').formSelect();
     $('.datepicker').datepicker({
-        format: "yyyy-MM-dd"
+        format: "yyyy-mm-dd"
     });
     $('select').formSelect();
 });
@@ -36,7 +36,7 @@ $(document).on('turbolinks:load', function() {
     $('.dropdown-trigger').dropdown();
     $('select').formSelect();
     $('.datepicker').datepicker({
-        format: "yyyy-MM-dd"
+        format: "yyyy-mm-dd"
     });
     $('select').formSelect();
 });

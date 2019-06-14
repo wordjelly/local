@@ -35,6 +35,8 @@ class Inventory::ItemType
 
 	attribute :manufacturer_name, String, mapping: {type: 'keyword'}
 
+	attribute :categories, String, mapping: {type: 'keyword'}
+
 	mapping do 
 		indexes :name,
 			type: 'keyword',
@@ -46,18 +48,22 @@ class Inventory::ItemType
 			      	}
 		   	},
 		   	copy_to: 'search_all'
+		indexes :categories,
+			type: 'keyword',
+			copy_to: 'search_all'
 	end
+	## so how do we populate these?
+	## for scalar fields form is pending.
+	## all autocomplete on tags.
 	## so we have included versioning into this also.
 	## now we go forward and get it to create.
 	## versioning UI also I want to complete today itself.
 	def self.permitted_params
-		base = [:id,{:item_type => [:name, :barcode_required, :virtual_units, :manufacturer_name]}]
+		base = [:id,{:item_type => [:name, :barcode_required, :virtual_units, :manufacturer_name, {:categories => []} ]}]
 		if defined? @permitted_params
 			base[1][:item_type] << @permitted_params
 			base[1][:item_type].flatten!
 		end
-		#puts "the base becomes:"
-		#puts base.to_s
 		base
 	end
 

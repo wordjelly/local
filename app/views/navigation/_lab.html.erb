@@ -16,6 +16,10 @@
 
 	<a class="dropdown-trigger btn" href="#" data-target='inventory'>Inventory</a>
 
+	<a class="dropdown-trigger btn" href="#" data-target='machines'>Machines</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='geo'>Geo</a>
+
 	<ul id='organization' class='dropdown-content'>
 		<% if current_user.has_organization? %>
 			<li><i class="material-icons">view_module</i><%= link_to current_user.organization.name, organization_path(current_user.organization.id.to_s) %></li>
@@ -49,12 +53,6 @@
 		<li><i class="material-icons">view_module</i><%= link_to "Add New Normal Range Template", new_normal_range_path %></li>
 	</ul>
 
-
-	<!-- machine kit is nothing may or may not be compulsory. -->
-	<!-- okay so now next is create the tag -->
-	<!-- then go to organization and add at least one -->
-	<!-- then go to join organization and specify a role -->
-	<!-- validate that in the profile -->
 	<ul id='roles_and_tags' class='dropdown-content'>
 		<li><i class="material-icons">view_module</i><%= link_to "See All Roles/Tags", tags_path %></li>
 		<li><i class="material-icons">view_module</i><%= link_to "Add New Role/Tag", new_tag_path %></li>
@@ -76,6 +74,16 @@
 		<li><i class="material-icons">view_module</i><%= link_to "Create New Item-Group To Inventory", new_inventory_item_group_path %></li>
 		<li><i class="material-icons">view_module</i><%= link_to "See All Item-Groups", inventory_item_groups_path %></li>
 		<li><i class="material-icons">view_module</i><%= link_to "See All Orders", inventory_transactions_path %></li>
+	</ul>
+
+	<ul id='machines' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Machines", inventory_equipment_machines_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Machine", new_inventory_equipment_machine_path %></li>
+	</ul>
+
+	<ul id='geo' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Locations", geo_locations_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Location", new_geo_location_path %></li>
 	</ul>
 	
 </div>

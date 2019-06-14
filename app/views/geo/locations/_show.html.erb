@@ -1,0 +1,8 @@
+<tr>
+	<td><%= link_to @location.name, location_path(@location.id.to_s) %></td>
+	<td><%= @location.model_id %></td>
+	<td><%= @location.model_class %></td>
+	<td><%= "(Latitude)" + @location.latitude + " , (Longitude)" + @location.longitude %></td>
+	<td><%= @location.address %></td>
+	<td><%= render :partial => "locations/options" %></td>
+</tr>

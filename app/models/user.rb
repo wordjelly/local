@@ -47,6 +47,20 @@ class User
                           },
                           date_of_birth: {
                             type: "date"
+                          },
+                          organization_members: {
+                            type: 'nested',
+                            properties: {
+                              organization_id: {
+                                type: 'keyword'
+                              },
+                              employee_role_id: {
+                                type: 'keyword'
+                              },
+                              created_by_this_user: {
+                                type: 'keyword'
+                              }
+                            }
                           }
                       }
                   }
@@ -61,11 +75,7 @@ class User
 
   attr_accessor :pending_patients
 
-  ## so let me design the organization controller.
-  ## first let us design the user roles.
-  ## for the base controller.
-  ## inclusive of permissions.
-  ## if he creates, he can add all the details of that organization.
+ 
 
 	##########################################################
 	##
@@ -121,7 +131,7 @@ class User
     end
 
 	  def as_indexed_json(options={})
-        self.attributes.merge({document_type: Auth::OmniAuth::Path.pathify(self.class.name.to_s)}).except("_id")
+        self.attributes.merge({document_type: Auth::OmniAuth::Path.pathify(self.class.name.to_s)}).except("_id").merge({"organization_members" => self.organization_members})
     end
 
     ############################################################

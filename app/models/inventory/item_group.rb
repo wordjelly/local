@@ -64,6 +64,25 @@ class Inventory::ItemGroup
 	#validate :items_not_assigned_to_another_similar_type_group
 	#validate :all_items_exist
 
+	## lets say it calculates all the requirements
+	## and makes an array out of them.
+	## it assigns item ids to whatever is there
+	## how does it know which test can and cannot be performed.
+	## i want to finish location and all this today itself, with item requirement 
+	## determination.
+	## and with addition and removal of reports from an
+	## order.
+	## the internal determination of requirements
+	## and assignment of packets.
+	## all this should be done by 
+	## now it goes over each report
+	## checks, if any of its requirements are fulfilled
+	## with a registered item, and sufficient quantity, and registers those reports to the all its available items.
+	## that is how it works.
+
+	attribute :report_ids, Array, mapping: {type: 'keyword'}
+	attribute :patient_id, String, mapping: {type: 'keyword'}
+
 	before_save do |document|
 		if document.supplier_id.blank?
 			document.supplier_id = document.created_by_user.organization.id.to_s

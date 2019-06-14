@@ -12,6 +12,8 @@ class SearchController < ApplicationController
 			}
 		]
 
+		## let me add the 
+
 		if current_user
 			## it has a verified / owns or belongs to an organization
 			should_clauses << {
@@ -20,10 +22,10 @@ class SearchController < ApplicationController
 				}
 			}
 			
-			if current_user.belongs_to_organization?
+			if current_user.has_organization?
 				should_clauses << {
 					term: {
-						owner_ids: current_user.organization_id
+						owner_ids: current_user.organization.all_organizations
 					}
 				}
 			end

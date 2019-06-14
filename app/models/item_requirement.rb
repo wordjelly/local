@@ -6,9 +6,6 @@ class ItemRequirement
 
 	index_name "pathofast-item-requirements"
 
-	## you cannot change the name.
-	## once the name is set.
-	## because the id does not correspond otherwise.
 
 	attribute :name, String, mapping: {type: "keyword"}
 	validates_presence_of :name
@@ -122,5 +119,13 @@ class ItemRequirement
 		}
 		(defs[0]["amount"] > 100) ? 100 : defs[0]["amount"]
 	end
+
+	## suppose we have the item requirements
+	## inside the tests
+	## no need for any seperate item requirements.
+	## so that's one model less
+	## ?
+	## i can do that.
+	## inside test itself.
 
 end

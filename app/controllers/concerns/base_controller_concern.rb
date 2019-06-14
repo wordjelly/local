@@ -9,20 +9,30 @@ module Concerns::BaseControllerConcern
     included do
         respond_to :js, :html, :json
         before_action :get_action_permissions
-        puts "the controller name is:"
-        puts controller_name.to_s
+        ## here you have to modify permissions ?
+        ## or what ?
         if $permissions["controllers"][controller_name].blank?
         	raise ActionController::RoutingError.new("Please set permissions for this controller")
         end
+
+        ## ill have to put that into the configuration for 
+        ## token authentication.
+    
         @tconditions = {:only => $permissions["controllers"][controller_name]["actions"].select{|c| c["requires_authentication"] != "no"}.map{|c| c["action_name"].to_sym}}
     	include Auth::Concerns::DeviseConcern
     	include Auth::Concerns::TokenConcern
     	before_action :do_before_request, @tconditions
+    	before_action :set_organization_from_header
 		before_action :set_model, :only => [:show,:update,:destroy,:edit]
+		
+    end
+
+
+    def set_organization_from_header
+    	current_user.set_organization_from_header(request.headers) unless current_user.blank?
     end
 
     ## now we go for the versioning.
-
     def new
     	#puts "teh get model params are:"
     	#puts get_model_params.to_s
@@ -47,9 +57,6 @@ module Concerns::BaseControllerConcern
 	end
 
 	def index
-
-		
-		
 
 		query = {
 			bool: {
@@ -89,11 +96,15 @@ module Concerns::BaseControllerConcern
 
 		## either has the organization id, or its own id.
 		## i also need to sort out permissions for searchability.
+		
+		#puts "is there a current user"
+		#puts current_user.to_s
+
 		if current_user
 			if current_user.belongs_to_organization?
 				query[:bool][:must] << {
-					term: {
-						owner_ids: current_user.organization_id
+					terms: {
+						owner_ids: current_user.organization.all_organizations
 					}
 				}
 			else
@@ -121,6 +132,18 @@ module Concerns::BaseControllerConcern
 		else
 			instance_variable_set("@#{get_resource_name.pluralize}",[])
 		end
+
+		respond_to do |format|
+			## lets see if it works with organizations.
+			format.json do 
+				render :json => {get_resource_name.pluralize.to_sym => objects}
+			end
+
+			format.html do 
+				render :index
+			end
+		end
+
 	end
 	
 
@@ -167,6 +190,9 @@ module Concerns::BaseControllerConcern
 
 		instance_variable_set("@#{get_resource_name}",instance)
 
+		puts "the instance is:"
+		puts instance.attributes.to_s
+
 		respond_to do |format|
 			format.html do 
 				if @errors.full_messages.empty?
@@ -175,9 +201,13 @@ module Concerns::BaseControllerConcern
 					render :new
 				end
 			end
+
+			## we can call instance.as_json(methods: instance.)
 			format.json do 
 				if @errors.full_messages.empty?
-					render :json => {get_resource_name.to_sym => instance}, :status => 201
+					#render :json => {get_resource_name.to_sym => instance}, :status => 201
+					#build_complex_industries
+					render :json => {get_resource_name.to_sym => instance.as_json(methods: instance.class.additional_attributes_for_json)}, :status => 201
 				else
 					render :json => {get_resource_name.to_sym => instance, errors: @errors.full_messages.to_s}, :status => 404
 				end
@@ -185,6 +215,8 @@ module Concerns::BaseControllerConcern
 		end
 	end
 
+	## here we can override the as_json
+	## instance.as_json()
 
 	def update
 		#puts " --------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
@@ -241,6 +273,9 @@ module Concerns::BaseControllerConcern
 			end		
 
 		else
+			## the get_model_params
+			## should have a default value for certain things.
+			## how do we ensure that?
 			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
 		end
 
@@ -305,8 +340,8 @@ module Concerns::BaseControllerConcern
 		query = add_authorization_clause(query) if (@action_permissions["requires_authorization"] == "yes")
 		
 		## so only its own user has been added.
-		#puts "query after adding authorization clause is:"
-		#puts JSON.pretty_generate(query)
+		puts "query after adding authorization clause is:"
+		puts JSON.pretty_generate(query)
 
 		#puts "resource class is:"
 		#puts get_resource_class.to_s
@@ -394,13 +429,19 @@ module Concerns::BaseControllerConcern
 				}	
 			}
 
-			unless current_user.organization_id.blank?
-				if current_user.verified_as_belonging_to_organization.blank?
-					puts "user is not verified as belonging to the given organization, so we cannot use its organization id to check for ownership"
+			## so address is already provided by location.
+			## but that is a changable location
+			
+			## this bug was hiding here.
+			puts "the current user organization is:"
+			puts current_user.organization.to_s
+			unless current_user.organization.blank?
+				#if current_user.verified_as_belonging_to_organization.blank?
+				#	puts "user is not verified as belonging to the given organization, so we cannot use its organization id to check for ownership"
 					##not_found("user has not been verified as belonging to his claimed organization id , and this needs authorization #{controller_name}##{action_name}")
-				else
-					query[:bool][:must][1][:bool][:should] << {term: {owner_ids: current_user.organization_id}}
-				end 
+				#else
+				query[:bool][:must][1][:bool][:should] << {terms: {owner_ids: current_user.organization.all_organizations }}
+				#end 
 			else
 				puts "the user does not have an organization id, so we cannot check for ownership using it."
 				#not_found("user does not have an organization_id, and authorization is necessary for this #{controller_name}##{action_name}")
@@ -429,6 +470,8 @@ module Concerns::BaseControllerConcern
 	
 		not_found("Please define permissions for : #{controller_name}##{action_name}") if @action_permissions.blank?
 
+		#puts "got action permissions as:"
+		#puts @action_permissions.to_s
 		
 		@action_permissions
 
@@ -455,7 +498,7 @@ module Concerns::BaseControllerConcern
 	def get_model_params
 		#puts "The controller path is:"
 		#puts controller_path.to_s
-		puts "the class symbol is:#{controller_path.classify.underscore.downcase.to_sym}"
+		puts "the symbol chosen is:#{controller_path.classify.demodulize.underscore.downcase.to_sym}"
 		attributes = permitted_params.fetch(controller_path.classify.demodulize.underscore.downcase.to_sym,{})
 		#puts "the attributes become:"
 		#puts attributes.to_s

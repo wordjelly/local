@@ -1,6 +1,6 @@
 module ApplicationHelper
 	## @param[Array] items: the array of items that have to be displayed.
-	## @param[String] item_path : for eg: report[status_ids] : if we are displaying status ids,  
+	## @param[String] item_path : for eg: report[status_ids] : if we are displaying status ids
 	def add_multiple_items(items,item_path)
 		html = "<ul>"
 		items.each do |item|
@@ -11,6 +11,19 @@ module ApplicationHelper
 		end	
 		html += "</ul>"
 	end	
+
+	## @return[Geo::Location] the first location of the organization 
+	def get_current_user_organization_location
+		if current_user.has_organization?
+			if current_user.organization.locations.blank?
+				nil
+			else
+				current_user.organization.locations[0]
+			end
+		else
+			nil
+		end
+	end
 
 	## @param[Array] applicable_status
 	def is_delayed?(applicable_status)
@@ -30,13 +43,6 @@ module ApplicationHelper
 	end	
 
 	def get_navigation_partial_name(current_user)
-		#if current_user.blank?
-		#	"no_user"
-		#elsif current_user.role.blank?
-		#	"user_no_role"
-		#else
-		#	current_user.role.downcase
-		#end
 		if current_user.blank?
 			"no_user"
 		else

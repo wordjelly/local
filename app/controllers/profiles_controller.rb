@@ -18,7 +18,14 @@ class ProfilesController < Auth::ProfilesController
 	end
 
 	def edit
-		
+		puts "came to edit action."
+		puts "the resource params are"
+		puts @resource_params.to_s
+		@profile_resource.attributes.merge!(@resource_params)
+		puts "the organization id is:"
+		puts @profile_resource.organization_member_organization_id
+		puts "the employee role id is:"
+		puts @profile_resource.organization_member_employee_role_id
 	end
 
 	def update
@@ -34,10 +41,10 @@ class ProfilesController < Auth::ProfilesController
 
 		respond_to do |format|
   		  if @profile_resource.save
-  		  	  puts "the authentication token after doing the update"
+  		  	  #puts "the authentication token after doing the update"
   		  	  #puts @profile_resource.authentication_token
-  		  	  k = User.find(@profile_resource.id.to_s)
-  		  	  puts k.authentication_token
+  		  	  #k = User.find(@profile_resource.id.to_s)
+  		  	  #puts k.authentication_token
   		  	  
   		  	  flash[:notice] = "Success"
   		  	  ## it should not regenerate the token after this actually.
@@ -79,7 +86,8 @@ class ProfilesController < Auth::ProfilesController
 	  				
 	  				## so this is an employee_role_id.
 	  				## that is now permitted.
-	  				permitted_arr = [:organization_id, :role, :first_name, :last_name, :date_of_birth, :sex, :address,:employee_role_id]
+	  				permitted_arr = [:organization_id, :role, :first_name, :last_name, :date_of_birth, :sex, :address,:employee_role_id,{:organization_members => [:organization_id, :employee_role_id]}, :organization_member_organization_id, :organization_member_employee_role_id]
+	  				
 
 =begin
 

@@ -3,21 +3,30 @@ require 'elasticsearch/persistence/model'
 class Organization
 	
 	include Elasticsearch::Persistence::Model
-	
-	index_name "pathofast-organizations"
-	
-	include Concerns::NameIdConcern
 	include Concerns::AllFieldsConcern
+	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
+	include Concerns::EsBulkIndexConcern
+	include Concerns::LocationConcern
 	include Concerns::MissingMethodConcern
+
+	
+	index_name "pathofast-organizations"
+	document_type "organization"
+		
 
 	DEFAULT_LOGO_URL = "/assets/default_logo.svg"
 
+	USER_VERIFIED = "Verified"
+	USER_PENDING_VERIFICATION = "Pending Verification"
+	USER_REJECTED = "Rejected"
+	OWNER_EMPLOYEE_ROLE_ID = "Owner"
+
 	attribute :name, String, mapping: {type: 'keyword'}
 
-	attribute :address, String, mapping: {type: 'keyword'}
+	#attribute :address, String, mapping: {type: 'keyword'}
 	
 	attribute :phone_number, String, mapping: {type: 'keyword'}
 
@@ -58,6 +67,13 @@ class Organization
 	## basically searches the public tags or the tags of this organization
 	attribute :role_ids, Array, mapping: {type: 'keyword'}
 
+	## i can have a before_merge hook.
+	## it can check which params have changed.
+	## if the new attributes are 
+
+	attribute :parent_id, String, mapping: {type: 'keyword'}
+
+	attribute :children, Array, mapping: {type: 'keyword'}
 	## loaded from role_ids.
 	## this is to define which employee roles are set on this
 	## organization.
@@ -66,29 +82,29 @@ class Organization
 	attr_accessor :employee_roles
 	attr_accessor :role_name
 
-
+	## these are loaded via elasticsearch.
+	## and i think its not calling after_find callback.
 	attr_accessor :users_pending_approval
-	attr_accessor :verified_users
-	attr_accessor :rejected_users
+	
+	## both these are set when the organization is set
+	## after_find in organization_concern, triggers
+	## set_organization -> which by default sets to the
+	## first organization in the users organization members
+	## when the organization is set, (on the user) if the user owns the organization, then this accessor is set to "yes"
+	## then the second step is the base_controller_concern before_action
+	## which sets by using the header
+	## in that case also when the organization is set, there too this accessor is set.
+	attr_accessor :owned_by_current_user
+	attr_accessor :current_user_role_id
 
+	OWNED_BY_CURRENT_USER = "yes"
 
-	validates_presence_of :address
+	attr_accessor :locations
+
+	#validates_presence_of :address
 
 	validates_presence_of :phone_number
 
-	## so there have to be some roles.
-	## let me make the ui to accept a role.
-	## can i launch a modal ?
-	## on show organization.
-	## with a link with the role.
-	## so user has to have something called an organization_role_id.
-	## max types of employees in an organization can be 10.
-	#validates_length_of :role_ids, :minimum => 1, :maximum => 10
-	## so this means you have to make some roles while creating the organization.
-	## so lets start with that
-	## before that get tags working.
-
-	
     mapping do
       
 	    indexes :name, type: 'keyword', fields: {
@@ -99,16 +115,7 @@ class Organization
 	      	}
 	    },
 	    copy_to: "search_all"
-
-	    indexes :address, type: 'keyword', fields: {
-	      	:raw => {
-	      		:type => "text",
-	      		:analyzer => "nGram_analyzer",
-	      		:search_analyzer => "whitespace_analyzer"
-	      	}
-	    },
-	    copy_to: "search_all"
-
+	    
 	    indexes :phone_number, type: 'keyword', fields: {
 	      	:raw => {
 	      		:type => "text",
@@ -120,24 +127,39 @@ class Organization
 
 	end
 
+	## we add the parent child thing as a validation
+	## so that if it fails this does not succeed.
 	before_save do |document|
 		document.public = Concerns::OwnersConcern::IS_PUBLIC
 		document.assign_employee_roles
 	end
 
+	after_save do |document|
+		document.update_creating_user_organization_members
+		document.update_parent_chain
+	end
+
 	after_find do |document|
 		document.load_users_pending_approval
-		document.load_verified_users
-		document.load_rejected_users
 		document.load_employee_roles
+		document.load_locations
 	end
 
 	## so these are the permitted params.
 	def self.permitted_params
-		puts "using permitted params -------------------"
-		[:id,{:organization => [:role, :name, :description, :address,:phone_number, {:user_ids => []}, :role_name,  {:role_ids => []}, {:rejected_user_ids => []}] }]
+		base = [:id,{:organization => [:parent_id, :role, :name, :description, :phone_number, {:user_ids => []}, :role_name,  {:role_ids => []}, {:rejected_user_ids => []}] }]
+		if defined? @permitted_params
+			base[1][:organization] << @permitted_params
+			base[1][:organization].flatten!
+		end
+		base
 	end
 
+	## so we will need a class variable for this.
+	## for using this @permitted_params.
+	## or we can override as json
+	## and use that.
+	## we need a class level method for this.
 	############################################################
 	##
 	##
@@ -175,14 +197,34 @@ class Organization
 	##
 	############################################################
 	def load_users_pending_approval
-		result = User.es.search({
+		## okay so here we have to do the nested search.
+		#puts "CAME TO LOAD USERS PENDING APPROVAL"
+		query = {
 			body: {
 				query: {
 					bool: {
 						must: [
 							{
-								term: {
-									organization_id: self.id.to_s
+								nested: {
+									path: "organization_members",
+									query: {
+										bool: {
+											must: [
+												{
+													term: {
+														"organization_members.organization_id".to_sym => self.id.to_s
+													}
+												}
+											],
+											must_not: [
+												{
+													term: {
+														"organization_members.created_by_this_user".to_sym => OrganizationMember::CREATED_BY_THIS_USER
+													}
+												}
+											]
+										}
+									}
 								}
 							}
 						],
@@ -196,14 +238,16 @@ class Organization
 					}
 				}
 			}
-		})
+		}
 
-		#puts result.results.to_s
+		#puts "pending user query is ------------------------------------>"
+		#puts JSON.pretty_generate(query)
 
-		#puts "came to after find to set the users pending approval."
+		result = User.es.search(query)
+
 		self.users_pending_approval ||= []
 		result.results.each do |res|
-			puts "the user pending approval is: #{res}"
+			#puts "the user pending approval is: #{res}"
 			self.users_pending_approval << res
 		end
 
@@ -219,9 +263,7 @@ class Organization
 	def load_rejected_users
 		self.rejected_users = []
 		self.rejected_user_ids.each do |ruid|
-
 			self.rejected_users << User.find(ruid)
-
 		end
 	end
 
@@ -231,6 +273,33 @@ class Organization
 			self.employee_roles << Tag.find(rid)
 		end
 	end	
+
+	## i will finish locations.
+
+	def load_locations
+	 	
+	 	self.locations = []
+
+	 	search_request = Geo::Location.search({
+	 		query: {
+	 			term: {
+	 				model_id: self.id.to_s
+	 			}
+	 		}
+	 	})
+
+	 	search_request.response.hits.hits.each do |hit|
+	 		location =  Location.new(hit["_source"])
+	 		location.id = hit["_id"]
+	 		location.run_callbacks(:find)
+	 		self.locations << location
+	 	end
+
+	 	## so this is the organization's location
+	 	## this is used in location concern.
+	 	## we can use that in the organization also.
+
+	end
 	
 	def assign_employee_roles
 		## we can do this based on the role of the organization search for specific types of tags.
@@ -256,6 +325,21 @@ class Organization
 			end	
 		end
 	end
+
+	def has_verified_user?(user_id)
+		self.user_ids.include? user_id
+	end
+
+	## membership status.
+	## boring shit.
+
+	def has_rejected_user?(user_id)
+		self.rejected_user_ids.include? user_id
+	end
+
+	def has_user_pending_verification?(user_id)
+		self.users_pending_approval.map{|c| c = c.id.to_s}.include? user_id
+	end
 	############################################################
 	##
 	##
@@ -274,7 +358,130 @@ class Organization
 		end
 	end
 
-	## dob is not working in profiles page
-	## 
+	## @return[Array] organizations: the current organization id and the ids of all the child organizations
+	def all_organizations
+		([self.id.to_s] + self.children).flatten
+	end
+	####################################################
+	##
+	##
+	## after_save callbacks.
+	##
+	##
+	####################################################
+	def update_creating_user_organization_members
+		
 
+		u = User.find(self.created_by_user_id)
+		
+		existing_organization = u.organization_members.select{|c|
+			c.organization_id == self.id.to_s
+		}
+
+		if existing_organization.blank?
+			u.organization_members.push(OrganizationMember.new(:organization_id => self.id.to_s, :employee_role_id => Organization::OWNER_EMPLOYEE_ROLE_ID, :created_by_this_user => "yes"))
+			u.skip_authentication_token_regeneration = true
+			u.save
+		end
+
+	end	
+
+	## if the parent is removed, then how does it work.
+	## this will add it.
+	## what about removing ?
+	## 
+	def update_parent_chain
+		current_org = self
+		
+		search_request = Organization.search({
+			query: {
+				term: {
+					children: self.id.to_s
+				}
+			},
+			aggregations: {
+				parent_organizations: {
+					terms: {
+						field: "_id"
+					}
+				}
+			}
+		})
+		
+		puts "=-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&== updating parent chain"
+
+
+		search_request.response.aggregations.parent_organizations.buckets.each do |porg_bucket|
+
+			organization_id = porg_bucket["key"]
+
+			source = '''
+				for(orphan in params.orphans){
+					ctx._source.children.removeIf(item -> item == orphan);
+				}
+			'''
+			params = {
+				orphans: ([self.id.to_s] + (self.children || [])).flatten
+			}
+			update_hash = {
+				update: {
+					_index: self.class.index_name,
+					_type: self.class.document_type,
+					_id: organization_id,
+					data: { 
+						script: 
+						{
+							source: source,
+							lang: 'painless', 
+							params: params
+						}
+					}
+				}
+			}
+
+			puts "the delete update hash is :"
+			puts update_hash.to_s
+			puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+
+			Organization.add_bulk_item(update_hash)
+			Organization.flush_bulk
+		end
+
+		while true
+			puts "the current org parent id is:"
+			puts current_org.parent_id.to_s
+			break unless current_org.parent_id
+			parent = Organization.find(current_org.parent_id)
+			source = '''
+				if(!ctx._source.children.contains(params.child_organization_id)){
+
+					ctx._source.children.add(params.child_organization_id);
+				}
+			'''
+			params = {
+				child_organization_id: self.id.to_s
+			}
+			update_hash = {
+				update: {
+					_index: self.class.index_name,
+					_type: self.class.document_type,
+					_id: parent.id.to_s,
+					data: { 
+						script: 
+						{
+							source: source,
+							lang: 'painless', 
+							params: params
+						}
+					}
+				}
+			}
+			Organization.add_bulk_item(update_hash)
+			## now add the bulk request.
+			current_org = parent
+		end
+		Organization.flush_bulk
+	end
+
+	
 end

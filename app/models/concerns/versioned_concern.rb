@@ -72,13 +72,6 @@ module Concerns::VersionedConcern
 	def apply_version(obj)
 		self.attributes.merge(obj.attributes)
 	end
-
-	
-	## so if we have some acceptors.
-	## now we make some new changes.
-	## now who are the acceptors ?
-	## 
-
 	#########################################################3
 	##
 	## METHODS TO CHECK IF ACCEPTED/REJECTED HAS CHANGED, AND IF YES THEN BY ONLY THE CURRENT USER'S ID OR WHAT

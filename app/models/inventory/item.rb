@@ -9,9 +9,9 @@ class Inventory::Item
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
-	include Concerns::MissingMethodConcern
 	include Concerns::TransferConcern
-
+	include Concerns::MissingMethodConcern
+	
 	index_name "pathofast-inventory-items"
 	document_type "inventory/item"	
 
@@ -58,6 +58,13 @@ class Inventory::Item
 	attribute :barcode, String
 	validates_presence_of :barcode
 
+	## these are set internally.
+	## of the patient.
+	## report can have patient id.
+	## this is also present on item group.
+	attribute :report_ids, Array, mapping: {type: 'keyword'}
+	attribute :patient_id, String, mapping: {type: 'keyword'}
+
 	attribute :contents_expiry_date, Date, mapping: {type: 'date', format: 'yyyy-MM-dd'}	
 
 	attr_accessor :statuses
@@ -88,34 +95,6 @@ class Inventory::Item
 	    copy_to: "search_all"
 
 	end
-
-	## so order one kit of tb gold.
-	## then does it have individual components ?
-	## the transaction may have ten such kits.
-	## each kit has individual items.
-	## do they have to be barcoded individually?
-	## so add_item should come on 
-	## where to configure number of tests ?
-	## on bundle or item_type?
-	## or what?
-	## or that is at a transaction level?
-	## do we make a kit ?
-	## item bundle.
-	## and it has a number of virtual units.
-	## i can just add that to item_type?
-	## or make a seperate model.
-	## so now the transaction has ten kits.
-	## now we want to add items 
-	## to what?
-	## item types.
-	## item group also has many items/item_types basically.
-	## if we want to transfer item_groups
-	## so in item_groups add item_types
-	## we can just make it 
-	## Add transactions on item groups
-	## and give the item group a definition of the group.
-	## 
-	
 
 	def load_statuses_and_reports
 		search_results = Order.search({

@@ -18,8 +18,11 @@
         <%= link_to "Edit", edit_organization_path(@organization.id.to_s) %>
         <%= link_to "Join Organization",  "#", {:class => "join_organziation_trigger"} %>
         <div class="join_organization">
+          <!-- this should take it to the profile form -->
+          <!-- we can update the member organizations -->
+          <!-- so we set them as attribute accessors -->
           <% @organization.employee_roles.each do |role| %>
-              <%= link_to "Join This Organization As #{role.name}", profile_path(:id => current_user.id.to_s, :resource => "users", :user => {:organization_id => @organization.id.to_s, :employee_role_id => role.id.to_s}), :method => :put %>
+              <%= link_to "Join This Organization As #{role.name}", edit_profile_path(:id => current_user.id.to_s, :resource => "users", :user => {:organization_member_organization_id => @organization.id.to_s, :organization_member_employee_role_id => role.id.to_s}) %>
           <% end %>
         </div>
       </div>

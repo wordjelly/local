@@ -1,0 +1,13 @@
+<!-- so solve for new record or old record -->
+<%= form_for @machine_complaint, as: :machine_complaint, method: @machine_complaint.new_record? ? :post : :put do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+		
+	<% unless @machine_complaint.new_record? %>
+		<%= render :partial => "images/image", locals: {model: @machine_complaint} %>
+	<% end %>
+	
+	<%= build_nested_form(@machine_complaint).html_safe %>	
+	<%= f.submit "Submit" %>
+
+<% end %>

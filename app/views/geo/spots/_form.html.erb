@@ -1,0 +1,41 @@
+<%= form_for @location do |f| %>
+	
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Location For Object
+			</div>
+			<%= f.text_field :model_id, :readonly => true %>
+			<%= f.label :model_id, :readonly => true %>
+
+			<%= f.text_field :model_class, :readonly => true %>
+			<%= f.label :model_class, :readonly => true %>
+		</div>
+	</div>
+	
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				GPS Co-ordinates
+			</div>
+			<%= f.number_field :latitude, step: :any %>
+			<%= f.label :latitude, step: :any %>
+
+			<%= f.number_field :longitude, step: :any %>
+			<%= f.label :longitude, step: :any %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Address
+			</div>
+				<%= f.text_field :address %>
+				<%= f.label :address %>	
+		</div>
+	</div>
+
+	<%= f.submit "Submit" %>
+
+<% end %>
