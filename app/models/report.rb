@@ -191,6 +191,11 @@ class Report
 		    		}
 		    	}
 		    }	
+
+		    ## even the sop steps should be defined in this report
+		    ## nowhere else
+		    ## if the same thing is to be repeated for many reports
+		    ## then so be it.
 =begin
 		    indexes :statuses, type: 'nested', properties: {
 		    	priority: {

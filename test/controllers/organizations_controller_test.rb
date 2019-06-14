@@ -611,4 +611,11 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
 
     end
 
+    ## now what after this.
+    ## now we finalize for location.
+    ## but its already finalized.
+    ## just show the other locations.
+    ## and edit a location if necessary.
+    ## and we move to the structure of a report finally.
+
 end

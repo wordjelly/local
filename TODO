@@ -4,6 +4,7 @@
 3. add views and controller for packages, with versioning.
 4. you can only add an item to a transaction if that transaction is showing that some items were received.
 5. you cannot add an item to it, if items exceeding the received amount have already been registered on it.
+6. index call does not query for public items if there is a current user.
 
 # so first change the architecture of test to ensure that it needs to be have the normal range ids added to it directly.
 # for that give a search box.
