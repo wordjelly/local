@@ -1,4 +1,4 @@
-class ReportsController < ApplicationController
+class Diagnostics::ReportsController < ApplicationController
 		
 	include Concerns::BaseControllerConcern
 

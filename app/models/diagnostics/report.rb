@@ -16,10 +16,14 @@ class Diagnostics::Report
 	attribute :tests, Array[Hash]
 	attribute :item_requirements, Array[Hash]
 	attribute :statuses, Array[Hash]
+	attribute :rates, Array[Hash]
 	attribute :price, Float
 	validates :price, numericality: true
+	attribute :outsource_to_organization_id, String, mapping: {type: 'keyword'}
 	attribute :tag_ids, Array, mapping: {type: "keyword"}, default: []
 
+	## WE SET PERMITTED
+	## AND THEN THE FIRST ACTION TO CHECK IS 
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -60,11 +64,7 @@ class Diagnostics::Report
 	    	}
 	  	} do
 
-	  	## what is the next step ?
-	  	## 
-	  
 	    mapping do
-	      
 		    indexes :name, type: 'keyword', fields: {
 		      	:raw => {
 		      		:type => "text",
@@ -73,22 +73,66 @@ class Diagnostics::Report
 		      	}
 		    }
 		    indexes :statuses, type: 'nested', properties: {
-		    		
+		    		name: {
+		    			type: 'keyword'
+		    		},
+		    		description: {
+		    			type: 'keyword'
+		    		},
+		    		duration: {
+		    			type: 'integer'
+		    		},
+		    		employee_block_duration: {
+		    			type: 'integer'
+		    		},
+		    		block_other_employees: {
+		    			type: 'keyword'
+		    		},
+		    		maximum_capacity: {
+		    			type: 'integer'
+		    		},
+		    		lot_size: {
+		    			type: 'integer'
+		    		},
+		    		requires_image: {
+		    			type: 'keyword'
+		    		},
+		    		result: {
+		    			type: 'text'
+		    		}
 		    }
 		    indexes :requirements, type: 'nested', properties: {
-			    	priority: {
-			    		type: 'integer'
-			    	},
-			    	item_type_id: {
-			    		type: 'keyword'
-			    	},
-			    	barcode: {
-			    		type: 'keyword'
-			    	},
 			    	quantity: {
-			    		type: 'integer'
+			    		type: 'float'
+			    	},
+			    	categories: {
+			    		type: 'nested',
+			    		properties: {
+			    			name: {
+			    				type: 'keyword'
+			    			},
+			    			items: {
+			    				type: 'nested',
+			    				properties: {
+
+			    				}
+			    			}
+			    		}
 			    	}
 		    	}
+		    ## so tomorrow we go for collation.
+		    ## then for fusion of statuses.
+		    ## then for scheduling, and routines.
+		    ## and last for order.
+		    ## this will take about 
+		    indexes :rates, type: 'nested', properties: {
+		    	for_organization_id: {
+		    		type: 'keyword'
+		    	},
+		    	rate: {
+		    		type: 'float'
+		    	}
+		    }
 		    indexes :tests, type: 'nested', properties: {
 		    	name: {
 		    		type: 'keyword',
@@ -168,11 +212,8 @@ class Diagnostics::Report
 		    		}
 		    	}
 		    }	
-
-	
 		end
 	end
-	
 	
 	before_save do |document|
 
@@ -255,6 +296,20 @@ class Diagnostics::Report
 		puts self.tests.to_s
 	end
 
+	## we have to solve.
+	## a bunch of issues
+	## like rates
+	## a certain organization may or may not use.
+	## it needs to be copied from a template.
+	## one action is customize.
+	## another action is if i select a report ->
+	## simplest thing is first copy it,
+	## then use it.
+	## first collate item requirements.
+	## it will be create, from report.
+	## and it will just pick up everything and save first.
+	## 
+
 	def load_item_requirements
 		puts "--------------Came to load item requirements------------------"
 		self.item_requirements_grouped_by_type = {}
@@ -324,42 +379,84 @@ class Diagnostics::Report
 		queries
 	end
 
+
 	def self.permitted_params
 		base = [
 				:id,
 				{:report => 
 					[
+						:patient_id,
 						:price,
 						:name, 
+						{:tag_ids => []},
+						:outsource_to_organization_id,
 						{
 							:requirements => [
-								:item_type_id, :quantity, :expiry_date
+								:priority,
+								:item_type_category,
+								:barcode,
+								:quantity,
+								:local_item_group_id,
+								:local_item_id
 							]
 						},
 				    	{
 				    		:statuses => [
-
+				    			:name,
+				    			:description,
+				    			:duration,
+				    			:employee_block_duration,
+				    			:block_other_employees,
+				    			:maximum_capacity,
+				    			:lot_size,
+				    			:requires_image,
+				    			:result
+				    		]
+				    	},
+				    	{
+				    		:rates => [
+				    			:for_organization_id,
+				    			:rate
+				    		]
+				    	},
+				    	{
+				    		:tests => [
+				    			:name,
+				    			:lis_code,
+				    			:description,
+				    			:price,
+				    			:verified,
+				    			{:references => []},
+				    			:machine,
+				    			:kit,
+				    			{
+				    				:ranges => [
+				    					:min_age_years,
+				    					:min_age_months,
+				    					:min_age_days,
+				    					:min_age_hours,
+				    					:max_age_years,
+				    					:max_age_months,
+				    					:max_age_days,
+				    					:max_age_hours,
+				    					:sex,
+				    					:grade,
+				    					:count,
+				    					:inference
+				    				]
+				    			}
 				    		]
 				    	}
 					]
 				}
 			]
 		if defined? @permitted_params
-			base[1][:item_type] << @permitted_params
-			base[1][:item_type].flatten!
+			base[1][:report] << @permitted_params
+			base[1][:report].flatten!
 		end
 		base
 	end
-		
 
-=begin
-	def self.permitted_params
-		## sort out permitted params.
-		## then make a form for the report
-		## then we move to copying of the report.
-		## and removal.
 
-		[:id , {:report => [:name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_id_action, :price, {:status_ids => []}, {:tag_ids => []} ,{:test_ids => []}, {:item_requirement_ids => []}, :patient_id, :template_report_id ]}]
-	end
-=end
+
 end

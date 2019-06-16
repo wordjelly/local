@@ -45,8 +45,11 @@ class Diagnostics::Status
 	attribute :requires_image, Integer, :default => 0
 	attribute :result, String, mapping: {type: 'text'}
 	
-
-
+	## MAKING the report pdf -> collation and emailing.
+	## all this is not too hard.
+	## whether it should be outsourced or not.
+	## FROM HERE ONWARDS IT IS NO LONGER REQUIRED.
+	## SO STUFF LIKE CHECK FOR HEMOLYSIS.
 	attribute :parent_ids, Array, mapping: {type: 'keyword'}
 	attribute :report_id, String, mapping: {type: 'keyword'}
 	attribute :numeric_value, Float

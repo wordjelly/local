@@ -1,4 +1,4 @@
-class OrdersController < ApplicationController
+class Business::OrdersController < ApplicationController
 	include Concerns::BaseControllerConcern
 
 =begin

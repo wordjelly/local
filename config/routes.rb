@@ -2,21 +2,40 @@ Rails.application.routes.draw do
 
   mount_routes Auth.configuration.auth_resources
 
-  resources :reports  
-  resources :patients
-  resources :orders
-  resources :employees
-  resources :statuses
-  resources :images
-  resources :tags
-  resources :organizations
-  resources :packages
-  resources :barcodes
-  
+
+  ## controls are a seperate thing.
+  ## because there can be many of them.
+  ## so we add them seperately
+  ## everything else will go through reports.
+  namespace :diagnostics
+    resources :reports  
+    resources :controls
+  end
+
   namespace :geo do 
     resources :locations
     resources :spots
   end
+
+  ## so we refactor and namespace the controllers.
+  ## then we go for the reports with rates.
+  ## rates are also included inside reports itslef.
+  ## 
+  
+  namespace :business
+    resources :orders
+    resources :packages 
+  end
+
+  resources :patients
+  resources :employees
+
+  resources :images
+  resources :tags
+  resources :organizations
+  
+  resources :barcodes
+  
 
 
   ## now after create add that there.
