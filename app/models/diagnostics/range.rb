@@ -1,6 +1,6 @@
 require 'elasticsearch/persistence/model'
 
-class NormalRange
+class Diagnostics::Range
 	
 	include Elasticsearch::Persistence::Model
 	include Concerns::AllFieldsConcern
@@ -11,7 +11,7 @@ class NormalRange
 	include Concerns::MissingMethodConcern
 	include Concerns::VersionedConcern
 
-	index_name "pathofast-normal-ranges"
+	index_name "pathofast-ranges"
 
 	## this range will load the test.
 	## it doesn't need the test.
@@ -105,7 +105,7 @@ class NormalRange
 		search_query = Test.search({
 			query: {
 				term: {
-					normal_ranges: self.id.to_s
+					ranges: self.id.to_s
 				}
 			}
 		})
@@ -136,10 +136,10 @@ class NormalRange
 
 
 	def self.permitted_params
-		base = [:id,{:normal_range => [:name, :test_id, :test_name, :min_age_years,:min_age_months,:min_age_weeks,:min_age_days, :max_age_years, :max_age_months,:max_age_days, :max_age_hours, :sex, :count, :grade, :machine, :kit, :reference]}]
+		base = [:id,{:range => [:name, :test_id, :test_name, :min_age_years,:min_age_months,:min_age_weeks,:min_age_days, :max_age_years, :max_age_months,:max_age_days, :max_age_hours, :sex, :count, :grade, :machine, :kit, :reference]}]
 		if defined? @permitted_params
-			base[1][:normal_range] << @permitted_params
-			base[1][:normal_range].flatten!
+			base[1][:range] << @permitted_params
+			base[1][:range].flatten!
 		end
 		puts "the base becomes:"
 		puts base.to_s

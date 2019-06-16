@@ -1,5 +1,5 @@
 require 'elasticsearch/persistence/model'
-class Test	
+class Diagnostics::Test	
 	
 	include Elasticsearch::Persistence::Model
 	include Concerns::NameIdConcern

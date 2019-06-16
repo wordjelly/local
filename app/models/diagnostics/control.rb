@@ -1,0 +1,5 @@
+class Diagnostics::Control
+
+	
+
+end

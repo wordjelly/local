@@ -1,5 +1,5 @@
 require 'elasticsearch/persistence/model'
-class Day
+class Schedule::Day
 
 
 
@@ -13,7 +13,9 @@ class Day
 	include Elasticsearch::Persistence::Model
 	include Concerns::EsBulkIndexConcern
 	
-	index_name "pathofast-days"
+	index_name "pathofast-schedule-days"
+	document_type "schedule/day"
+
 
 	attribute :date, Date
 

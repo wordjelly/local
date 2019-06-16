@@ -1,9 +1,11 @@
 require 'elasticsearch/persistence/model'
-class Minute
+class Schedule::Minute
 	include Elasticsearch::Persistence::Model
 	include Concerns::EsBulkIndexConcern
 	
-	index_name "pathofast-minutes"
+	index_name "pathofast-schedule-minutes"
+	document_type "schedule/minute"
+
 
 	attribute :date, Date
 	attribute :working, Integer, :default => 1
@@ -114,6 +116,13 @@ class Minute
 	    end
 	end
 
+	## so we are storing the statuses in the minutes
+	## at booking and employee levels.
+	## so that is the main issue.
+	## so if a report has certain steps.
+	## they need to be reflected in a status
+	## let that be a nested commonality.
+	## it will be simpler like that.
 	## so now we have order, patient report ids, and tube ids, in every minute
 	## so we can search by either of these
 	## if we remove some template reports
@@ -611,6 +620,11 @@ class Minute
 		}
 	}
 =end
+
+	## so we autocomplete on what exactly ?
+	## each status can have a name ?
+	## so we autocomplete on it 
+	## 
 
 	def self.minute_blocked(status_id,employee_id,minute,blocked_minutes_hash)
 		false if blocked_minutes_hash[status_id].blank?

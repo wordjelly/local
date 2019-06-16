@@ -1,5 +1,5 @@
 require 'elasticsearch/persistence/model'
-class Status
+class Diagnostics::Status
 
 	###########################################################
 	##
@@ -20,7 +20,33 @@ class Status
 
 	index_name "pathofast-statuses"
 
+	##################################################
+	##
+	##
+	## ATTRIBUTES IN USE
+	##
+	##
+	#################################################
 	attribute :name, String, mapping: {type: 'keyword'}
+	attribute :description, String, mapping: {type: 'keyword'}
+	attribute :duration, Integer, :default => 10
+	## REQUIRED
+	attribute :employee_block_duration, Integer, :default => 1
+	## REQUIRED
+	attribute :block_other_employees, Integer, :default => 1
+	## the maximum number of these statuses that can be handled at any one time by any give employee.
+	## REQUIRED
+	attribute :maximum_capacity, Integer, :default => 10
+	## when this status is run, how much does the overall capacity reduce by, for the time duration.
+	## i think this method should be placed on status itself.
+	## so how to add this to block structure ?
+	## okay so we have lot_size
+	attribute :lot_size, Integer, default: 1
+	attribute :requires_image, Integer, :default => 0
+	attribute :result, String, mapping: {type: 'text'}
+	
+
+
 	attribute :parent_ids, Array, mapping: {type: 'keyword'}
 	attribute :report_id, String, mapping: {type: 'keyword'}
 	attribute :numeric_value, Float
@@ -34,20 +60,20 @@ class Status
 	attribute :tag_ids, String, mapping: {type: 'keyword'}
 	
 	## REQUIRED
-	attribute :duration, Integer, :default => 10
+	#attribute :duration, Integer, :default => 10
 	## REQUIRED
-	attribute :employee_block_duration, Integer, :default => 1
+	#attribute :employee_block_duration, Integer, :default => 1
 	## REQUIRED
-	attribute :block_other_employees, Integer, :default => 1
+	#attribute :block_other_employees, Integer, :default => 1
 	## the maximum number of these statuses that can be handled at any one time by any give employee.
 	## REQUIRED
-	attribute :maximum_capacity, Integer, :default => 10
+	#attribute :maximum_capacity, Integer, :default => 10
 
 	## when this status is run, how much does the overall capacity reduce by, for the time duration.
 	## i think this method should be placed on status itself.
 	## so how to add this to block structure ?
 	## okay so we have lot_size
-	attribute :lot_size, Integer, default: 1
+	#attribute :lot_size, Integer, default: 1
 
 	attr_accessor :tag_name
 
@@ -59,7 +85,7 @@ class Status
 
 	validates_numericality_of :priority
 	## whether an image is compulsory for this status.
-	attribute :requires_image, Integer, :default => 0
+	
 
 	attribute :information_keys, Hash
 

@@ -13,6 +13,7 @@ class Organization
 	include Concerns::MissingMethodConcern
 
 	
+		
 	index_name "pathofast-organizations"
 	document_type "organization"
 		
@@ -289,7 +290,7 @@ class Organization
 	 	})
 
 	 	search_request.response.hits.hits.each do |hit|
-	 		location =  Location.new(hit["_source"])
+	 		location = Geo::Location.new(hit["_source"])
 	 		location.id = hit["_id"]
 	 		location.run_callbacks(:find)
 	 		self.locations << location
@@ -391,6 +392,8 @@ class Organization
 	## what about removing ?
 	## 
 	def update_parent_chain
+		## okay so there is some deprecation 
+		## here on the newer elasticsearch version.
 		current_org = self
 		
 		search_request = Organization.search({
@@ -402,13 +405,17 @@ class Organization
 			aggregations: {
 				parent_organizations: {
 					terms: {
-						field: "_id"
+						field: "name"
 					}
 				}
 			}
 		})
 		
-		puts "=-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&== updating parent chain"
+		## so the id can be a base64 slug.
+		## that is created from that ?
+		## we can do something like that. 
+
+		#puts "=-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&== updating parent chain"
 
 
 		search_request.response.aggregations.parent_organizations.buckets.each do |porg_bucket|

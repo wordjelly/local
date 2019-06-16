@@ -1,5 +1,5 @@
 require 'elasticsearch/persistence/model'
-class Order
+class Business::Order
 
 	include Elasticsearch::Persistence::Model
 	include Concerns::StatusConcern
@@ -9,7 +9,9 @@ class Order
 	## this is a huge interval.
 	DEFAULT_INTERVAL = 300
 
-	index_name "pathofast-orders"
+	index_name "pathofast-business-orders"
+	document_type "business/order"
+
 
 	attr_accessor :patient_name
 

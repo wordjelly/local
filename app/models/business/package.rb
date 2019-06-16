@@ -1,6 +1,6 @@
 require 'elasticsearch/persistence/model'
 
-class NormalRange
+class Business::Package
 	
 	include Elasticsearch::Persistence::Model
 	include Concerns::AllFieldsConcern
@@ -10,7 +10,8 @@ class NormalRange
 	include Concerns::MissingMethodConcern
 	include Concerns::VersionedConcern
 
-	index_name "pathofast-packages"
+	index_name "pathofast-business-packages"
+	document_type "business/package"
 
 	attribute :name, String, mapping: {type: 'keyword'}
 	attr_accessor :report_name

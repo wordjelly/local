@@ -1,8 +1,10 @@
 require 'elasticsearch/persistence/model'
-class Booking
+class Schedule::Booking
 
 	include Elasticsearch::Persistence::Model
-	index_name "pathofast-bookings"
+	index_name "pathofast-schedule-bookings"
+	document_type "schedule/booking"
+
 	
 	attribute :status_id, String, mapping: {type: 'keyword'}
 	attribute :count, Float, :default => 1

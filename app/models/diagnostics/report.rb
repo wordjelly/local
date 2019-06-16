@@ -1,5 +1,5 @@
 require 'elasticsearch/persistence/model'
-class Report
+class Diagnostics::Report
 
 	include Elasticsearch::Persistence::Model
 	include Concerns::StatusConcern
@@ -9,55 +9,17 @@ class Report
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
 
-	index_name "pathofast-reports"
-
-	## so there is that template report id business
-	## that's ok.
-
-	attribute :template_report_id, String, mapping: {type: "keyword"}
-
-	#there's no need for all this.
-	attribute :test_ids, Array, mapping: {type: 'keyword'}, default: []
-	attr_accessor :test_name
-	attr_accessor :test_id_action
-	attr_accessor :test_id
-	attr_accessor :tests
+	index_name "pathofast-diagnostics-reports"
+	document_type "diagnostics/report"
 
 	attribute :patient_id, String, mapping: {type: 'keyword'}
-	
 	attribute :tests, Array[Hash]
-	attribute :requirements, Array[Hash]
-	## patient id is there on report already.
-
-	attribute :name, String
-
+	attribute :item_requirements, Array[Hash]
+	attribute :statuses, Array[Hash]
 	attribute :price, Float
 	validates :price, numericality: true
-
-	attribute :item_requirement_ids, Array, mapping: {type: 'keyword'}, default: []
-
-	## do we need statuses on this ?
-	## or where do we define these ?
-	attribute :statuses, Array[Hash]
-
 	attribute :tag_ids, Array, mapping: {type: "keyword"}, default: []
 
-	#attr_accessor :item_requirement_name
-	#attr_accessor :item_requirement_id_action
-	#attr_accessor :item_requirement_id
-	#attr_accessor :item_requirements
-
-	attr_accessor :item_requirements_grouped_by_type
-	attr_accessor :patient
-
-	
-	#attr_accessor :tag_name
-
-	after_find do |document|
-		document.load_patient
-		#document.load_tests
-		document.load_item_requirements
-	end
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -98,6 +60,9 @@ class Report
 	    	}
 	  	} do
 
+	  	## what is the next step ?
+	  	## 
+	  
 	    mapping do
 	      
 		    indexes :name, type: 'keyword', fields: {
@@ -107,12 +72,21 @@ class Report
 		      		:search_analyzer => "whitespace_analyzer"
 		      	}
 		    }
+		    indexes :statuses, type: 'nested', properties: {
+		    		
+		    }
 		    indexes :requirements, type: 'nested', properties: {
-			    	item_category: {
-			    		type: 'keyword'
+			    	priority: {
+			    		type: 'integer'
 			    	},
 			    	item_type_id: {
 			    		type: 'keyword'
+			    	},
+			    	barcode: {
+			    		type: 'keyword'
+			    	},
+			    	quantity: {
+			    		type: 'integer'
 			    	}
 		    	}
 		    indexes :tests, type: 'nested', properties: {
@@ -152,7 +126,7 @@ class Report
 		    	kit: {
 		    		type: 'keyword'
 		    	},
-		    	normal_ranges: {
+		    	ranges: {
 		    		type: "nested",
 		    		properties: {
 		    			min_age_years: {
@@ -187,84 +161,21 @@ class Report
 		    			},
 		    			count: {
 		    				type: "float"
+		    			},
+		    			inference: {
+		    				type: 'text'
 		    			}
 		    		}
 		    	}
 		    }	
 
-		    ## even the sop steps should be defined in this report
-		    ## nowhere else
-		    ## if the same thing is to be repeated for many reports
-		    ## then so be it.
-=begin
-		    indexes :statuses, type: 'nested', properties: {
-		    	priority: {
-		    		type: "integer"
-		    	},
-		    	name: {
-		    		type: "keyword"
-		    	},
-		    	template_status_id: {
-		    		type: "keyword"
-		    	},
-		    	expected_time: {
-		    		type: "date"
-		    	},
-		    	assigned_to_employee_id: {
-		    		type: "keyword"
-		    	},
-		    	requires_image: {
-		    		type: "integer"
-		    	},
-		    	performed_at: {
-		    		type: "date"
-		    	},
-		    	completed: {
-		    		type: "integer"
-		    	},
-		    	comments: {
-		    		type: "nested",
-		    		properties: {
-		    			comment: {
-		    				type: "keyword",
-		    				fields: {
-		    					raw: {
-		    						type: "text"
-		    					}
-		    				}
-		    			},
-		    			created_at: {
-		    				type: "date"
-		    			},
-		    			created_by: {
-		    				type: "keyword"
-		    			}
-		    		}
-		    	}
-		    }
-=end
+	
 		end
 	end
 	
 	
 	before_save do |document|
-=begin
-		if document.test_id_action
-			unless document.test_id.blank?
-				if document.test_id_action == "add"
-					document.test_ids << document.test_id
-				end
-			end
-		end
-		
-		if document.item_requirement_id_action
-			unless document.item_requirement_id.blank?
-				if document.item_requirement_id_action == "add"
-					document.item_requirement_ids << document.item_requirement_id
-				end
-			end
-		end
-=end
+
 	end
 
 	## so next step is simple.
@@ -413,10 +324,42 @@ class Report
 		queries
 	end
 
-	
-
 	def self.permitted_params
+		base = [
+				:id,
+				{:report => 
+					[
+						:price,
+						:name, 
+						{
+							:requirements => [
+								:item_type_id, :quantity, :expiry_date
+							]
+						},
+				    	{
+				    		:statuses => [
+
+				    		]
+				    	}
+					]
+				}
+			]
+		if defined? @permitted_params
+			base[1][:item_type] << @permitted_params
+			base[1][:item_type].flatten!
+		end
+		base
+	end
+		
+
+=begin
+	def self.permitted_params
+		## sort out permitted params.
+		## then make a form for the report
+		## then we move to copying of the report.
+		## and removal.
+
 		[:id , {:report => [:name,:test_id,:item_requirement_id, :test_id_action, :item_requirement_id_action, :price, {:status_ids => []}, {:tag_ids => []} ,{:test_ids => []}, {:item_requirement_ids => []}, :patient_id, :template_report_id ]}]
 	end
-
+=end
 end

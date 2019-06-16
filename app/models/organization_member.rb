@@ -7,25 +7,22 @@ class OrganizationMember
 	## then this field will have the value "yes"
 	field :created_by_this_user, type: String
 	attr_accessor :membership_status
+	attr_accessor :organization
+
+	## so the organization member has an organization.
 
 	CREATED_BY_THIS_USER = "yes"
 
 	def set_membership_status(user_id)
 		if self.organization_id
+			organization = Organization.find(self.organization_id)
+			organization.run_callbacks(:find)
+			self.organization = organization
 			unless self.created_by_this_user.blank?
 				self.membership_status = Organization::USER_VERIFIED
-			else
-				organization = Organization.find(self.organization_id)
-				puts "found the organization: #{organization.name}"
-				organization.run_callbacks(:find)
-				puts "the user id being queried is:"
-				puts user_id
-				puts "the organization user ids are:"
-				puts organization.user_ids
+			else	
 				if organization.has_verified_user?(user_id)
 					self.membership_status = Organization::USER_VERIFIED
-					puts "the membership status was set to verified."
-					puts self.membership_status
 				elsif organization.has_rejected_user?(user_id)
 					self.membership_status = Organization::USER_REJECTED
 				elsif organization.has_user_pending_verification?(user_id)
@@ -37,5 +34,8 @@ class OrganizationMember
 		end
 	end
 
+	def as_json(options={})
+		super.merge(:methods => [:organizaiton,:membership_status])
+	end
 
 end	

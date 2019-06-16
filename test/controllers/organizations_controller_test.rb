@@ -48,7 +48,8 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         ##
         ##
         ## ROLES
-        ##
+        ## controls also have to be established in diagnostics
+        ## at the level of the test object.
         ##
         #########################################################
         @pathologist_role = Tag.new(name: "Pathologist",created_by_user: @u, tag_type: Tag::EMPLOYEE_TAG)
@@ -610,12 +611,5 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         puts response.body.to_s
 
     end
-
-    ## now what after this.
-    ## now we finalize for location.
-    ## but its already finalized.
-    ## just show the other locations.
-    ## and edit a location if necessary.
-    ## and we move to the structure of a report finally.
 
 end

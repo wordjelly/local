@@ -217,7 +217,13 @@ class User
     ##
     ##############################################
     def attributes_to_return_with_profile
-      self.attributes.slice(*[:first_name,:last_name,:date_of_birth,:address,:sex,:organization]).merge(organization: self.organization)
+      ## for these organization members, we can load those organizations
+      ## or we can tell him to get that organizaiton.
+      ## whichever one is ok.
+      ## he will need the name.
+      ## since name id does not connect.
+      ## and only those where he has been accepted.
+      self.attributes.slice(*[:first_name,:last_name,:date_of_birth,:address,:sex]).merge(organizations: self.organization_members.map{|c| c = c.organization})
     end
 
     ##############################################
