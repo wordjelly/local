@@ -1,5 +1,5 @@
 require 'elasticsearch/persistence/model'
-class Schedule::Routine < Schedule::Report
+class Schedule::Routine < Diagnostics::Report
 	include Elasticsearch::Persistence::Model
 	attribute :is_routine, Integer, :default => 1
 
