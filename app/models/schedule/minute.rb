@@ -141,7 +141,7 @@ class Schedule::Minute
 		## i could just go with inner hits.
 		## can i combine this in one query ?
 		## like for different barcodes.
-		search_results = Minute.search({
+		search_results = Schedule::Minute.search({
 			query: {
 				nested: {
 					path: "employees",
@@ -289,25 +289,25 @@ class Schedule::Minute
 	## creates n minutes.
 	def self.create_single_test_minute(status,employee_count=1)
 		status_ids = [status.id.to_s]
-		m = Minute.new(number: 1, working: 1, employees: [], id: 1.to_s)
+		m = Schedule::Minute.new(number: 1, working: 1, employees: [], id: 1.to_s)
 		employee_count.times do |employee|
 			e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
 			m.employees << e
 		end
-		Minute.add_bulk_item(m)
-		Minute.flush_bulk
+		Schedule::Minute.add_bulk_item(m)
+		Schedule::Minute.flush_bulk
 	end
 
 	def self.create_multiple_test_minutes(total_mins,employee_count,status_ids,start_minute = 0)
 		total_mins.times do |min|
-			m = Minute.new(number: (min + start_minute), working: 1, employees: [], id: (min + start_minute).to_s)
+			m = Schedule::Minute.new(number: (min + start_minute), working: 1, employees: [], id: (min + start_minute).to_s)
 			employee_count.times do |employee|
 				e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
 				m.employees << e
 			end
-			Minute.add_bulk_item(m)
+			Schedule::Minute.add_bulk_item(m)
 		end
-		Minute.flush_bulk
+		Schedule::Minute.flush_bulk
 	end
 
 
@@ -316,14 +316,14 @@ class Schedule::Minute
 	def self.create_two_test_minutes(status)
 		status_ids = [status.id.to_s]
 		2.times do |n| 
-			m = Minute.new(number: n, working: 1, employees: [], id: n.to_s)
+			m = Schedule::Minute.new(number: n, working: 1, employees: [], id: n.to_s)
 			1.times do |employee|
 				e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
 				m.employees << e
 			end
-			Minute.add_bulk_item(m)
+			Schedule::Minute.add_bulk_item(m)
 		end
-		Minute.flush_bulk
+		Schedule::Minute.flush_bulk
 	end
 
 	def self.create_test_minutes(number_of_minutes)
@@ -332,7 +332,7 @@ class Schedule::Minute
     		status_ids << status.to_s
     	end
 		number_of_minutes.times do |minute|
-			m = Minute.new(number: minute, working: 1, employees: [], id: minute.to_s)
+			m = Schedule::Minute.new(number: minute, working: 1, employees: [], id: minute.to_s)
 			6.times do |employee|
 				e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: [0,1,2,3,4,5,6,7,8,9,10].sample)
 				[0,1,2,3,4].sample.times do |booking|
@@ -347,9 +347,9 @@ class Schedule::Minute
 				end
 				m.employees << e
 			end
-			Minute.add_bulk_item(m)
+			Schedule::Minute.add_bulk_item(m)
 		end
-		Minute.flush_bulk
+		Schedule::Minute.flush_bulk
 	end
 	
 	def self.create_test_days
@@ -365,23 +365,23 @@ class Schedule::Minute
     		d.working = 1
     		d.minutes = []
     		720.times do |minute|
-    			m = Minute.new(number: minute_count, working: 1, employees: [], id: minute_count.to_s)
+    			m = Schedule::Minute.new(number: minute_count, working: 1, employees: [], id: minute_count.to_s)
     			6.times do |employee|
     				e = Employee.new(id: employee.to_s, status_ids: status_ids, booked_status_id: -1, booked_count: 0)
     				m.employees << e
     			end
     			minute_count+=1
-    			Minute.add_bulk_item(m)
+    			Schedule::Minute.add_bulk_item(m)
     		end
     	end
-    	Minute.flush_bulk
+    	Schedule::Minute.flush_bulk
 	end	
 
 
 
 	def self.aggregate_employee_bookings(employee_id,minute_from,minute_to)
 		## so let's get this working first. of all.
-		search_results = Minute.search({
+		search_results = Schedule::Minute.search({
 			_source: false,
 			query: {
 				nested: {
@@ -536,11 +536,11 @@ class Schedule::Minute
 
 				update_hash = build_minute_update_request_for_reallotment(reallotment_hash.merge(:employee_to_block => employee_id))
 
-				Minute.add_bulk_item(update_hash)
+				Schedule::Minute.add_bulk_item(update_hash)
 
 			end
 
-			Minute.flush_bulk
+			Schedule::Minute.flush_bulk
 
 		end
 
@@ -718,7 +718,7 @@ class Schedule::Minute
 			}
 		}
 
-		search_result = Minute.search({
+		search_result = Schedule::Minute.search({
 			query: query,
 			aggs:  aggs
 		})
@@ -759,7 +759,7 @@ class Schedule::Minute
 		## for all employees for subsequent minutes.
 		## somehow have to factor capacities into this.
 		## so we have to aggregate by lot_size also.
-		order = Order.find(args[:order_id])
+		order = Business::Order.find(args[:order_id])
 
 		query = {
 			bool: {
@@ -1253,7 +1253,7 @@ class Schedule::Minute
 	end
 
 	## @param[Hash] order_statuses_hash => 
-	## @param[Order] order =>
+	## @param[Business::Order] order =>
 	## @param[Hash] args => contains a single key,
 	## :required_statuses.
 	def self.build_minute_update_request_for_order(
