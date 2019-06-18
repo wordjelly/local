@@ -2,70 +2,38 @@ require 'elasticsearch/persistence/model'
 class Business::Order
 
 	include Elasticsearch::Persistence::Model
-	include Concerns::StatusConcern
-	include Concerns::PdfConcern
-	
-	## the interval to keep between minutes.
-	## this is a huge interval.
-	DEFAULT_INTERVAL = 300
-
+	#include Concerns::StatusConcern
 	index_name "pathofast-business-orders"
 	document_type "business/order"
+	include Concerns::OrderConcern
+	include Concerns::PdfConcern
+	
 
-
-	attr_accessor :patient_name
-
-	attr_accessor :account_statement
-
-	attribute :patient_id, String
-
-	attribute :patient_test_ids, Array
-
-	attribute :patient_report_ids, Array
-
-	attribute :template_report_ids, Array
-
-	attribute :tubes, Array[Hash]
-
-	attribute :schedule_action, String, mapping: {type: 'keyword'}
-
-
-	attribute :report_ids_to_add, Array, mapping: {type: 'keyword'}
-
-	## this is for the external api.
-	attribute :external_reference_number, String, mapping: {type: 'keyword'}
-
-	attribute :start_time, Time
-	validates_presence_of :start_time
-
-	attribute :item_group_id
-	attribute :item_group_action
-	attribute :order_logs, Array[Hash]
-
-	attr_accessor :patient
-	attr_accessor :reports
-	attr_accessor :cloned_reports
-	attr_accessor :report_name
-	attr_accessor :report_ids_to_remove
-
+	# do reports need to be externally permitted ?
+	# yes.
+	# all the attributes ?
+	# or will they be internally assigned ?
+	# 
 	def self.permitted_params
 		[:id,
 			{
 			 	:order => [
-			 		:start_time,
-			 		:item_group_id,
-			 		:item_group_action,
 			 		:patient_id,
-			 		{:template_report_ids => []},
-			 		:tubes => [:item_requirement_name, :patient_report_ids, :template_report_ids, :barcode, :occupied_space]
+			 		:local_item_group_id,
+			 		{
+			 			:reports => Diagnostics::Report.permitted_params
+			 		},
+			 		{
+			 			:payments => Business::Payment.permitted_params
+			 		},
+			 		{
+			 			:requirements => Inventory::Requirement.permitted_params
+			 		}
 			 	]
 			}
 		]
 	end
 		
-=begin
-
-=end
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -105,41 +73,9 @@ class Business::Order
 	            }
 	    	}
 	  	} do
+	  		
 	    mappings dynamic: 'true' do
-		    indexes :tubes, type: 'nested', properties: {
-		    	item_requirement_name: {
-		    		type: 'keyword'
-		    	},
-		    	patient_report_ids: {
-		    		type: 'keyword'
-		    	},
-		    	occupied_space: {
-		    		type: 'float'
-		    	},
-		    	template_report_ids: {
-		    		type: 'keyword'
-		    	},
-		    	barcode: {
-		    		type: 'keyword'
-		    	},
-		    	item_group_id: {
-		    		type: 'keyword'
-		    	}
-		    }
-		    indexes :order_logs, type: 'nested', properties: {
-		    	log_time: {
-		    		type: 'date'
-		    	},
-		    	description: {
-		    		type: 'keyword'
-		    	},
-		    	report_ids: {
-		    		type: 'keyword'
-		    	},
-		    	order_start_time: {
-		    		type: 'date'
-		    	}
-		    }
+		    
 		end
 
 	end
@@ -744,6 +680,7 @@ class Business::Order
 				status_details[:maximum_capacity] = statuses_to_reports_hash[status][:maximum_capacity]
 				status_details[:duration] = statuses_to_reports_hash[status][:duration]
 
+				## ill split that out into a concern.
 
 				if key == 0
 					status_details[:from] = (self.start_time.to_i/60)

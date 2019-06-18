@@ -4,6 +4,19 @@ class OrderTest < ActiveSupport::TestCase
    
     setup do 
 
+      ## so make a user
+      ## make an organization
+      ## and start with adding an order, with a dummy patient id.
+      ## so let me first finalize the order
+      ## will it have nested reports ?
+      ## that can become a massive object.
+      ## so let it have n reports ?
+      ## yes why not ?
+      ## so do we make seperate reports
+      ## is there any need to clone and commit ?
+      ## not required.
+
+=begin
       ["Test","Employee","Item","ItemGroup","ItemRequirement","ItemType","Location","NormalRange","Order","Patient","Report","Status","Test","Image"].each do |cls|
         cls.constantize.send("create_index!",{force: true})
       end
@@ -186,6 +199,8 @@ class OrderTest < ActiveSupport::TestCase
 
       Elasticsearch::Persistence.client.indices.refresh index: "pathofast-item-groups"
       ##exit(1)
+=end
+
 
     end
 

@@ -45,6 +45,7 @@ class Diagnostics::Status
 	attribute :requires_image, Integer, :default => 0
 	attribute :result, String, mapping: {type: 'text'}
 	
+=begin
 	## MAKING the report pdf -> collation and emailing.
 	## all this is not too hard.
 	## whether it should be outsourced or not.
@@ -112,7 +113,7 @@ class Diagnostics::Status
 	attr_accessor :employee_ids
 	attr_accessor :divide_into
 	#########################################################
-
+=end
 	settings index: { 
 	    number_of_shards: 1, 
 	    number_of_replicas: 0,
@@ -172,6 +173,7 @@ class Diagnostics::Status
 	##
 	##
 	########################################################
+=begin
 	after_find do |document|
 		document.load_parents
 		document.load_template_reports_not_added_to_status
@@ -183,16 +185,9 @@ class Diagnostics::Status
 			document.add_schedule(document.from,document.to,document.employee_ids,self.id.to_s)
 		end
 	end
+=end
 
-	## suppose i give for em200
-	## can another person operate it again?
-	## no so the status is to be removed for other people
-	## for the booked duration, remove it for everyone else, and that employee also.
-	## that's what has to be done.
-	## and all this in one bulk call.
-	## so where will we add this bulk item?
-	## on minute.
-
+=begin
 	def add_schedule(from,to,employee_ids,status_id,divide_equally)
 		Minute.get_minute_ids(document.from,document.to).each do |min_id|
 			update_request = Minute.update_minute(min_id,{status_id: status_id, employee_ids: employee_ids})
@@ -200,7 +195,7 @@ class Diagnostics::Status
 		end
 		Minute.flush_bulk
 	end
-
+=end
 	
 
 	########################################################
@@ -210,7 +205,7 @@ class Diagnostics::Status
 	########################################################
 
 
-
+=begin
 	## creates a bill for the report.
 	def self.add_bill(patient_report,order_id)	
 		s = Status.new
@@ -861,6 +856,23 @@ class Diagnostics::Status
 		return duration_and_statuses
 
 	end
+=end
+
+	def self.permitted_params
+		[
+			:name,
+			:description,
+			:duration,
+			:employee_block_duration,
+			:block_other_employees,
+			:maximum_capacity,
+			:lot_size,
+			:requires_image,
+			:result
+		]
+	end
+
+
 
 
 end

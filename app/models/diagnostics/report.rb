@@ -2,7 +2,7 @@ require 'elasticsearch/persistence/model'
 class Diagnostics::Report
 
 	include Elasticsearch::Persistence::Model
-	include Concerns::StatusConcern
+	#include Concerns::StatusConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
@@ -12,11 +12,14 @@ class Diagnostics::Report
 	index_name "pathofast-diagnostics-reports"
 	document_type "diagnostics/report"
 
+	attribute :name, String, mapping: {type: 'keyword'}
+	attribute :description, String, mapping: {type: 'keyword'}
 	attribute :patient_id, String, mapping: {type: 'keyword'}
 	attribute :tests, Array[Hash]
-	attribute :item_requirements, Array[Hash]
+	attribute :requirements, Array[Hash]
 	attribute :statuses, Array[Hash]
 	attribute :rates, Array[Hash]
+	attribute :payments, Array[Hash]
 	attribute :price, Float
 	validates :price, numericality: true
 	attribute :outsource_to_organization_id, String, mapping: {type: 'keyword'}
@@ -114,7 +117,12 @@ class Diagnostics::Report
 			    			items: {
 			    				type: 'nested',
 			    				properties: {
-
+			    					local_item_group_id: {
+			    						type: 'keyword'
+			    					},
+			    					barcode: {
+			    						type: 'keyword'
+			    					}
 			    				}
 			    			}
 			    		}
@@ -219,23 +227,16 @@ class Diagnostics::Report
 
 	end
 
-	## so next step is simple.
-	## we have to be able to show these statuses in different scenarios
-	## first about the employees.
-	## who is available to do what when.
-	## and then aggregating that, together with a UI.
-	## UI to update the status comments, and whatever else.
-	## also UI to add employee schedules.
-	## on the statuses.
-	## normal ranges, alerts and formats of the reports, for pdf.
-	## and sms.
-	## interfacing with the app.
-	## lets finish the interface for the status, in any and all situations.
-	## tomorrow for UI of employees -> for jobs, as well as status allotment.
-	## think how to put jobs into this.
-	## maximum one week to finish all this.
-	## one week more for control integration + LIS integration
-
+	## collate n reports
+	## add a report
+	## remove a report
+	## and update all the reports with the item requirements.
+	## so there is a clone stage ?
+	## yes
+	## is there an assignment of an order
+	## yes
+	## lets start a basic order object.
+	## and write the tests for that.
 	
 	def clone(patient_id,order_id)
 		
@@ -388,35 +389,37 @@ class Diagnostics::Report
 						:patient_id,
 						:price,
 						:name, 
+						:description,
 						{:tag_ids => []},
 						:outsource_to_organization_id,
 						{
 							:requirements => [
 								:priority,
-								:item_type_category,
-								:barcode,
-								:quantity,
-								:local_item_group_id,
-								:local_item_id
+								{
+									:categories => [
+										:name,
+										{
+											:items => [
+												:barcode,
+												:local_item_group_id
+											]
+										}
+									]
+								}
 							]
 						},
 				    	{
-				    		:statuses => [
-				    			:name,
-				    			:description,
-				    			:duration,
-				    			:employee_block_duration,
-				    			:block_other_employees,
-				    			:maximum_capacity,
-				    			:lot_size,
-				    			:requires_image,
-				    			:result
-				    		]
+				    		:statuses => Diagnostics::Status.permitted_params
 				    	},
 				    	{
 				    		:rates => [
 				    			:for_organization_id,
 				    			:rate
+				    		]
+				    	},
+				    	{
+				    		:payments => [
+				    			:amount
 				    		]
 				    	},
 				    	{

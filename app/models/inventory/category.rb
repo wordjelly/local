@@ -15,8 +15,7 @@ class Inventory::Category
 	include Concerns::TransferConcern
 	include Concerns::MissingMethodConcern
 
-	## inside this is item.
-	## simply.
+	attribute :name, String, mapping: {type: 'keyword'}
 	attribute :items, Array[Hash]
 
 end

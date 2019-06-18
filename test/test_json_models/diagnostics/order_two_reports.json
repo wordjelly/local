@@ -1,0 +1,24 @@
+{
+	"reports" : [
+		{
+			"name" : "Hemogram",
+			"description" : "The Complete Blood Count",
+			"tests" : [
+				{
+					"name" : "MCV",
+					"description" : "Mean Corpuscular Volume"
+				}
+			],
+			"requirements" : [
+				{
+					"categories" : [
+						{
+							
+						}
+					],
+					"quantity" : 10
+				}
+			]
+		}
+	]
+}

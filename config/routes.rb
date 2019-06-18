@@ -2,12 +2,7 @@ Rails.application.routes.draw do
 
   mount_routes Auth.configuration.auth_resources
 
-
-  ## controls are a seperate thing.
-  ## because there can be many of them.
-  ## so we add them seperately
-  ## everything else will go through reports.
-  namespace :diagnostics
+  namespace :diagnostics do
     resources :reports  
     resources :controls
   end
@@ -17,12 +12,7 @@ Rails.application.routes.draw do
     resources :spots
   end
 
-  ## so we refactor and namespace the controllers.
-  ## then we go for the reports with rates.
-  ## rates are also included inside reports itslef.
-  ## 
-  
-  namespace :business
+  namespace :business do
     resources :orders
     resources :packages 
   end
