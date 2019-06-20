@@ -2,7 +2,6 @@ require 'elasticsearch/persistence/model'
 class Diagnostics::Report
 
 	include Elasticsearch::Persistence::Model
-	#include Concerns::StatusConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
@@ -75,151 +74,14 @@ class Diagnostics::Report
 		      		:search_analyzer => "whitespace_analyzer"
 		      	}
 		    }
-		    indexes :statuses, type: 'nested', properties: {
-		    		name: {
-		    			type: 'keyword'
-		    		},
-		    		description: {
-		    			type: 'keyword'
-		    		},
-		    		duration: {
-		    			type: 'integer'
-		    		},
-		    		employee_block_duration: {
-		    			type: 'integer'
-		    		},
-		    		block_other_employees: {
-		    			type: 'keyword'
-		    		},
-		    		maximum_capacity: {
-		    			type: 'integer'
-		    		},
-		    		lot_size: {
-		    			type: 'integer'
-		    		},
-		    		requires_image: {
-		    			type: 'keyword'
-		    		},
-		    		result: {
-		    			type: 'text'
-		    		}
-		    }
-		    indexes :requirements, type: 'nested', properties: {
-			    	quantity: {
-			    		type: 'float'
-			    	},
-			    	categories: {
-			    		type: 'nested',
-			    		properties: {
-			    			name: {
-			    				type: 'keyword'
-			    			},
-			    			items: {
-			    				type: 'nested',
-			    				properties: {
-			    					local_item_group_id: {
-			    						type: 'keyword'
-			    					},
-			    					barcode: {
-			    						type: 'keyword'
-			    					}
-			    				}
-			    			}
-			    		}
-			    	}
-		    	}
-		    ## so tomorrow we go for collation.
-		    ## then for fusion of statuses.
-		    ## then for scheduling, and routines.
-		    ## and last for order.
-		    ## this will take about 
-		    indexes :rates, type: 'nested', properties: {
-		    	for_organization_id: {
-		    		type: 'keyword'
-		    	},
-		    	rate: {
-		    		type: 'float'
-		    	}
-		    }
-		    indexes :tests, type: 'nested', properties: {
-		    	name: {
-		    		type: 'keyword',
-		    		fields: {
-		    			:raw => {
-		    				:type => "text",
-				      		:analyzer => "nGram_analyzer",
-				      		:search_analyzer => "whitespace_analyzer"
-		    			}
- 		    		}
-		    	},
-		    	lis_code: {
-		    		type: 'keyword'
-		    	},
-		    	description: {
-		    		type: 'keyword',
-		    		fields: {
-		    			:raw => {
-		    				:type => "text"
-		    			}
-		    		}
-		    	},
-		    	price: {
-		    		type: 'float'
-		    	},
-		    	verified: {
-		    		type: 'boolean'
-		    	},
-		    	references: {
-		    		type: 'keyword'
-		    	},
-		    	machine: {
-		    		type: 'keyword'
-		    	},
-		    	kit: {
-		    		type: 'keyword'
-		    	},
-		    	ranges: {
-		    		type: "nested",
-		    		properties: {
-		    			min_age_years: {
-		    				type: "integer"
-		    			},
-		    			min_age_months: {
-		    				type: "integer"
-		    			},
-		    			min_age_days: {
-		    				type: "integer"
-		    			},
-		    			min_age_hours: {
-		    				type: "integer"
-		    			},
-		    			max_age_years: {
-		    				type: "integer"
-		    			},
-		    			max_age_months: {
-		    				type: "integer"
-		    			},
-		    			max_age_days: {
-		    				type: "integer"
-		    			},
-		    			max_age_hours: {
-		    				type: "integer"
-		    			},
-		    			sex: {
-		    				type: "keyword"
-		    			},
-		    			grade: {
-		    				type: "keyword"
-		    			},
-		    			count: {
-		    				type: "float"
-		    			},
-		    			inference: {
-		    				type: 'text'
-		    			}
-		    		}
-		    	}
-		    }	
+		    indexes :patient_id, type: 'keyword'
+		    indexes :price, type: 'float'
+		    indexes :outsource_to_organization_id, type: 'keyword'
+		    indexes :tag_ids, type: 'keyword'
+		    indexes :statuses, type: 'nested', properties: Diagnostics::Status.index_properties
+		    indexes :requirements, type: 'nested', properties: Inventory::Requirement.index_properties
+		    indexes :rates, type: 'nested', properties: Business::Rate.index_properties
+		    indexes :tests, type: 'nested', properties: Diagnostics::Test.index_properties
 		end
 	end
 	
@@ -227,17 +89,7 @@ class Diagnostics::Report
 
 	end
 
-	## collate n reports
-	## add a report
-	## remove a report
-	## and update all the reports with the item requirements.
-	## so there is a clone stage ?
-	## yes
-	## is there an assignment of an order
-	## yes
-	## lets start a basic order object.
-	## and write the tests for that.
-	
+=begin	
 	def clone(patient_id,order_id)
 		
 		patient_report = Report.new(self.attributes.except(:id).merge({patient_id: patient_id, template_report_id: self.id.to_s}))
@@ -379,7 +231,7 @@ class Diagnostics::Report
 		end	
 		queries
 	end
-
+=end
 
 	def self.permitted_params
 		base = [
@@ -393,62 +245,16 @@ class Diagnostics::Report
 						{:tag_ids => []},
 						:outsource_to_organization_id,
 						{
-							:requirements => [
-								:priority,
-								{
-									:categories => [
-										:name,
-										{
-											:items => [
-												:barcode,
-												:local_item_group_id
-											]
-										}
-									]
-								}
-							]
+							:requirements => Inventory::Requirement.permitted_params
 						},
 				    	{
 				    		:statuses => Diagnostics::Status.permitted_params
 				    	},
 				    	{
-				    		:rates => [
-				    			:for_organization_id,
-				    			:rate
-				    		]
+				    		:rates => Business::Rate.permitted_params
 				    	},
 				    	{
-				    		:payments => [
-				    			:amount
-				    		]
-				    	},
-				    	{
-				    		:tests => [
-				    			:name,
-				    			:lis_code,
-				    			:description,
-				    			:price,
-				    			:verified,
-				    			{:references => []},
-				    			:machine,
-				    			:kit,
-				    			{
-				    				:ranges => [
-				    					:min_age_years,
-				    					:min_age_months,
-				    					:min_age_days,
-				    					:min_age_hours,
-				    					:max_age_years,
-				    					:max_age_months,
-				    					:max_age_days,
-				    					:max_age_hours,
-				    					:sex,
-				    					:grade,
-				    					:count,
-				    					:inference
-				    				]
-				    			}
-				    		]
+				    		:tests => Diagnostics::Test.permitted_params
 				    	}
 					]
 				}
@@ -460,6 +266,47 @@ class Diagnostics::Report
 		base
 	end
 
-
+	def self.index_properties
+		{
+			:name => {
+				:type => 'keyword',
+				:fields => {
+						:raw => {
+			      		:type => "text",
+			      		:analyzer => "nGram_analyzer",
+			      		:search_analyzer => "whitespace_analyzer"
+		      		}
+				}
+			},
+			:patient_id => {
+				:type => 'keyword'
+			},
+			:price => {
+				:type => 'float'
+			},
+			:outsource_to_organization_id => {
+				:type => 'keyword'
+			},
+			:tag_ids => {
+				:type => 'keyword'
+			},
+			:requirements => {
+				:type => 'nested',
+				:properties => Inventory::Requirement.index_properties
+			},
+			:statuses => {
+				:type => 'nested',
+				:properties => Diagnostics::Status.index_properties
+			},
+			:rates => {
+				:type => "nested",
+				:properties => Business::Rate.index_properties
+			},
+			:tests => {
+				:type => "nested",
+				:properties => Diagnostics::Test.index_properties
+			}
+		}
+	end
 
 end

@@ -15,4 +15,19 @@ class Business::Rate
 	attribute :for_organization_id, String, mapping: {type: 'keyword'}, default: Business::Rate::UNIVERSAL_ORGANIZATION_ID
 	attribute :rate, Float
 
+	def self.permitted_params
+		[:for_organization_id, :rate]
+	end
+
+	def self.index_properties
+		{
+	    	for_organization_id: {
+	    		type: 'keyword'
+	    	},
+	    	rate: {
+	    		type: 'float'
+	    	}
+		}
+	end
+
 end

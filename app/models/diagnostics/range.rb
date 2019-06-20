@@ -11,16 +11,6 @@ class Diagnostics::Range
 	include Concerns::MissingMethodConcern
 	include Concerns::VersionedConcern
 
-	index_name "pathofast-ranges"
-
-	## this range will load the test.
-	## it doesn't need the test.
-	## will search a test, which has this as the normal range.
-	## and take that.
-	attribute :test_id, String
-
-	attr_accessor :test_name
-		
 	#########################################################
 	##
 	##
@@ -69,54 +59,6 @@ class Diagnostics::Range
 
 	attribute :reference, String, mapping: {type: 'keyword'}
 
-	after_find do |document|
-		document.load_test_name
-	end
-
-	def test_id_exists
-		begin
-			Test.find(self.test_id)
-		rescue
-			self.errors.add(:test_id, "this test id does not exist")
-		end
-	end
-
-	def load_test_name
-		if self.test_name.blank?
-			begin
-				t = Test.find(self.test_id)
-				self.test_name = t.name	
-			rescue
-
-			end
-		end
-	end
-
-	def load_test
-		## what if it is added to more than one test
-		## not allowed
-		## that validation has to be added at the test level.
-		## the problem is that if i edit my test, and i want to use the same normal range ?
-		## then it has to copy all the normal ranges also?
-		## this is all too complicated
-		## make it nested
-		## if they want to change anything, copy it new.
-		## its totally pointless and too complicated otherwise.
-		search_query = Test.search({
-			query: {
-				term: {
-					ranges: self.id.to_s
-				}
-			}
-		})
-
-		search_query.response.hits.hits.each do |hit|
-
-		end
-
-	end
-
-	
 
 	before_save do |document|
 		document.set_min_and_max_age
@@ -134,7 +76,7 @@ class Diagnostics::Range
 		self.max_age = (self.max_age_years*365*24) + (self.max_age_months*31*24) + (self.max_age_days*24) + self.max_age_hours
 	end
 
-
+=begin
 	def self.permitted_params
 		base = [:id,{:range => [:name, :test_id, :test_name, :min_age_years,:min_age_months,:min_age_weeks,:min_age_days, :max_age_years, :max_age_months,:max_age_days, :max_age_hours, :sex, :count, :grade, :machine, :kit, :reference]}]
 		if defined? @permitted_params
@@ -144,6 +86,67 @@ class Diagnostics::Range
 		puts "the base becomes:"
 		puts base.to_s
 		base
+	end
+=end
+
+	
+	def self.permitted_params
+		[
+			:min_age_years,
+			:min_age_months,
+			:min_age_days,
+			:min_age_hours,
+			:max_age_years,
+			:max_age_months,
+			:max_age_days,
+			:max_age_hours,
+			:sex,
+			:grade,
+			:count,
+			:inference
+		]
+	end
+
+	def self.index_properties
+		{
+			min_age_years: {
+				type: "integer"
+			},
+			min_age_months: {
+				type: "integer"
+			},
+			min_age_days: {
+				type: "integer"
+			},
+			min_age_hours: {
+				type: "integer"
+			},
+			max_age_years: {
+				type: "integer"
+			},
+			max_age_months: {
+				type: "integer"
+			},
+			max_age_days: {
+				type: "integer"
+			},
+			max_age_hours: {
+				type: "integer"
+			},
+			sex: {
+				type: "keyword"
+			},
+			grade: {
+				type: "keyword"
+			},
+			count: {
+				type: "float"
+			},
+			inference: {
+				type: 'text'
+			}
+    	}
+    	
 	end
 
 end 

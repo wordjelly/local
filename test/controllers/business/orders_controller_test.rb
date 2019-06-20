@@ -1,6 +1,6 @@
 require "test_helper"
 
-class ReportsControllerTest < ActionDispatch::IntegrationTest
+class OrdersControllerTest < ActionDispatch::IntegrationTest
 
 	setup do 
 		Organization.create_index! force: true
@@ -124,43 +124,154 @@ class ReportsControllerTest < ActionDispatch::IntegrationTest
 
     end
 
-     test " -- creates an order with multiple reports -- " do 
+=begin
+    test " -- creates an order with multiple reports -- " do 
 
         ## okay now we use json for this ?
         ## 
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
-        status = Diagnostics::Status.new(name: "one", description: "step one")
-        
-        test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")
-            
+        status = Diagnostics::Status.new(name: "one", description: "step one") 
+        test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")     
         requirement = Inventory::Requirement.new(quantity: 10)
         category = Inventory::Category.new(name: "serum tube")
         item = Inventory::Item.new(local_item_group_id: "1234")
         category.items = [item]
         requirement.categories = [category]
-
         report = Diagnostics::Report.new
         report.statuses = [status]
         report.tests = [test]
         report.requirements = [requirement]
-        report.name = ""
+        report.name = "blank name"
         report.description = "new report description"
         report.price = 52
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
         report.save
-        puts "the report errors are --------------->"
-        puts report.errors.full_messages.to_s
         assert_equal true, report.errors.full_messages.blank?
+
+        report_one_id = report.id.to_s
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
         ## now add another one.
-        
+        status = Diagnostics::Status.new(name: "one", description: "step one") 
+        test = Diagnostics::Test.new(name: "Vitamin D", description: "Vitamin D level in blood", price: 20, lis_code: "VITD")     
+        requirement = Inventory::Requirement.new(quantity: 10)
+        category = Inventory::Category.new(name: "serum tube")
+        item = Inventory::Item.new(local_item_group_id: "1234")
+        category.items = [item]
+        requirement.categories = [category]
+        report = Diagnostics::Report.new
+        report.statuses = [status]
+        report.tests = [test]
+        report.requirements = [requirement]
+        report.name = "25, OH dihydroxy vitamin d"
+        report.description = "Measurement of Vitamin D"
+        report.price = 520
+        report.created_by_user = @u
+        report.created_by_user_id = @u.id.to_s
+        report.assign_id_from_name
+        report.save
+        assert_equal true, report.errors.full_messages.blank?
 
+        report_two_id = report.id.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"        
+
+        report_one = Diagnostics::Report.find(report_one_id)
+        
+        #puts "the report one requirements are:"
+        #puts report_one.requirements.to_s
+        #exit(1)
+
+        report_two = Diagnostics::Report.find(report_two_id)
+
+        order = Business::Order.new
+        order.reports =  [report_one.attributes,report_two.attributes]
+      
+        post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers 
+
+
+        assert_equal "201", response.code.to_s
 
     end
+=end
+    test " -- collates individual report requirements into order requirements -- " do 
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        status = Diagnostics::Status.new(name: "one", description: "step one") 
+        test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")     
+        requirement = Inventory::Requirement.new(quantity: 10)
+        category = Inventory::Category.new(name: "serum tube")
+        item = Inventory::Item.new(local_item_group_id: "1234")
+        category.items = [item]
+        requirement.categories = [category]
+        report = Diagnostics::Report.new
+        report.statuses = [status]
+        report.tests = [test]
+        report.requirements = [requirement]
+        report.name = "blank name"
+        report.description = "new report description"
+        report.price = 52
+        report.created_by_user = @u
+        report.created_by_user_id = @u.id.to_s
+        report.assign_id_from_name
+        report.save
+        assert_equal true, report.errors.full_messages.blank?
+
+        report_one_id = report.id.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        ## now add another one.
+        status = Diagnostics::Status.new(name: "one", description: "step one") 
+        test = Diagnostics::Test.new(name: "Vitamin D", description: "Vitamin D level in blood", price: 20, lis_code: "VITD")     
+        requirement = Inventory::Requirement.new(quantity: 10)
+        category = Inventory::Category.new(name: "serum tube")
+        item = Inventory::Item.new(local_item_group_id: "1234")
+        category.items = [item]
+        requirement.categories = [category]
+        report = Diagnostics::Report.new
+        report.statuses = [status]
+        report.tests = [test]
+        report.requirements = [requirement]
+        report.name = "25, OH dihydroxy vitamin d"
+        report.description = "Measurement of Vitamin D"
+        report.price = 520
+        report.created_by_user = @u
+        report.created_by_user_id = @u.id.to_s
+        report.assign_id_from_name
+        report.save
+        assert_equal true, report.errors.full_messages.blank?
+
+        report_two_id = report.id.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"        
+
+        report_one = Diagnostics::Report.find(report_one_id)
+        
+        #puts "the report one requirements are:"
+        #puts report_one.requirements.to_s
+        #exit(1)
+
+        report_two = Diagnostics::Report.find(report_two_id)
+
+        order = Business::Order.new
+        order.reports =  [report_one.attributes,report_two.attributes]
+      
+        post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers 
+
+        order = Business::Order.new(JSON.parse(response.body)["order"])
+
+        
+
+        assert_equal "201", response.code.to_s
+        assert_equal true, !order.requirements.blank?
+
+    end
+
+
 
 end

@@ -169,8 +169,73 @@ class Diagnostics::Test
 
 	end
 
+=begin
 	def self.permitted_params
 		[:id , {:test => [:name,:lis_code,:description,:price]}]
+	end
+=end
+	
+	def self.permitted_params
+
+		[
+			:name,
+			:lis_code,
+			:description,
+			:price,
+			:verified,
+			{:references => []},
+			:machine,
+			:kit,
+			{
+				:ranges => Diagnostics::Range.permitted_params
+			}
+		]
+
+	end
+
+	def self.index_properties
+		{
+	    	name: {
+	    		type: 'keyword',
+	    		fields: {
+	    			:raw => {
+	    				:type => "text",
+			      		:analyzer => "nGram_analyzer",
+			      		:search_analyzer => "whitespace_analyzer"
+	    			}
+		    		}
+	    	},
+	    	lis_code: {
+	    		type: 'keyword'
+	    	},
+	    	description: {
+	    		type: 'keyword',
+	    		fields: {
+	    			:raw => {
+	    				:type => "text"
+	    			}
+	    		}
+	    	},
+	    	price: {
+	    		type: 'float'
+	    	},
+	    	verified: {
+	    		type: 'boolean'
+	    	},
+	    	references: {
+	    		type: 'keyword'
+	    	},
+	    	machine: {
+	    		type: 'keyword'
+	    	},
+	    	kit: {
+	    		type: 'keyword'
+	    	},
+	    	ranges: {
+	    		type: 'nested',
+	    		properties: Diagnostics::Range.index_properties
+	    	}
+	    }	
 	end
 
 end

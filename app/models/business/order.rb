@@ -2,84 +2,20 @@ require 'elasticsearch/persistence/model'
 class Business::Order
 
 	include Elasticsearch::Persistence::Model
-	#include Concerns::StatusConcern
+	include Concerns::NameIdConcern
+	include Concerns::ImageLoadConcern
+	include Concerns::OwnersConcern
+	include Concerns::AlertConcern
+	include Concerns::MissingMethodConcern
+
 	index_name "pathofast-business-orders"
 	document_type "business/order"
 	include Concerns::OrderConcern
 	include Concerns::PdfConcern
+
 	
-
-	# do reports need to be externally permitted ?
-	# yes.
-	# all the attributes ?
-	# or will they be internally assigned ?
-	# 
-	def self.permitted_params
-		[:id,
-			{
-			 	:order => [
-			 		:patient_id,
-			 		:local_item_group_id,
-			 		{
-			 			:reports => Diagnostics::Report.permitted_params
-			 		},
-			 		{
-			 			:payments => Business::Payment.permitted_params
-			 		},
-			 		{
-			 			:requirements => Inventory::Requirement.permitted_params
-			 		}
-			 	]
-			}
-		]
-	end
 		
-
-	settings index: { 
-	    number_of_shards: 1, 
-	    number_of_replicas: 0,
-	    analysis: {
-		      	filter: {
-			      	nGram_filter:  {
-		                type: "nGram",
-		                min_gram: 2,
-		                max_gram: 20,
-		               	token_chars: [
-		                   "letter",
-		                   "digit",
-		                   "punctuation",
-		                   "symbol"
-		                ]
-			        }
-		      	},
-	            analyzer:  {
-	                nGram_analyzer:  {
-	                    type: "custom",
-	                    tokenizer:  "whitespace",
-	                    filter: [
-	                        "lowercase",
-	                        "asciifolding",
-	                        "nGram_filter"
-	                    ]
-	                },
-	                whitespace_analyzer: {
-	                    type: "custom",
-	                    tokenizer: "whitespace",
-	                    filter: [
-	                        "lowercase",
-	                        "asciifolding"
-	                    ]
-	                }
-	            }
-	    	}
-	  	} do
-	  		
-	    mappings dynamic: 'true' do
-		    
-		end
-
-	end
-
+=begin
 	validates_presence_of :patient_id	
 		
 	## if set to any value, will skip the before save callbacks
@@ -104,10 +40,10 @@ class Business::Order
 	end
 
 	after_find do |document|
-		document.load_patient
-		document.load_patient_reports
-		document.generate_account_statement
-		document.generate_pdf
+		#document.load_patient
+		#document.load_patient_reports
+		#document.generate_account_statement
+		#document.generate_pdf
 	end
 
 	def load_patient_reports
@@ -724,5 +660,5 @@ class Business::Order
 		end
 
 	end
-
+=end
 end

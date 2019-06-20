@@ -872,6 +872,38 @@ class Diagnostics::Status
 		]
 	end
 
+	def self.index_properties
+		{
+    		name: {
+    			type: 'keyword'
+    		},
+    		description: {
+    			type: 'keyword'
+    		},
+    		duration: {
+    			type: 'integer'
+    		},
+    		employee_block_duration: {
+    			type: 'integer'
+    		},
+    		block_other_employees: {
+    			type: 'keyword'
+    		},
+    		maximum_capacity: {
+    			type: 'integer'
+    		},
+    		lot_size: {
+    			type: 'integer'
+    		},
+    		requires_image: {
+    			type: 'keyword'
+    		},
+    		result: {
+    			type: 'text'
+    		}
+	    }
+	end
+
 
 
 

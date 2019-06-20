@@ -153,6 +153,20 @@ class Inventory::Item
 		base
 	end
 
+	def self.index_properties
+		{
+			type: 'nested',
+			properties: {
+				local_item_group_id: {
+					type: 'keyword'
+				},
+				barcode: {
+					type: 'keyword'
+				}
+			}
+		}
+	end
+
 	########################################################
 	##
 	##

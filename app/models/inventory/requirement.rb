@@ -10,14 +10,36 @@ class Inventory::Requirement
 	include Concerns::TransferConcern
 	include Concerns::MissingMethodConcern
 	
-	index_name "pathofast-inventory-item-requirements"
-	document_type "inventory/item-requirement"
+	index_name "pathofast-inventory-requirements"
+	document_type "inventory/requirement"
 
-	## the optionals
-	## so what will the final thing look like.
-	## it will be an array of requirements only.
 	attribute :categories, Array[Hash]
-	attribute :quantity, Integer	
+	attribute :name, String, mapping: {type: 'keyword'}
+
+	def assign_id_from_name
+		self.name = BSON::ObjectId.new.to_s
+		self.id = self.name
+	end
+
+	def self.permitted_params
+		[
+			:priority,
+			{
+				:categories => Inventory::Category.permitted_params
+			}
+		]
+	end
+
+	def self.index_properties
+		
+		{
+	    	categories: {
+	    		type: 'nested',
+	    		properties: Inventory::Category.index_properties
+	    	}
+	    }
+
+	end
 
 
 end
