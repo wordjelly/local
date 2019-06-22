@@ -6,13 +6,13 @@ module Concerns::OrderConcern
 			
 		attribute :name, String, mapping: {type: 'keyword'}
 
-		attribute :reports, Array[Hash]
+		attribute :reports, Array[Diagnostics::Report]
 
 		attribute :patient_id, String, mapping: {type: 'keyword'}
 
-		attribute :categories, Array[Hash] 
+		attribute :categories, Array[Inventory::Category] 
 
-		attribute :payments, Array[Hash]
+		attribute :payments, Array[Business::Payment]
 
 		attribute :local_item_group_id
 
@@ -72,9 +72,10 @@ module Concerns::OrderConcern
 
 		end
 
-
+		
 		before_save do |document|
 			document.update_requirements
+			document.update_report_items
 		end
 
 	end
@@ -86,10 +87,20 @@ module Concerns::OrderConcern
 
 	## first reset all the required quantitis.
 	def reset_category_quantities
-		self.categories_hash.keys.each do |cat|
-			self.categories_hash[cat].quantity = 0
-		end
+		self.categories.map {|cat|
+			cat.quantity = 0	
+		}
 	end
+
+	def has_category?(name)
+		self.categories.select{|c|
+			c.name == name
+		}.size > 0
+	end
+
+	## can we show all the sectors if required ?
+	## we can get it from where ?
+	## information will have to be created for each sector also.
 
 	def update_requirements
 		reset_category_quantities
@@ -97,36 +108,55 @@ module Concerns::OrderConcern
 			report.requirements.each do |req|
 				options = req.categories.size
 				req.categories.each do |category|
-					if self.categories_hash[category.name].blank?
-
-						category_to_add = Inventory::Category.new(quantity: category.quantity, required_for_reports: [], optional_for_reports: [])
-						if options.size > 1
-							optional_for_reports << report.id.to_s
+					puts "looking for category: #{category.name}"
+					if !has_category?(category.name)
+						category_to_add = Inventory::Category.new(quantity: category.quantity, required_for_reports: [], optional_for_reports: [], name: category.name)
+						if options > 1
+							category_to_add.optional_for_reports << report.id.to_s
 						else
-							required_for_reports << report.id.to_s
+							category_to_add.required_for_reports << report.id.to_s
 						end
-
-						self.categories_hash[category.name] = category_to_add
+						self.categories << category_to_add
 					else
+						self.categories.each do |existing_category|
+							if existing_category.name == category.name
+								
+								existing_category.quantity += category.quantity
 
-						self.categories_hash[category.name].quantity+= category.quantity
+								if options > 1
+									existing_category.optional_for_reports << report.id.to_s
+								else
+									existing_category.required_for_reports << report.id.to_s
+								end
 
-						if options.size > 1
-							optional_for_reports << report.id.to_s
-						else
-							required_for_reports << report.id.to_s
-						end					 
-						
+								existing_category.optional_for_reports.flatten!
+
+								existing_category.required_for_reports.flatten!
+
+							end
+						end
 					end
 				end
 			end
+		}		
+	end
+
+	def update_report_items
+		self.reports.map{|c|
+			c.clear_all_items
 		}
-		
+		self.categories.each do |category|
+			category.items.each do |item|
+				self.reports.each do |report|
+					report.add_item(category,item)
+				end
+			end
+		end
 	end
 
 	module ClassMethods
 
-		def self.permitted_params
+		def permitted_params
 			base = [
 					:id,
 					{:order => 
@@ -151,7 +181,7 @@ module Concerns::OrderConcern
 			end
 			base
 		end
-		
+
 	end
 
 end

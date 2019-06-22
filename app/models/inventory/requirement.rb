@@ -13,7 +13,7 @@ class Inventory::Requirement
 	index_name "pathofast-inventory-requirements"
 	document_type "inventory/requirement"
 
-	attribute :categories, Array[Hash]
+	attribute :categories, Array[Inventory::Category]
 	attribute :name, String, mapping: {type: 'keyword'}
 
 	def assign_id_from_name

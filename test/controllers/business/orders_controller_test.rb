@@ -198,14 +198,16 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
     end
 =end
+
+=begin
     test " -- collates individual report requirements into order requirements -- " do 
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
         status = Diagnostics::Status.new(name: "one", description: "step one") 
         test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")     
-        requirement = Inventory::Requirement.new(quantity: 10)
-        category = Inventory::Category.new(name: "serum tube")
+        requirement = Inventory::Requirement.new
+        category = Inventory::Category.new(name: "serum tube", quantity: 10)
         item = Inventory::Item.new(local_item_group_id: "1234")
         category.items = [item]
         requirement.categories = [category]
@@ -228,8 +230,8 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         ## now add another one.
         status = Diagnostics::Status.new(name: "one", description: "step one") 
         test = Diagnostics::Test.new(name: "Vitamin D", description: "Vitamin D level in blood", price: 20, lis_code: "VITD")     
-        requirement = Inventory::Requirement.new(quantity: 10)
-        category = Inventory::Category.new(name: "serum tube")
+        requirement = Inventory::Requirement.new
+        category = Inventory::Category.new(name: "serum tube", quantity: 10)
         item = Inventory::Item.new(local_item_group_id: "1234")
         category.items = [item]
         requirement.categories = [category]
@@ -259,19 +261,123 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report_two = Diagnostics::Report.find(report_two_id)
 
         order = Business::Order.new
-        order.reports =  [report_one.attributes,report_two.attributes]
-      
+        order.reports =  [report_one,report_two]
+        
+        #puts order.reports.to_s
+        #exit(1)
+
         post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers 
 
         order = Business::Order.new(JSON.parse(response.body)["order"])
 
-        
+        puts "these are the order categories-"
+
+        puts order.categories.to_s
 
         assert_equal "201", response.code.to_s
-        assert_equal true, !order.requirements.blank?
+        #assert_equal true, !order.requirements.blank?
 
     end
 
+=end
 
+    test " -- on adding an item, updates to all relevant reports, and reduces required quantities of all other categories --" do 
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        status = Diagnostics::Status.new(name: "one", description: "step one") 
+        test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")     
+        requirement = Inventory::Requirement.new
+        category = Inventory::Category.new(name: "rapid serum tube", quantity: 10)
+        
+        requirement.categories = [category]
+        report = Diagnostics::Report.new
+        report.statuses = [status]
+        report.tests = [test]
+        report.requirements = [requirement]
+        report.name = "blank name"
+        report.description = "new report description"
+        report.price = 52
+        report.created_by_user = @u
+        report.created_by_user_id = @u.id.to_s
+        report.assign_id_from_name
+        report.save
+        assert_equal true, report.errors.full_messages.blank?
+
+        report_one_id = report.id.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        ## now add another one.
+        status = Diagnostics::Status.new(name: "one", description: "step one") 
+        test = Diagnostics::Test.new(name: "Vitamin D", description: "Vitamin D level in blood", price: 20, lis_code: "VITD")     
+        requirement = Inventory::Requirement.new
+        category = Inventory::Category.new(name: "serum tube", quantity: 10)
+        requirement.categories = [category]
+        report = Diagnostics::Report.new
+        report.statuses = [status]
+        report.tests = [test]
+        report.requirements = [requirement]
+        report.name = "25, OH dihydroxy vitamin d"
+        report.description = "Measurement of Vitamin D"
+        report.price = 520
+        report.created_by_user = @u
+        report.created_by_user_id = @u.id.to_s
+        report.assign_id_from_name
+        report.save
+        assert_equal true, report.errors.full_messages.blank?
+
+        report_two_id = report.id.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"        
+
+        report_one = Diagnostics::Report.find(report_one_id)
+        
+        report_two = Diagnostics::Report.find(report_two_id)
+
+        order = Business::Order.new
+        order.reports =  [report_one,report_two]
+        order.created_by_user = @u
+        order.created_by_user_id = @u.id.to_s
+        order.assign_id_from_name
+        order.save
+        assert_equal true, order.errors.full_messages.blank?
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"        
+
+
+        order = Business::Order.find(order.id.to_s)
+            
+        #puts order.categories[0].to_s
+        #exit(1)
+        order.categories[0].items.push(Inventory::Item.new(barcode: "1234567", local_item_group_id: "abcde"))
+
+        first_category_name = order.categories[0].name
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers 
+    
+        assert_equal "204", response.code.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"                 
+
+        order = Business::Order.find(order.id.to_s)
+
+        found_item = false
+
+        order.reports.each do |report|
+            report.requirements.each do |requirement|
+                requirement.categories.each do |category|
+                    if category.name == first_category_name
+                        found_item = true
+                        assert_equal 1, category.items.size
+                    end
+                end     
+            end 
+        end     
+
+        assert_equal true, found_item
+
+        
+        
+    end
 
 end

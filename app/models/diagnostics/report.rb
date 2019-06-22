@@ -14,11 +14,11 @@ class Diagnostics::Report
 	attribute :name, String, mapping: {type: 'keyword'}
 	attribute :description, String, mapping: {type: 'keyword'}
 	attribute :patient_id, String, mapping: {type: 'keyword'}
-	attribute :tests, Array[Hash]
-	attribute :requirements, Array[Hash]
-	attribute :statuses, Array[Hash]
-	attribute :rates, Array[Hash]
-	attribute :payments, Array[Hash]
+	attribute :tests, Array[Diagnostics::Test]
+	attribute :requirements, Array[Inventory::Requirement]
+	attribute :statuses, Array[Diagnostics::Status]
+	attribute :rates, Array[Business::Rate]
+	attribute :payments, Array[Business::Payment]
 	attribute :price, Float
 	validates :price, numericality: true
 	attribute :outsource_to_organization_id, String, mapping: {type: 'keyword'}
@@ -238,6 +238,7 @@ class Diagnostics::Report
 				:id,
 				{:report => 
 					[
+						:id,
 						:patient_id,
 						:price,
 						:name, 
@@ -309,4 +310,27 @@ class Diagnostics::Report
 		}
 	end
 
-end
+	## so it clears the items.
+	def clear_all_items
+		self.requirements.each do |req|
+			req.categories.each do |cat|
+				cat.items = []
+			end
+		end
+	end
+
+	## item has a remaining quantity.
+	def add_item(category,item)
+		self.requirements.each do |req|
+			req.categories.each do |cat|
+				if cat.name == category.name
+					if item.has_space?(cat.quantity)
+						item.deduct_space(cat.quantity)
+						cat.items << item
+					end
+				end
+			end
+		end
+	end
+
+end	

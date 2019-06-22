@@ -71,6 +71,9 @@ class Inventory::Item
 
 	attr_accessor :reports
 
+	attribute :space, Float, mapping: {type: 'float'}, default: 100.0
+	## its quantity can be only a maximum and defaults to 100
+	## and all quantities are specified as what ?
 	#validate :transaction_has_received_items
 
 	## so the root item group has to be defined.
@@ -96,6 +99,7 @@ class Inventory::Item
 
 	end
 
+=begin
 	def load_statuses_and_reports
 		search_results = Order.search({
 			_source: false,
@@ -136,7 +140,7 @@ class Inventory::Item
 	def update_status(template_status_id)
 
 	end
-
+=end
 	########################################################
 	##
 	##
@@ -145,7 +149,7 @@ class Inventory::Item
 	##
 	########################################################
 	def self.permitted_params
-		base = [:id,{:item => [:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date]}]
+		base = [:id,{:item => [:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space]}]
 		if defined? @permitted_params
 			base[1][:item] << @permitted_params
 			base[1][:item].flatten!
@@ -165,6 +169,25 @@ class Inventory::Item
 				}
 			}
 		}
+	end
+
+	###########################################################
+	##
+	##
+	## BOTH METHODS ARE USED IN Diagnostics::Report#add_item, which is in turn called from order_concern.rb
+	##
+	##
+	###########################################################
+
+	## @return[Boolean] : if the remaining space is 
+	def has_space?(quantity)
+		self.space > quantity
+	end
+
+	## @return[Float] : remaining space
+	def deduct_space(quantity)
+		self.space-=quantity
+		self.space
 	end
 
 	########################################################

@@ -14,7 +14,6 @@ class Business::Order
 	include Concerns::PdfConcern
 
 	
-		
 =begin
 	validates_presence_of :patient_id	
 		

@@ -13,8 +13,9 @@ class Inventory::Category
 	include Concerns::MissingMethodConcern
 
 	attribute :name, String, mapping: {type: 'keyword'}
+	## this is a percentage.
 	attribute :quantity, Float, mapping: {type: 'float'}
-	attribute :items, Array[Hash]
+	attribute :items, Array[Inventory::Item]
 	attribute :required_for_reports, Array, mapping: {type: 'keyword'}
 	attribute :optional_for_reports , Array, mapping: {type: 'keyword'}
 
