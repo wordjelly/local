@@ -7,6 +7,46 @@ module Concerns::Schedule::OrderConcern
 
   	module ClassMethods
 
+  		def employee_agg(s)
+			employee_agg = {
+				employee_id: {
+					terms: {
+						field: "employees.employee_id",
+						size: 1,
+						order: {workload: "asc"}
+					},
+					aggs: {
+						workload: {
+							min: {
+								field: "employees.bookings_score"
+							}
+						},
+						status_bookings: {
+							nested: {
+								path: "employees.bookings"
+							},
+							aggs: {
+								this_status: {
+									filter: {
+										term: {
+											"employees.bookings.status_id".to_sym => s[:id]
+										}
+									},
+									aggs: {
+										booking_priority: {
+											terms: {
+												field: "employees.bookings.priority",
+												order: {"_key".to_sym => "asc"}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		end
   		
 		def add_status_to_query(query,status)
 			query[:bool][:should] << 
@@ -100,53 +140,110 @@ module Concerns::Schedule::OrderConcern
 				}
 		end
 
-		def add_status_to_aggregation(aggs,status,order)
-				aggs[status.id.to_s] = {
-					terms: {
-						field: "number",
-						size: status.to - status.from,
-						include: (status.from.to_i..status.to.to_i).to_a
+		def with_order_aggregation(aggs,status,order)
+			aggs[status.id.to_s][:with_order_filter] = 
+				{
+					nested: {
+						path: "employees"
 					},
 					aggs: {
-						with_order_filter: {
+						with_order_filter_bookings: {
 							nested: {
-								path: "employees"
+								path: "employees.bookings"
 							},
 							aggs: {
-								with_order_filter_bookings: {
-									nested: {
-										path: "employees.bookings"
+								order_filter: {
+									filter: {
+										term: {
+											"employees.bookings.order_id".to_sym => order.id.to_s
+										}
 									},
 									aggs: {
-										order_filter: {
-											filter: {
-												term: {
-													"employees.bookings.order_id".to_sym => order.id.to_s
-												}
-											},
+										minutes: {
+											reverse_nested: {},
 											aggs: {
-												employees: {
-													reverse_nested: {
-														path: "employees"
+												minute: {
+													terms: {
+														field: "number",
+														size: status.to - status.from,
+														include: (status.from.to_i..status.to.to_i).to_a
 													},
-													aggs: employee_agg(status)
+													aggs: {
+														employees: {
+															nested: {
+																path: "employees"
+															},
+															aggs: employee_agg(statuse)
+														}
+													}
 												}
 											}
 										}
+										
 									}
 								}
 							}
-						},
-						without_order_filter: {
-							nested: {
-								path: "employees"
-							},
-							aggs: employee_agg(status)
 						}
 					}
 				}
 			
 		end
+
+		def without_order_aggregation(aggs,status,order)
+
+			aggs[status.id.to_s][:without_order_filter] = 
+				{
+					nested: {
+						path: "employees"
+					},
+					aggs: {
+						without_order_filter_bookings: {
+							nested: {
+								path: "employees.bookings"
+							},
+							aggs: {
+								order_filter: {
+									filter: {
+										not: {
+											filter: {
+												term: {
+													"employees.bookings.order_id".to_sym => order.id.to_s
+												}
+											}
+										}
+									},
+									aggs: {
+										minutes: {
+											reverse_nested: {},
+											aggs: {
+												minute: {
+													terms: {
+														field: "number",
+														size: status.to - status.from,
+														include: (status.from.to_i..status.to.to_i).to_a
+													},
+													aggs: {
+														employees: {
+															nested: {
+																path: "employees"
+															},
+															aggs: employee_agg(statuse)
+														}
+													}
+												}
+											}
+										}
+										
+									}
+								}
+							}
+						}
+					}
+				}
+
+		end
+
+		
 
 		def schedule_order(order)
 
@@ -164,7 +261,8 @@ module Concerns::Schedule::OrderConcern
 			order.procedure_versions_hash.keys.each do |pr|
 				order.procedure_versions_hash[pr][:statuses].each do |status|
 					add_status_to_query(query,status)
-					add_status_to_aggregation(aggregation,status,order)
+					with_order_aggregation(aggregation,status,order)
+					without_order_aggregation(aggregation,status,order)
 				end
 			end
 
@@ -174,6 +272,32 @@ module Concerns::Schedule::OrderConcern
 
 			puts "the aggregation is"
 			puts JSON.pretty_generate(aggregation)
+
+			search_result = Schedule::Minute.search({
+				query: query,
+				aggs:  aggregation
+			})
+
+			#puts search_result.response.aggregations.to_s
+
+			order.procedure_versions_hash.keys.each do |pr|
+				order.procedure_versions_hash[pr][:statuses].each do |status|
+					
+					status_id = status.id.to_s
+					
+					puts JSON.pretty_generate(search_result.response.aggregations.send(status_id))
+					
+					#search_result.response.aggregations.send(status_id).buckets.each do |bucket|
+						
+
+
+					#end
+				
+				end
+			end
+			
+
+			exit(1)
 
 		end
 

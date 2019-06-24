@@ -440,46 +440,7 @@ class Schedule::Minute
 
 	## @param[Hash] s : status has.
 	## expected to have a symbol key called :id
-	def self.employee_agg(s)
-		employee_agg = {
-			employee_id: {
-				terms: {
-					field: "employees.employee_id",
-					size: 1,
-					order: {workload: "asc"}
-				},
-				aggs: {
-					workload: {
-						min: {
-							field: "employees.bookings_score"
-						}
-					},
-					status_bookings: {
-						nested: {
-							path: "employees.bookings"
-						},
-						aggs: {
-							this_status: {
-								filter: {
-									term: {
-										"employees.bookings.status_id".to_sym => s[:id]
-									}
-								},
-								aggs: {
-									booking_priority: {
-										terms: {
-											field: "employees.bookings.priority",
-											order: {"_key".to_sym => "asc"}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	end
+	
 
 	## @args[Hash] : hash of arguments
 	## 1.required_statuses: 
