@@ -124,7 +124,7 @@ class ReportsControllerTest < ActionDispatch::IntegrationTest
 
     end
 
-
+=begin
     test " -- creates a report with status, requirement and test -- " do 
     	
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
@@ -191,6 +191,57 @@ class ReportsControllerTest < ActionDispatch::IntegrationTest
         report = Diagnostics::Report.find(report.id.to_s)
 
         assert_equal "new report description", report.description
+
+    end
+
+=end
+
+    test " -- creates a procedure version for the report, and all the statuses are given id's -- " do 
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+
+        status = Diagnostics::Status.new(name: "one", description: "step one")
+        
+
+        test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")
+
+            
+        requirement = Inventory::Requirement.new(quantity: 10)
+        category = Inventory::Category.new(name: "serum tube")
+        item = Inventory::Item.new(local_item_group_id: "1234")
+        category.items = [item]
+        requirement.categories = [category]
+
+
+
+        report = Diagnostics::Report.new
+        report.statuses = [status]
+        report.tests = [test]
+        report.requirements = [requirement]
+        report.name = "new report"
+        report.description = "new report description"
+        report.price = 52
+        report.created_by_user = @u
+        report.created_by_user_id = @u.id.to_s
+        report.assign_id_from_name
+        report.save
+        puts "the report errors are --------------->"
+        puts report.errors.full_messages.to_s
+        assert_equal true, report.errors.full_messages.blank?
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        ## now add another one.
+        put diagnostics_report_path(report.id.to_s), params: {report: report.attributes.merge(description: "new report description"), :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers 
+
+        report = Diagnostics::Report.find(report.id.to_s)
+
+        assert_equal "new report description", report.description        
+        assert_equal true, !report.procedure_version.blank?
+        
+        report.statuses.each do |status|
+            assert_equal true, !status.id.to_s.blank?
+        end
 
     end
 

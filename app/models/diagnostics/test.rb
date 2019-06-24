@@ -11,7 +11,6 @@ class Diagnostics::Test
 	index_name "pathofast-tests"
 
 
-
 	#attr_accessor :normal_ranges
 	
 	#attr_accessor :report_id

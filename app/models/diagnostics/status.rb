@@ -17,6 +17,8 @@ class Diagnostics::Status
 
 	include Elasticsearch::Persistence::Model
 	include Concerns::ImageLoadConcern
+	include Concerns::NameIdConcern
+	include Concerns::MissingMethodConcern
 
 	index_name "pathofast-statuses"
 
@@ -44,6 +46,10 @@ class Diagnostics::Status
 	attribute :lot_size, Integer, default: 1
 	attribute :requires_image, Integer, :default => 0
 	attribute :result, String, mapping: {type: 'text'}
+	attribute :from, Integer, mapping: {type: 'integer'}
+	attribute :to, Integer, mapping: {type: 'integer'}
+	## this is set if the status is copied from somewhere.
+	## has to be a permitted parameter.
 	
 =begin
 	## MAKING the report pdf -> collation and emailing.
@@ -165,7 +171,6 @@ class Diagnostics::Status
 		end
 
 	end
-
 	########################################################
 	##
 	##
@@ -173,6 +178,9 @@ class Diagnostics::Status
 	##
 	##
 	########################################################
+	before_save do |document|
+		document.assign_id_from_name
+	end
 =begin
 	after_find do |document|
 		document.load_parents

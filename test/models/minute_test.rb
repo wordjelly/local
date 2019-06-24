@@ -9,9 +9,6 @@ class MinuteTest < ActiveSupport::TestCase
     end
 
 
-    ## what all to test
-    ## 
-
     test "test adds new employee to minute" do 
     	new_employee_ids = ["101","221","321"]
 

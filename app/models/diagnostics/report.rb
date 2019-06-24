@@ -23,7 +23,10 @@ class Diagnostics::Report
 	validates :price, numericality: true
 	attribute :outsource_to_organization_id, String, mapping: {type: 'keyword'}
 	attribute :tag_ids, Array, mapping: {type: "keyword"}, default: []
-
+	
+	## calculated before_save in the set_procedure_version function
+	attribute :procedure_version, String, mapping: {type: "keyword"}
+	attribute :start_epoch, Integer, mapping: {type: 'integer'}
 	## WE SET PERMITTED
 	## AND THEN THE FIRST ACTION TO CHECK IS 
 
@@ -82,11 +85,23 @@ class Diagnostics::Report
 		    indexes :requirements, type: 'nested', properties: Inventory::Requirement.index_properties
 		    indexes :rates, type: 'nested', properties: Business::Rate.index_properties
 		    indexes :tests, type: 'nested', properties: Diagnostics::Test.index_properties
+			indexes :start_epoch, type: 'integer'
 		end
 	end
 	
 	before_save do |document|
+		document.set_procedure_version
+	end
 
+	## generates a huge concated string using the reference status version 
+	## of each status in the report.
+	## then converts that into a base64 string.
+	def set_procedure_version
+		procedure_version = ''
+		self.statuses.map{|c|
+			procedure_version+= c.updated_at.to_s
+		}
+		self.procedure_version = Base64.encode64(procedure_version)
 	end
 
 =begin	
@@ -243,6 +258,8 @@ class Diagnostics::Report
 						:price,
 						:name, 
 						:description,
+						:start_epoch,
+						:procedure_version,
 						{:tag_ids => []},
 						:outsource_to_organization_id,
 						{
@@ -306,6 +323,9 @@ class Diagnostics::Report
 			:tests => {
 				:type => "nested",
 				:properties => Diagnostics::Test.index_properties
+			},
+			:start_epoch => {
+				:type => 'integer'
 			}
 		}
 	end

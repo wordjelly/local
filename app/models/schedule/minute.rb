@@ -2,6 +2,8 @@ require 'elasticsearch/persistence/model'
 class Schedule::Minute
 	include Elasticsearch::Persistence::Model
 	include Concerns::EsBulkIndexConcern
+	include Concerns::Schedule::OrderConcern
+	include Concerns::Schedule::TestMethodsConcern
 	
 	index_name "pathofast-schedule-minutes"
 	document_type "schedule/minute"
@@ -12,12 +14,11 @@ class Schedule::Minute
 	attribute :number, Integer
 	attribute :employees, Array[Hash]
 
-	## we have to work with copy_to 
-	## and we have to work with 
-	## so we have the all field concern.
-	## add that to all the models.
-	## via a concern.
-	## then do copy_to wherever you need it.
+
+	## so now you come to the main game.
+	## the status and minute update scenarios.
+	## first status collation
+	## then minuting.
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -71,46 +72,7 @@ class Schedule::Minute
 					},
 					bookings: {
 						type: "nested",
-						properties: {
-							status_id: {
-								type: 'keyword'
-							},
-							count: {
-								type: 'integer'
-							},
-							priority: {
-								type: 'float'
-							},
-							order_id: {
-								type: 'keyword'
-							},
-							report_ids: {
-								type: 'keyword'
-							},
-							max_delay: {
-								type: 'keyword'
-							},
-							tubes: {
-								type: 'keyword'
-							},
-							blocks: {
-								type: 'nested',
-								properties: {
-									minutes: {
-										type: 'integer'
-									},
-									status_ids: {
-										type: 'keyword'
-									},
-									employee_ids: {
-										type: 'keyword'
-									},
-									remaining_capacity: {
-										type: 'keyword'
-									}
-								}
-							}
-						}
+						properties: Schedule::Booking.index_properties
 					}
 				}
 	    end
@@ -284,99 +246,6 @@ class Schedule::Minute
 	def self.bulk_size
 		100
 	end
-
-	## creates a single minute, with 
-	## creates n minutes.
-	def self.create_single_test_minute(status,employee_count=1)
-		status_ids = [status.id.to_s]
-		m = Schedule::Minute.new(number: 1, working: 1, employees: [], id: 1.to_s)
-		employee_count.times do |employee|
-			e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
-			m.employees << e
-		end
-		Schedule::Minute.add_bulk_item(m)
-		Schedule::Minute.flush_bulk
-	end
-
-	def self.create_multiple_test_minutes(total_mins,employee_count,status_ids,start_minute = 0)
-		total_mins.times do |min|
-			m = Schedule::Minute.new(number: (min + start_minute), working: 1, employees: [], id: (min + start_minute).to_s)
-			employee_count.times do |employee|
-				e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
-				m.employees << e
-			end
-			Schedule::Minute.add_bulk_item(m)
-		end
-		Schedule::Minute.flush_bulk
-	end
-
-
-	## creates a single minute, with 
-	## creates n minutes.
-	def self.create_two_test_minutes(status)
-		status_ids = [status.id.to_s]
-		2.times do |n| 
-			m = Schedule::Minute.new(number: n, working: 1, employees: [], id: n.to_s)
-			1.times do |employee|
-				e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
-				m.employees << e
-			end
-			Schedule::Minute.add_bulk_item(m)
-		end
-		Schedule::Minute.flush_bulk
-	end
-
-	def self.create_test_minutes(number_of_minutes)
-		status_ids = []    	
-    	5.times do |status|
-    		status_ids << status.to_s
-    	end
-		number_of_minutes.times do |minute|
-			m = Schedule::Minute.new(number: minute, working: 1, employees: [], id: minute.to_s)
-			6.times do |employee|
-				e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: [0,1,2,3,4,5,6,7,8,9,10].sample)
-				[0,1,2,3,4].sample.times do |booking|
-					b = Booking.new
-					b.status_id = status_ids.sample
-					b.count = 2
-					b.priority = booking
-					b.order_id = "o#{booking}"
-					b.report_ids = ["r#{booking}"]
-					b.max_delay = 10*booking
-					e.bookings << b		
-				end
-				m.employees << e
-			end
-			Schedule::Minute.add_bulk_item(m)
-		end
-		Schedule::Minute.flush_bulk
-	end
-	
-	def self.create_test_days
-		status_ids = []    	
-    	100.times do |status|
-    		status_ids << status
-    	end
-    	days = []
-    	minute_count = 0
-    	100.times do |day|
-    		d = Day.new(id: "day_" + day.to_s)
-    		d.date = Time.now + day.days
-    		d.working = 1
-    		d.minutes = []
-    		720.times do |minute|
-    			m = Schedule::Minute.new(number: minute_count, working: 1, employees: [], id: minute_count.to_s)
-    			6.times do |employee|
-    				e = Employee.new(id: employee.to_s, status_ids: status_ids, booked_status_id: -1, booked_count: 0)
-    				m.employees << e
-    			end
-    			minute_count+=1
-    			Schedule::Minute.add_bulk_item(m)
-    		end
-    	end
-    	Schedule::Minute.flush_bulk
-	end	
-
 
 
 	def self.aggregate_employee_bookings(employee_id,minute_from,minute_to)
@@ -556,6 +425,19 @@ class Schedule::Minute
 
 	end
 
+	## aggregation of statuses
+	## for eg :
+	## 6 reports have a collection status.
+	## which tubes are to be registered at that point.
+	## status steps, will register categories.
+	## that have been mentioned in the requirements.
+	## that way the tubes can pass.
+	## status will have a classification.
+	## 
+	## each status classification will have rules.
+	## and how it will be deducted.
+	## 
+
 	## @param[Hash] s : status has.
 	## expected to have a symbol key called :id
 	def self.employee_agg(s)
@@ -624,7 +506,7 @@ class Schedule::Minute
 	## so we autocomplete on what exactly ?
 	## each status can have a name ?
 	## so we autocomplete on it 
-	## 
+	## lets create the test minutes first in any test.
 
 	def self.minute_blocked(status_id,employee_id,minute,blocked_minutes_hash)
 		false if blocked_minutes_hash[status_id].blank?
@@ -740,13 +622,14 @@ class Schedule::Minute
 				end
 		end
 		
-		## status already has duration.
-		## we need lot size.
-		## and we need.
+		
 
 		blocked_minutes_hash
 	end
 
+
+	## called from 
+	
 
 	def self.get_minute_slots(args)
 			
@@ -769,8 +652,16 @@ class Schedule::Minute
 			}
 		}
 
+		#####################################################
+		##
+		##
+		## THIS IS THE QUERY PART.
+		##
+		##
+		#####################################################
 		args[:required_statuses].map{|c|
-			query[:bool][:should] << {
+			query[:bool][:should] << 
+			{
 				bool: {
 					must: [
 						{
@@ -864,6 +755,13 @@ class Schedule::Minute
 			
 		}
 		
+		########################################################
+		##
+		##
+		## THESE ARE THE AGGREGATIONS
+		##
+		##
+		########################################################
 		args[:required_statuses].each do |s|
 			
 			aggs[s[:id]] = {

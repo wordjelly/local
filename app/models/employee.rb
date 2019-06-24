@@ -7,6 +7,7 @@ class Employee
 	attribute :status_ids, Array, :default => []
 	attribute :employee_id, String, mapping: {type: "keyword"}
 	attribute :bookings_score, Float, :default => 0
-	attribute :bookings, Array[Hash]
+	attribute :bookings, Array[Schedule::Booking]
+
 	
 end

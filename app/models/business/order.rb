@@ -13,8 +13,8 @@ class Business::Order
 	include Concerns::OrderConcern
 	include Concerns::PdfConcern
 
-	
 =begin
+	
 	validates_presence_of :patient_id	
 		
 	## if set to any value, will skip the before save callbacks
@@ -485,6 +485,21 @@ class Business::Order
 
 	end
 
+	## gather those that have exactly same steps
+	## as one.
+	## then schedule -> 
+	## then move to the next report -> using homing to schedule it
+	## simple to add or remove reports.
+	## but that will take time.
+	## the exact scheduling.
+	## status ids.
+	## i can do it actually.
+	## But an employee is actually a user.
+	## so they have to have a user id.
+	## status collation
+	## order homing.
+	## these two are critical.	
+
 	###########################################################
 	##
 	##
@@ -659,5 +674,7 @@ class Business::Order
 		end
 
 	end
+
 =end
+
 end
