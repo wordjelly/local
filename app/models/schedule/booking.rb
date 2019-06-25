@@ -5,7 +5,6 @@ class Schedule::Booking
 	index_name "pathofast-schedule-blocks"
 	document_type "schedule/block"
 
-	
 	attribute :status_id, String, mapping: {type: 'keyword'}
 	attribute :count, Float, :default => 1
 	attribute :priority, Float, :default => 0

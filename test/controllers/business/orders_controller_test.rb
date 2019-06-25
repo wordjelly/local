@@ -450,6 +450,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     test " -- creates test minutes -- " do 
         status_ids = ["step 1","step 2","step 3","step 4","step 5"]
         Schedule::Minute.create_test_minutes
+       
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
         status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
