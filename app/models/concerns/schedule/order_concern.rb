@@ -277,6 +277,115 @@ module Concerns::Schedule::OrderConcern
 				}
 		end
 
+		## blocking an employee is straight forward.
+		## and then realloting will be just gathering those
+		## statuses that he had, and running those queries again.
+		## just reallot to nearest and next possible person.
+		## simplify it.
+
+		def get_blocked_minutes
+=begin
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "exists" : {
+                    "field" : "employees.bookings.blocks"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "step 1": {
+      "filter": {
+        "nested": {
+          "path": "employees",
+          "query": {
+            "nested": {
+              "path": "employees.bookings",
+              "query": {
+                "nested": {
+                  "path": "employees.bookings.blocks",
+                  "query": {
+                    "bool": {
+                      "must": [
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "terms": {
+                                  "employees.bookings.blocks.status_ids": [
+                                    "step 1",
+                                    "*"
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "aggs": {
+        "employees": {
+          "nested": 
+          {
+            "path": "employees"
+          },
+          "aggs": {
+            "bookings": {
+              "nested": {
+                "path": "employees.bookings"
+              },
+              "aggs": {
+                "blocks": {
+                  "nested": {
+                    "path": "employees.bookings.blocks"
+                  },
+                  "aggs": {
+                    "minutes" : {
+                      "terms": {
+                        "field": "employees.bookings.blocks.minutes"
+                      },
+                      "aggs": {
+                        "minimum_remaining_capacity": {
+                          "min": {
+                            "field": "employees.bookings.blocks.remaining_capacity"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+=end
+		end
+
 		## what does the block depend on ?
 		## how long the status blocks the user.
 		## how long it blocks other users.
