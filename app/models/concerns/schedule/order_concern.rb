@@ -395,7 +395,7 @@ module Concerns::Schedule::OrderConcern
 		## will add the booking and block to the update script.
 		## we have to also factor in the block at this stage.
 		## who all to block and for how long.
-		def add_to_booking(minute,employee_id,order_id,status,report_ids)
+		def add_to_booking(minute,employee_id,order_id,status,report_ids,remaining_capacity=0)
 			update_script = 
 			{
 				script: {
@@ -409,23 +409,23 @@ module Concerns::Schedule::OrderConcern
 							booking.put("order_id",[params.order_id]);
 
 							Map prior_block = new HashMap();
-							block.put("minutes",params.block_minutes_prior);
-							block.put("remaining_capacity",0);
-							block.put("status_ids",[params.status_id]);
-							block.put("employee_ids",["*"]);
+							prior_block.put("minutes",params.block_minutes_prior);
+							prior_block.put("remaining_capacity",0);
+							prior_block.put("status_ids",[params.status_id]);
+							prior_block.put("employee_ids",["*"]);
 
 							Map subsequent_block_this_emp = new HashMap();
-							block.put("minutes",params.block_minutes_hence);
-							block.put("remaining_capacity",params.remaining_capacity);
-							block.put("status_ids",["*"]);
-							block.put("employee_ids",[params.employee_id]);
+							subsequent_block_this_emp.put("minutes",params.block_minutes_hence);
+							subsequent_block_this_emp.put("remaining_capacity",params.remaining_capacity);
+							subsequent_block_this_emp.put("status_ids",["*"]);
+							subsequent_block_this_emp.put("employee_ids",[params.employee_id]);
 
 							Map subsequent_block_other_emp = new HashMap();
-							block.put("minutes",params.block_minutes_hence);
-							block.put("remaining_capacity",params.remaining_capacity);
-							block.put("status_ids",[param.status_id]);
-							block.put("employee_ids",[params.employee_id]);
-							block.put("except",1);
+							subsequent_block_other_emp.put("minutes",params.block_minutes_hence);
+							subsequent_block_other_emp.put("remaining_capacity",params.remaining_capacity);
+							subsequent_block_other_emp.put("status_ids",[params.status_id]);
+							subsequent_block_other_emp.put("employee_ids",[params.employee_id]);
+							subsequent_block_other_emp.put("except",1);
 
 							booking.put("blocks",[prior_block,subsequent_block_this_emp,subsequent_block_other_emp]);
 
@@ -436,10 +436,10 @@ module Concerns::Schedule::OrderConcern
 					}
 					''',
 					params: {
-						block_minutes_prior: *((minute - status.duration)..(minute)),
-						reduce_prior_capacity_by: status.reduce_prior_capacity_by
-						block_minutes_hence: *((minute)..(minute + status.duration)),
-						employee_block_duration: status.employee_block_duration
+						block_minutes_prior: Array((minute - status.duration)..(minute)),
+						reduce_prior_capacity_by: status.reduce_prior_capacity_by,
+						block_minutes_hence: Array((minute)..(minute + status.duration)),
+						employee_block_duration: status.employee_block_duration,
 						minute: minute,
 						employee_id: employee_id,
 						order_id: order_id,
@@ -447,7 +447,7 @@ module Concerns::Schedule::OrderConcern
 						status_id: status.id.to_s,
 						remaining_capacity: remaining_capacity
 					}	
-
+					
 				}
 			}
 
@@ -492,13 +492,17 @@ module Concerns::Schedule::OrderConcern
 			order.procedure_versions_hash.keys.each do |pr|
 				order.procedure_versions_hash[pr][:statuses].each do |status|
 					status_id = status.id.to_s
-					status_aggs = search_result.response.aggregations.send(status_id)					
+					status_aggs = search_result.response.aggregations.send(status_id)		
+
 					minute_buckets = get_minutes(status_aggs)
 					minute_buckets.each do |bucket|
-						minute_number = bucket.key
+
+
+						minute_number = bucket["key"]
+						
 						if current_order?(bucket)
 							#puts "current order detected"
-							employee_id = get_employees(bucket).first.key	
+							employee_id = get_employees(bucket.current_order).first["key"]	
 							## add the booking.
 							## to an employee.
 							## is this a new booking.?
@@ -508,20 +512,24 @@ module Concerns::Schedule::OrderConcern
 							#puts "other order detected"
 							## so now we have to build the block
 							## here.
-							employee_id = get_employees(bucket).first.key	
+							employee_id = get_employees(bucket.other_orders).first["key"]
 						else
-							employee_id = get_employees(bucket).first.key
+							employee_id = get_employees(bucket.no_bookings).first["key"]
 						end
 
 						## now you send it to the blockage.
 						puts "minute number: #{minute_number}"
 						puts "employee id: #{employee_id}"
 
+						## before this we would normally check the blocks.
+						add_to_booking(minute_number,employee_id,order.id.to_s,status,["a","b","c"])
 
 					end 
 
 				end
 			end
+
+			flush_bulk
 		end
 		#######################################################
 		##
@@ -537,6 +545,8 @@ module Concerns::Schedule::OrderConcern
 
 		## @return[Array] 
 		def get_employees(bucket)
+			puts "the bucket is:"
+			puts JSON.pretty_generate(bucket)
 			bucket.employees.employee.buckets
 		end
 
