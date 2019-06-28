@@ -31,11 +31,125 @@ class Schedule::Block
 		}
 	end
 
-	def self.build_blocks_script(minute,status)
-		
-		if status.block_other_employees
-		else
-		end
+	####################################################
+	##
+	##
+	## METHODS TO BUILD THE QUERY AND AGGREGATION
+	## TO FIND THE BLOCKS, WHILE SCHEDULING THE ORDER.
+	##
+	##
+	####################################################
+
+	def self.query 
+		{
+			bool: {
+				must: [
+					{
+						nested: {
+							path: "employees",
+							query: {
+								nested: {
+									path: "employees.bookings",
+									query: {
+										exists: {
+											field: "employees.bookings.blocks"
+										}
+									}
+								}
+							}
+						}
+					}
+				]
+			}
+		}
+	end
+
+	def self.agg_pre_filter(status)
+		{
+			nested: {
+				path: "employees",
+				query: {
+					nested: {
+						path: "employees.bookings",
+						query: {
+							nested: {
+								path: "employees.bookings.blocks",
+								query: {
+									terms: {
+	                                  "employees.bookings.blocks.status_ids".to_sym => [
+	                                    status.id.to_s,
+	                                    "*"
+	                                  ]
+	                                }
+								}	
+							}
+						}
+					}
+				}
+			}
+		}
+	end
+
+	def self.agg_capacity(status)
+
+=begin
+		{
+			nested: {
+				path: "employees"
+			},
+			aggs: {
+				bookings: {
+					nested: {
+						path: "employees.bookings"
+					},
+					aggs: {
+
+					}
+				}
+			}
+		}
+=end
+
+		{
+			#employees: {
+				nested: {
+					path: "employees"
+				},
+				aggs: {
+					bookings: {
+						nested: {
+							path: "employees.bookings"
+						},
+						aggs: {
+							blocks: {
+								nested: {
+									path: "employees.bookings.blocks"
+								},
+								aggs: {
+									blocked_minutes: {
+										terms: {
+											field: "employees.bookings.blocks.minutes"
+										},
+										aggs: {
+											"minimum_remaining_capacity".to_sym => {
+												min: {
+													field: "employees.bookings.blocks.remaining_capacity"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			#}
+		}
+
+	end
+
+	def self.add_status_to_agg(aggregation,status)
+		aggregation[status.id.to_s.to_sym] = agg_capacity(status)
 	end
 
 end

@@ -277,124 +277,6 @@ module Concerns::Schedule::OrderConcern
 				}
 		end
 
-		## blocking an employee is straight forward.
-		## and then realloting will be just gathering those
-		## statuses that he had, and running those queries again.
-		## just reallot to nearest and next possible person.
-		## simplify it.
-
-		def get_blocked_minutes
-=begin
-{
-  "query": {
-    "bool": {
-      "must": [
-        {
-          "nested": {
-            "path": "employees",
-            "query": {
-              "nested": {
-                "path": "employees.bookings",
-                "query": {
-                  "exists" : {
-                    "field" : "employees.bookings.blocks"
-                  }
-                }
-              }
-            }
-          }
-        }
-      ]
-    }
-  },
-  "aggs": {
-    "step 1": {
-      "filter": {
-        "nested": {
-          "path": "employees",
-          "query": {
-            "nested": {
-              "path": "employees.bookings",
-              "query": {
-                "nested": {
-                  "path": "employees.bookings.blocks",
-                  "query": {
-                    "bool": {
-                      "must": [
-                        {
-                          "bool": {
-                            "should": [
-                              {
-                                "terms": {
-                                  "employees.bookings.blocks.status_ids": [
-                                    "step 1",
-                                    "*"
-                                  ]
-                                }
-                              }
-                            ]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "aggs": {
-        "employees": {
-          "nested": 
-          {
-            "path": "employees"
-          },
-          "aggs": {
-            "bookings": {
-              "nested": {
-                "path": "employees.bookings"
-              },
-              "aggs": {
-                "blocks": {
-                  "nested": {
-                    "path": "employees.bookings.blocks"
-                  },
-                  "aggs": {
-                    "minutes" : {
-                      "terms": {
-                        "field": "employees.bookings.blocks.minutes"
-                      },
-                      "aggs": {
-                        "minimum_remaining_capacity": {
-                          "min": {
-                            "field": "employees.bookings.blocks.remaining_capacity"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-=end
-		end
-
-		## what does the block depend on ?
-		## how long the status blocks the user.
-		## how long it blocks other users.
-		## that's it.
-		## so these two are defined in status.
-		## instead of specifying all other employees.
-		## will add the booking and block to the update script.
-		## we have to also factor in the block at this stage.
-		## who all to block and for how long.
 		def add_to_booking(minute,employee_id,order_id,status,report_ids,remaining_capacity=0)
 			update_script = 
 			{
@@ -460,8 +342,10 @@ module Concerns::Schedule::OrderConcern
 			add_bulk_item(update_request)
 		end
 
+		## all i have to do is sort this out today.
 		def schedule_order(order)
 
+			## QUERY FOR THE FREE MINUTES.
 			query = {
 				bool: {
 					should: [
@@ -469,25 +353,44 @@ module Concerns::Schedule::OrderConcern
 				}
 			}
 
+			## AGG FOR THE FREE MINUTES.
 			aggregation = {
 				
 			}
+
+
+			## QUERY FOR THE BLOCKED_MINUTES
+			blocks_query = Schedule::Block.query
+
+			blocks_aggregation = {}
+
+			## AGGREGATION FOR THE BLOCKED MINUTES.
 
 			order.procedure_versions_hash.keys.each do |pr|
 				order.procedure_versions_hash[pr][:statuses].each do |status|
 					aggregation[status.id.to_s] = {}
 					add_to_query(query,status)
 					add_to_aggregation(status,order,aggregation)
+					Schedule::Block.add_status_to_agg(blocks_aggregation,status)
 				end
 			end
 
 			puts "the aggregation is"
-			puts JSON.pretty_generate(aggregation)
+			#puts JSON.pretty_generate(aggregation)
+			puts JSON.pretty_generate(blocks_aggregation)
 
 			search_result = Schedule::Minute.search({
 				query: query,
 				aggs:  aggregation
 			})
+
+			block_search_result = Schedule::Minute.search({
+				query: blocks_query,
+				aggs: blocks_aggregation
+				#,
+				#aggs: blocks_aggregation
+			})
+
 
 			order.procedure_versions_hash.keys.each do |pr|
 				order.procedure_versions_hash[pr][:statuses].each do |status|
