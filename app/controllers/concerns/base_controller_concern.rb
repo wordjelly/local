@@ -180,7 +180,7 @@ module Concerns::BaseControllerConcern
 			instance.versions.push(v.attributes)
 		end
 
-		puts JSON.pretty_generate(instance.attributes)
+		#puts JSON.pretty_generate(instance.attributes)
 
 		instance.save(op_type: 'create')
 
@@ -190,8 +190,8 @@ module Concerns::BaseControllerConcern
 
 		instance_variable_set("@#{get_resource_name}",instance)
 
-		puts "the instance is:"
-		puts instance.attributes.to_s
+		#puts "the instance is:"
+		#puts instance.attributes.to_s
 
 		respond_to do |format|
 			format.html do 

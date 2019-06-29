@@ -6,106 +6,171 @@ module Concerns::Schedule::OrderConcern
   	end
 
   	module ClassMethods
-		  		
-  		def add_to_aggregation(s,order,aggregation)
-  			aggregation[s.id.to_s] = {
-		      filter: {
-		        nested: {
-		          path: "employees",
-		          query: {
-		            bool: {
-		              must: [
-		                {
-		                  term: {
-		                    "employees.status_ids".to_sym => {
-		                      value: s.id.to_s
-		                    }
-		                  }
-		                },
-		                {
-		                  	nested: {
-		                    path: "employees.bookings",
-		                    query: {
-		                      	bool: {
-		                        must: [
-		                          {
-		                            range: {
-		                              "employees.bookings.count".to_sym => {
-		                                lte: s.maximum_capacity
-		                              }
-		                            }     
-		                          }
-		                        ]
-		                      }
-		                    }
-		                  }
-		                }
-		              ]
-		            }
-		          }
-		        }
-		      },
-		      aggs: {
-		        minute: {
-		          terms: {
-		            field: "number",
-		            size: 1,
-		            order: [
-		              {"current_order.doc_count".to_sym => "asc"},
-		              {"other_orders.doc_count".to_sym => "asc"},
-		              {"no_bookings.doc_count".to_sym => "asc"}
-		            ]
-		          },
-		          aggs: {
-		            current_order: {
-			            filter: {
-			                nested: {
-				                path: "employees",
-				                query: {
-				                    nested: {
-				                      	path: "employees.bookings",
-				                      	query: {
-					                        term: {
-					                          	"employees.bookings.order_id".to_sym => {
-					                            	value: order.id.to_s
-					                          	}
-					                        }
-				                      	}
-				                    }
-				                }
-			                }
-			            },
-		              	aggs: {
-		                	employees: {
-		              			nested: {
-		              				path: "employees"
-		              			},
-		              			aggs: {
-		              				employee: {
-		              					terms: {field: "employees.employee_id"},
-		              					aggs: {
-		              						bookings: {
-			              						nested: {
-			              							path: "employees.bookings"
-			              						},
-			              						aggs: {
-			              							booking: {
-			              								terms: {field: "employees.bookings.booking_id"}
-			              							}
-			              						}
-		              						}
-		              					}
-		              				}
-		              			}
-		              		}
-		                }
-		            },
-		            other_orders: {
-		              	filter: {
-		                	nested: {
-			                  	path: "employees",
-			                  	query: {
-				                    nested: {
+
+  		def blocks_hash_to_query(employee_blocks_hash)
+  			queries = []
+  			employee_blocks_hash.keys.each do |employee_id|
+  				queries << {
+  					bool: {
+  						must_not: [
+  							{
+  								terms: {
+  									number: employee_blocks_hash[employee_id]
+  								}
+  							},
+  							{
+  								nested: {
+  									path: "employees",
+  									query: {
+  										term: {
+  											"employees.employee_id".to_sym => employee_id
+  										}
+  									}
+  								}
+  							}
+  						]
+  					}
+  				}
+  			end
+  			queries
+  		end
+
+
+=begin
+
+=end
+
+		def filter__(employee_blocks_hash,s)
+			{
+  				bool: {
+  					must: 
+  					[
+  						{
+  							bool: {
+  								must: blocks_hash_to_query(employee_blocks_hash)
+  							}
+  						},
+  						{
+  							nested: {
+					          path: "employees",
+					          query: {
+					            bool: {
+					              must: [
+					                {
+					                  term: {
+					                    "employees.status_ids".to_sym => {
+					                      value: s.id.to_s
+					                    }
+					                  }
+					                },
+					                {
+					                  	nested: {
+					                    path: "employees.bookings",
+					                    query: {
+					                      	bool: {
+					                        must: [
+					                          {
+					                            range: {
+					                              "employees.bookings.count".to_sym => {
+					                                lte: s.maximum_capacity
+					                              }
+					                            }     
+					                          }
+					                        ]
+					                      }
+					                    }
+					                  }
+					                }
+					              ]
+					            }
+					          }
+					        }
+  						}
+  					]
+  				}
+		    }
+		end
+
+		def multi_filter(aggregation,status,order)
+			aggregation[status.id.to_s] = {
+				filters: {
+					filters: {
+						other_orders: other_orders_filter(order),
+						current_order: current_order_filter(order)
+					}
+				},
+				aggs: {
+					employees: {
+		      			nested: {
+		      				path: "employees"
+		      			},
+		      			aggs: {
+		      				filtered_employees: {
+		      					filter: {
+		      						bool: {
+		      							must_not: [
+		      								{
+		      									terms: {
+		      										"employees.id_minute".to_sym => ["0_0","1_0","2_0","3_0","4_0","5_0"]
+		      									}
+		      								}
+		      							]
+		      						}
+		      					},
+		      					aggs: {
+		      						back_to_minutes: {
+		      							reverse_nested: {},
+		      							aggs: {
+			  								minute: {
+			  									terms: {
+			  										field: "number"
+			  									},
+			  									aggs: {
+			  										employee_again: {
+			  											nested: {
+			  												path: "employees"
+			  											},
+			  											aggs: {
+			  												
+									      						employee: {
+											      					terms: {field: "employees.employee_id"},
+											      					aggs: {
+											      						bookings: {
+											          						nested: {
+											          							path: "employees.bookings"
+											          						},
+											          						aggs: {
+											          							booking: {
+											          								terms: {field: "employees.bookings.booking_id"}
+											          							}
+											          						}
+											      						}
+											      					}
+											      				}
+									      					
+			  											}
+			  										}
+			  									}
+			  								}
+			  							}
+		      						},
+		      					}
+		      				}
+		      			}
+		      		}
+				}
+			}
+		end
+
+		def other_orders_filter(order)
+			{
+				nested: {
+	              	path: "employees",
+	              	query: {
+	              		bool: {
+	              			must: [
+	              				{
+	              					nested: {
 				                      	path: "employees.bookings",
 				                      	query: {
 					                        bool: {
@@ -121,70 +186,333 @@ module Concerns::Schedule::OrderConcern
 					                        }
 				                      	}
 				                    }
-			                  	}
-		                	}
-		              	},
-		              	aggs: {
-		                	employees: {
-		              			nested: {
-		              				path: "employees"
-		              			},
-		              			aggs: {
-		              				employee: {
-		              					terms: {field: "employees.employee_id"},
-		              					aggs: {
-		              						bookings: {
-			              						nested: {
-			              							path: "employees.bookings"
-			              						},
-			              						aggs: {
-			              							booking: {
-			              								terms: {field: "employees.bookings.booking_id"}
-			              							}
-			              						}
-		              						}
-		              					}
-		              				}
-		              			}
-		              		}
-		                }
-		            },
-		            no_bookings: {
-		              	filter: {
-			                nested: {
-			                  path: "employees",
-			                  query: {
-			                    bool: {
-			                      must_not: [
-			                        {
-			                          exists: {
-			                            field: "bookings"
-			                          }
-			                        }
-			                      ]
-			                    }
-			                  }
-			                }
-		              	},
-		              	aggs: {
-		              		employees: {
-		              			nested: {
-		              				path: "employees"
-		              			},
-		              			aggs: {
-		              				employee: {
-		              					terms: {field: "employees.employee_id"}
-		              				}
-		              			}
-		              		}
-		              	}
-		            }
-		          }
-		        }
-		      }
-			}
+	              				}
+
+	              			]
+	              		}
+	                    
+	              	}
+	        	}
+        	}
 		end
 
+		def current_order_filter(order)
+			{
+				nested: {
+	                path: "employees",
+	                query: {
+	                    nested: {
+	                      	path: "employees.bookings",
+	                      	query: {
+		                        term: {
+		                          	"employees.bookings.order_id".to_sym => {
+		                            	value: order.id.to_s
+		                          	}
+		                        }
+	                      	}
+	                    }
+	                }
+	            }
+        	}
+		end
+
+=begin
+		def other_orders
+			filter: {
+	        	nested: {
+	              	path: "employees",
+	              	query: {
+	              		bool: {
+	              			must: [
+	              				{
+	              					nested: {
+				                      	path: "employees.bookings",
+				                      	query: {
+					                        bool: {
+					                          	must_not: [
+						                            {
+						                              	term: {
+							                                "employees.bookings.order_id".to_sym => {
+							                                  value: order.id.to_s
+							                                }
+						                              	}     
+						                            }
+					                          	]
+					                        }
+				                      	}
+				                    }
+	              				}
+
+	              			]
+	              		}
+	                    
+	              	}
+	        	}
+	      	},
+	      	aggs: {
+	        	employees: {
+	      			nested: {
+	      				path: "employees"
+	      			},
+	      			aggs: {
+	      				filtered_employees: {
+	      					filter: {
+	      						bool: {
+	      							must_not: [
+	      								{
+	      									terms: {
+	      										"employees.id_minute".to_sym => ["0_0","1_0","2_0","3_0","4_0","5_0"]
+	      									}
+	      								}
+	      							]
+	      						}
+	      					},
+	      					aggs: {
+	      						back_to_minutes: {
+	      							reverse_nested: {}
+	      						},
+	  							aggs: {
+	  								minute: {
+	  									term: {
+	  										field: "number"
+	  									},
+	  									aggs: {
+	  										employee_again: {
+	  											nested: {
+	  												path: "employees"
+	  											},
+	  											aggs: {
+	  												aggs: {
+							      						employee: {
+									      					terms: {field: "employees.employee_id"},
+									      					aggs: {
+									      						bookings: {
+									          						nested: {
+									          							path: "employees.bookings"
+									          						},
+									          						aggs: {
+									          							booking: {
+									          								terms: {field: "employees.bookings.booking_id"}
+									          							}
+									          						}
+									      						}
+									      					}
+									      				}
+							      					}
+	  											}
+	  										}
+	  									}
+	  								}
+	  							}
+	      					}
+	      				}
+	      			}
+	      		}
+	        }
+		end
+=end
+		
+
+		def no_bookings
+
+		end
+
+  		## @param[Hash] employee_blocks_hash => 
+  		def primary_aggregation(employee_blocks_hash,order,status)
+  			{
+	  			#filter: filter__(employee_blocks_hash,status),
+			   	#aggs: {
+			    #    minute: {
+					  terms: {
+					    field: "number",
+					    size: 1,
+					    order: [
+					      {"blocked_filter>current_order.doc_count".to_sym => "asc"},
+					      {"blocked_filter>other_orders.doc_count".to_sym => "asc"},
+					      {"blocked_filter>no_bookings.doc_count".to_sym => "asc"}
+					    ]
+					  },
+					  aggs: {
+					  	blocked_filter: {
+					  		filter: {
+					  			nested: {
+					  				path: "employees",
+					  				query: {
+					  					bool: {
+					  						must_not: [
+					  							{
+					  								term: {
+					  									"employees.id_minute".to_sym => "0_0"
+					  								}
+					  							}
+					  						]
+					  					}
+					  				}
+					  			}
+					  		},
+					  		aggs: {
+					  			current_order: {
+							        filter: {
+							            nested: {
+							                path: "employees",
+							                query: {
+							                    nested: {
+							                      	path: "employees.bookings",
+							                      	query: {
+								                        term: {
+								                          	"employees.bookings.order_id".to_sym => {
+								                            	value: order.id.to_s
+								                          	}
+								                        }
+							                      	}
+							                    }
+							                }
+							            }
+							        },
+							      	aggs: {
+							        	employees: {
+							      			nested: {
+							      				path: "employees"
+							      			},
+							      			aggs: {
+							      				employee: {
+							      					terms: {field: "employees.employee_id"},
+							      					aggs: {
+							      						bookings: {
+							          						nested: {
+							          							path: "employees.bookings"
+							          						},
+							          						aggs: {
+							          							booking: {
+							          								terms: {field: "employees.bookings.booking_id"}
+							          							}
+							          						}
+							      						}
+							      					}
+							      				}
+							      			}
+							      		}
+							        }
+							    },
+							    other_orders: {
+							      	filter: {
+							        	nested: {
+							              	path: "employees",
+							              	query: {
+							              		bool: {
+							              			must: [
+							              				{
+							              					nested: {
+										                      	path: "employees.bookings",
+										                      	query: {
+											                        bool: {
+											                          	must_not: [
+												                            {
+												                              	term: {
+													                                "employees.bookings.order_id".to_sym => {
+													                                  value: order.id.to_s
+													                                }
+												                              	}     
+												                            }
+											                          	]
+											                        }
+										                      	}
+										                    }
+							              				}
+
+							              			]
+							              		}
+							                    
+							              	}
+							        	}
+							      	},
+							      	aggs: {
+							        	employees: {
+							      			nested: {
+							      				path: "employees"
+							      			},
+							      			aggs: {
+							      				filtered_employees: {
+							      					filter: {
+							      						bool: {
+							      							must_not: [
+							      								{
+							      									terms: {
+							      										"employees.id_minute".to_sym => ["0_0","1_0","2_0","3_0","4_0","5_0"]
+							      									}
+							      								}
+							      							]
+							      						}
+							      					},
+							      					## reverse aggregation on the minutes
+							      					## and then the employee id.
+							      					## that can be simpler.
+							      					## so we will automatically ignore
+							      					## and we can sort this on the 
+							      					aggs: {
+							      						employee: {
+									      					terms: {field: "employees.employee_id"},
+									      					aggs: {
+									      						bookings: {
+									          						nested: {
+									          							path: "employees.bookings"
+									          						},
+									          						aggs: {
+									          							booking: {
+									          								terms: {field: "employees.bookings.booking_id"}
+									          							}
+									          						}
+									      						}
+									      					}
+									      				}
+							      					}
+							      				}
+							      			}
+							      		}
+							        }
+							    },
+							    no_bookings: {
+							      	filter: {
+							            nested: {
+							              path: "employees",
+							              query: {
+							                bool: {
+							                  must_not: [
+							                    {
+							                      exists: {
+							                        field: "bookings"
+							                      }
+							                    }
+							                  ]
+							                }
+							              }
+							            }
+							      	},
+							      	aggs: {
+							      		employees: {
+							      			nested: {
+							      				path: "employees"
+							      			},
+							      			aggs: {
+							      				employee: {
+							      					terms: {field: "employees.employee_id"}
+							      				}
+							      			}
+							      		}
+							      	}
+							    }
+					  		}
+					  	}
+					  }
+					#}
+	  			#}
+  			}
+  		end
+
+  		def add_to_aggregation(aggregation,s,order)
+  			aggregation[s.id.to_s] = primary_aggregation({"0" => [0,1,2,3]},order,s)
+  		end
+		
 		def add_to_query(query,status)
 			query[:bool][:should] << 
 				{
@@ -358,45 +686,35 @@ module Concerns::Schedule::OrderConcern
 				
 			}
 
-
-			## QUERY FOR THE BLOCKED_MINUTES
-			blocks_query = Schedule::Block.query
-
-			blocks_aggregation = {}
-
-			## AGGREGATION FOR THE BLOCKED MINUTES.
-
+			## first get the bloody aggregation working.
+				
 			order.procedure_versions_hash.keys.each do |pr|
 				order.procedure_versions_hash[pr][:statuses].each do |status|
 					aggregation[status.id.to_s] = {}
 					add_to_query(query,status)
-					add_to_aggregation(status,order,aggregation)
-					Schedule::Block.add_status_to_agg(blocks_aggregation,status)
+					multi_filter(aggregation,status,order)
+					#add_to_aggregation(aggregation,status,order)
 				end
 			end
 
 			puts "the aggregation is"
-			#puts JSON.pretty_generate(aggregation)
-			puts JSON.pretty_generate(blocks_aggregation)
+			puts JSON.pretty_generate(aggregation)
+			#puts JSON.pretty_generate(blocks_aggregation)
 
 			search_result = Schedule::Minute.search({
 				query: query,
 				aggs:  aggregation
 			})
 
-			block_search_result = Schedule::Minute.search({
-				query: blocks_query,
-				aggs: blocks_aggregation
-				#,
-				#aggs: blocks_aggregation
-			})
 
 
 			order.procedure_versions_hash.keys.each do |pr|
 				order.procedure_versions_hash[pr][:statuses].each do |status|
 					status_id = status.id.to_s
 					status_aggs = search_result.response.aggregations.send(status_id)		
-
+					puts "the status aggs are:"
+					puts JSON.pretty_generate(status_aggs)
+					exit(1)
 					minute_buckets = get_minutes(status_aggs)
 					minute_buckets.each do |bucket|
 

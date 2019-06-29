@@ -73,6 +73,12 @@ class Schedule::Minute
 					bookings: {
 						type: "nested",
 						properties: Schedule::Booking.index_properties
+					},
+					number: {
+						type: "integer"
+					},
+					id_minute: {
+						type: 'keyword'
 					}
 				}
 	    end

@@ -447,7 +447,8 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     end
 =end
     
-    test " -- creates test minutes -- " do 
+=begin
+    test " -- schedules order -- " do 
         status_ids = ["step 1","step 2","step 3","step 4","step 5"]
         Schedule::Minute.create_test_minutes
        
@@ -519,5 +520,78 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         puts o.errors.full_messages.to_s
 
     end 
+=end
 
+    test " -- finds blocked minutes -- " do 
+
+        status_ids = ["step 1","step 2","step 3","step 4","step 5"]
+        Schedule::Minute.create_test_minutes
+       
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
+        test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")     
+        requirement = Inventory::Requirement.new
+        category = Inventory::Category.new(name: "rapid serum tube", quantity: 10)
+        
+        requirement.categories = [category]
+        report = Diagnostics::Report.new
+        report.statuses = [status]
+        report.tests = [test]
+        report.requirements = [requirement]
+        report.name = "blank name"
+        report.description = "new report description"
+        report.price = 52
+        report.created_by_user = @u
+        report.created_by_user_id = @u.id.to_s
+        report.assign_id_from_name
+        report.save
+        assert_equal true, report.errors.full_messages.blank?
+
+        report_one_id = report.id.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        ## now add another one.
+        status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
+        test = Diagnostics::Test.new(name: "Vitamin D", description: "Vitamin D level in blood", price: 20, lis_code: "VITD")     
+        requirement = Inventory::Requirement.new
+        category = Inventory::Category.new(name: "serum tube", quantity: 10)
+        requirement.categories = [category]
+        report = Diagnostics::Report.new
+        report.statuses = [status]
+        report.tests = [test]
+        report.requirements = [requirement]
+        report.name = "25, OH dihydroxy vitamin d"
+        report.description = "Measurement of Vitamin D"
+        report.price = 520
+        report.created_by_user = @u
+        report.created_by_user_id = @u.id.to_s
+        report.assign_id_from_name
+        report.save
+        assert_equal true, report.errors.full_messages.blank?
+
+        report_two_id = report.id.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"        
+
+        report_one = Diagnostics::Report.find(report_one_id)
+        
+        report_two = Diagnostics::Report.find(report_two_id)
+
+        report_one.start_epoch = 10
+        report_two.start_epoch = 20
+
+        order = Business::Order.new
+        order.reports =  [report_one,report_two]
+        
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
+
+        post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers     
+
+      
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
+
+
+        
+    end
 end

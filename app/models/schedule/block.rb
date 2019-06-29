@@ -26,7 +26,7 @@ class Schedule::Block
 				type: 'keyword'
 			},
 			remaining_capacity: {
-				type: 'keyword'
+				type: 'integer'
 			}
 		}
 	end
@@ -39,79 +39,9 @@ class Schedule::Block
 	##
 	##
 	####################################################
-
-	def self.query 
-		{
-			bool: {
-				must: [
-					{
-						nested: {
-							path: "employees",
-							query: {
-								nested: {
-									path: "employees.bookings",
-									query: {
-										exists: {
-											field: "employees.bookings.blocks"
-										}
-									}
-								}
-							}
-						}
-					}
-				]
-			}
-		}
-	end
-
-	def self.agg_pre_filter(status)
-		{
-			nested: {
-				path: "employees",
-				query: {
-					nested: {
-						path: "employees.bookings",
-						query: {
-							nested: {
-								path: "employees.bookings.blocks",
-								query: {
-									terms: {
-	                                  "employees.bookings.blocks.status_ids".to_sym => [
-	                                    status.id.to_s,
-	                                    "*"
-	                                  ]
-	                                }
-								}	
-							}
-						}
-					}
-				}
-			}
-		}
-	end
-
-	def self.agg_capacity(status)
-
-=begin
-		{
-			nested: {
-				path: "employees"
-			},
-			aggs: {
-				bookings: {
-					nested: {
-						path: "employees.bookings"
-					},
-					aggs: {
-
-					}
-				}
-			}
-		}
-=end
-
-		{
-			#employees: {
+	def self.get_blocked_mins(status)
+		aggregation[status.id.to_s] = {
+			filter: {
 				nested: {
 					path: "employees"
 				},
@@ -126,14 +56,32 @@ class Schedule::Block
 									path: "employees.bookings.blocks"
 								},
 								aggs: {
-									blocked_minutes: {
-										terms: {
-											field: "employees.bookings.blocks.minutes"
+									status_related: {
+										filter: {
+											terms: {
+												"employees.bookings.blocks.status_id".to_sym => {
+													"employees.bookings.blocks.status_ids".to_sym => [
+					                                    status.id.to_s,
+					                                    "*"
+					                                ]
+												}
+											}
 										},
 										aggs: {
-											"minimum_remaining_capacity".to_sym => {
-												min: {
-													field: "employees.bookings.blocks.remaining_capacity"
+											blocked_minutes: {
+												terms: {
+													field: "employees.bookings.blocks.minutes"
+												},
+												aggs: {
+													has_capacity: {
+														filter: {
+															range: {
+																"employees.bookings.blocks.remaining_capacity".to_sym => {
+																	lte: 0
+																}
+															}
+														}
+													}
 												}
 											}
 										}
@@ -142,14 +90,9 @@ class Schedule::Block
 							}
 						}
 					}
-				}
-			#}
-		}
-
-	end
-
-	def self.add_status_to_agg(aggregation,status)
-		aggregation[status.id.to_s.to_sym] = agg_capacity(status)
+				}	
+			}	
+		} 	
 	end
 
 end

@@ -51,7 +51,7 @@ module Concerns::Schedule::TestMethodsConcern
 			number_of_minutes.times do |minute|
 				m = Schedule::Minute.new(number: minute, working: 1, employees: [], id: minute.to_s)
 				6.times do |employee|
-					e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: [0,1,2,3,4,5,6,7,8,9,10].sample)
+					e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: [0,1,2,3,4,5,6,7,8,9,10].sample, number: minute, id_minute: employee.to_s + "_" + minute.to_s)
 					[0,1,2,3,4].sample.times do |booking|
 						b = Schedule::Booking.new
 						b.status_id = status_ids.sample
