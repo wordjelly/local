@@ -2,9 +2,11 @@ require 'elasticsearch/persistence/model'
 class Schedule::Booking
 
 	include Elasticsearch::Persistence::Model
-	index_name "pathofast-schedule-blocks"
-	document_type "schedule/block"
+	include Concerns::Schedule::BookingConcern
+	index_name "pathofast-schedule-bookings"
+	document_type "schedule/booking"
 
+	attribute :booking_id, String, mapping: {type: 'keyword'}
 	attribute :status_id, String, mapping: {type: 'keyword'}
 	attribute :count, Float, :default => 1
 	attribute :priority, Float, :default => 0
@@ -16,6 +18,9 @@ class Schedule::Booking
 
 	def self.index_properties
 		{
+			booking_id: {
+				type: 'keyword'
+			},
 			status_id: {
 				type: 'keyword'
 			},

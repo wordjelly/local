@@ -14,8 +14,9 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 		Inventory::Transaction.create_index! force: true
 		Inventory::ItemTransfer.create_index! force: true
 		Inventory::Comment.create_index! force: true
-        Schedule::Minute.create_index! force: true
-		## that's the end of it
+        #Schedule::Minute.create_index! force: true
+		#Schedule::Block.create_index! force: true
+        ## that's the end of it
 		User.delete_all
 		User.es.index.delete
 		User.es.index.create
@@ -522,12 +523,14 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     end 
 =end
 
+
     test " -- finds blocked minutes -- " do 
 
-        status_ids = ["step 1","step 2","step 3","step 4","step 5"]
-        Schedule::Minute.create_test_minutes
+        status_ids = ["step 1","step 2","step 3","step 4","step 5","step 6","step 7","step 8","step 9","step 10"]
+        #Schedule::Minute.create_test_minutes
        
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
 
         status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
         test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")     
@@ -536,7 +539,13 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         
         requirement.categories = [category]
         report = Diagnostics::Report.new
-        report.statuses = [status]
+        report.statuses = status_ids.map{|c| 
+            s = Diagnostics::Status.new
+            s.name = c
+            s.duration = 20
+            s.description = c
+            s
+        }
         report.tests = [test]
         report.requirements = [requirement]
         report.name = "blank name"
@@ -558,7 +567,13 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         category = Inventory::Category.new(name: "serum tube", quantity: 10)
         requirement.categories = [category]
         report = Diagnostics::Report.new
-        report.statuses = [status]
+        report.statuses = status_ids.map{|c| 
+            s = Diagnostics::Status.new
+            s.name = c
+            s.duration = 10
+            s.description = c
+            s
+        }
         report.tests = [test]
         report.requirements = [requirement]
         report.name = "25, OH dihydroxy vitamin d"
@@ -578,8 +593,8 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         
         report_two = Diagnostics::Report.find(report_two_id)
 
-        report_one.start_epoch = 10
-        report_two.start_epoch = 20
+        report_one.start_epoch = 450
+        report_two.start_epoch = 100
 
         order = Business::Order.new
         order.reports =  [report_one,report_two]
@@ -587,11 +602,22 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
 
         post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers     
-
       
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
-
-
         
+        ## consider a purely write heavy system
+        ## it will write all minutes in the range
+        ## with a script, i.e update
+        ## any employee, which has the status, and is not booked, will be given this.
+        ## then a simple query, for the first minute will do the rest of the job.
+        ## in this the only problem is the blocks.
+        ## after the status is done, 
+
     end
+
+=begin
+    test " -- create test minutes -- " do 
+        Schedule::Minute.create_test_minutes
+    end
+=end
 end

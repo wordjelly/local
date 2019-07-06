@@ -4,6 +4,7 @@ class Schedule::Minute
 	include Concerns::EsBulkIndexConcern
 	include Concerns::Schedule::OrderConcern
 	include Concerns::Schedule::TestMethodsConcern
+	include Concerns::Schedule::MinuteConcern
 	
 	index_name "pathofast-schedule-minutes"
 	document_type "schedule/minute"
@@ -13,13 +14,6 @@ class Schedule::Minute
 	attribute :working, Integer, :default => 1
 	attribute :number, Integer
 	attribute :employees, Array[Hash]
-
-
-	## so now you come to the main game.
-	## the status and minute update scenarios.
-	## first status collation
-	## then minuting.
-
 	settings index: { 
 	    number_of_shards: 1, 
 	    number_of_replicas: 0,

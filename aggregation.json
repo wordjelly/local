@@ -1,0 +1,1832 @@
+{
+  "step 1": {
+    "filters": {
+      "filters": {
+        "other_orders": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "nested": {
+                      "path": "employees.bookings",
+                      "query": {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "term": {
+                                "employees.bookings.order_id": {
+                                  "value": "5d209d51acbcd6014346081d"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "current_order": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "term": {
+                    "employees.bookings.order_id": {
+                      "value": "5d209d51acbcd6014346081d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "no_bookings": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "exists": {
+                          "field": "employees.bookings.status_id"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggs": {
+      "blocked_minutes_filter": {
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "number": [
+                    -1
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "employees": {
+            "nested": {
+              "path": "employees"
+            },
+            "aggs": {
+              "back_to_minutes": {
+                "reverse_nested": {
+                },
+                "aggs": {
+                  "status_minute_range": {
+                    "filter": {
+                      "range": {
+                        "number": {
+                          "gte": 100,
+                          "lte": 160
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "employee_again": {
+                        "nested": {
+                          "path": "employees"
+                        },
+                        "aggs": {
+                          "status_id_filter": {
+                            "filter": {
+                              "term": {
+                                "employees.status_ids": "step 1"
+                              }
+                            },
+                            "aggs": {
+                              "minute": {
+                                "reverse_nested": {
+                                },
+                                "aggs": {
+                                  "minute_histogram": {
+                                    "histogram": {
+                                      "field": "number",
+                                      "interval": 1
+                                    },
+                                    "aggs": {
+                                      "employee": {
+                                        "nested": {
+                                          "path": "employees"
+                                        },
+                                        "aggs": {
+                                          "employee": {
+                                            "terms": {
+                                              "field": "employees.number",
+                                              "size": 1
+                                            },
+                                            "aggs": {
+                                              "employee_id": {
+                                                "terms": {
+                                                  "field": "employees.employee_id",
+                                                  "size": 1
+                                                },
+                                                "aggs": {
+                                                  "bookings": {
+                                                    "nested": {
+                                                      "path": "employees.bookings"
+                                                    },
+                                                    "aggs": {
+                                                      "booking": {
+                                                        "terms": {
+                                                          "field": "employees.bookings.booking_id",
+                                                          "size": 1
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "step 2": {
+    "filters": {
+      "filters": {
+        "other_orders": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "nested": {
+                      "path": "employees.bookings",
+                      "query": {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "term": {
+                                "employees.bookings.order_id": {
+                                  "value": "5d209d51acbcd6014346081d"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "current_order": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "term": {
+                    "employees.bookings.order_id": {
+                      "value": "5d209d51acbcd6014346081d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "no_bookings": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "exists": {
+                          "field": "employees.bookings.status_id"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggs": {
+      "blocked_minutes_filter": {
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "number": [
+                    -1
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "employees": {
+            "nested": {
+              "path": "employees"
+            },
+            "aggs": {
+              "back_to_minutes": {
+                "reverse_nested": {
+                },
+                "aggs": {
+                  "status_minute_range": {
+                    "filter": {
+                      "range": {
+                        "number": {
+                          "gte": 170,
+                          "lte": 230
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "employee_again": {
+                        "nested": {
+                          "path": "employees"
+                        },
+                        "aggs": {
+                          "status_id_filter": {
+                            "filter": {
+                              "term": {
+                                "employees.status_ids": "step 2"
+                              }
+                            },
+                            "aggs": {
+                              "minute": {
+                                "reverse_nested": {
+                                },
+                                "aggs": {
+                                  "minute_histogram": {
+                                    "histogram": {
+                                      "field": "number",
+                                      "interval": 1
+                                    },
+                                    "aggs": {
+                                      "employee": {
+                                        "nested": {
+                                          "path": "employees"
+                                        },
+                                        "aggs": {
+                                          "employee": {
+                                            "terms": {
+                                              "field": "employees.number",
+                                              "size": 1
+                                            },
+                                            "aggs": {
+                                              "employee_id": {
+                                                "terms": {
+                                                  "field": "employees.employee_id",
+                                                  "size": 1
+                                                },
+                                                "aggs": {
+                                                  "bookings": {
+                                                    "nested": {
+                                                      "path": "employees.bookings"
+                                                    },
+                                                    "aggs": {
+                                                      "booking": {
+                                                        "terms": {
+                                                          "field": "employees.bookings.booking_id",
+                                                          "size": 1
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "step 3": {
+    "filters": {
+      "filters": {
+        "other_orders": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "nested": {
+                      "path": "employees.bookings",
+                      "query": {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "term": {
+                                "employees.bookings.order_id": {
+                                  "value": "5d209d51acbcd6014346081d"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "current_order": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "term": {
+                    "employees.bookings.order_id": {
+                      "value": "5d209d51acbcd6014346081d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "no_bookings": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "exists": {
+                          "field": "employees.bookings.status_id"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggs": {
+      "blocked_minutes_filter": {
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "number": [
+                    -1
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "employees": {
+            "nested": {
+              "path": "employees"
+            },
+            "aggs": {
+              "back_to_minutes": {
+                "reverse_nested": {
+                },
+                "aggs": {
+                  "status_minute_range": {
+                    "filter": {
+                      "range": {
+                        "number": {
+                          "gte": 240,
+                          "lte": 300
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "employee_again": {
+                        "nested": {
+                          "path": "employees"
+                        },
+                        "aggs": {
+                          "status_id_filter": {
+                            "filter": {
+                              "term": {
+                                "employees.status_ids": "step 3"
+                              }
+                            },
+                            "aggs": {
+                              "minute": {
+                                "reverse_nested": {
+                                },
+                                "aggs": {
+                                  "minute_histogram": {
+                                    "histogram": {
+                                      "field": "number",
+                                      "interval": 1
+                                    },
+                                    "aggs": {
+                                      "employee": {
+                                        "nested": {
+                                          "path": "employees"
+                                        },
+                                        "aggs": {
+                                          "employee": {
+                                            "terms": {
+                                              "field": "employees.number",
+                                              "size": 1
+                                            },
+                                            "aggs": {
+                                              "employee_id": {
+                                                "terms": {
+                                                  "field": "employees.employee_id",
+                                                  "size": 1
+                                                },
+                                                "aggs": {
+                                                  "bookings": {
+                                                    "nested": {
+                                                      "path": "employees.bookings"
+                                                    },
+                                                    "aggs": {
+                                                      "booking": {
+                                                        "terms": {
+                                                          "field": "employees.bookings.booking_id",
+                                                          "size": 1
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "step 4": {
+    "filters": {
+      "filters": {
+        "other_orders": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "nested": {
+                      "path": "employees.bookings",
+                      "query": {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "term": {
+                                "employees.bookings.order_id": {
+                                  "value": "5d209d51acbcd6014346081d"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "current_order": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "term": {
+                    "employees.bookings.order_id": {
+                      "value": "5d209d51acbcd6014346081d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "no_bookings": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "exists": {
+                          "field": "employees.bookings.status_id"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggs": {
+      "blocked_minutes_filter": {
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "number": [
+                    -1
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "employees": {
+            "nested": {
+              "path": "employees"
+            },
+            "aggs": {
+              "back_to_minutes": {
+                "reverse_nested": {
+                },
+                "aggs": {
+                  "status_minute_range": {
+                    "filter": {
+                      "range": {
+                        "number": {
+                          "gte": 310,
+                          "lte": 370
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "employee_again": {
+                        "nested": {
+                          "path": "employees"
+                        },
+                        "aggs": {
+                          "status_id_filter": {
+                            "filter": {
+                              "term": {
+                                "employees.status_ids": "step 4"
+                              }
+                            },
+                            "aggs": {
+                              "minute": {
+                                "reverse_nested": {
+                                },
+                                "aggs": {
+                                  "minute_histogram": {
+                                    "histogram": {
+                                      "field": "number",
+                                      "interval": 1
+                                    },
+                                    "aggs": {
+                                      "employee": {
+                                        "nested": {
+                                          "path": "employees"
+                                        },
+                                        "aggs": {
+                                          "employee": {
+                                            "terms": {
+                                              "field": "employees.number",
+                                              "size": 1
+                                            },
+                                            "aggs": {
+                                              "employee_id": {
+                                                "terms": {
+                                                  "field": "employees.employee_id",
+                                                  "size": 1
+                                                },
+                                                "aggs": {
+                                                  "bookings": {
+                                                    "nested": {
+                                                      "path": "employees.bookings"
+                                                    },
+                                                    "aggs": {
+                                                      "booking": {
+                                                        "terms": {
+                                                          "field": "employees.bookings.booking_id",
+                                                          "size": 1
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "step 5": {
+    "filters": {
+      "filters": {
+        "other_orders": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "nested": {
+                      "path": "employees.bookings",
+                      "query": {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "term": {
+                                "employees.bookings.order_id": {
+                                  "value": "5d209d51acbcd6014346081d"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "current_order": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "term": {
+                    "employees.bookings.order_id": {
+                      "value": "5d209d51acbcd6014346081d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "no_bookings": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "exists": {
+                          "field": "employees.bookings.status_id"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggs": {
+      "blocked_minutes_filter": {
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "number": [
+                    -1
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "employees": {
+            "nested": {
+              "path": "employees"
+            },
+            "aggs": {
+              "back_to_minutes": {
+                "reverse_nested": {
+                },
+                "aggs": {
+                  "status_minute_range": {
+                    "filter": {
+                      "range": {
+                        "number": {
+                          "gte": 380,
+                          "lte": 440
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "employee_again": {
+                        "nested": {
+                          "path": "employees"
+                        },
+                        "aggs": {
+                          "status_id_filter": {
+                            "filter": {
+                              "term": {
+                                "employees.status_ids": "step 5"
+                              }
+                            },
+                            "aggs": {
+                              "minute": {
+                                "reverse_nested": {
+                                },
+                                "aggs": {
+                                  "minute_histogram": {
+                                    "histogram": {
+                                      "field": "number",
+                                      "interval": 1
+                                    },
+                                    "aggs": {
+                                      "employee": {
+                                        "nested": {
+                                          "path": "employees"
+                                        },
+                                        "aggs": {
+                                          "employee": {
+                                            "terms": {
+                                              "field": "employees.number",
+                                              "size": 1
+                                            },
+                                            "aggs": {
+                                              "employee_id": {
+                                                "terms": {
+                                                  "field": "employees.employee_id",
+                                                  "size": 1
+                                                },
+                                                "aggs": {
+                                                  "bookings": {
+                                                    "nested": {
+                                                      "path": "employees.bookings"
+                                                    },
+                                                    "aggs": {
+                                                      "booking": {
+                                                        "terms": {
+                                                          "field": "employees.bookings.booking_id",
+                                                          "size": 1
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "step 6": {
+    "filters": {
+      "filters": {
+        "other_orders": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "nested": {
+                      "path": "employees.bookings",
+                      "query": {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "term": {
+                                "employees.bookings.order_id": {
+                                  "value": "5d209d51acbcd6014346081d"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "current_order": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "term": {
+                    "employees.bookings.order_id": {
+                      "value": "5d209d51acbcd6014346081d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "no_bookings": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "exists": {
+                          "field": "employees.bookings.status_id"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggs": {
+      "blocked_minutes_filter": {
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "number": [
+                    -1
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "employees": {
+            "nested": {
+              "path": "employees"
+            },
+            "aggs": {
+              "back_to_minutes": {
+                "reverse_nested": {
+                },
+                "aggs": {
+                  "status_minute_range": {
+                    "filter": {
+                      "range": {
+                        "number": {
+                          "gte": 450,
+                          "lte": 510
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "employee_again": {
+                        "nested": {
+                          "path": "employees"
+                        },
+                        "aggs": {
+                          "status_id_filter": {
+                            "filter": {
+                              "term": {
+                                "employees.status_ids": "step 6"
+                              }
+                            },
+                            "aggs": {
+                              "minute": {
+                                "reverse_nested": {
+                                },
+                                "aggs": {
+                                  "minute_histogram": {
+                                    "histogram": {
+                                      "field": "number",
+                                      "interval": 1
+                                    },
+                                    "aggs": {
+                                      "employee": {
+                                        "nested": {
+                                          "path": "employees"
+                                        },
+                                        "aggs": {
+                                          "employee": {
+                                            "terms": {
+                                              "field": "employees.number",
+                                              "size": 1
+                                            },
+                                            "aggs": {
+                                              "employee_id": {
+                                                "terms": {
+                                                  "field": "employees.employee_id",
+                                                  "size": 1
+                                                },
+                                                "aggs": {
+                                                  "bookings": {
+                                                    "nested": {
+                                                      "path": "employees.bookings"
+                                                    },
+                                                    "aggs": {
+                                                      "booking": {
+                                                        "terms": {
+                                                          "field": "employees.bookings.booking_id",
+                                                          "size": 1
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "step 7": {
+    "filters": {
+      "filters": {
+        "other_orders": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "nested": {
+                      "path": "employees.bookings",
+                      "query": {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "term": {
+                                "employees.bookings.order_id": {
+                                  "value": "5d209d51acbcd6014346081d"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "current_order": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "term": {
+                    "employees.bookings.order_id": {
+                      "value": "5d209d51acbcd6014346081d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "no_bookings": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "exists": {
+                          "field": "employees.bookings.status_id"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggs": {
+      "blocked_minutes_filter": {
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "number": [
+                    -1
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "employees": {
+            "nested": {
+              "path": "employees"
+            },
+            "aggs": {
+              "back_to_minutes": {
+                "reverse_nested": {
+                },
+                "aggs": {
+                  "status_minute_range": {
+                    "filter": {
+                      "range": {
+                        "number": {
+                          "gte": 520,
+                          "lte": 580
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "employee_again": {
+                        "nested": {
+                          "path": "employees"
+                        },
+                        "aggs": {
+                          "status_id_filter": {
+                            "filter": {
+                              "term": {
+                                "employees.status_ids": "step 7"
+                              }
+                            },
+                            "aggs": {
+                              "minute": {
+                                "reverse_nested": {
+                                },
+                                "aggs": {
+                                  "minute_histogram": {
+                                    "histogram": {
+                                      "field": "number",
+                                      "interval": 1
+                                    },
+                                    "aggs": {
+                                      "employee": {
+                                        "nested": {
+                                          "path": "employees"
+                                        },
+                                        "aggs": {
+                                          "employee": {
+                                            "terms": {
+                                              "field": "employees.number",
+                                              "size": 1
+                                            },
+                                            "aggs": {
+                                              "employee_id": {
+                                                "terms": {
+                                                  "field": "employees.employee_id",
+                                                  "size": 1
+                                                },
+                                                "aggs": {
+                                                  "bookings": {
+                                                    "nested": {
+                                                      "path": "employees.bookings"
+                                                    },
+                                                    "aggs": {
+                                                      "booking": {
+                                                        "terms": {
+                                                          "field": "employees.bookings.booking_id",
+                                                          "size": 1
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "step 8": {
+    "filters": {
+      "filters": {
+        "other_orders": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "nested": {
+                      "path": "employees.bookings",
+                      "query": {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "term": {
+                                "employees.bookings.order_id": {
+                                  "value": "5d209d51acbcd6014346081d"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "current_order": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "term": {
+                    "employees.bookings.order_id": {
+                      "value": "5d209d51acbcd6014346081d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "no_bookings": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "exists": {
+                          "field": "employees.bookings.status_id"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggs": {
+      "blocked_minutes_filter": {
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "number": [
+                    -1
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "employees": {
+            "nested": {
+              "path": "employees"
+            },
+            "aggs": {
+              "back_to_minutes": {
+                "reverse_nested": {
+                },
+                "aggs": {
+                  "status_minute_range": {
+                    "filter": {
+                      "range": {
+                        "number": {
+                          "gte": 590,
+                          "lte": 650
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "employee_again": {
+                        "nested": {
+                          "path": "employees"
+                        },
+                        "aggs": {
+                          "status_id_filter": {
+                            "filter": {
+                              "term": {
+                                "employees.status_ids": "step 8"
+                              }
+                            },
+                            "aggs": {
+                              "minute": {
+                                "reverse_nested": {
+                                },
+                                "aggs": {
+                                  "minute_histogram": {
+                                    "histogram": {
+                                      "field": "number",
+                                      "interval": 1
+                                    },
+                                    "aggs": {
+                                      "employee": {
+                                        "nested": {
+                                          "path": "employees"
+                                        },
+                                        "aggs": {
+                                          "employee": {
+                                            "terms": {
+                                              "field": "employees.number",
+                                              "size": 1
+                                            },
+                                            "aggs": {
+                                              "employee_id": {
+                                                "terms": {
+                                                  "field": "employees.employee_id",
+                                                  "size": 1
+                                                },
+                                                "aggs": {
+                                                  "bookings": {
+                                                    "nested": {
+                                                      "path": "employees.bookings"
+                                                    },
+                                                    "aggs": {
+                                                      "booking": {
+                                                        "terms": {
+                                                          "field": "employees.bookings.booking_id",
+                                                          "size": 1
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "step 9": {
+    "filters": {
+      "filters": {
+        "other_orders": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "nested": {
+                      "path": "employees.bookings",
+                      "query": {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "term": {
+                                "employees.bookings.order_id": {
+                                  "value": "5d209d51acbcd6014346081d"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "current_order": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "term": {
+                    "employees.bookings.order_id": {
+                      "value": "5d209d51acbcd6014346081d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "no_bookings": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "exists": {
+                          "field": "employees.bookings.status_id"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggs": {
+      "blocked_minutes_filter": {
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "number": [
+                    -1
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "employees": {
+            "nested": {
+              "path": "employees"
+            },
+            "aggs": {
+              "back_to_minutes": {
+                "reverse_nested": {
+                },
+                "aggs": {
+                  "status_minute_range": {
+                    "filter": {
+                      "range": {
+                        "number": {
+                          "gte": 660,
+                          "lte": 720
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "employee_again": {
+                        "nested": {
+                          "path": "employees"
+                        },
+                        "aggs": {
+                          "status_id_filter": {
+                            "filter": {
+                              "term": {
+                                "employees.status_ids": "step 9"
+                              }
+                            },
+                            "aggs": {
+                              "minute": {
+                                "reverse_nested": {
+                                },
+                                "aggs": {
+                                  "minute_histogram": {
+                                    "histogram": {
+                                      "field": "number",
+                                      "interval": 1
+                                    },
+                                    "aggs": {
+                                      "employee": {
+                                        "nested": {
+                                          "path": "employees"
+                                        },
+                                        "aggs": {
+                                          "employee": {
+                                            "terms": {
+                                              "field": "employees.number",
+                                              "size": 1
+                                            },
+                                            "aggs": {
+                                              "employee_id": {
+                                                "terms": {
+                                                  "field": "employees.employee_id",
+                                                  "size": 1
+                                                },
+                                                "aggs": {
+                                                  "bookings": {
+                                                    "nested": {
+                                                      "path": "employees.bookings"
+                                                    },
+                                                    "aggs": {
+                                                      "booking": {
+                                                        "terms": {
+                                                          "field": "employees.bookings.booking_id",
+                                                          "size": 1
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "step 10": {
+    "filters": {
+      "filters": {
+        "other_orders": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "nested": {
+                      "path": "employees.bookings",
+                      "query": {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "term": {
+                                "employees.bookings.order_id": {
+                                  "value": "5d209d51acbcd6014346081d"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "current_order": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "term": {
+                    "employees.bookings.order_id": {
+                      "value": "5d209d51acbcd6014346081d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "no_bookings": {
+          "nested": {
+            "path": "employees",
+            "query": {
+              "nested": {
+                "path": "employees.bookings",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "exists": {
+                          "field": "employees.bookings.status_id"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggs": {
+      "blocked_minutes_filter": {
+        "filter": {
+          "bool": {
+            "must_not": [
+              {
+                "terms": {
+                  "number": [
+                    -1
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "employees": {
+            "nested": {
+              "path": "employees"
+            },
+            "aggs": {
+              "back_to_minutes": {
+                "reverse_nested": {
+                },
+                "aggs": {
+                  "status_minute_range": {
+                    "filter": {
+                      "range": {
+                        "number": {
+                          "gte": 730,
+                          "lte": 790
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "employee_again": {
+                        "nested": {
+                          "path": "employees"
+                        },
+                        "aggs": {
+                          "status_id_filter": {
+                            "filter": {
+                              "term": {
+                                "employees.status_ids": "step 10"
+                              }
+                            },
+                            "aggs": {
+                              "minute": {
+                                "reverse_nested": {
+                                },
+                                "aggs": {
+                                  "minute_histogram": {
+                                    "histogram": {
+                                      "field": "number",
+                                      "interval": 1
+                                    },
+                                    "aggs": {
+                                      "employee": {
+                                        "nested": {
+                                          "path": "employees"
+                                        },
+                                        "aggs": {
+                                          "employee": {
+                                            "terms": {
+                                              "field": "employees.number",
+                                              "size": 1
+                                            },
+                                            "aggs": {
+                                              "employee_id": {
+                                                "terms": {
+                                                  "field": "employees.employee_id",
+                                                  "size": 1
+                                                },
+                                                "aggs": {
+                                                  "bookings": {
+                                                    "nested": {
+                                                      "path": "employees.bookings"
+                                                    },
+                                                    "aggs": {
+                                                      "booking": {
+                                                        "terms": {
+                                                          "field": "employees.bookings.booking_id",
+                                                          "size": 1
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

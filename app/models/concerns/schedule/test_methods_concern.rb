@@ -47,11 +47,22 @@ module Concerns::Schedule::TestMethodsConcern
 			Schedule::Minute.flush_bulk
 		end
 
-		def create_test_minutes(number_of_minutes=25,status_ids=["step 1","step 2","step 3"])
+		def create_test_minutes(number_of_minutes=1000,status_ids=["step 1","step 2","step 3","step 4","step 5","step 6","step 7","step 8","step 9","step 10","step 11","step 12","step 13","step 14","step 15","step 16","step 17","step 18","step 19","step 20","step 21"])
+			
+			status_durations_to_ids = {
+				"10" => ["step 1","step 2","step 3","step 4"],
+				"20" => ["step 5","step 6","step 7","step 8"],
+				"30" => ["step 9","step 10","step 11","step 12"],
+				"40" => ["step 13","step 14","step 15","step 16"],
+				"60" => ["step 17","step 18","step 19","step 20"],
+				"90" => ["step 21","step 22","step 23","step 24"],
+				"120" => ["step 25","step 26","step 27","step 28"]
+			}
+
 			number_of_minutes.times do |minute|
 				m = Schedule::Minute.new(number: minute, working: 1, employees: [], id: minute.to_s)
 				6.times do |employee|
-					e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: [0,1,2,3,4,5,6,7,8,9,10].sample, number: minute, id_minute: employee.to_s + "_" + minute.to_s)
+					e = Employee.new(id: employee.to_s, status_ids: status_ids.sample(10), employee_id: employee.to_s, bookings_score: [0,1,2,3,4,5,6,7,8,9,10].sample, number: minute, id_minute: employee.to_s + "_" + minute.to_s)
 					[0,1,2,3,4].sample.times do |booking|
 						b = Schedule::Booking.new
 						b.status_id = status_ids.sample
@@ -60,13 +71,23 @@ module Concerns::Schedule::TestMethodsConcern
 						b.order_id = "o#{booking}"
 						b.report_ids = ["r#{booking}"]
 						b.max_delay = 10*booking
+						status_durations_to_ids.keys.each do |duration|
+							block = Schedule::Block.new
+							block.status_ids = status_durations_to_ids[duration]
+							block.minutes = Array((minute.to_i - duration.to_i)..minute.to_i)
+							block.remaining_capacity = -1
+							Schedule::Block.add_bulk_item(block)
+							#b.blocks << block
+						end
 						e.bookings << b		
 					end
 					m.employees << e
 				end
+
 				Schedule::Minute.add_bulk_item(m)
 			end
 			Schedule::Minute.flush_bulk
+			Schedule::Block.flush_bulk
 		end
 		
 		def create_test_days

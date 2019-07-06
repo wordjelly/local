@@ -104,150 +104,6 @@ class Diagnostics::Report
 		self.procedure_version = Base64.encode64(procedure_version)
 	end
 
-=begin	
-	def clone(patient_id,order_id)
-		
-		patient_report = Report.new(self.attributes.except(:id).merge({patient_id: patient_id, template_report_id: self.id.to_s}))
-		
-		patient_report.test_ids = []
-		
-		self.test_ids.each do |test_id|
-			unless test_id.blank?
-				t = Test.find(test_id)
-				patient_test = t.clone(patient_id)
-				patient_report.test_ids << patient_test.id.to_s
-			end
-		end
-
-		patient_report.save
-		## create a status, of the payment.
-
-		Status.add_bill(patient_report,order_id)
-		patient_report
-
-	end
-
-	## as long as there is no status that says collection completed
-	## the 
-	def can_be_cancelled?
-		status_completed = self.statuses.select{|c|
-			c.text_value == Status::COLLECTION_COMPLETED
-		}
-		status_completed.size == 0
-	end
-
-	def is_template_report?
-		self.template_report_id.blank?
-	end
-
-	## so we add some status like this
-	## for the test.
-
-	def load_patient	
-		unless self.patient_id.blank?
-			begin
-				self.patient = Patient.find(self.patient_id)
-			rescue
-				self.errors.add(:id,"patient #{self.patient_id} not found")
-			end
-		end
-	end
-
-	def load_tests
-		puts " ------------------ loading tests -------------------- "
-		self.tests ||= []
-		self.test_ids.each do |tid|
-			self.tests << Test.find(tid) unless tid.blank?
-		end
-		self.tests.map{|c| c.report_id = self.id.to_s}
-		puts "self tests are:"
-		puts self.tests.to_s
-	end
-
-	## we have to solve.
-	## a bunch of issues
-	## like rates
-	## a certain organization may or may not use.
-	## it needs to be copied from a template.
-	## one action is customize.
-	## another action is if i select a report ->
-	## simplest thing is first copy it,
-	## then use it.
-	## first collate item requirements.
-	## it will be create, from report.
-	## and it will just pick up everything and save first.
-	## 
-
-	def load_item_requirements
-		puts "--------------Came to load item requirements------------------"
-		self.item_requirements_grouped_by_type = {}
-		self.item_requirements ||= []
-		self.item_requirement_ids.each do |iid|
-			unless iid.blank? 
-				ireq = ItemRequirement.find(iid)
-				self.item_requirements << ireq
-			end
-		end
-		self.item_requirements.map{|c| c.report_id = self.id.to_s }
-		puts "the item requirements are:"
-		puts self.item_requirements.to_s
-	end
-
-	def build_query
-		queries = [{
-			filter: {
-				query: {
-					match_all: {}
-				}
-			}
-		}]
-
-		self.attributes.each do |attr|
-			if self.send(attr).class.to_s == "Array"
-				unless self.send(attr).blank?
-					if self.send(attr)[0] == "*"
-						queries << {
-							exists: {
-								field: attr.to_sym.to_s
-							}
-						}
-					else
-						queries << {
-							terms: {
-								attr.to_s.to_sym => self.send(attr)
-							}
-						}
-					end
-				end
-			elsif self.send(attr).class.to_s == "String"
-				if self.send(attr) == "*"
-					queries << {
-						exists: {
-							field: attr.to_sym.to_s
-						}
-					}
-				else
-					queries << {
-						term: {
-							attr.to_s.to_sym => self.send(attr)
-						}
-					}
-				end
-			elsif self.send(attr).class.to_s =~ /Float|Integer/
-				queries << {
-					range: {
-						attr.to_s.to_sym => {
-							gte: self.send(attr),
-							lte: self.send(attr)
-						}
-					}
-				}
-			end
-		end	
-		queries
-	end
-=end
-
 	def self.permitted_params
 		base = [
 				:id,
@@ -330,6 +186,82 @@ class Diagnostics::Report
 		}
 	end
 
+	#############################################################
+	##
+	##
+	## STATUS GROUPING
+	##
+	##
+	#############################################################
+	## @used_in: Concerns::Schedule::OrderConcern, to make the blocks.
+	## @param[statuses] Array : Diagnostics::Status Objects.
+	## @return[Hash]
+	## key => duration
+	## value => [status_id_one, status_id_two, status_id_three]s
+	def self.group_statuses_by_duration(statuses)
+		search_request = search({
+			query: {
+				nested: {
+					path: "statuses",
+					query: {
+						bool: {
+							should: statuses.map{|c|
+								{
+									term: {
+										"statuses.id".to_sym => c.id.to_s
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			aggs: {
+				duration_agg: {
+					nested: {
+						path: "statuses"
+					},
+					aggs: {
+						status_duration: {
+							terms: {
+								field: "statuses.duration"
+							},
+							aggs: {
+								status_ids: {
+									terms: {
+										field: "statuses.id"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+
+		duration_to_statuses = {}
+		search_request.response.aggregations.duration_agg.status_duration.buckets.each do |duration_bucket|
+			duration = duration_bucket["key"]
+			statuses = []
+			duration_bucket.status_ids.buckets.each do |status_id_bucket|
+				status_id = status_id_bucket["key"]
+				statuses << status_id
+			end
+			duration_to_statuses[duration.to_s] = statuses
+		end
+
+		duration_to_statuses
+
+	end	
+
+	#############################################################
+	##
+	##
+	## STATUS GROUPING ENDS.
+	##
+	##
+	#############################################################
+
 	## so it clears the items.
 	def clear_all_items
 		self.requirements.each do |req|
@@ -352,5 +284,7 @@ class Diagnostics::Report
 			end
 		end
 	end
+
+
 
 end	

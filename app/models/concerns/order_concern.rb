@@ -210,9 +210,11 @@ module Concerns::OrderConcern
 		## give the statuses the :from and :to timings.
 		procedure_versions_hash.keys.each do |proc|
 			start_time = procedure_versions_hash[proc][:start_time]
+			prev_start = nil
 			procedure_versions_hash[proc][:statuses].map{|c|
-				c.from = start_time
-				c.to = c.from + c.duration
+				c.from = prev_start.blank? ? (start_time) : (prev_start + c.duration) 
+				c.to = c.from + Diagnostics::Status::MAX_DELAY
+				prev_start = c.to
 			}
 		end
 
