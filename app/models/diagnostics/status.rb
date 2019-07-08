@@ -140,6 +140,9 @@ class Diagnostics::Status
 
 	def self.index_properties
 		{
+			id: {
+				type: 'keyword'
+			},
     		name: {
     			type: 'keyword'
     		},

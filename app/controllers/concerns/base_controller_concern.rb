@@ -177,7 +177,7 @@ module Concerns::BaseControllerConcern
 			## that is if you are accepting a version, then you have to provide a value for any number of custom parameters,  parameter, and it can be evaluated in the verified by users thign.
 			v = Version.new(attributes_string: JSON.generate(get_model_params.merge(:verified_by_user_ids => [current_user.id.to_s], :rejected_by_user_ids => [])))
 			v.assign_control_doc_number
-			instance.versions.push(v.attributes)
+			instance.versions.push(v)
 		end
 
 		#puts JSON.pretty_generate(instance.attributes)
@@ -254,7 +254,7 @@ module Concerns::BaseControllerConcern
 				## which will 
 				unless v.tampering?(instance_variable_get("@#{get_resource_name}").non_tamperables,instance_variable_get("@#{get_resource_name}").versions[-1],get_model_params,instance_variable_get("@#{get_resource_name}").class.name)
 
-					instance_variable_get("@#{get_resource_name}").send("versions").push(v.attributes)
+					instance_variable_get("@#{get_resource_name}").send("versions").push(v)
 
 				end
 
@@ -266,7 +266,7 @@ module Concerns::BaseControllerConcern
 
 					v.assign_control_doc_number
 
-					instance_variable_get("@#{get_resource_name}").send("versions").push(v.attributes)
+					instance_variable_get("@#{get_resource_name}").send("versions").push(v)
 
 				end
 

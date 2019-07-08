@@ -6,7 +6,7 @@ $(document).on('click','.add_item_definition',function(event){
 		<div class="card item_definition">
     		<div class="card-content">
       			<div class="card-title">
-					<input type="text" name="item_group[item_definitions][][item_type_id]" data-autocomplete-type="item-types" />
+					<input type="text" name="item_group[item_definitions][][item_type_id]" data-autocomplete-type="inventory-item-types" />
 					<label for="item_group[item_definitions][][item_type_id]">Item Type Id</label>
 					<input type="text" name="item_group[item_definitions][][quantity]" />
 					<label for="item_group[item_definitions][][quantity]">Quantity</label>
@@ -19,6 +19,9 @@ $(document).on('click','.add_item_definition',function(event){
 		`;
 
 	$(item_definition_element).insertBefore($(this).parent().parent());
+	$('.datepicker').datepicker({
+        format: "yyyy-mm-dd"
+    });
 });
 
 // since the remove item definition button is nested 

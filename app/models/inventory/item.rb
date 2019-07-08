@@ -82,7 +82,7 @@ class Inventory::Item
 	#validate :transaction_has_items_left
 	
 	after_find do |document|
-		document.load_statuses_and_reports
+		#document.load_statuses_and_reports
 	end
 
 	

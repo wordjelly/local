@@ -15,7 +15,7 @@ module Concerns::VersionedConcern
 
 		@permitted_params = [{:verified_by_user_ids => []}, {:rejected_by_user_ids => []}]
 
-		attribute :versions, Array[Hash]
+		attribute :versions, Array[Version]
 		attribute :verified_by_user_ids, Array, mapping: {type: 'keyword'}, :default => []
 		attribute :rejected_by_user_ids, Array, mapping: {type: 'keyword'}, :default => []
 		attribute :active, Integer, mapping: {type: 'integer'}, default: 0

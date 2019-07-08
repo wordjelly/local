@@ -24,7 +24,7 @@ class SearchController < ApplicationController
 			
 			if current_user.has_organization?
 				should_clauses << {
-					term: {
+					terms: {
 						owner_ids: current_user.organization.all_organizations
 					}
 				}
@@ -89,9 +89,11 @@ class SearchController < ApplicationController
 		## and this has to be exposed to json also
 		## 
 		@type = params[:type]
-		puts "autocomplete type is: #{@type}"
+		#puts "autocomplete type is: #{@type}"
 		response = Elasticsearch::Persistence.client.search index: "pathofast-#{@type}", body: build_query
 		mash = Hashie::Mash.new response 
+		puts "the total hits are:"
+		puts mash.hits.hits.size.to_s
 		@search_results = mash.hits.hits.map{|c|
 			c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
 			c

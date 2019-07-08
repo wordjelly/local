@@ -380,29 +380,50 @@ module Concerns::Schedule::OrderConcern
 		## that way it can be done, but will have to work that outs
 		## residual scheduling.
 		## @return[Array] bookings_array : after adding the latest status to it.
-		def status_aggregation_to_bookings(aggregation,status,booking_minutes_array,order,status_durations)
+		def status_aggregation_to_bookings(args)
 			
-			last_minute = booking_minutes_array[-1]
+			booking_minutes = args[:booking_minutes]
+			order = args[:order]
+			status_durations = args[:status_durations]
+			aggregation = args[:aggregation]
+			status = args[:status]
+
 			path = CHAIN.join(".")
-			booked_minute = nil
+
+			booked_min = nil
+
+			#puts "the aggregation is:"
+			#puts JSON.pretty_generate(aggregation)
+			
+			#puts "path is: #{path}"
+			#exit(1)
+			#puts aggregation.buckets
 
 			[CURRENT_ORDER,OTHER_ORDERS,NO_BOOKINGS].each do |option|
 				if booked_min.blank?
-					aggregation.send(option).send(path).buckets.each do |bucket|
-						## booked_minute is defined in Concerns::Schedule::MinuteConcern, which is included in the Schedule::Minute class.
-						booked_min = booked_minute(bucket,{
-							order: order,
-							status: status,
-							booking_minutes_array: booking_minutes_array,
-							status_durations: status_durations
-						})
-						unless booked_min.blank?
-							booking_minutes_array << booked_min
-							break
+					curr_filt = aggregation.buckets.send(option)
+					CHAIN.each do |ch|
+						curr_filt = curr_filt.send(ch)
+					end
+					unless curr_filt.blank?
+						curr_filt.buckets.each do |bucket|
+							## booked_minute is defined in Concerns::Schedule::MinuteConcern, which is included in the Schedule::Minute class.
+							if booked_min = book_minute(bucket,{
+									order: order,
+									status: status,
+									booking_minutes_array: booking_minutes,
+									status_durations: status_durations
+								})
+							
+								
+								break
+							end
 						end
 					end
 				end				
 			end
+
+			booked_min
 
 		end
 
@@ -414,14 +435,15 @@ module Concerns::Schedule::OrderConcern
 			query = { bool: { should: [] } }
 			aggregation = {}
 
+			all_statuses = []
 			
 			blocks_result = {}
 
-			
 			order.procedure_versions_hash.keys.each do |pr|
 				
 				## first gotta merge this.
 				## then status grouping.
+				all_statuses << order.procedure_versions_hash[pr][:statuses]
 				blocks_result[pr] = Schedule::Block.gather_blocks(order.procedure_versions_hash[pr][:statuses])
 				
 				order.procedure_versions_hash[pr][:statuses].each do |status|
@@ -433,13 +455,17 @@ module Concerns::Schedule::OrderConcern
 				#aggregation = simple_aggregation(order.procedure_versions_hash[pr][:statuses])
 			end
 
-			puts "the query is:"
-			puts JSON.pretty_generate(query)
-			IO.write("query.json", JSON.pretty_generate(query))
+			all_statuses.flatten!
 
-			puts "the aggregation is:"
-			puts JSON.pretty_generate(aggregation)
-			IO.write("aggregation.json", JSON.pretty_generate(aggregation))
+			status_durations = Diagnostics::Report.group_statuses_by_duration(all_statuses)
+
+			#puts "the query is:"
+			#puts JSON.pretty_generate(query)
+			#IO.write("query.json", JSON.pretty_generate(query))
+
+			#puts "the aggregation is:"
+			#puts JSON.pretty_generate(aggregation)
+			#IO.write("aggregation.json", JSON.pretty_generate(aggregation))
 			
 			t = Time.now
 
@@ -456,8 +482,20 @@ module Concerns::Schedule::OrderConcern
 
 			order.procedure_versions_hash.keys.each do |pr|
 				order.procedure_versions_hash[pr][:statuses].each do |status|
-					booking_minutes << status_aggregation_to_bookings(aggs.send(status.id.to_s),blocks_result[pr])
+					#aggregation,status,booking_minutes_array,order,status_durations
+					#aggs.send(status.id.to_s),status,booking_minutes,order,status_durations					
+					if booked_min = status_aggregation_to_bookings({
+							aggregation: aggs.send(status.id.to_s),
+							status: status,
+							booking_minutes: booking_minutes,
+							order: order,
+							status_durations: status_durations,
+							report_ids: order.procedure_versions_hash[pr][:reports]
+						})
+						booking_minutes << booked_min
+					end
 				end
+
 			end
 
 			booking_minutes.map{|c|
@@ -478,7 +516,7 @@ module Concerns::Schedule::OrderConcern
 
 			puts "the base agg took: "
 			puts (t2 - t)*1000
-			exit(1)
+			#exit(1)
 
 		end
 		#######################################################

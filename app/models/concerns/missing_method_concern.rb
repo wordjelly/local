@@ -53,12 +53,16 @@ module Concerns::MissingMethodConcern
 					if virtus_attribute.respond_to? "member_type"
 						class_name = virtus_attribute.member_type.primitive.to_s
 						unless class_name == "BasicObject"
+							## this is because you have not typified versions
+							## and are storing it as a hash.
 							unless self.send(virtus_attribute.name).blank?
 								puts "attribute name is: #{virtus_attribute.name.to_s}"
 								self.send(virtus_attribute.name).each do |arr|
 									puts "arr is: #{arr}"
 									puts "callback si: #{callback}"
-									arr.run_callbacks(callback)
+									unless arr.is_a? Hash
+										arr.run_callbacks(callback)
+									end
 								end
 							end
 						end 

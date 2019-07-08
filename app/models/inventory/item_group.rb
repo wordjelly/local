@@ -87,6 +87,9 @@ class Inventory::ItemGroup
 		if document.supplier_id.blank?
 			document.supplier_id = document.created_by_user.organization.id.to_s
 		end
+		if document.created_by_user.organization.is_a_supplier?
+			document.public = Concerns::OwnersConcern::IS_PUBLIC
+		end
 	end
 
 	after_find do |document|
