@@ -86,6 +86,103 @@ module Concerns::OrderConcern
 
 	end
 
+	def get_schedule
+  		search_request = Schedule::Minute.search({
+  			size: 0,
+  			query: {
+  				bool: {
+  					must: [
+  						{
+  							nested: {
+  								path: "employees",
+  								query: {
+  									nested: {
+  										path: "employees.bookings",
+  										query: {
+  											term: {
+  												"employees.bookings.order_id".to_sym => self.id.to_s
+  											}
+  										}
+  									}
+  								}
+  							}
+  						}
+  					]
+  				}
+  			},
+  			aggs: {
+  				minute: {
+  					terms: {
+  						field: "number",
+  						order: {
+  							"_key".to_sym => "asc"
+  						}
+  					},
+  					aggs: {
+  						employees: {
+  							nested: {
+  								path: "employees"
+  							},
+  							aggs: {
+  							 	employees: {
+  							 		filter: {
+  							 			nested: {
+  							 				path: "employees.bookings",
+  							 				query: {
+  							 					term: {
+  							 						"employees.bookings.order_id".to_sym => self.id.to_s
+  							 					}
+  							 				}
+  							 			}
+  							 		},
+  							 		aggs: {
+  							 			employees: {
+  							 				terms: {
+  							 					field: "employees.employee_id"
+  							 				},
+  							 				aggs: {
+  							 					bookings: {
+  							 						nested: {
+  							 							path: "employees.bookings"
+  							 						},
+  							 						aggs: {
+  							 							bookings_filtered: {
+  							 								filter: {
+  							 									term: {
+  							 										"employees.bookings.order_id".to_sym => self.id.to_s
+  							 									}
+  							 								},
+  							 								aggs: {
+  							 									status_ids: {
+		  							 								terms: {
+		  							 									field: "employees.bookings.status_id"
+		  							 								},
+		  							 								aggs: {
+		  							 									report_ids: {
+		  							 										terms: {
+		  							 											field: "employees.bookings.report_ids"
+		  							 										}
+		  							 									}
+		  							 								}
+		  							 							}
+  							 								}
+  							 							}
+  							 							
+  							 						}
+  							 					}
+  							 				}
+  							 			}
+  							 		}
+  							 	}
+  							}
+  						}
+  					}
+  				}
+  			}
+  		})
+  		search_request.response.aggregations
+  	end
+
 	def assign_id_from_name
 		self.name = BSON::ObjectId.new.to_s
 		self.id = self.name
@@ -114,7 +211,7 @@ module Concerns::OrderConcern
 			report.requirements.each do |req|
 				options = req.categories.size
 				req.categories.each do |category|
-					puts "looking for category: #{category.name}"
+					#puts "looking for category: #{category.name}"
 					if !has_category?(category.name)
 						category_to_add = Inventory::Category.new(quantity: category.quantity, required_for_reports: [], optional_for_reports: [], name: category.name)
 						if options > 1
@@ -220,16 +317,17 @@ module Concerns::OrderConcern
 
 		self.procedure_versions_hash = procedure_versions_hash
 		## so we can just pass the whole order.
-		puts "came to schedule order"
+		#puts "came to schedule order"
 
-		puts "procedure versions hash is:"
+		#puts "procedure versions hash is:"
 
-		puts JSON.pretty_generate(self.procedure_versions_hash)
+		#puts JSON.pretty_generate(self.procedure_versions_hash)
 
 		Schedule::Minute.schedule_order(self)
 	
 				
 	end
+
 
 	module ClassMethods
 

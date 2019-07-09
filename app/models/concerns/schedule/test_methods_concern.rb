@@ -71,14 +71,14 @@ module Concerns::Schedule::TestMethodsConcern
 						b.order_id = "o#{booking}"
 						b.report_ids = ["r#{booking}"]
 						b.max_delay = 10*booking
-						status_durations_to_ids.keys.each do |duration|
-							block = Schedule::Block.new
-							block.status_ids = status_durations_to_ids[duration]
-							block.minutes = Array((minute.to_i - duration.to_i)..minute.to_i)
-							block.remaining_capacity = -1
-							Schedule::Block.add_bulk_item(block)
+						#status_durations_to_ids.keys.each do |duration|
+						#	block = Schedule::Block.new
+						#	block.status_ids = status_durations_to_ids[duration]
+						#	block.minutes = Array((minute.to_i - duration.to_i)..minute.to_i)
+						#	block.remaining_capacity = -1
+						#	Schedule::Block.add_bulk_item(block)
 							#b.blocks << block
-						end
+						#end
 						e.bookings << b		
 					end
 					m.employees << e
@@ -87,7 +87,7 @@ module Concerns::Schedule::TestMethodsConcern
 				Schedule::Minute.add_bulk_item(m)
 			end
 			Schedule::Minute.flush_bulk
-			Schedule::Block.flush_bulk
+			#Schedule::Block.flush_bulk
 		end
 		
 		def create_test_days

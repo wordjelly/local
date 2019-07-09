@@ -56,10 +56,10 @@ module Concerns::MissingMethodConcern
 							## this is because you have not typified versions
 							## and are storing it as a hash.
 							unless self.send(virtus_attribute.name).blank?
-								puts "attribute name is: #{virtus_attribute.name.to_s}"
+								#puts "attribute name is: #{virtus_attribute.name.to_s}"
 								self.send(virtus_attribute.name).each do |arr|
-									puts "arr is: #{arr}"
-									puts "callback si: #{callback}"
+									#puts "arr is: #{arr}"
+									#puts "callback si: #{callback}"
 									unless arr.is_a? Hash
 										arr.run_callbacks(callback)
 									end

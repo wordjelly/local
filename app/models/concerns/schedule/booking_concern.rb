@@ -9,10 +9,11 @@ module Concerns::Schedule::BookingConcern
   	## required arguments include?
   	##
   	def build_blocks(args)
-		blocks = []
-		# prospective_blocks(status,current_minute,employee_id)
-		blocks << Schedule::Block.prospective_blocks(args)
-		blocks << Schedule::Block.retrospective_blocks(args)		
-  	end
+		  
+		  # prospective_blocks(status,current_minute,employee_id)
+		  self.blocks << Schedule::Block.prospective_blocks(args).flatten
+		  self.blocks << Schedule::Block.retrospective_blocks(args).flatten
+  	  self.blocks.flatten!
+    end
 
 end

@@ -34,7 +34,7 @@ module Concerns::EsBulkIndexConcern
 
 	  		unless c.is_a? Hash
 				c = {
-	  					index:  { _index: c.class.index_name, _id: c.id, _type: c.	class.document_type, data: c.as_json }
+	  					index:  { _index: c.class.index_name, _id: c.id, _type: c.class.document_type, data: c.as_json }
 	  				}	  			
 	  		end
 

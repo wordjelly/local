@@ -392,7 +392,7 @@ module Concerns::Schedule::OrderConcern
 
 			booked_min = nil
 
-			#puts "the aggregation is:"
+			#puts "the aggregation result is, for status: #{status.id.to_s}:"
 			#puts JSON.pretty_generate(aggregation)
 			
 			#puts "path is: #{path}"
@@ -414,7 +414,10 @@ module Concerns::Schedule::OrderConcern
 									booking_minutes_array: booking_minutes,
 									status_durations: status_durations
 								})
-							
+								
+								#puts "got a booked minute"
+								#puts "status is: #{status.id.to_s}"
+								#puts "minute number is: #{booked_min.number}"
 								
 								break
 							end
@@ -446,11 +449,13 @@ module Concerns::Schedule::OrderConcern
 				all_statuses << order.procedure_versions_hash[pr][:statuses]
 				blocks_result[pr] = Schedule::Block.gather_blocks(order.procedure_versions_hash[pr][:statuses])
 				
+
+
 				order.procedure_versions_hash[pr][:statuses].each do |status|
 					#simple_query(query,status,order)
 					#so you filter the blocked minutes
 					add_to_query(query,status)
-					add_to_aggregation(aggregation,status,order,blocks_result)
+					add_to_aggregation(aggregation,status,order,blocks_result[pr])
 				end
 				#aggregation = simple_aggregation(order.procedure_versions_hash[pr][:statuses])
 			end
@@ -461,14 +466,14 @@ module Concerns::Schedule::OrderConcern
 
 			#puts "the query is:"
 			#puts JSON.pretty_generate(query)
-			#IO.write("query.json", JSON.pretty_generate(query))
+			IO.write("query.json", JSON.pretty_generate(query))
 
 			#puts "the aggregation is:"
 			#puts JSON.pretty_generate(aggregation)
-			#IO.write("aggregation.json", JSON.pretty_generate(aggregation))
+			#exit(1)
+			IO.write("aggregation.json", JSON.pretty_generate(aggregation))
 			
 			t = Time.now
-
 
 			search_result = Schedule::Minute.search({
 				size: 0,
@@ -478,12 +483,22 @@ module Concerns::Schedule::OrderConcern
 
 			aggs = search_result.response.aggregations
 
+
+			#puts JSON.pretty_generate(aggs)
+			#exit(1)
+
 			booking_minutes = []
 
 			order.procedure_versions_hash.keys.each do |pr|
 				order.procedure_versions_hash[pr][:statuses].each do |status|
+					
+					puts " ------------------- STATUS 10 -----------------"
+					if(status.id.to_s == "step 10")
+						puts JSON.pretty_generate(aggs.send(status.id.to_s))
+					end
 					#aggregation,status,booking_minutes_array,order,status_durations
 					#aggs.send(status.id.to_s),status,booking_minutes,order,status_durations					
+					#puts "searching for status: #{status.id.to_s}"
 					if booked_min = status_aggregation_to_bookings({
 							aggregation: aggs.send(status.id.to_s),
 							status: status,
@@ -498,20 +513,38 @@ module Concerns::Schedule::OrderConcern
 
 			end
 
+
+			#puts "the total booking minutes are:"
+			#puts booking_minutes.to_s
+			m = Schedule::Minute.new(id: BSON::ObjectId.new.to_s)
+			e = Employee.new
+			b = Schedule::Booking.new
+			b.blocks = []
+
 			booking_minutes.map{|c|
 				update_request = {
 					update: {
-						_index: Schedule::Minute.index_name, _type: Schedule::Minute.document_type, _id: minute.number, data: c.update_script
+						_index: Schedule::Minute.index_name, _type: Schedule::Minute.document_type, _id: c.number, data: c.update_script
 					}
 				}
+				## so we need some kind of block holder
+				## and we need to aggregate it.
+				## and then sort out the geo.
+
 				Schedule::Minute.add_bulk_item(update_request)
 				c.employees.first.bookings.first.blocks.each do |block|
-					Schedule::Bulk.add_bulk_item(block)
+					b.blocks << block
+					
 				end
-			}		
+			}	
+
+			e.bookings << b
+			m.employees << e
+			puts "minute id added for block: #{m.id.to_s}"
+			Schedule::Minute.add_bulk_item(m)
+
 			Schedule::Minute.flush_bulk	
-			Schedule::Block.flush_bulk
-			#flush_bulk
+
 			t2 = Time.now
 
 			puts "the base agg took: "
@@ -533,8 +566,8 @@ module Concerns::Schedule::OrderConcern
 
 		## @return[Array] 
 		def get_employees(bucket)
-			puts "the bucket is:"
-			puts JSON.pretty_generate(bucket)
+			#puts "the bucket is:"
+			#puts JSON.pretty_generate(bucket)
 			bucket.employees.employee.buckets
 		end
 

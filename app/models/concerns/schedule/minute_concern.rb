@@ -64,25 +64,27 @@ module Concerns::Schedule::MinuteConcern
   			create_booking = args[:booking_minutes_array].blank? ? true : (args[:booking_minutes_array].last.number < current_minute)
   			
   			unless create_booking.blank?
-  				employee_bucket = bucket.employee.employee.buckets[0].employee_id.buckets[0]
-  				employee_id = employee_bucket["key"]
-  				minute = new(number: current_minute)
-  				employee = Employee.new(id: employee_id)
-  				booking = Schedule::Booking.new(status_id: args[:status].id.to_s, order_id: args[:order].id.to_s)
+          unless bucket.employee.employee.buckets.blank?
+    				employee_bucket = bucket.employee.employee.buckets[0].employee_id.buckets[0]
+    				employee_id = employee_bucket["key"]
+    				minute = new(number: current_minute)
+    				employee = Employee.new(id: employee_id)
+    				booking = Schedule::Booking.new(status_id: args[:status].id.to_s, order_id: args[:order].id.to_s)
 
-  				unless employee_bucket.bookings.booking.buckets.blank?
-  					booking_id = employee_bucket.bookings.booking.buckets.first["key"]
-  					booking.id = booking_id
-  					booking.build_blocks(args.merge({:current_minute => current_minute, :employee_id => employee_id}))
-  				end
-  				employee.bookings << booking
-  				minute.employees << employee
-  				minute.set_update_script({
-  					employee_id: employee_id,
-  					order_id: args[:order].id.to_s,
-  					status_id: args[:status].id.to_s,
-  					report_ids: args[:report_ids]
-  				})
+    				unless employee_bucket.bookings.booking.buckets.blank?
+    					booking_id = employee_bucket.bookings.booking.buckets.first["key"]
+    					booking.id = booking_id
+    				end
+            booking.build_blocks(args.merge({:current_minute => current_minute, :employee_id => employee_id}))
+    				employee.bookings << booking
+    				minute.employees << employee
+    				minute.set_update_script({
+    					employee_id: employee_id,
+    					order_id: args[:order].id.to_s,
+    					status_id: args[:status].id.to_s,
+    					report_ids: args[:report_ids]
+    				})
+          end
    			end
   			minute
   		end

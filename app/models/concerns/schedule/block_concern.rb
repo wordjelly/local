@@ -29,11 +29,11 @@ module Concerns::Schedule::BlockConcern
 
   		end
 
-  		def retrospective_blocks(status_durations,current_minute,status)
+  		def retrospective_blocks(args)
         
         status_durations = args[:status_durations]
         
-        current_minute = args[:current_minute]
+        current_minute = args[:current_minute].to_i
         
         status = args[:status]
 
@@ -41,13 +41,13 @@ module Concerns::Schedule::BlockConcern
   			
         status_durations.keys.each do |duration|
           d = duration.to_i
-          minutes = Array((current_minute - duration)..(current_minute))
+          minutes = Array((current_minute - d)..(current_minute))
           status_ids = status_durations[duration]
           employee_capacity = -1
           blocks << new(employee_capacity: -1, status_ids: status_ids, minutes: minutes)
+          blocks << new(sample_capacity: -1, status_id: status.id.to_s, minutes: Array((current_minute - d)..(current_minute)))
         end
 
-        blocks << new(sample_capacity: -1, status_id: current_status.id.to_s, minutes: Array(current_minute - duration)..(current_minute))
 
         blocks
   			

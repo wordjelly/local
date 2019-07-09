@@ -2,6 +2,8 @@ require 'elasticsearch/persistence/model'
 class Schedule::Block
 	include Elasticsearch::Persistence::Model
 	include Concerns::EsBulkIndexConcern
+	include Concerns::Schedule::BlockConcern
+
 	index_name "pathofast-schedule-blocks"
 	document_type "schedule/block"
 
@@ -35,6 +37,12 @@ class Schedule::Block
 			},
 			remaining_capacity: {
 				type: 'integer'
+			},
+			sample_capacity: {
+				type: 'integer'
+			},
+			employee_capacity: {
+				type: 'integer'
 			}
 		}
 	end
@@ -62,49 +70,84 @@ class Schedule::Block
 	## }
 	def self.gather_blocks(statuses)
 		blocked_minute_per_status = {}
-		search_request = Schedule::Block.search({
+		search_request = Schedule::Minute.search({
 			size: 0,
 			query: {
 				match_all: {}
 			},
 			aggs: {
 				status_ids: {
-					terms: {
-						field: "status_ids",
-						include: statuses.map{|c| c.id.to_s}
+					nested: {
+						path: "employees"
 					},
 					aggs: {
-						minutes: {
-							terms: {
-								field: "minutes",
-								size: 100
+						status_ids: {
+							nested: {
+								path: "employees.bookings"
 							},
 							aggs: {
-								capacities: {
-									sum: {
-										field: "remaining_capacity"
-									}
-								},
-								zero_minutes: {
-									bucket_selector: {
-										buckets_path: {
-											tcap: "capacities"
-										},
-										script: "params.tcap < -150"
+								status_ids: {
+									nested: {
+										path: "employees.bookings.blocks"
+									},
+									aggs: {
+										status_ids: {
+											terms: {
+												field: "employees.bookings.blocks.status_ids",
+												include: statuses.map{|c| c.id.to_s}
+											},
+											aggs: {
+												minutes: {
+													terms: {
+														field: "employees.bookings.blocks.minutes",
+														size: 100
+													},
+													aggs: {
+														capacities: {
+															sum: {
+																field: "employees.bookings.blocks.sample_capacity"
+															}
+														},
+														zero_minutes: {
+															bucket_selector: {
+																buckets_path: {
+																	tcap: "capacities"
+																},
+																script: "params.tcap < 1"
+															}
+														}
+													}
+												}
+											}
+										}
 									}
 								}
 							}
 						}
 					}
-				}
+				}		
 			}
 		})
+
+		#puts "--------------- blocks aggregation------------------ "
+		#puts JSON.pretty_generate(blocked_minute_per_status)
 		#puts JSON.pretty_generate(search_request.response.aggregations)
-		search_request.response.aggregations.status_ids.buckets.each do |s_bucket|
-			status_id = s_bucket["key"]
-			blocked_minutes = s_bucket.minutes.buckets.map{|c| c.capacities["value"]}
-			blocked_minute_per_status[status_id] = blocked_minutes
+		#return blocked_minute_per_status if search_request.response.aggregations.status_ids.status_ids.blank?
+		if search_request.response.aggregations.status_ids.status_ids.blank?
+			puts "it is blank"
+		else
+			search_request.response.aggregations.status_ids.status_ids.status_ids.status_ids.buckets.each do |s_bucket|
+				status_id = s_bucket["key"]
+				blocked_minutes = s_bucket.minutes.buckets.map{|c| c["key"]}
+				#puts "blocked minutes are:"
+				#puts blocked_minutes.to_s
+				blocked_minute_per_status[status_id] = blocked_minutes
+				
+			end
 		end
+		#exit(1)
+		#puts JSON.pretty_generate(blocked_minute_per_status)
+		#exit(1)
 		## but that can be the same statuses repeating
 		## as well
 		## so it could get repeated
