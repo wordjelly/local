@@ -252,6 +252,11 @@ module Concerns::Schedule::OrderConcern
 										lte: (status.to + 30)
 									}
 								}
+							},
+							{
+								term: {
+									owner_ids: status.to_be_performed_by_organization
+								}
 							}
 						]
 					}
@@ -492,10 +497,10 @@ module Concerns::Schedule::OrderConcern
 			order.procedure_versions_hash.keys.each do |pr|
 				order.procedure_versions_hash[pr][:statuses].each do |status|
 					
-					puts " ------------------- STATUS 10 -----------------"
-					if(status.id.to_s == "step 10")
-						puts JSON.pretty_generate(aggs.send(status.id.to_s))
-					end
+					#puts " ------------------- STATUS 10 -----------------"
+					#if(status.id.to_s == "step 10")
+					#	puts JSON.pretty_generate(aggs.send(status.id.to_s))
+					#end
 					#aggregation,status,booking_minutes_array,order,status_durations
 					#aggs.send(status.id.to_s),status,booking_minutes,order,status_durations					
 					#puts "searching for status: #{status.id.to_s}"
@@ -533,6 +538,7 @@ module Concerns::Schedule::OrderConcern
 
 				Schedule::Minute.add_bulk_item(update_request)
 				c.employees.first.bookings.first.blocks.each do |block|
+					block.location = {lat: 10, lon: 10}
 					b.blocks << block
 					
 				end

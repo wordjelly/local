@@ -258,6 +258,8 @@ module Concerns::OrderConcern
 		end
 	end
 
+
+
 	## collates reports if they share the exact same statuses.
 	## to do this, it will check the checksum of the report statuses.
 	## if it is the same, then it will collate.
@@ -290,7 +292,6 @@ module Concerns::OrderConcern
 		## 
 		self.reports.each do |report|
 			## we consider the desired start time and the procedure, as a parameter for commonality.
-
 			effective_version = report.procedure_version + "_" + report.start_epoch.to_s
 			if procedure_versions_hash[effective_version].blank?
 				procedure_versions_hash[effective_version] =
@@ -328,6 +329,63 @@ module Concerns::OrderConcern
 				
 	end
 
+	###########################################################
+	##
+	##
+	## PRE SCHEDULE FUNCTIONS.
+	##
+	##
+	###########################################################
+	## STEP ONE
+	def get_reports_to_schedule
+	end
+
+	## STEP TWO
+	def group_reports_by_start_epoch
+	end
+
+	## STEP THREE
+	def group_reports_by_procedure_version
+	end
+
+
+	
+	## SO THEY CAN ENTER THE ID OF THE OUTSOURCING ORGANIZATION
+	## THEN THEY HAVE TO ANSWER FUSION QUESTIONS.
+	## FOR EACH STEP IN THE OUTSOURCER SOP, IT WILL 
+	## ASK IF YOU ARE GOING TO DO THIS, IF YOU HAVE AN EQUI
+	## VALENT 
+
+	## fire grouped queries.
+	## so lets say you will do that yourself.
+	## or you don't have any equivalent status.
+	## we will do a certain status.
+	## do the equivalent status
+	## or do that status itself.
+	## that can also be offered.
+	## status is marked as required
+	## so and it has a category
+	## all the required statuses either have an equivalence or they
+	## are out.so we we give a merge report for outsourcing.
+	## so we call merge on outsourced reports
+	## they have a report
+	## they have sent that organizations report
+	## this part comes later on.
+	## so is the outsourcing issue resolved or not ?
+	## he marks it as outsource
+	## we searched his organizations reports
+	## he has said perform by someone else.
+	## so now we cannot schedule till then.
+	## we get that report and present the combined statuses
+	## he chooses that status.
+	## how to schedule based on the start epochs.
+	###########################################################
+	##
+	##
+	## 
+	##
+	##
+	###########################################################
 
 	module ClassMethods
 

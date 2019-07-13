@@ -21,7 +21,7 @@ class Diagnostics::Report
 	attribute :payments, Array[Business::Payment]
 	attribute :price, Float
 	validates :price, numericality: true
-	attribute :outsource_to_organization_id, String, mapping: {type: 'keyword'}
+
 	attribute :tag_ids, Array, mapping: {type: "keyword"}, default: []
 	
 	## calculated before_save in the set_procedure_version function
@@ -91,6 +91,10 @@ class Diagnostics::Report
 	
 	before_save do |document|
 		document.set_procedure_version
+		document.statuses.each do |status|
+			## if its not defined, then use this.
+			status.performing_organization_id ||= status.document.created_by_user.organization.id.to_s
+		end
 	end
 
 	## generates a huge concated string using the reference status version 
@@ -284,7 +288,18 @@ class Diagnostics::Report
 			end
 		end
 	end
-
-
+	
+	#############################################################
+	##
+	##
+	## OVERRIDEN FROM NAME ID CONCERN.
+	##
+	##
+	#############################################################
+	def assign_id_from_name
+		if self.id.blank?			
+			self.id = self.created_by_user.organization.id + "/" + self.name 
+		end
+	end
 
 end	

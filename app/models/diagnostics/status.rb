@@ -34,6 +34,18 @@ class Diagnostics::Status
 	attribute :name, String, mapping: {type: 'keyword'}
 	attribute :description, String, mapping: {type: 'keyword'}
 	attribute :duration, Integer, :default => 10
+
+	## so what about minute, that will also need
+	## the organization id.
+	## should it have an owner ?
+	## ya why not.
+	## THIS IS REQUIRED FOR CROSS STATUS FUSION.
+	attribute :category, String, mapping: {type: 'keyword'}
+	validates_presence_of :category
+	
+	## SET BY THE REPORT IN ITS BEFORE SAVE HOOK.
+	attribute :performing_organization_id, String, mapping: {type: 'keyword'}
+	
 	## REQUIRED
 	attribute :employee_block_duration, Integer, :default => 1
 	## REQUIRED
@@ -53,8 +65,10 @@ class Diagnostics::Status
 	attribute :to, Integer, mapping: {type: 'integer'}
 	attribute :bucket_interval, Integer, mapping: {type: 'integer'}, default: DEFAULT_BUCKET_INTERVAL
 
+	attribute :required, Integer, mapping: {type: 'integer'}, default: 1
+
+	attribute :origin, Hash
 	## this is set if the status is copied from somewhere.
-	## has to be a permitted parameter.
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -115,7 +129,7 @@ class Diagnostics::Status
 	##
 	########################################################
 	before_save do |document|
-		document.assign_id_from_name
+		document.assign_id_from_name	
 	end
 	
 	########################################################
@@ -134,7 +148,10 @@ class Diagnostics::Status
 			:lot_size,
 			:requires_image,
 			:result,
-			:reduce_prior_capacity_by
+			:reduce_prior_capacity_by,
+			:category,
+			:performing_organization_id,
+			:required
 		]
 	end
 
@@ -171,6 +188,15 @@ class Diagnostics::Status
     			type: 'text'
     		},
     		reduce_prior_capacity_by: {
+    			type: 'integer'
+    		},
+    		category: {
+    			type: 'keyword'
+    		},
+    		performing_organization_id: {
+    			type: 'keyword'
+    		},
+    		required: {
     			type: 'integer'
     		}
 	    }

@@ -9,13 +9,28 @@ module Concerns::Schedule::TestMethodsConcern
   			
 	  	## creates a single minute, with 
 		## creates n minutes.
-		def create_single_test_minute(status,employee_count=1)
-			status_ids = [status.id.to_s]
+		def create_single_test_minute(status_ids=["step 1","step 2"],employee_count=1)
+			Schedule::Minute.create_index! force: true
 			m = Schedule::Minute.new(number: 1, working: 1, employees: [], id: 1.to_s)
 			employee_count.times do |employee|
 				e = Employee.new(id: employee.to_s, status_ids: status_ids, employee_id: employee.to_s, bookings_score: 0)
+				booking = Schedule::Booking.new
+				block = Schedule::Block.new
+				## okay so right now half the shit is on 
+				## on the start point and the other half is 
+				## on the end point.
+				## and we want to aggregate for it being 
+				## within a certain distance of that block.
+				## the ones that you are ruling out.
+				## so i can do that
+				## threshold at 3 km.
+				block.location = {lat: 10.20, lon: 20.20}
+				booking.blocks << block
+				e.bookings << booking
 				m.employees << e
 			end
+			## okay so we will set blocks.
+			## and we will give them coordinates.
 			Schedule::Minute.add_bulk_item(m)
 			Schedule::Minute.flush_bulk
 		end
