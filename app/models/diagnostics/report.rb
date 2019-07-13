@@ -1,4 +1,5 @@
 require 'elasticsearch/persistence/model'
+
 class Diagnostics::Report
 
 	include Elasticsearch::Persistence::Model
@@ -7,6 +8,7 @@ class Diagnostics::Report
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::Diagnostics::OutsourceConcern
 
 	index_name "pathofast-diagnostics-reports"
 	document_type "diagnostics/report"

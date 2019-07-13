@@ -1,3 +1,4 @@
+=begin
 module Concerns::Diagnostics::OutsourceConcern
 
 	extend ActiveSupport::Concern
@@ -131,3 +132,4 @@ module Concerns::Diagnostics::OutsourceConcern
 	## statuses have to answer required, and have to have a category.			
 
 end
+=end
