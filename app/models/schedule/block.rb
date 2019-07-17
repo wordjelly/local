@@ -21,6 +21,9 @@ class Schedule::Block
 	## number of employees that are available on any minute of the block.
 	attribute :employee_capacity, Integer, mapping: {type: 'integer'}
 
+	## it will be lat and lon
+	attribute :location, Hash
+
 	def self.index_properties
 		{
 			minutes: {
@@ -43,6 +46,9 @@ class Schedule::Block
 			},
 			employee_capacity: {
 				type: 'integer'
+			},
+			location: {
+				type: 'geo_point'
 			}
 		}
 	end
@@ -64,13 +70,36 @@ class Schedule::Block
 
 	end
 
+	## total employee capacity, has to be gte the number
+	## you may need.
+	## 
+
 	## @return[Hash] : blocked_minutes_per_status : 
 	## {
 	##   status_id => [blocked_minute1,blocked_minute2]
 	## }
 	def self.gather_blocks(statuses)
 		blocked_minute_per_status = {}
-		search_request = Schedule::Minute.search({
+		nearby_statuses = {}
+		statuses.map{|c|
+			unless c.origin.blank?
+				nearby_statuses[(c.id.to_s + "_nearby").to_sym] = {
+					geo_distance: {
+						field: "employees.bookings.blocks.location",
+						origin: c.origin,
+						unit: "km",
+						ranges: [
+							{
+								to: 3
+							}
+						]
+					}
+				}
+			end
+		}
+
+		query_and_aggregation = 
+		{
 			size: 0,
 			query: {
 				match_all: {}
@@ -127,11 +156,24 @@ class Schedule::Block
 					}
 				}		
 			}
-		})
+		}
 
-		#puts "--------------- blocks aggregation------------------ "
+		query_and_aggregation[:aggs][:status_ids][:aggs][:status_ids][:aggs][:status_ids][:aggs][:status_ids][:aggs][:minutes][:aggs].merge!(nearby_statuses)
+
+		# unless externally defined
+		# it is the organization.
+		# so we will provide an adapter.
+		# at the order level.
+		# so we have the coordinates
+		#aggs,status_ids,aggs,status_ids,aggs,status_ids,aggs,status_ids
+		puts "the blocks query is:"
+		puts JSON.pretty_generate(query_and_aggregation)
+		search_request = Schedule::Minute.search(query_and_aggregation)
+
+
+		puts "--------------- blocks aggregation------------------ "
 		#puts JSON.pretty_generate(blocked_minute_per_status)
-		#puts JSON.pretty_generate(search_request.response.aggregations)
+		puts JSON.pretty_generate(search_request.response.aggregations)
 		#return blocked_minute_per_status if search_request.response.aggregations.status_ids.status_ids.blank?
 		if search_request.response.aggregations.status_ids.status_ids.blank?
 			puts "it is blank"

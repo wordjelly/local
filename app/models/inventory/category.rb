@@ -14,12 +14,10 @@ class Inventory::Category
 
 	attribute :name, String, mapping: {type: 'keyword'}
 	## this is a percentage.
-	attribute :quantity, Float, mapping: {type: 'float'}
+	attribute :quantity, Float, mapping: {type: 'float'}, default: 100
 	attribute :items, Array[Inventory::Item]
-	attribute :required_for_reports, Array, mapping: {type: 'keyword'}
-	attribute :optional_for_reports , Array, mapping: {type: 'keyword'}
-
-	attr_accessor :optional_for_reports
+	attribute :required_for_reports, Array, mapping: {type: 'keyword'}, default: []
+	attribute :optional_for_reports , Array, mapping: {type: 'keyword'}, default: []
 
 	def self.permitted_params
 		[

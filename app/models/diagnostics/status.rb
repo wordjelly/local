@@ -19,6 +19,7 @@ class Diagnostics::Status
 	include Concerns::ImageLoadConcern
 	include Concerns::NameIdConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::Diagmodule::Status::OutsourceConcern
 
 	index_name "pathofast-statuses"
 	LOT_SIZE = 1
@@ -124,7 +125,7 @@ class Diagnostics::Status
 	##
 	########################################################
 	def self.permitted_params
-		[
+		base = [
 			:name,
 			:description,
 			:duration,
@@ -136,10 +137,16 @@ class Diagnostics::Status
 			:result,
 			:reduce_prior_capacity_by
 		]
+		
+		if defined? @permitted_params
+			(base + @permitted_params).flatten
+		else
+			base
+		end
 	end
 
 	def self.index_properties
-		{
+		base = 	{
 			id: {
 				type: 'keyword'
 			},
@@ -174,6 +181,11 @@ class Diagnostics::Status
     			type: 'integer'
     		}
 	    }
+		if defined? @index_properties
+			base.merge(@index_properties)
+		else
+			base
+		end
 	end
 
 

@@ -223,7 +223,11 @@ module Concerns::OrderConcern
 					else
 						self.categories.each do |existing_category|
 							if existing_category.name == category.name
-								
+									
+								puts "the existing category quantity is: #{existing_category.quantity}"
+
+								puts "the category quantity is: #{category.quantity}"
+
 								existing_category.quantity += category.quantity
 
 								if options > 1
@@ -258,37 +262,23 @@ module Concerns::OrderConcern
 		end
 	end
 
-	## collates reports if they share the exact same statuses.
-	## to do this, it will check the checksum of the report statuses.
-	## if it is the same, then it will collate.
-	## it also adds relevant tubes to those  statuses ?
-	## no it does not.
-	## just go with status ids ?
-	## or how to add statuses exactly ?
-	## will it have its own id
-	## does it have to be unique ?
-	## if you copy a status, and you change the earlier one.
-	## then does that propagate ?
-	## reference status id.
-	## it can be done.
-	## like that.
-	## so it will be collated based on what ?
-	## reference status id ?
-	## so we give it a reference status version, and id.
-	## let the status ids be unique.
-	## on changing it its version will change.
-	## collate by similarity of version+refid.
-	## so lets say there are ten statuses -> so we make a base64 out of it ?
-	## no we maintain that for the report.
-	## and use it here directly.
-	## call it procedure code or some shit.
+	## how to synchronize the queries.
+	## group statuses by query ?
+	## maybe that will work, if the start time and end time is the same ?
+	## so i need to merge statuses
+	## somehow.
+	## if its start and end time is exactly the same
+	## it can be merged for the query.
+
 	def schedule
 		procedure_versions_hash = {}
-		## we append the start epoch to it.
-		## so that we don't fuck that up.
-		## next step will be the mapping.
-		## 
+		## let me sort this out first.
+		## where is the start epoch.
 		self.reports.each do |report|
+			## so first by start time
+			## then by procedure
+			## and still fuse the queries
+
 			## we consider the desired start time and the procedure, as a parameter for commonality.
 
 			effective_version = report.procedure_version + "_" + report.start_epoch.to_s
@@ -309,7 +299,18 @@ module Concerns::OrderConcern
 			start_time = procedure_versions_hash[proc][:start_time]
 			prev_start = nil
 			procedure_versions_hash[proc][:statuses].map{|c|
+				
+				puts "start time: #{start_time}"
+				
+				puts "prev start: #{prev_start}"
+				
+				puts "c duration: #{c.duration}"
+
+
 				c.from = prev_start.blank? ? (start_time) : (prev_start + c.duration) 
+
+				puts "c from is: #{c.from}"
+
 				c.to = c.from + Diagnostics::Status::MAX_DELAY
 				prev_start = c.to
 			}

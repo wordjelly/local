@@ -430,6 +430,8 @@ module Concerns::Schedule::OrderConcern
 
 		end
 
+		## we go with a synchronization concern.
+
 		## and what else will you do ?
 		## all i have to do is sort this out today.
 		def schedule_order(order)
@@ -441,6 +443,17 @@ module Concerns::Schedule::OrderConcern
 			all_statuses = []
 			
 			blocks_result = {}
+
+
+			order.build_queries
+			## it should be done from here onwards
+			## the building of the queries.
+
+			## this is the only way to manage it.
+			## if there are 5 procedures
+			## it will take 5 times the time.
+			## there is no way to manage otherwise
+			## or you collate before hand
 
 			order.procedure_versions_hash.keys.each do |pr|
 				
@@ -466,12 +479,12 @@ module Concerns::Schedule::OrderConcern
 
 			#puts "the query is:"
 			#puts JSON.pretty_generate(query)
-			IO.write("query.json", JSON.pretty_generate(query))
+			#IO.write("query.json", JSON.pretty_generate(query))
 
 			#puts "the aggregation is:"
 			#puts JSON.pretty_generate(aggregation)
 			#exit(1)
-			IO.write("aggregation.json", JSON.pretty_generate(aggregation))
+			#IO.write("aggregation.json", JSON.pretty_generate(aggregation))
 			
 			t = Time.now
 
@@ -492,10 +505,7 @@ module Concerns::Schedule::OrderConcern
 			order.procedure_versions_hash.keys.each do |pr|
 				order.procedure_versions_hash[pr][:statuses].each do |status|
 					
-					puts " ------------------- STATUS 10 -----------------"
-					if(status.id.to_s == "step 10")
-						puts JSON.pretty_generate(aggs.send(status.id.to_s))
-					end
+					
 					#aggregation,status,booking_minutes_array,order,status_durations
 					#aggs.send(status.id.to_s),status,booking_minutes,order,status_durations					
 					#puts "searching for status: #{status.id.to_s}"
@@ -549,7 +559,7 @@ module Concerns::Schedule::OrderConcern
 
 			puts "the base agg took: "
 			puts (t2 - t)*1000
-			#exit(1)
+			
 
 		end
 		#######################################################

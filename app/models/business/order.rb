@@ -10,8 +10,8 @@ class Business::Order
 
 	index_name "pathofast-business-orders"
 	document_type "business/order"
+	include Concerns::Schedule::QueryBuilderConcern
 	include Concerns::OrderConcern
 	include Concerns::PdfConcern
-
 
 end

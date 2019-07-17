@@ -2,24 +2,24 @@ require "test_helper"
 
 class OrdersControllerTest < ActionDispatch::IntegrationTest
 
-	setup do 
-		Organization.create_index! force: true
-		#NormalRange.create_index! force: true
+    setup do 
+        Organization.create_index! force: true
+        #NormalRange.create_index! force: true
         Diagnostics::Report.create_index! force: true
-		Tag.create_index! force: true
-		Barcode.create_index! force: true
-		Inventory::ItemType.create_index! force: true
-		Inventory::ItemGroup.create_index! force: true
-		Inventory::Item.create_index! force: true
-		Inventory::Transaction.create_index! force: true
-		Inventory::ItemTransfer.create_index! force: true
-		Inventory::Comment.create_index! force: true
+        Tag.create_index! force: true
+        Barcode.create_index! force: true
+        Inventory::ItemType.create_index! force: true
+        Inventory::ItemGroup.create_index! force: true
+        Inventory::Item.create_index! force: true
+        Inventory::Transaction.create_index! force: true
+        Inventory::ItemTransfer.create_index! force: true
+        Inventory::Comment.create_index! force: true
         Schedule::Minute.create_index! force: true
-		Schedule::Block.create_index! force: true
+        #Schedule::Block.create_index! force: true
         ## that's the end of it
-		User.delete_all
-		User.es.index.delete
-		User.es.index.create
+        User.delete_all
+        User.es.index.delete
+        User.es.index.create
         Auth::Client.delete_all
         #########################################################
         ##
@@ -38,7 +38,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         @u2 = User.find(@u2.id.to_s)
         @u2.confirm
         @u2.save
-		@c = Auth::Client.new(:resource_id => @u.id, :api_key => "test", :app_ids => ["testappid"])
+        @c = Auth::Client.new(:resource_id => @u.id, :api_key => "test", :app_ids => ["testappid"])
         @c.redirect_urls = ["http://www.google.com"]
         @c.versioned_create
         @u.client_authentication["testappid"] = "test_es_token"
@@ -57,18 +57,18 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         #########################################################
         @pathologist_role = Tag.new(name: "Pathologist",created_by_user: @u, tag_type: Tag::EMPLOYEE_TAG)
         @pathologist_role.assign_id_from_name
-		@pathologist_role.save
-		#puts "these are the pathologist role error messages ------------------"
-		#puts @pathologist_role.errors.full_messages.to_s
-		
-		#puts Tag.find("Pathologist")
-		
-		#exit(1)
+        @pathologist_role.save
+        #puts "these are the pathologist role error messages ------------------"
+        #puts @pathologist_role.errors.full_messages.to_s
+        
+        #puts Tag.find("Pathologist")
+        
+        #exit(1)
 
 
-		@technician_role = Tag.new(name: "Technician", created_by_user: @u, tag_type: Tag::EMPLOYEE_TAG)
-		@technician_role.assign_id_from_name
-		@technician_role.save
+        @technician_role = Tag.new(name: "Technician", created_by_user: @u, tag_type: Tag::EMPLOYEE_TAG)
+        @technician_role.assign_id_from_name
+        @technician_role.save
 
         ##########################################################
         ##
@@ -104,7 +104,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
-		@headers = { "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json", "X-User-Token" => @u.authentication_token, "X-User-Es" => @u.client_authentication["testappid"], "X-User-Aid" => "testappid"}
+        @headers = { "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json", "X-User-Token" => @u.authentication_token, "X-User-Es" => @u.client_authentication["testappid"], "X-User-Aid" => "testappid"}
 
         @pathofast = Organization.new(name: "pathofast diagnostic laboratory", description: "new lab", phone_number: "123345", address: "jome")
         @pathofast.role = "lab"
@@ -124,16 +124,10 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
             "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json", "X-User-Token" => @pathan.authentication_token, "X-User-Es" => @pathan.client_authentication["testappid"], "X-User-Aid" => "testappid"
         }
 
-
-
     end
 
 =begin
-
     test " -- creates an order with multiple reports -- " do 
-
-        ## okay now we use json for this ?
-        ## 
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
@@ -186,12 +180,15 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"        
 
         report_one = Diagnostics::Report.find(report_one_id)
+            
+        ## so this is passing.
+        ## we first make all of them pass.
+        ## then we proceed.
         
-        #puts "the report one requirements are:"
-        #puts report_one.requirements.to_s
-        #exit(1)
-
         report_two = Diagnostics::Report.find(report_two_id)
+
+        report_one.start_epoch = 450
+        report_two.start_epoch = 100
 
         order = Business::Order.new
         order.reports =  [report_one.attributes,report_two.attributes]
@@ -202,7 +199,6 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         assert_equal "201", response.code.to_s
 
     end
-
 
     test " -- collates individual report requirements into order requirements -- " do 
 
@@ -264,6 +260,9 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
         report_two = Diagnostics::Report.find(report_two_id)
 
+        report_one.start_epoch = 450
+        report_two.start_epoch = 100
+
         order = Business::Order.new
         order.reports =  [report_one,report_two]
         
@@ -282,7 +281,6 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         #assert_equal true, !order.requirements.blank?
 
     end
-
 
 
     test " -- on adding an item, updates to all relevant reports, and reduces required quantities of all other categories --" do 
@@ -337,6 +335,11 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report_one = Diagnostics::Report.find(report_one_id)
         
         report_two = Diagnostics::Report.find(report_two_id)
+
+
+        report_one.start_epoch = 450
+        report_two.start_epoch = 100
+        
 
         order = Business::Order.new
         order.reports =  [report_one,report_two]
@@ -436,9 +439,13 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         
         report_two = Diagnostics::Report.find(report_two_id)
 
+
+        report_one.start_epoch = 450
+        report_two.start_epoch = 100
+        
+
         order = Business::Order.new
         order.reports =  [report_one,report_two]
-        
         
     
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
@@ -446,84 +453,17 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers
 
     end
-=end
+
     
-=begin
-    test " -- schedules order -- " do 
-        status_ids = ["step 1","step 2","step 3","step 4","step 5"]
-        Schedule::Minute.create_test_minutes
-       
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+    test " -- first collates reports by start time, then by the commonality of procedure -- " do 
 
-        status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
-        test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")     
-        requirement = Inventory::Requirement.new
-        category = Inventory::Category.new(name: "rapid serum tube", quantity: 10)
-        
-        requirement.categories = [category]
-        report = Diagnostics::Report.new
-        report.statuses = [status]
-        report.tests = [test]
-        report.requirements = [requirement]
-        report.name = "blank name"
-        report.description = "new report description"
-        report.price = 52
-        report.created_by_user = @u
-        report.created_by_user_id = @u.id.to_s
-        report.assign_id_from_name
-        report.save
-        assert_equal true, report.errors.full_messages.blank?
 
-        report_one_id = report.id.to_s
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
-        ## now add another one.
-        status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
-        test = Diagnostics::Test.new(name: "Vitamin D", description: "Vitamin D level in blood", price: 20, lis_code: "VITD")     
-        requirement = Inventory::Requirement.new
-        category = Inventory::Category.new(name: "serum tube", quantity: 10)
-        requirement.categories = [category]
-        report = Diagnostics::Report.new
-        report.statuses = [status]
-        report.tests = [test]
-        report.requirements = [requirement]
-        report.name = "25, OH dihydroxy vitamin d"
-        report.description = "Measurement of Vitamin D"
-        report.price = 520
-        report.created_by_user = @u
-        report.created_by_user_id = @u.id.to_s
-        report.assign_id_from_name
-        report.save
-        assert_equal true, report.errors.full_messages.blank?
-
-        report_two_id = report.id.to_s
-
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"        
-
-        report_one = Diagnostics::Report.find(report_one_id)
-        
-        report_two = Diagnostics::Report.find(report_two_id)
-
-        report_one.start_epoch = 10
-        report_two.start_epoch = 20
-
-        order = Business::Order.new
-        order.reports =  [report_one,report_two]
-        
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
-
-        post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers     
-
-        puts "------------------------- response body ------------ "
-        puts response.body.to_s
-
-        o = Business::Order.new(JSON.parse(response.body))
-        puts o.errors.full_messages.to_s
-
-    end 
+    end
 =end
 
-    test " -- finds blocked minutes -- " do 
+=begin
+    test " -- doess query and block aggregation -- " do 
         ## so now we create fewer test minutes
         ## it should ignore the employee and for status ids 
         ## as required.
@@ -545,6 +485,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
             s.name = c
             s.duration = 20
             s.description = c
+            s.origin = {lat: 10, lon: 10}
             s
         }
         report.tests = [test]
@@ -573,6 +514,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
             s.name = c
             s.duration = 10
             s.description = c
+            s.origin = {lat: 10, lon: 10}
             s
         }
         report.tests = [test]
@@ -607,6 +549,8 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
         
         order_one = Business::Order.find(JSON.parse(response.body)["order"]["id"])
+
+        #exit(1)
 
         #puts JSON.pretty_generate(order_one.get_schedule)
         ## okay so we just want to see if the blocks work or not
@@ -633,76 +577,107 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
         order_two = Business::Order.find(order_two.id.to_s)
 
-        puts JSON.pretty_generate(order_two.get_schedule)
-        ## consider a purely write heavy system
-        ## it will write all minutes in the range
-        ## with a script, i.e update
-        ## any employee, which has the status, and is not booked, will be given this.
-        ## then a simple query, for the first minute will do the rest of the job.
-        ## in this the only problem is the blocks.
-        ## after the status is done, 
+       # puts JSON.pretty_generate(order_two.get_schedule)
+            
 
     end
+=end
 
-=begin
-    test " -- when some minutes are blocked, ignores those, while booking the next status -- " do 
+    test " -- generates queries and blocks hash -- " do 
 
-        status_ids = ["step 1","step 2","step 3","step 4","step 5","step 6","step 7","step 8","step 9","step 10"]
-        Schedule::Minute.create_test_minutes(10)
+        #status_ids = ["step 1","step 2","step 3"]
+        
+        status_ids_report_one = ["step 1","step 2","step 3"]
+        
+        status_ids_report_two = ["step 4","step 5","step 6"]
+
+        Schedule::Minute.create_test_minutes
        
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
-        status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
+        #status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
+
         test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")     
         requirement = Inventory::Requirement.new
+        
         category = Inventory::Category.new(name: "rapid serum tube", quantity: 10)
         
         requirement.categories = [category]
+        
         report = Diagnostics::Report.new
-        report.statuses = status_ids.map{|c| 
+        
+        report.statuses = status_ids_report_one.map{|c| 
             s = Diagnostics::Status.new
             s.name = c
             s.duration = 20
             s.description = c
+            s.origin = {lat: 10, lon: 10}
             s
         }
+
         report.tests = [test]
+        
         report.requirements = [requirement]
+        
         report.name = "blank name"
+        
         report.description = "new report description"
+        
         report.price = 52
+        
         report.created_by_user = @u
+        
         report.created_by_user_id = @u.id.to_s
+        
         report.assign_id_from_name
+        
         report.save
+        
         assert_equal true, report.errors.full_messages.blank?
 
         report_one_id = report.id.to_s
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
         ## now add another one.
-        status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
+        #status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
+        
         test = Diagnostics::Test.new(name: "Vitamin D", description: "Vitamin D level in blood", price: 20, lis_code: "VITD")     
+        
         requirement = Inventory::Requirement.new
+        
         category = Inventory::Category.new(name: "serum tube", quantity: 10)
+        
         requirement.categories = [category]
+        
         report = Diagnostics::Report.new
-        report.statuses = status_ids.map{|c| 
+        
+        report.statuses = status_ids_report_two.map{|c| 
             s = Diagnostics::Status.new
             s.name = c
             s.duration = 10
             s.description = c
+            s.origin = {lat: 10, lon: 10}
             s
         }
+        
         report.tests = [test]
+        
         report.requirements = [requirement]
+        
         report.name = "25, OH dihydroxy vitamin d"
+        
         report.description = "Measurement of Vitamin D"
+        
         report.price = 520
+        
         report.created_by_user = @u
+        
         report.created_by_user_id = @u.id.to_s
+        
         report.assign_id_from_name
+        
         report.save
+        
         assert_equal true, report.errors.full_messages.blank?
 
         report_two_id = report.id.to_s
@@ -714,7 +689,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report_two = Diagnostics::Report.find(report_two_id)
 
         report_one.start_epoch = 450
-        report_two.start_epoch = 100
+        report_two.start_epoch = 450
 
         order = Business::Order.new
         order.reports =  [report_one,report_two]
@@ -724,117 +699,9 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers     
       
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
-
-        o2 = Business::Order.new(order.attributes)
-        o2.reports = [report_one,report_two]
-
-        post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers     
-      
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
-          status_ids = ["step 1","step 2","step 3","step 4","step 5","step 6","step 7","step 8","step 9","step 10"]
-      
-        Schedule::Minute.create_test_minutes(100)
-       
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
-
-
-        status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
-        test = Diagnostics::Test.new(name: "MCV", description: "Mean Corpuscular Volume", price: 20, lis_code: "MCV")     
-        requirement = Inventory::Requirement.new
-        category = Inventory::Category.new(name: "rapid serum tube", quantity: 10)
         
-        requirement.categories = [category]
-        report = Diagnostics::Report.new
-        report.statuses = status_ids.map{|c| 
-            s = Diagnostics::Status.new
-            s.name = c
-            s.duration = 5
-            s.description = c
-            s
-        }
-        report.tests = [test]
-        report.requirements = [requirement]
-        report.name = "blank name"
-        report.description = "new report description"
-        report.price = 52
-        report.created_by_user = @u
-        report.created_by_user_id = @u.id.to_s
-        report.assign_id_from_name
-        report.save
-        assert_equal true, report.errors.full_messages.blank?
-
-        report_one_id = report.id.to_s
-
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
-        ## now add another one.
-        status = Diagnostics::Status.new(name: status_ids[0], description: "step one") 
-        test = Diagnostics::Test.new(name: "Vitamin D", description: "Vitamin D level in blood", price: 20, lis_code: "VITD")     
-        requirement = Inventory::Requirement.new
-        category = Inventory::Category.new(name: "serum tube", quantity: 10)
-        requirement.categories = [category]
-        report = Diagnostics::Report.new
-        report.statuses = status_ids.map{|c| 
-            s = Diagnostics::Status.new
-            s.name = c
-            s.duration = 10
-            s.description = c
-            s
-        }
-        report.tests = [test]
-        report.requirements = [requirement]
-        report.name = "25, OH dihydroxy vitamin d"
-        report.description = "Measurement of Vitamin D"
-        report.price = 520
-        report.created_by_user = @u
-        report.created_by_user_id = @u.id.to_s
-        report.assign_id_from_name
-        report.save
-        assert_equal true, report.errors.full_messages.blank?
-
-        report_two_id = report.id.to_s
-
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"        
-
-        report_one = Diagnostics::Report.find(report_one_id)
-        
-        report_two = Diagnostics::Report.find(report_two_id)
-
-        report_one.start_epoch = 20
-        report_two.start_epoch = 50
-
-        order = Business::Order.new
-        order.reports =  [report_one,report_two]
-        
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
-
-        post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers     
-        
-        #puts response.body.to_s
-
         order_one = Business::Order.find(JSON.parse(response.body)["order"]["id"])
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
-        
-        #post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: @headers     
-
-        #puts response.body.to_s
-
-        #order_two = Business::Order.find(JSON.parse(response.body)["order"]["id"])
-
-        #Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"           
-
-        ## now we have the two orders.
-        #puts "the schedule of the first order is -----------"
-       # puts JSON.pretty_generate(order_one.get_schedule)
-        ## i have to crack the 
-        ## so let's give a simple method to view an orders
-        ## schedule
-        ## get a simple hash by aggregating.
-        ## each status.
-        ## just take the procedure versions hash and build it.
-        ## and i can see how to display it later.
-
     end
-=end
 
 end

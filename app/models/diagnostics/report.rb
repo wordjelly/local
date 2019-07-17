@@ -7,6 +7,7 @@ class Diagnostics::Report
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::Diagmodule::Report::OutsourceConcern
 
 	index_name "pathofast-diagnostics-reports"
 	document_type "diagnostics/report"
@@ -21,7 +22,6 @@ class Diagnostics::Report
 	attribute :payments, Array[Business::Payment]
 	attribute :price, Float
 	validates :price, numericality: true
-	attribute :outsource_to_organization_id, String, mapping: {type: 'keyword'}
 	attribute :tag_ids, Array, mapping: {type: "keyword"}, default: []
 	
 	## calculated before_save in the set_procedure_version function
@@ -79,7 +79,6 @@ class Diagnostics::Report
 		    }
 		    indexes :patient_id, type: 'keyword'
 		    indexes :price, type: 'float'
-		    indexes :outsource_to_organization_id, type: 'keyword'
 		    indexes :tag_ids, type: 'keyword'
 		    indexes :statuses, type: 'nested', properties: Diagnostics::Status.index_properties
 		    indexes :requirements, type: 'nested', properties: Inventory::Requirement.index_properties
@@ -117,7 +116,6 @@ class Diagnostics::Report
 						:start_epoch,
 						:procedure_version,
 						{:tag_ids => []},
-						:outsource_to_organization_id,
 						{
 							:requirements => Inventory::Requirement.permitted_params
 						},
@@ -187,7 +185,6 @@ class Diagnostics::Report
 	end
 
 	#############################################################
-	##
 	##
 	## STATUS GROUPING
 	##
