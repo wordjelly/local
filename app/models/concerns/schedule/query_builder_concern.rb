@@ -93,19 +93,37 @@ module Concerns::Schedule::QueryBuilderConcern
   		prev_min_status_count = self.global_minutes_hash.values.first.size
   		
   		self.global_minutes_hash.keys.each do |minute|
+  			
   			message("iterating",minute)
+
   			message(self.global_minutes_hash[minute],minute)
+  				
+  			keys_to_remove = []
+  			
+  			keys_to_add = []
+
+  			new_keys = []
+
   			if self.open_status_ids_hash.blank?
+
   				message("open status ids hash is blank.",minute)
+  				
   				self.global_minutes_hash[minute].keys.each do |status_key|
+  				
   					message("doing status key: #{status_key}",minute)
+  				
   					status_id = status_key.to_s.split("_")[0]
+  				
   					message("status id is: #{status_id}",minute)
-  					status_queries_hash[status_id.to_s][:blocks][status_key] ||= {}
+  				
+  					#status_queries_hash[status_id.to_s][:blocks][status_key] ||= {}
   					
   					open_status(status_key,minute)
+  					
+  					keys_to_add << status_key
 
   				end
+
   			else
   				curr_min_status_count = self.global_minutes_hash[minute].keys.size
   				
@@ -117,6 +135,8 @@ module Concerns::Schedule::QueryBuilderConcern
   						if global_minutes_hash[minute][ok].blank?
   							# we closed it here because 
   							close_status(ok)
+
+  							keys_to_remove << ok
   							# in this case there is no question of reopening. 
   						end
   					end
@@ -125,40 +145,49 @@ module Concerns::Schedule::QueryBuilderConcern
   					new_keys = (self.global_minutes_hash[minute].keys - self.open_status_keys_array)
   					message("new keys: #{new_keys}",minute)
 
-  					keys_to_remove = []
-  					keys_to_add = []
-
   					self.open_status_keys_array.each do |ok|
   						close_status(ok,minute)
   						# reopen if its key has a "to" component greater than this minute
   						upto = ok.to_s.split("_")[-1]
-  						if upto.to_i > minute
-  							open_status(ok,minute)
-  							keys_to_add << ok
+  						status_id = ok.to_s.split("_")[0]
+  						if upto.to_i >= minute
+  							## if you open it , it will overwrite.
+  							## so you are opening for what exactly 
+  							## for this key.
+  							new_key = status_id + "_" + minute.to_s + "_" + upto.to_s
+  							open_status(new_key,minute)
+  							keys_to_add << new_key
   						else
   							keys_to_remove << ok
   						end
   					end
+
   					message("keys to remove: #{keys_to_remove}",minute)
 
-  					keys_to_remove.map{|c| self.open_status_keys_array.delete(c)}
-
-  					keys_to_add.map{|c| self.open_status_keys_array << c}
-
-  					new_keys.map{|c|
-  						open_status(c,minute)
-  					}
-
   				end	
+
   				prev_min_status_count = curr_min_status_count
+
   			end
-  			#exit(1)
+
+  			keys_to_remove.map{|c| self.open_status_keys_array.delete(c)}
+
+  			keys_to_add.map{|c| self.open_status_keys_array << c}
+
+  			new_keys.map{|c|
+  				open_status(c,minute)
+  			}
+			
   		end
   	end
 
+  	## where will they add the reports
+  	## how do they get outsourced ?
+  	## 
+
   	def close_status(status_key,to)
   		status_id = status_key.to_s.split("_")[0]
-  		status_queries_hash[status_id.to_s][:blocks][status_key][:to] = to
+  		status_queries_hash[status_id.to_s][:blocks][status_id][status_key][:to] = to
   		self.open_status_ids_hash[status_id].delete(status_key)
   		#self.open_status_keys_array.delete(status_key)
   	end
@@ -166,7 +195,8 @@ module Concerns::Schedule::QueryBuilderConcern
   	def open_status(status_key,from)
   		#message("opening status key: #{status_key}",from)
   		status_id = status_key.to_s.split("_")[0]
-  		status_queries_hash[status_id.to_s][:blocks][status_key] = 
+  		status_queries_hash[status_id.to_s][:blocks][status_id] ||= {}
+  		status_queries_hash[status_id.to_s][:blocks][status_id][status_key] = 
   		{
 			from: from,
 			to: nil,
