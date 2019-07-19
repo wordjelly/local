@@ -11,10 +11,13 @@ class Inventory::Category
 	include Concerns::AlertConcern
 	include Concerns::TransferConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::FormConcern
 
 	attribute :name, String, mapping: {type: 'keyword'}
 	## this is a percentage.
 	attribute :quantity, Float, mapping: {type: 'float'}, default: 100
+	## these will be the items added.
+	## so i had added it here.
 	attribute :items, Array[Inventory::Item]
 	attribute :required_for_reports, Array, mapping: {type: 'keyword'}, default: []
 	attribute :optional_for_reports , Array, mapping: {type: 'keyword'}, default: []

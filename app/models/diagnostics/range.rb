@@ -10,6 +10,32 @@ class Diagnostics::Range
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
 	include Concerns::VersionedConcern
+	include Concerns::FormConcern
+
+	## select this, in a select form.
+	## 
+	GENDERS = ["Male","Female","Other"]
+
+	def fields_not_show_in_form
+		["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","min_age","max_age"]		
+	end
+
+
+	def customizations(root)
+		root ||= self.class.name.classify.demodulize.underscore.downcase
+		puts "root is: #{root}"
+
+		k = ApplicationController.helpers.select_tag(root + "[sex]" ,ApplicationController.helpers.options_for_select(GENDERS), {:class => "browser-default"})
+		k += "<label>Select Gender</label>".html_safe
+
+		{
+			"sex" => k
+		}
+	end
+
+	
+
+
 
 	#########################################################
 	##

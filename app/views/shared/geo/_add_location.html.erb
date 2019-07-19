@@ -1,11 +1,11 @@
 <div></div>
 <span class="add-location">Add Location<i class="material-icons">add_circle_outline</i></span>
-<div class="section add-location-fields" stye="display:none;">
-	<%= f.number_field :latitude %>
-	<%= f.label :latitude %>
+<div class="section add-location-fields" style="display:none;">
+	<%= f.hidden_field :latitude %>
+	
 
-	<%= f.number_field :longitude %>
-	<%= f.label :longitude %>
+	<%= f.hidden_field :longitude %>
+	
 
 	<%= f.text_field :address %>
 	<%= f.label :address %>

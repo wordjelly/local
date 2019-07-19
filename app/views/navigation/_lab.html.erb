@@ -2,20 +2,22 @@
 	<!-- show or create the organization -->
 	<a class='dropdown-trigger btn' href='#' data-target='organization'>Organization</a>
 
-	<a class="dropdown-trigger btn" href="#" data-target='patients'>Patients</a>
+	<a class="dropdown-trigger btn" href="#" data-target='report_templates'>Report Formats</a>
 
-	<a class="dropdown-trigger btn" href="#" data-target='report_templates'>Report Templates</a>
+	<a class="dropdown-trigger btn" href="#" data-target='orders'>Orders</a>
 
-	<a class="dropdown-trigger btn" href="#" data-target='roles_and_tags'>Roles and Tags</a>
-
+	<!-- it is showing the images twice in organization, so gotta check that part. -->
+<!--
 	<a class="dropdown-trigger btn" href="#" data-target='packages'>Packages</a>
 
 	<a class="dropdown-trigger btn" href="#" data-target='inventory'>Inventory</a>
 
 	<a class="dropdown-trigger btn" href="#" data-target='machines'>Machines</a>
 
-	<a class="dropdown-trigger btn" href="#" data-target='geo'>Geo</a>
+	<a class="dropdown-trigger btn" href="#" data-target='roles_and_tags'>Roles and Tags</a>
 
+	<a class="dropdown-trigger btn" href="#" data-target='geo'>Geo</a>
+-->
 	<ul id='organization' class='dropdown-content'>
 		<% if current_user.has_organization? %>
 			<li><i class="material-icons">view_module</i><%= link_to current_user.organization.name, organization_path(current_user.organization.id.to_s) %></li>
@@ -38,7 +40,11 @@
 		<li><i class="material-icons">view_module</i><%= link_to "Add New Report Template", new_diagnostics_report_path %></li>
 	</ul>
 
-	
+	<ul id='orders' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to " Pending Orders", business_orders_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "New Order", new_business_order_path %></li>
+	</ul>
+
 
 	<ul id='roles_and_tags' class='dropdown-content'>
 		<li><i class="material-icons">view_module</i><%= link_to "See All Roles/Tags", tags_path %></li>

@@ -9,8 +9,10 @@ var template;
 
 $(document).on('click','.add_nested_element',function(event){
 
-	var template = _.template($(this).parent().prev().html());
-	
+	var script_id = $(this).attr("data-id");
+	console.log("script id:" + script_id);
+	var template = _.template($("#" + script_id).html());
+	console.log($("#" + script_id));
 	$(template({})).insertAfter($(this).parent());
 
 });

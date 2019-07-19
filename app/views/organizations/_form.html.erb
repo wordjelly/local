@@ -1,52 +1,65 @@
 <%= form_for @organization do |f| %>
 	
-	
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Basic Details
+			</div>
+			<%= f.text_field :name %>
+			<%= f.label :name %>
 
-	<%= f.text_field :name %>
-	<%= f.label :name %>
+			<%= f.text_field :phone_number %>
+			<%= f.label :phone_number %>
 
-	<%= f.text_field :address %>
-	<%= f.label :address %>
+			<%= f.text_field :description %>
+			<%= f.label :description %>
 
-	<%= f.text_field :phone_number %>
-	<%= f.label :phone_number %>
+			<div style="margin-top:1rem"></div>
+			<!-- no need for showing laittude and longitude -->
+			<%= render :partial => "/shared/geo/add_location", locals: {f: f} %>
+		</div>
+	</div>
 
-	<%= f.text_field :description %>
-	<%= f.label :description %>
+	<%= f.label :organization_type %>
+	<%= f.select :role , Organization::ROLES.map{|c| [c,c]}, {include_blank: "Organization Type", disabled: '', selected: (@organization.role || '')} %>
 
-	<h6>If you are a sub-organization/branch, enter the name of the parent organization here.</h6>
-	<%= f.text_field :parent_id, :data => {:autocomplete_type => "organizations" } %>
-	<%= f.label :parent_id %>
-
-	<%= f.select :role , Organization::ROLES.map{|c| [c,c]}, {include_blank: "Organization Type", disabled: '', selected: ''} %>
+	<%= render :partial => "/organizations/employees" %>
 
 	<% unless @organization.new_record? %>
     	<%= render :partial => "images/image", locals: {model: @organization} %>
+    	<%= render :partial => "images/index" %>
   	<% end %>
 
-  	<!-- to show the approved users, and delete them if required -->
-  	<%= render :partial => "/shared/display_array", locals: {model: @organization, multiple_el: "user_ids", multiple_objects: "verified_users"} %>
 
-  	<!-- to show the rejected users and delete them if required -->
-  	<%= render :partial => "/shared/display_array", locals: {model: @organization, multiple_el: "rejected_user_ids", multiple_objects: "rejected_users"} %>
-
-  	<!-- to show the pending users and delete them if required -->
-	<%= render :partial => "/organizations/users_pending_approval_form_partial" %> 
-
-
-	<!-- add the various staff types in your organization -->
-	<!-- add this to the organizations attribute_accessors -->
-	<%= f.text_field :role_name , :data => {:autocomplete_type => "tags", :multiple => true, :multiple_element_name => "organization[role_ids][]"}, :autocomplete => "off" %>
-
-	<%= f.label :role_name %>
-
-	<%= render :partial => "/shared/display_array", locals: {model: @organization, multiple_el: "role_ids", multiple_objects: "employee_roles"} %> 	
-
-	<%= f.number_field :verifiers %>
-	<%= f.label :verifiers %>
-
-	<%= render :partial => "/shared/geo/add_location", locals: {f: f} %>
+  	<h6><i class="material-icons" id="toggle_advanced">add</i>Advanced</h6>
 	
+	<!-- abstract into a seperate partial -->
+	<div id="advanced" style="display:none;">
+		<%= render :partial => "/organizations/parent_organization_field", locals: {f: f} %>
+
+		<%= render :partial => "/organizations/employee_roles", locals: {f: f} %>
+
+		<%= render :partial => "/organizations/settings", locals: {f: f} %>
+	</div>
+
 	<%= f.submit "Submit" %>
 
 <% end %>
+
+<!-- next step is how am i going to sort out the architecture for the rest of it -->
+<!-- and its visibility issues -->
+<!-- first a UI for our creation of a report, its ranges etc,-->
+<!-- i want to first sort that out -->
+<!-- then we move to the creation of an order -->
+<!-- via a patient, order scheduling, without statuses -->
+<!-- and interfacing with LIS, this won't be very problematic -->
+<!-- problem will come with requirements -->
+<!-- that is the issue actually -->
+<!-- so they enter report names , and outsource to pathofast -->
+<!-- and upload their letter head -->
+<!-- if outsource is true, how does the visibility play out -->
+<!-- we can add the outsourced organziation as an owner also -->
+<!-- that can work -->
+<!-- so ownership comes -->
+<!-- how does the patient integration work, so we make an order with a patient name ?, or do we put the patient in the order?, will be simpler -->
+<!-- so each time you create a new patient, or search existing -->

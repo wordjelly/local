@@ -6,6 +6,7 @@ class Inventory::Comment
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::FormConcern
 	
 	index_name "pathofast-inventory-comments"
 	document_type "inventory/comment"

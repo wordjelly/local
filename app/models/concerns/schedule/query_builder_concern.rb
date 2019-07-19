@@ -46,7 +46,7 @@ module Concerns::Schedule::QueryBuilderConcern
 
   			if status_queries_hash[status.id.to_s].blank?
 	  			status_queries_hash[status.id.to_s] ||= {
-	  				blocks: {},
+	  				blocks: [],
 	  				queries: {
 	  					(from_to_combination).to_sym => {
 		  					from: status.from,
@@ -88,6 +88,56 @@ module Concerns::Schedule::QueryBuilderConcern
 
   	end
 
+  	def build
+  		 
+  		prev_employee_capacity = nil
+  		prev_minute_statuses = []
+  		open_status_blocks = []
+  		self.global_minutes_hash.keys.each do |minute|
+  			required_employee_capacity = self.global_minutes_hash[minute].keys
+
+  			if prev_employee_capacity.blank?
+  				## open the blocks.
+  				## for this status.
+  				self.global_minutes_hash[minute].keys.each do |status_key|
+					status_id = status_key.to_s.split("_")[0]
+					block = {
+						from: minute,
+						to: nil,
+						total_employee_capacity: required_employee_capacity
+					}
+					self.status_queries_hash[status_id.to_s][:blocks] << block
+					open_status_blocks << status_id
+				end
+  				
+  			else
+
+  				puts "difference is:"
+  				puts prev_minute_statuses - self.global_minutes_hash[minute].keys
+  				 
+	  			if (prev_minute_statuses - self.global_minutes_hash[minute].keys).size > 0
+
+	  				open_status_blocks.each do |status_id|
+	  					self.status_queries_hash[status_id.to_s][:blocks].map{|c|
+	  						c[:to] = minute if c[:to].blank?
+	  					}
+	  				end
+
+	  				open_status_blocks = []
+	  			
+	  			end
+
+  			end
+
+  			
+
+  			prev_employee_capacity = required_employee_capacity
+  			prev_minute_statuses = self.global_minutes_hash[minute].keys
+
+  		end
+  	end
+
+=begin
   	def build
   		
   		prev_min_status_count = self.global_minutes_hash.values.first.size
@@ -134,7 +184,7 @@ module Concerns::Schedule::QueryBuilderConcern
   					self.open_status_keys_array.each do |ok|
   						if global_minutes_hash[minute][ok].blank?
   							# we closed it here because 
-  							close_status(ok)
+  							close_status(ok,minute)
 
   							keys_to_remove << ok
   							# in this case there is no question of reopening. 
@@ -143,6 +193,9 @@ module Concerns::Schedule::QueryBuilderConcern
   				else
   					## open all the new keys.
   					new_keys = (self.global_minutes_hash[minute].keys - self.open_status_keys_array)
+
+  					message("global minutes hash keys #{self.global_minutes_hash[minute].keys}",minute)
+  					message("open status array keys: #{self.open_status_keys_array}",minute)
   					message("new keys: #{new_keys}",minute)
 
   					self.open_status_keys_array.each do |ok|
@@ -170,24 +223,30 @@ module Concerns::Schedule::QueryBuilderConcern
 
   			end
 
-  			keys_to_remove.map{|c| self.open_status_keys_array.delete(c)}
+  			keys_to_remove.map{|c| self.open_status_keys_array.delete(c.to_s)}
 
-  			keys_to_add.map{|c| self.open_status_keys_array << c}
+  			keys_to_add.map{|c| self.open_status_keys_array << c.to_s}
 
+  			message("opening status for new keys: #{new_keys}",minute)
   			new_keys.map{|c|
   				open_status(c,minute)
+  				open_status_keys_array << c.to_s
   			}
+  			message("End opening status",minute)
 			
   		end
   	end
-
+=end
   	## where will they add the reports
   	## how do they get outsourced ?
   	## 
 
   	def close_status(status_key,to)
   		status_id = status_key.to_s.split("_")[0]
-  		status_queries_hash[status_id.to_s][:blocks][status_id][status_key][:to] = to
+  		puts "status key:#{status_key}"
+  		puts "status id: #{status_id}"
+  		puts status_queries_hash[status_id.to_s][:blocks]
+  		status_queries_hash[status_id.to_s][:blocks][status_id.to_s][status_key.to_s][:to] = to
   		self.open_status_ids_hash[status_id].delete(status_key)
   		#self.open_status_keys_array.delete(status_key)
   	end
@@ -195,8 +254,8 @@ module Concerns::Schedule::QueryBuilderConcern
   	def open_status(status_key,from)
   		#message("opening status key: #{status_key}",from)
   		status_id = status_key.to_s.split("_")[0]
-  		status_queries_hash[status_id.to_s][:blocks][status_id] ||= {}
-  		status_queries_hash[status_id.to_s][:blocks][status_id][status_key] = 
+  		status_queries_hash[status_id.to_s][:blocks][status_id.to_s] ||= {}
+  		status_queries_hash[status_id.to_s][:blocks][status_id.to_s][status_key.to_s] = 
   		{
 			from: from,
 			to: nil,

@@ -9,6 +9,7 @@ class Business::Payment
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
 	include Concerns::VersionedConcern
+	include Concerns::FormConcern
 
 	attribute :amount, Float, mapping: {type: 'float'}
 

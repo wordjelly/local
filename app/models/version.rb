@@ -3,6 +3,8 @@ require 'elasticsearch/persistence/model'
 class Version
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::FormConcern
+	
 	attribute :attributes_string, String
 	attribute :control_doc_number, String
 

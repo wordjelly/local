@@ -1,12 +1,7 @@
-<div class="row" style="margin-bottom:1.4rem; margin-top:1.4rem">
-	<a class='dropdown-trigger btn' href='#' data-target='organization'>Organization</a>
-
-	<ul id='organization' class='dropdown-content'>
-		<% if current_user.has_organization? %>
-			<li><i class="material-icons">view_module</i><%= link_to current_user.organization.name, organization_path(current_user.organization.id.to_s) %></li>
-		<% else %>
-			<li><i class="material-icons">view_module</i><%= link_to "Create Your Lab", new_organization_path %></li>
-		<% end %>
-	</ul>
-	
+<div class="row center" style="margin-bottom:1.4rem; margin-top:1.4rem">
+	<% if defined? @organization %>
+	<% else %>
+		<%= link_to "Create Your Lab!", new_organization_path(:organization => {:role => "lab"}), :class => "waves-effect waves-light btn-large" %>
+	<% end %>
+	<!-- so here we say create your lab -->
 </div>

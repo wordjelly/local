@@ -8,6 +8,7 @@ class Business::Rate
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::FormConcern
 	UNIVERSAL_ORGANIZATION_ID = "*"
 
 	## the id of the organization for which this rate is being set.

@@ -26,3 +26,11 @@ $(document).on('click','.reject_user',function(event){
 	add_rejected_user_id($(this).attr("data-user-id"),$(this));
 });
 
+$(document).on('click','#toggle_advanced',function(event){
+	$("#advanced").slideToggle();
+});
+
+// sort out geo add location, being shown.
+// sort out create your lab button being hidden.
+// sort out lab being prepopulaed.
+// sort out report template nested views.

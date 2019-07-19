@@ -19,6 +19,7 @@ class Diagnostics::Status
 	include Concerns::ImageLoadConcern
 	include Concerns::NameIdConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::FormConcern
 	include Concerns::Diagmodule::Status::OutsourceConcern
 
 	index_name "pathofast-statuses"
@@ -53,6 +54,16 @@ class Diagnostics::Status
 	attribute :from, Integer, mapping: {type: 'integer'}
 	attribute :to, Integer, mapping: {type: 'integer'}
 	attribute :bucket_interval, Integer, mapping: {type: 'integer'}, default: DEFAULT_BUCKET_INTERVAL
+
+	## will have to reference an array of requirements.
+	## so that these can be correctly updated
+	## but basically they are just items right ?
+	## should embed the requirements.
+	## these are linked from the report requirements.
+	## so add it right away.
+	attribute :requirements, Array[Inventory::Requirement]
+
+
 
 	## this is set if the status is copied from somewhere.
 	## has to be a permitted parameter.
@@ -121,7 +132,9 @@ class Diagnostics::Status
 	
 	########################################################
 	##
-	## UTILITY
+	## UTILITY, or i can just have requirement ids
+	## which can be referenced and thus sorted out
+	## but what about the items 
 	##
 	########################################################
 	def self.permitted_params
@@ -135,7 +148,10 @@ class Diagnostics::Status
 			:lot_size,
 			:requires_image,
 			:result,
-			:reduce_prior_capacity_by
+			:reduce_prior_capacity_by,
+			{
+				:requirements => Inventory::Requirement.permitted_params
+			}
 		]
 		
 		if defined? @permitted_params
@@ -179,7 +195,8 @@ class Diagnostics::Status
     		},
     		reduce_prior_capacity_by: {
     			type: 'integer'
-    		}
+    		},
+    		requirements: Inventory::Requirement.index_properties
 	    }
 		if defined? @index_properties
 			base.merge(@index_properties)

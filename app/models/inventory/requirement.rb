@@ -9,6 +9,7 @@ class Inventory::Requirement
 	include Concerns::AlertConcern
 	include Concerns::TransferConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::FormConcern
 	
 	index_name "pathofast-inventory-requirements"
 	document_type "inventory/requirement"

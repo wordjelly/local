@@ -76,7 +76,10 @@
   <!-- expects an instance variable called @alert[OPTIONAL] -->
   <%= render :partial => "/shared/alert" %>
   <!-- expects an instance variable called @images[OPTIONAL] -->
-  <%= render :partial => "/images/index" %>
+  <!-- earlier had rendered a partial called /images/index -->
+  <!-- this can be shown on edit only, inside the relevant thing -->
+  <!-- so i will add it there -->
+  <!-- we can have doctors, that can be done in profile -->
   <%= yield %>
 </div>
 

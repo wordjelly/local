@@ -11,6 +11,7 @@ class Inventory::Item
 	include Concerns::AlertConcern
 	include Concerns::TransferConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::FormConcern
 	
 	index_name "pathofast-inventory-items"
 	document_type "inventory/item"	
