@@ -61,6 +61,8 @@ class Patient
 	attribute :date_of_birth, DateTime
 	validates_presence_of :date_of_birth
 
+	attr_accessor :current_age_in_hours
+
 	attribute :address, String
 	validates_presence_of :address
 
@@ -140,7 +142,10 @@ class Patient
 	attribute :heart_problems, Integer, mapping: {type: 'keyword'}
 
 	attribute :medications_list, Array, mapping: {type: 'keyword'}
-		
+	
+	after_find do |document|
+		document.current_age_in_hours = (Time.now - document.date_of_birth)/3600.0
+	end
 	
 	#############################################################
 	##
@@ -190,6 +195,15 @@ class Patient
 		alert += " has heart problems" if self.heart_problems == 1
 		return alert if alert.blank?
 		return "The patient" + alert
+	end
+
+	def meets_range_requirements?(range)
+		 if range.sex == self.sex
+		 	if ((range.min_age <= self.current_age_in_hours) && (range.max_age >= self.current_age_in_hours))
+		 		true
+		 	end
+		 end
+		 false
 	end
 
 	def self.permitted_params

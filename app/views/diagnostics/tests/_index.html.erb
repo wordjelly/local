@@ -1,0 +1,25 @@
+ <table>
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>LIS Code</th>
+              <th>Description</th>
+              <th>Ready For Reporting</th>
+              <th>Verified</th>
+              <th>Result Type</th>
+              <th>Result Raw</th>
+              <th>Result Text</th>
+              <th>Result Numeric</th>
+              <th>Ranges</th>
+              <th>References</th>
+              <th>Options</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        	<% @tests.each do |test| %>
+        	<% @test = test %>
+        	<%= render :partial => "/diagnostics/tests/show" %>
+        	<% end %>
+        </tbody>
+</table>

@@ -305,11 +305,11 @@ module Concerns::BaseControllerConcern
 
 	end
 
+
 	def set_model
-		## either public or private
-		## either the resource is public.
-		## or it is a private resource and we have to be the owner.
-		## so it should have been public.
+		## so make the controllers and routes
+		## just override this thing.
+		## 
 
 		query = {
 			bool: {
@@ -356,6 +356,13 @@ module Concerns::BaseControllerConcern
 		else
 			not_found("no such model exists, or the current user does not have authorization to interact with the model")
 		end
+		
+		## get category by id.
+		## let me get this over with.
+		## or first check that query before i forget how it works.
+		## so let me check why that is not working.
+		## then move forwards.
+		
 	end
 
 	def set_images_instance_variable(obj)

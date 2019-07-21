@@ -1,0 +1,9 @@
+<div class="red-text"><%= @category.name %> (<%= @category.quantity %>)</div>
+<div>Items</div>
+<% unless @category.items.blank? %>
+	<% @category.items.each do |item| %>
+		<div>
+			<%= link_to item.barcode, inventory_item_path(item.barcode) %>
+		</div>
+	<% end %>
+<% end %>

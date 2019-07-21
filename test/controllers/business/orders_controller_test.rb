@@ -144,7 +144,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report.requirements = [requirement]
         report.name = "blank name"
         report.description = "new report description"
-        report.price = 52
+        
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
@@ -168,7 +168,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report.requirements = [requirement]
         report.name = "25, OH dihydroxy vitamin d"
         report.description = "Measurement of Vitamin D"
-        report.price = 520
+        0
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
@@ -217,7 +217,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report.requirements = [requirement]
         report.name = "blank name"
         report.description = "new report description"
-        report.price = 52
+        
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
@@ -241,7 +241,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report.requirements = [requirement]
         report.name = "25, OH dihydroxy vitamin d"
         report.description = "Measurement of Vitamin D"
-        report.price = 520
+        0
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
@@ -299,7 +299,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report.requirements = [requirement]
         report.name = "blank name"
         report.description = "new report description"
-        report.price = 52
+        
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
@@ -321,7 +321,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report.requirements = [requirement]
         report.name = "25, OH dihydroxy vitamin d"
         report.description = "Measurement of Vitamin D"
-        report.price = 520
+        0
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
@@ -402,7 +402,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report.requirements = [requirement]
         report.name = "blank name"
         report.description = "new report description"
-        report.price = 52
+        
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
@@ -424,7 +424,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report.requirements = [requirement]
         report.name = "25, OH dihydroxy vitamin d"
         report.description = "Measurement of Vitamin D"
-        report.price = 520
+        0
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
@@ -492,7 +492,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report.requirements = [requirement]
         report.name = "blank name"
         report.description = "new report description"
-        report.price = 52
+        
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
@@ -521,7 +521,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         report.requirements = [requirement]
         report.name = "25, OH dihydroxy vitamin d"
         report.description = "Measurement of Vitamin D"
-        report.price = 520
+        0
         report.created_by_user = @u
         report.created_by_user_id = @u.id.to_s
         report.assign_id_from_name
@@ -623,7 +623,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         
         report.description = "new report description"
         
-        report.price = 52
+        
         
         report.created_by_user = @u
         
@@ -668,7 +668,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         
         report.description = "Measurement of Vitamin D"
         
-        report.price = 520
+        0
         
         report.created_by_user = @u
         

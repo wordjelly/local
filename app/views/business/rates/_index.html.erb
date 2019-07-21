@@ -1,0 +1,15 @@
+<table>
+  <thead>
+    <tr>
+        <th>Rate</th>
+        <th>Organization Id</th>
+        <th>Options</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @rates.each do |nr| %>
+     <% @rate = nr %>
+     <%= render :partial => "/business/rates/show" %>
+    <% end %>
+  </tbody>
+</table>

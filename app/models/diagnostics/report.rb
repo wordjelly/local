@@ -13,22 +13,29 @@ class Diagnostics::Report
 	index_name "pathofast-diagnostics-reports"
 	document_type "diagnostics/report"
 
+	## OBJECT ARRAYS
+	attribute :tests, Array[Diagnostics::Test]
+	attribute :statuses, Array[Diagnostics::Status]
+
+	attribute :requirements, Array[Inventory::Requirement]
+	attribute :rates, Array[Business::Rate]
+	
+	## SCALARS 
 	attribute :name, String, mapping: {type: 'keyword'}
 	attribute :description, String, mapping: {type: 'keyword'}
 	attribute :patient_id, String, mapping: {type: 'keyword'}
-	attribute :tests, Array[Diagnostics::Test]
-	attribute :requirements, Array[Inventory::Requirement]
-	attribute :statuses, Array[Diagnostics::Status]
-	attribute :rates, Array[Business::Rate]
-	attribute :payments, Array[Business::Payment]
 	attribute :tag_ids, Array, mapping: {type: "keyword"}, default: []
-	
+	## 1 -> request rerun
+	## you have to enter a comment in the range
+	## 
+	## -1 -> (default) don't.
+	attribute :request_rerun, Integer, mapping: {type: 'integer'}, default: -1
 	## calculated before_save in the set_procedure_version function
 	attribute :procedure_version, String, mapping: {type: "keyword"}
 	attribute :start_epoch, Integer, mapping: {type: 'integer'}
 	## WE SET PERMITTED
 	## AND THEN THE FIRST ACTION TO CHECK IS 
-
+	## parse normal ranges.
 	settings index: { 
 	    number_of_shards: 1, 
 	    number_of_replicas: 0,

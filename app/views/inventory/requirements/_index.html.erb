@@ -1,0 +1,15 @@
+ <table>
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Categories</th>
+              <th>Options</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @requirements.each do |requirement| %>
+          <% @requirement = requirement %>
+          <%= render :partial => "inventory/requirements/show" %>
+          <% end %>
+        </tbody>
+</table>

@@ -63,6 +63,12 @@ class Diagnostics::Status
 	## so add it right away.
 	attribute :requirements, Array[Inventory::Requirement]
 
+	## mark the status as 1, after which the value can be reported
+	## problem is what happens when we want to rerun?
+	## so for the moment for repeat there is no way to manage it.
+	## we will actually have to make a new report.
+	## and do it with that.
+	attribute :can_report, Integer, mapping: {type: 'integer'}, default: -1
 
 
 	## this is set if the status is copied from somewhere.
@@ -196,7 +202,10 @@ class Diagnostics::Status
     		reduce_prior_capacity_by: {
     			type: 'integer'
     		},
-    		requirements: Inventory::Requirement.index_properties
+    		requirements: {
+    			type: 'nested',
+    			properties: Inventory::Requirement.index_properties
+    		}
 	    }
 		if defined? @index_properties
 			base.merge(@index_properties)

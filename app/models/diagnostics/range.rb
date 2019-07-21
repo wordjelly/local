@@ -73,6 +73,8 @@ class Diagnostics::Range
 
 	attribute :max_value, Float, :default => 0.0
 
+	attribute :text_value, String
+
 	attribute :grade, String, mapping: {type: 'keyword'}
 
 	attribute :count, String, mapping: {type: 'keyword'}
@@ -81,10 +83,19 @@ class Diagnostics::Range
 
 	attribute :machine, String, mapping: {type: 'keyword'}
 
+	attribute :comment, String, mapping: {type: 'text'}
+
 	attribute :kit, String, mapping: {type: 'keyword'}
 
 	attribute :reference, String, mapping: {type: 'keyword'}
 
+	## picked -> 1 (means this range satisfied the test value.)
+	## picked -> -1 (default, does not satisfy.)
+	attribute :picked, Integer, mapping: {type: 'integer'}, default: -1	
+
+	## abnormal -> 1
+	## normal -> -1
+	attribute :is_abnormal, Integer, mapping: {type: 'integer'}, default: 1	
 
 	before_save do |document|
 		document.set_min_and_max_age
@@ -129,7 +140,11 @@ class Diagnostics::Range
 			:sex,
 			:grade,
 			:count,
-			:inference
+			:inference,
+			:comment,
+			:is_abnormal,
+			:text_value,
+			:picked
 		]
 	end
 
@@ -170,9 +185,25 @@ class Diagnostics::Range
 			},
 			inference: {
 				type: 'text'
+			},
+			comment: {
+				type: 'text'
+			},
+			is_abnormal: {
+				type: 'integer'
+			},
+			text_value: {
+				type: 'text'
+			},
+			picked: {
+				type: 'integer'
 			}
     	}
     	
+	end
+
+	def pick_range
+		self.picked = 1
 	end
 
 end 

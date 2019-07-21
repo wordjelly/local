@@ -1,0 +1,15 @@
+<tr>
+	<td><%= link_to @test.name, test_path(@test.id.to_s) %></td>
+	<td><%= @test.lis_code %></td>
+	<td><%= @test.description %></td>
+	<td><%= @test.ready_for_reporting %></td>
+	<td><%= @test.verified %></td>
+	<td><%= @test.result_type %></td>
+	<td><%= @test.result_raw %></td>
+	<td><%= @test.result_text %></td>
+	<td><%= @test.result_numeric %></td>
+	<% @ranges = @test.ranges %>
+	<td><%= render :partial => "/diagnostics/ranges/index" %></td>
+	<td><%= @test.references %></td>
+	<td><%= render :partial => "/tests/options" %></td>
+</tr>

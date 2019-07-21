@@ -6,12 +6,16 @@
               <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Priority</th>
-                    <th>Reports</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Duration</th>
+                    <th>Lot Size</th>
+                    <th>Result</th>
+                    <th>Requirements</th>
+                    <th>Can Report</th>
                     <th>Options</th>
                 </tr>
               </thead>
-
               <tbody>
                 <% @statuses.each_with_index {|nr,key| %>
               	 <% @status = nr %>
@@ -22,6 +26,5 @@
       </table>
   </div>
 </div>
-<!-- this page has to allow us to add statuses -->
-<!-- and also select levels where we can add reports -->
-<!-- also modify the priorities of the statuses -->
+
+<!-- so today main is requirements, porting to statuses, and order creation etc -->

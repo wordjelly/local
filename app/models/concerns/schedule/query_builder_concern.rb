@@ -82,7 +82,7 @@ module Concerns::Schedule::QueryBuilderConcern
 				self.global_minutes_hash[k.to_i][status_key.to_sym] << report.id.to_s
   			end
 
-  			prev_status_end = status.to
+  			prev_status_end = status.from + status.duration
 
   		end
 
@@ -94,42 +94,45 @@ module Concerns::Schedule::QueryBuilderConcern
   		prev_minute_statuses = []
   		open_status_blocks = []
   		self.global_minutes_hash.keys.each do |minute|
-  			required_employee_capacity = self.global_minutes_hash[minute].keys
+  			required_employee_capacity = self.global_minutes_hash[minute].keys.size
 
   			if prev_employee_capacity.blank?
   				## open the blocks.
   				## for this status.
   				self.global_minutes_hash[minute].keys.each do |status_key|
-					status_id = status_key.to_s.split("_")[0]
-					block = {
-						from: minute,
-						to: nil,
-						total_employee_capacity: required_employee_capacity
-					}
-					self.status_queries_hash[status_id.to_s][:blocks] << block
-					open_status_blocks << status_id
-				end
+  					status_id = status_key.to_s.split("_")[0]
+            to = status_key.to_s.split("_")[-1]
+            if to.to_i > minute
+    					block = {
+    						from: minute,
+    						to: nil,
+    						total_employee_capacity: required_employee_capacity
+    					}
+    					self.status_queries_hash[status_id.to_s][:blocks] << block
+    					open_status_blocks << status_id
+            end
+				  end
   				
   			else
 
-  				puts "difference is:"
-  				puts prev_minute_statuses - self.global_minutes_hash[minute].keys
-  				 
 	  			if (prev_minute_statuses - self.global_minutes_hash[minute].keys).size > 0
-
+            
+            message("difference: #{ prev_minute_statuses - self.global_minutes_hash[minute].keys}", minute)
+            
+            ## close all the open statuses.        
 	  				open_status_blocks.each do |status_id|
 	  					self.status_queries_hash[status_id.to_s][:blocks].map{|c|
 	  						c[:to] = minute if c[:to].blank?
 	  					}
 	  				end
-
 	  				open_status_blocks = []
+
+            ## now reopen if it is that any of these things are 
+            ## going to continue.
 	  			
 	  			end
 
   			end
-
-  			
 
   			prev_employee_capacity = required_employee_capacity
   			prev_minute_statuses = self.global_minutes_hash[minute].keys
@@ -304,7 +307,7 @@ module Concerns::Schedule::QueryBuilderConcern
   	##
   	#########################################################
   	def message(info,minute)
-  		if ((minute.to_i >= 510) && (minute.to_i <= 511)) 
+  		if ((minute.to_i >= 510) && (minute.to_i <= 600)) 
   			puts "#{minute}  --> : #{info}"
   		end
   	end

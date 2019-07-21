@@ -10,6 +10,8 @@ module Concerns::OrderConcern
 
 		attribute :patient_id, String, mapping: {type: 'keyword'}
 
+		attr_accessor :patient
+
 		attribute :categories, Array[Inventory::Category] 
 
 		attribute :payments, Array[Business::Payment]
@@ -76,14 +78,24 @@ module Concerns::OrderConcern
 
 
 		before_save do |document|
+			document.load_patient
 			document.update_requirements
 			document.update_report_items
+			document.add_report_values
 		end
 
 		after_save do |document|
 			document.schedule
 		end
 
+		after_find do |document|
+			document.load_patient
+		end
+
+	end
+
+	def load_patient
+		self.patient = Patient.find(self.patient_id) if self.patient_id
 	end
 
 	def get_schedule
@@ -259,6 +271,19 @@ module Concerns::OrderConcern
 					report.add_item(category,item)
 				end
 			end
+		end
+	end
+
+	## next step is to display the created report
+	## for now just let me make something simple.
+	## called before save, to add the patient values
+	def add_report_values
+		unless self.patient.blank?
+			self.reports.map{|report|
+				report.tests.map{|test|
+					test.add_result(self.patient) 
+				}
+			}
 		end
 	end
 

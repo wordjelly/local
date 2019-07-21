@@ -1,0 +1,55 @@
+<!-- expects a variable called "model" to be passed in -->
+<!-- select the array attributes, make tabs out of titles, and render index views for each into tabs -->
+<!-- then the rest of the things, we add into the card -->
+<% array_attributes = model.class.attribute_set.select{|c| 
+		if c.primitive.to_s == "Array"
+			if c.respond_to? "member_type"
+				if c.member_type != "BasicObject"
+					true
+				else
+					false
+				end
+			else
+				false
+			end
+		else
+			false
+		end
+	}	 
+%>
+
+<!-- so we have to make index views for all -->
+<% non_array_attributes = model.class.attribute_set.select{|c| 
+		if c.primitive.to_s == "Array"
+			if c.respond_to? "member_type"
+				if c.member_type != "BasicObject"
+					false
+				else
+					true
+				end
+			else
+				true
+			end
+		else
+			true
+		end
+	}
+%>
+
+<!-- first the non arrays -->
+<div class="row">
+    <div class="col s12 m12 l12">
+      	<ul class="tabs">
+      		<% array_attributes.each do |virtus_attribute| %>
+				<li class="tab col s3 m3 l3"><a href="<%= virtus_attribute.name.to_s %>">virtus_attribute.name.to_s</a></li>	
+			<% end %>
+      	</ul>
+    </div>
+    <% array_attributes.each do |virtus_attribute| %>
+		<div id="<%= virtus_attribute.name.to_s %>" class="col s12 m12 l12">
+			<%= send("@#{virtus_attribute.name.to_s}=",model.virtus_attribute) %>	
+			<% class_name = virtus_attribute.member_type.primitive.to_s %>
+			<%= render :partial => (Auth::OmniAuth::Path.model_to_path(class_name.constantize) + "/index") %>
+		</div>
+	<% end %>
+</div>
