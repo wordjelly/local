@@ -198,15 +198,18 @@ class Inventory::Transaction
 
 
 	before_save do |document|
-		puts "document is received check?"
-		puts document.quantity_received.to_s
+		#puts "document is received check?"
+		#puts document.quantity_received.to_s
 		if document.received?
-			puts "document is received."
+			#puts "document is received."
 			if document.local_item_groups.blank?
-				puts "local item group is blank."
+				#puts "local item group is blank."
 				document.clone_local_item_groups
 			end
 		end
+	
+		document.cascade_id_generation(nil)
+	
 	end
 		
 end

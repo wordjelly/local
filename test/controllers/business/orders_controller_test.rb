@@ -704,4 +704,16 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
     end
 
+    ## why to make individual controllers
+    ## how to make them ?
+    ## so you are looking for a requirement.or a category
+    ## you have to be able to search for it.
+    ## and sort out the nested shit.
+    ## so let's create a report and ignore, that much and see
+    ## how it pans out.
+    ## solve all those bugs first.
+    ## i have to figure out a way to namespace the index
+    ## names somehow.
+    ## we can run setup website.
+
 end

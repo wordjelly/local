@@ -17,10 +17,6 @@ class Inventory::Requirement
 	attribute :categories, Array[Inventory::Category]
 	attribute :name, String, mapping: {type: 'keyword'}
 
-	def assign_id_from_name
-		self.name = BSON::ObjectId.new.to_s
-		self.id = self.name
-	end
 
 	def self.permitted_params
 		[

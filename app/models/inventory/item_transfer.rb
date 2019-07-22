@@ -173,6 +173,7 @@ class Inventory::ItemTransfer
 			Inventory::ItemTransfer.add_bulk_item(update_request)
 		end
 		Inventory::ItemTransfer.flush_bulk
+		document.cascade_id_generation(nil)
 	end
 
 	## this should transfer shit easily.

@@ -4,7 +4,7 @@
 <% array_attributes = model.class.attribute_set.select{|c| 
 		if c.primitive.to_s == "Array"
 			if c.respond_to? "member_type"
-				if c.member_type != "BasicObject"
+				if c.member_type.primitive.to_s != "BasicObject"
 					true
 				else
 					false
@@ -22,7 +22,7 @@
 <% non_array_attributes = model.class.attribute_set.select{|c| 
 		if c.primitive.to_s == "Array"
 			if c.respond_to? "member_type"
-				if c.member_type != "BasicObject"
+				if c.member_type.primitive.to_s != "BasicObject"
 					false
 				else
 					true
@@ -47,9 +47,9 @@
     </div>
     <% array_attributes.each do |virtus_attribute| %>
 		<div id="<%= virtus_attribute.name.to_s %>" class="col s12 m12 l12">
-			<%= send("@#{virtus_attribute.name.to_s}=",model.virtus_attribute) %>	
 			<% class_name = virtus_attribute.member_type.primitive.to_s %>
-			<%= render :partial => (Auth::OmniAuth::Path.model_to_path(class_name.constantize) + "/index") %>
+			<% instance_plural = class_name.classify.demodulize.underscore.downcase.pluralize %>
+			<%= render :partial => (Auth::OmniAuth::Path.model_to_path(class_name.constantize) + "/index"), locals: {instance_plural.to_sym => model.send(virtus_attribute.name.to_s)} %>
 		</div>
 	<% end %>
 </div>

@@ -1,3 +1,9 @@
+<% statuses_array = [] %>
+<% if defined? :statuses %>
+  <% statuses_array = statuses %>
+<% else %>
+  <% statuses_array = @statuses %>
+<% end %>
 <div class="card">
   <div class="card-content">
     <div class="card-title">
@@ -17,10 +23,10 @@
                 </tr>
               </thead>
               <tbody>
-                <% @statuses.each_with_index {|nr,key| %>
-              	 <% @status = nr %>
-                 <!-- how to display the priority -->
-                 <%= render :partial => "statuses/show", locals: {status: @status} %>
+                <% statuses_array.each_with_index {|nr,key| %>
+                   <% @status = nr %>
+                   <!-- how to display the priority -->
+                   <%= render :partial => "statuses/show", locals: {status: @status} %>
                 <% } %>
               </tbody>
       </table>

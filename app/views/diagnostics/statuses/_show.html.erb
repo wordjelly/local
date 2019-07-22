@@ -1,5 +1,5 @@
 <tr id="status_row_<%= status.id.to_s %>">
-	<td><%= link_to status.name, status_path(status.id.to_s) %></td>
+	<td><%= link_to status.name, diagnostics_status_path(status.id.to_s) %></td>
 	<td><%= status.from %></td>
 	<td><%= status.to %></td>
 	<td><%= status.duration %></td>

@@ -1,3 +1,11 @@
+<% rates_array = [] %>
+
+<% if defined? :rates %>
+  <% rates_array = rates %>  
+<% else %>
+  <% rates_array = @rates %>
+<% end %> 
+
 <table>
   <thead>
     <tr>
@@ -7,7 +15,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @rates.each do |nr| %>
+    <% rates_array.each do |nr| %>
      <% @rate = nr %>
      <%= render :partial => "/business/rates/show" %>
     <% end %>

@@ -139,6 +139,8 @@ class Diagnostics::Test
 	#before_save do |document|
 	#	document.add_result
 	#end
+	## should be done from the report ?
+	## or else how will we get the reference to the organization id ?
 
 	def result_filters
 		["undefined","nan","null","infinity","-",".","!"]
@@ -199,7 +201,6 @@ class Diagnostics::Test
 		}
 	end
 
-	## before that is the display of the requirements.
-	## that is the main thing.
+	
 
 end

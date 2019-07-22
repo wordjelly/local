@@ -180,9 +180,21 @@ module Concerns::BaseControllerConcern
 			instance.versions.push(v)
 		end
 
-		#puts JSON.pretty_generate(instance.attributes)
-
-		instance.save(op_type: 'create')
+		## this has to be a global setting
+		## like in test, we have to be able to disable it in the
+		## while testing.
+		## can this be done as a configuration.
+		## what about chekcing if it is a test env.?
+		#if Rails.env.test?
+		if Rails.env.test? || Rails.env.development?
+			if ENV["CREATE_UNIQUE_RECORDS"].blank?
+				instance.save(op_type: 'create')
+			elsif ENV["CREATE_UNIQUE_RECORDS"] == "no"
+				instance.save
+			end
+		else
+			instance.save(op_type: 'create')
+		end
 
 		set_errors_instance_variable(instance)
 		

@@ -1,4 +1,10 @@
- <table>
+<% requirements_array = [] %>
+<% if defined? :requirements %>
+    <% requirements_array = requirements %>
+<% else %>
+    <% requirements_array = @requirements %>
+<% end %>
+<table>
         <thead>
           <tr>
               <th>Name</th>
@@ -7,9 +13,9 @@
           </tr>
         </thead>
         <tbody>
-          <% @requirements.each do |requirement| %>
-          <% @requirement = requirement %>
-          <%= render :partial => "inventory/requirements/show" %>
+          <% requirements_array.each do |requirement| %>
+            <% @requirement = requirement %>
+            <%= render :partial => "inventory/requirements/show" %>
           <% end %>
         </tbody>
 </table>

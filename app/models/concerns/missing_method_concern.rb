@@ -70,6 +70,36 @@ module Concerns::MissingMethodConcern
 				end
 			end
 		end
+
+		## call this before save in all the top level objects.
+		def cascade_id_generation(organization_id)
+			if self.class.name =~ /organization/i 
+				self.assign_id_from_name(nil)
+			else
+				org_id = nil
+				if self.respond_to? :created_by_user
+					org_id = self.created_by_user.organization.id.to_s
+				else
+					raise("no organization specified") if organization_id.blank?
+					org_id = organization_id
+				end
+				self.assign_id_from_name(org_id)
+				self.class.attribute_set.each do |virtus_attribute|
+					if virtus_attribute.primitive.to_s == "Array"
+						if virtus_attribute.respond_to? "member_type"
+							class_name = virtus_attribute.member_type.primitive.to_s
+							unless class_name == "BasicObject"
+								## set the id , and call cascade on it.
+								self.send("#{virtus_attribute}").each do |obj|
+									obj.cascade_id_generation(org_id)
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+
 	end
 
 	module ClassMethods

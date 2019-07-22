@@ -95,6 +95,7 @@ class Diagnostics::Report
 	
 	before_save do |document|
 		document.set_procedure_version
+		cascade_id_generation(nil)
 	end
 
 	## generates a huge concated string using the reference status version 

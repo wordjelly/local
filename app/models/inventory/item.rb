@@ -82,10 +82,7 @@ class Inventory::Item
 	## 
 	#validate :transaction_has_items_left
 	
-	after_find do |document|
-		#document.load_statuses_and_reports
-	end
-
+	
 	
     mapping do
       
@@ -100,48 +97,11 @@ class Inventory::Item
 
 	end
 
-=begin
-	def load_statuses_and_reports
-		search_results = Order.search({
-			_source: false,
-			query: {
-				nested: {
-					path: "tubes",
-					query: {
-						term: {
-							"tubes.barcode".to_sym => {
-								value: self.id.to_s
-							}
-						}
-					},
-					inner_hits: {}
-				}
-			}
-		})
-		patient_report_ids = []
-		unless search_results.response.hits.hits.blank?
-			search_results.response.hits.hits.each do |outer_hit|
-				outer_hit.inner_hits.tubes.hits.hits.each do |hit|
-					patient_report_ids = hit._source.patient_report_ids
-				end
-			end
-		end	
-		
-		## so here we send this as the query.
-		res = Status.gather_statuses({
-			ids: {
-				values: patient_report_ids
-			}
-		})
 
-		self.statuses = res[:statuses]
-		self.reports = res[:reports]
+	before_save do |document|
+		document.cascade_id_generation(nil)
 	end
 
-	def update_status(template_status_id)
-
-	end
-=end
 	########################################################
 	##
 	##

@@ -90,6 +90,9 @@ class Inventory::ItemGroup
 		if document.created_by_user.organization.is_a_supplier?
 			document.public = Concerns::OwnersConcern::IS_PUBLIC
 		end
+	
+		document.cascade_id_generation(nil)
+	
 	end
 
 	after_find do |document|

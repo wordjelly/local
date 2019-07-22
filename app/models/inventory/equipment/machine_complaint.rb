@@ -80,4 +80,8 @@ class Inventory::Equipment::MachineComplaint
 		end
 	end
 
+	before_save do |document|
+		document.cascade_id_generation(nil)
+	end
+
 end

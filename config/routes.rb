@@ -5,6 +5,13 @@ Rails.application.routes.draw do
   namespace :diagnostics do
     resources :reports  
     resources :controls
+    
+    ## create a controller
+    resources :tests
+    ## create a controller
+    resources :ranges
+    ## create a controller
+    resources :statuses
   end
 
   namespace :geo do 
@@ -14,6 +21,7 @@ Rails.application.routes.draw do
 
   namespace :business do
     resources :orders
+    resources :rates
     resources :packages 
   end
 
@@ -39,6 +47,7 @@ Rails.application.routes.draw do
     resources :transactions
     resources :item_groups
     resources :items
+    resources :requirements
     namespace :equipment do 
       resources :machines
       resources :machine_complaints
