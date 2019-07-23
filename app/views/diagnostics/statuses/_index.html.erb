@@ -1,5 +1,5 @@
 <% statuses_array = [] %>
-<% if defined? :statuses %>
+<% if local_assigns[:statuses] %>
   <% statuses_array = statuses %>
 <% else %>
   <% statuses_array = @statuses %>

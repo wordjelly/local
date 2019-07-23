@@ -3,9 +3,8 @@
           <tr>
               <th>Name</th>
               <th>Total Tests</th>
-              <th>Price</th>
+              <th>Total Steps</th>
               <th>Total Requirements</th>
-              <th>Patient</th>
               <th>Options</th>
           </tr>
         </thead>
@@ -42,7 +41,7 @@
         <tbody>
         	<% @reports.each do |report| %>
         	<% @report = report %>
-        	<%= render :partial => "/reports/show" %>
+        	<%= render :partial => "/diagnostics/reports/show" %>
         	<% end %>
         </tbody>
 </table>

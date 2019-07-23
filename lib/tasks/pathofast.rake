@@ -52,7 +52,6 @@ namespace :pathofast do
     pathofast.created_by_user_id = u1.id.to_s
     pathofast.created_by_user = u1
     pathofast.phone_number = "9561137096"
-    pathofast.assign_id_from_name
     pathofast.save 
     puts "ERRORS CREATING PATHOFAST: #{pathofast.errors.full_messages}"
 
@@ -65,7 +64,6 @@ namespace :pathofast do
     anand.phone_number = "02024411990"
     anand.created_by_user_id = u2.id.to_s
     anand.created_by_user = u2
-    anand.assign_id_from_name
     anand.save 
     puts "ERRORS CREATING ANAND: #{anand.errors.full_messages}"    
 

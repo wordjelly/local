@@ -1,5 +1,5 @@
 <% tests_array = [] %>
-<% if defined? :tests %>
+<% if local_assigns[:tests] %>
   <% tests_array = tests %>
 <% else %>
   <% tests_array = @tests %>

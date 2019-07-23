@@ -77,11 +77,19 @@ module Concerns::MissingMethodConcern
 				self.assign_id_from_name(nil)
 			else
 				org_id = nil
-				if self.respond_to? :created_by_user
-					org_id = self.created_by_user.organization.id.to_s
-				else
-					raise("no organization specified") if organization_id.blank?
-					org_id = organization_id
+				## if an organization id was already passed in .
+				## use it.
+				org_id = organization_id unless organization_id.blank?
+					
+				## this is useful when 
+				## otherwise try to determine it.
+				if org_id.blank?
+					if self.respond_to? :created_by_user
+						org_id = self.created_by_user.organization.id.to_s
+					else
+						raise("no organization specified") if organization_id.blank?
+						org_id = organization_id
+					end
 				end
 				self.assign_id_from_name(org_id)
 				self.class.attribute_set.each do |virtus_attribute|

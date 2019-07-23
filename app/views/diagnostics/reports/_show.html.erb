@@ -13,13 +13,9 @@
 <!-- this was currently being set inside item_requirements -->
 <!-- those items had to preexist, but we had -->
 <tr>
-	<td><%= link_to @report.name, report_path(@report.id.to_s) %></td>
+	<td><%= link_to @report.name, diagnostics_report_path(@report.id.to_s) %></td>
 	<td><%= @report.tests.size %></td>
-	<td><%= @report.price %></td>
-	<td><%= @report.item_requirements.size %></td>
-	<td><% unless @report.patient.blank? %>
-			<%= link_to @report.patient.name, patient_path(@report.patient_id) %>
-		<% end %>
-	</td>
-	<td><%= render :partial => "reports/options" %></td>
+	<td><%= @report.statuses.size %></td>
+	<td><%= @report.requirements.size %></td>
+	<td><%= render :partial => "/diagnostics/reports/options" %></td>
 </tr>

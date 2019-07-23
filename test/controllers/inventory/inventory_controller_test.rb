@@ -50,7 +50,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
         ##
         #########################################################
         @pathologist_role = Tag.new(name: "Pathologist",created_by_user: @u, tag_type: Tag::EMPLOYEE_TAG)
-        @pathologist_role.assign_id_from_name
+        
 		@pathologist_role.save
 		#puts "these are the pathologist role error messages ------------------"
 		#puts @pathologist_role.errors.full_messages.to_s
@@ -61,7 +61,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 
 		@technician_role = Tag.new(name: "Technician", created_by_user: @u, tag_type: Tag::EMPLOYEE_TAG)
-		@technician_role.assign_id_from_name
+		
 		@technician_role.save
 
         ##########################################################
@@ -104,7 +104,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		@organization_kondhwa.created_by_user = @atif
 		@organization_kondhwa.save
 
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 		@headers = { "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json", "X-User-Token" => @u.authentication_token, "X-User-Es" => @u.client_authentication["testappid"], "X-User-Aid" => "testappid"}
 
 		@headers_kondhwa = { "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json", "X-User-Token" => @atif.authentication_token, "X-User-Es" => @atif.client_authentication["testappid"], "X-User-Aid" => "testappid"}
@@ -119,7 +119,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		@u2 = User.find(@u2.id.to_s)
 		
 
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 		@u2 = User.find(@u2.id.to_s)
 		@u = User.find(@u.id.to_s)
 		@atif = User.find(@atif.id.to_s)
@@ -127,7 +127,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 	end
 
-=begin
+
 	test " -- creates item type -- " do 
 
 		post inventory_item_types_path, params: {item_type: {name: "first item type", barcode_required: "yes", virtual_units: 10 }, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
@@ -135,9 +135,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		assert_equal "201", response.code.to_s
 
 	end
-=end
 
-=begin
 	test " -- creates item group with item types, and quantities -- " do 
 
 		## we have to be able to create an item type
@@ -147,7 +145,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		item_type.assign_id_from_name
+		
 		item_type.save
 
 		## now create another item type.
@@ -157,7 +155,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		item_type_two.assign_id_from_name
+		
 		item_type_two.save
 		## now save them both into the shit.
 
@@ -177,9 +175,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		assert_equal "201", response.code
 
 	end
-=end
 
-=begin
 	test " -- orders an item group -- " do 
 	
 		## we have to be able to create an item type
@@ -189,7 +185,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		item_type.assign_id_from_name
+		
 		item_type.save
 
 		## now create another item type.
@@ -198,7 +194,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		item_type_two.assign_id_from_name
+		
 		item_type_two.save
 
 		## now save them both into the shit.
@@ -218,7 +214,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 				expiry_date: "2018-01-01"
 			}
 		]
-		item_group.assign_id_from_name
+		
 		item_group.save
 		assert_equal [], item_group.errors.full_messages
 
@@ -227,7 +223,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		#tr.supplier_item_group_id = item_group.id.to_s
 		#tr.supplier_id = item_group.supplier_id
 		#tr.created_by_user = @u
-		#tr.assign_id_from_name
+		
 		#tr.save
 
 		post inventory_transactions_path, params: {transaction: {supplier_item_group_id: item_group.id.to_s, supplier_id: item_group.supplier_id}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
@@ -237,9 +233,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		puts "the response code is: #{response.code.to_s}"
 
 	end
-=end
 
-=begin
 	test " -- receives an item group order, and creates local item groups, equal to the quantity received. -- " do 
 
 		item_type = Inventory::ItemType.new
@@ -247,7 +241,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		item_type.assign_id_from_name
+		
 		item_type.save
 
 		## now create another item type.
@@ -256,7 +250,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		item_type_two.assign_id_from_name
+		
 		item_type_two.save
 
 		## now save them both into the shit.
@@ -276,7 +270,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 				expiry_date: "2018-01-01"
 			}
 		]
-		item_group.assign_id_from_name
+		
 		item_group.save
 		assert_equal [], item_group.errors.full_messages
 
@@ -285,14 +279,14 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		tr.supplier_item_group_id = item_group.id.to_s
 		tr.supplier_id = item_group.supplier_id
 		tr.created_by_user = @u
-		tr.assign_id_from_name
+		
 		tr.save
 
 		puts "these are the create transaction errors."
 		puts tr.errors.full_messages.to_s
 
 		## refresh the indices.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
 
@@ -306,7 +300,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## so a local item_group should have been created.
 		## which was cloned from this item group.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		search_results = Inventory::ItemGroup.search({
 			size: 1,
@@ -319,8 +313,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		assert_equal 1, search_results.response.hits.hits.size
 	end
-=end
-=begin
+
 	test " -- receives an item group order, and creates local item groups, equal to the quantity received, the local item group is owned by the organization that ordered the item group -- " do 
 
 		item_type = Inventory::ItemType.new
@@ -328,7 +321,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		item_type.assign_id_from_name
+		
 		item_type.save
 
 		## now create another item type.
@@ -337,7 +330,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		item_type_two.assign_id_from_name
+		
 		item_type_two.save
 
 		## now save them both into the shit.
@@ -357,7 +350,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 				expiry_date: "2018-01-01"
 			}
 		]
-		item_group.assign_id_from_name
+		
 		item_group.save
 		assert_equal [], item_group.errors.full_messages
 
@@ -366,14 +359,14 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		tr.supplier_item_group_id = item_group.id.to_s
 		tr.supplier_id = item_group.supplier_id
 		tr.created_by_user = @u
-		tr.assign_id_from_name
+		
 		tr.save
 
 		puts "these are the create transaction errors."
 		puts tr.errors.full_messages.to_s
 
 		## refresh the indices.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
 
@@ -386,7 +379,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## so a local item_group should have been created.
 		## which was cloned from this item group.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		search_query = Inventory::ItemGroup.search({
 			size: 1,
@@ -418,9 +411,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		#assert_equal local_item_group.owner_ids.include? @u.organization.id.to_s, true
 		#assert_equal local_item_group.currently_held_by_organization, @u.organization.id.to_s 
 	end
-=end
 
-=begin
 	test " -- creates item belonging local item group -- " do 
 			
 		item_type = Inventory::ItemType.new
@@ -428,7 +419,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		item_type.assign_id_from_name
+		
 		item_type.save
 
 		## now create another item type.
@@ -437,7 +428,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		item_type_two.assign_id_from_name
+		
 		item_type_two.save
 
 		## now save them both into the shit.
@@ -457,7 +448,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 				expiry_date: "2018-01-01"
 			}
 		]
-		item_group.assign_id_from_name
+		
 		item_group.save
 		assert_equal [], item_group.errors.full_messages
 
@@ -466,14 +457,14 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		tr.supplier_item_group_id = item_group.id.to_s
 		tr.supplier_id = item_group.supplier_id
 		tr.created_by_user = @u
-		tr.assign_id_from_name
+		
 		tr.save
 
 		puts "these are the create transaction errors."
 		puts tr.errors.full_messages.to_s
 
 		## refresh the indices.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		#put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
 
@@ -483,7 +474,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## so a local item_group should have been created.
 		## which was cloned from this item group.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		search_results = Inventory::ItemGroup.search({
 			size: 1,
@@ -505,8 +496,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 
 	end
-=end
-=begin
+
 	test " -- transfers single time between members of different organizations -- " do 
 			
 		item_type = Inventory::ItemType.new
@@ -514,7 +504,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		item_type.assign_id_from_name
+		
 		item_type.save
 
 		## now create another item type.
@@ -523,7 +513,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		item_type_two.assign_id_from_name
+		
 		item_type_two.save
 
 		## now save them both into the shit.
@@ -543,7 +533,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 				expiry_date: "2018-01-01"
 			}
 		]
-		item_group.assign_id_from_name
+		
 		item_group.save
 		assert_equal [], item_group.errors.full_messages
 
@@ -552,14 +542,14 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		tr.supplier_item_group_id = item_group.id.to_s
 		tr.supplier_id = item_group.supplier_id
 		tr.created_by_user = @u
-		tr.assign_id_from_name
+		
 		tr.save
 
 		puts "these are the create transaction errors."
 		puts tr.errors.full_messages.to_s
 
 		## refresh the indices.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		#put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
 
@@ -571,7 +561,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## so a local item_group should have been created.
 		## which was cloned from this item group.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		search_results = Inventory::ItemGroup.search({
 			size: 1,
@@ -595,13 +585,13 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item.barcode = "1234556"
 		item.expiry_date = "2015-05-05"
 		item.created_by_user = @u
-		item.assign_id_from_name
+		
 		item.save
 		puts "the item save errors are----------------------"
 		puts item.errors.full_messages
 		assert_equal true, item.errors.full_messages.blank?
 		
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		post inventory_item_transfers_path, params: {item_transfer: {to_user_id: @u.id.to_s, reason: "Just for the heck of it.", name: "new item transfer", model_id: item.id.to_s, model_class: item.class.name.to_s}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
 
@@ -609,15 +599,14 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## get the item.
 		## check its organization ids.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		item = Inventory::Item.find(item.id.to_s)
 		assert_equal 2, item.owner_ids.size
 		assert_equal @u.organization.id.to_s, item.currently_held_by_organization
 
 	end
-=end
-=begin
+
 	test " -- transfers item between members of different organizations -- " do 
 
 		item_type = Inventory::ItemType.new
@@ -625,7 +614,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		item_type.assign_id_from_name
+		
 		item_type.save
 
 		## now create another item type.
@@ -634,7 +623,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		item_type_two.assign_id_from_name
+		
 		item_type_two.save
 
 		## now save them both into the shit.
@@ -654,7 +643,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 				expiry_date: "2018-01-01"
 			}
 		]
-		item_group.assign_id_from_name
+		
 		item_group.save
 		assert_equal [], item_group.errors.full_messages
 
@@ -663,14 +652,14 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		tr.supplier_item_group_id = item_group.id.to_s
 		tr.supplier_id = item_group.supplier_id
 		tr.created_by_user = @u
-		tr.assign_id_from_name
+		
 		tr.save
 
 		puts "these are the create transaction errors."
 		puts tr.errors.full_messages.to_s
 
 		## refresh the indices.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		#put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
 
@@ -682,7 +671,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## so a local item_group should have been created.
 		## which was cloned from this item group.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		search_results = Inventory::ItemGroup.search({
 			size: 1,
@@ -706,13 +695,13 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item.barcode = "1234556"
 		item.expiry_date = "2015-05-05"
 		item.created_by_user = @u
-		item.assign_id_from_name
+		
 		item.save
 		puts "the item save errors are----------------------"
 		puts item.errors.full_messages
 		assert_equal true, item.errors.full_messages.blank?
 		
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		## its like we are giving this to atif.
 		post inventory_item_transfers_path, params: {item_transfer: {to_user_id: @atif.id.to_s, reason: "Just for the heck of it.", name: "new item transfer", model_id: item.id.to_s, model_class: item.class.name.to_s}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
@@ -721,16 +710,14 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## get the item.
 		## check its organization ids.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		item = Inventory::Item.find(item.id.to_s)
 		assert_equal 3, item.owner_ids.size
 		assert_equal @atif.organization.id.to_s, item.currently_held_by_organization
 
 	end
-=end
 
-=begin
 	test " transfers item group and all its component items to the other organization " do 
 
 		item_type = Inventory::ItemType.new
@@ -738,7 +725,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		item_type.assign_id_from_name
+		
 		item_type.save
 
 		## now create another item type.
@@ -747,7 +734,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		item_type_two.assign_id_from_name
+		
 		item_type_two.save
 
 		## now save them both into the shit.
@@ -767,7 +754,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 				expiry_date: "2018-01-01"
 			}
 		]
-		item_group.assign_id_from_name
+		
 		item_group.save
 		assert_equal [], item_group.errors.full_messages
 
@@ -776,14 +763,14 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		tr.supplier_item_group_id = item_group.id.to_s
 		tr.supplier_id = item_group.supplier_id
 		tr.created_by_user = @u
-		tr.assign_id_from_name
+		
 		tr.save
 
 		puts "these are the create transaction errors."
 		puts tr.errors.full_messages.to_s
 
 		## refresh the indices.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		#put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
 
@@ -798,7 +785,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## so a local item_group should have been created.
 		## which was cloned from this item group.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		search_results = Inventory::ItemGroup.search({
 			size: 1,
@@ -821,13 +808,13 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item.barcode = "1234556"
 		item.expiry_date = "2015-05-05"
 		item.created_by_user = @u
-		item.assign_id_from_name
+		
 		item.save
 		puts "the item save errors are----------------------"
 		puts item.errors.full_messages
 		assert_equal true, item.errors.full_messages.blank?
 
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		## its like we are giving this to atif.
 		post inventory_item_transfers_path, params: {item_transfer: {to_user_id: @atif.id.to_s, reason: "Transferring local item group.", name: "new item group transfer", model_id: local_item_group.id.to_s, model_class: local_item_group.class.name.to_s}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
@@ -838,7 +825,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## get the item.
 		## check its organization ids.
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		## so this done.
 		## now i want to see what all is returned with profile.
@@ -849,8 +836,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		assert_equal @atif.organization.id.to_s, item.currently_held_by_organization
 
 	end
-=end
-	
+
 =begin
 	test " transfers transaction and all its components to another organization -- " do 
 

@@ -1,3 +1,11 @@
+<% ranges_array = [] %>
+<% if local_assigns[:ranges] %>
+  <%= puts "ranges are defined" %>
+  <% ranges_array = ranges %>
+<% else %>
+  <%= puts "ranges are not defined" %>
+  <% ranges_array = @ranges %>
+<% end %>
 <table>
         <thead>
           <tr>
@@ -11,8 +19,8 @@
         </thead>
 
         <tbody>
-          <% @normal_ranges.each do |nr| %>
-           <% @normal_range = nr %>
+          <% @ranges.each do |nr| %>
+           <% @range = nr %>
            <%= render :partial => "show" %>
           <% end %>
         </tbody>

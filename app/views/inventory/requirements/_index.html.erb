@@ -1,5 +1,5 @@
 <% requirements_array = [] %>
-<% if defined? :requirements %>
+<% if local_assigns[:requirements] %>
     <% requirements_array = requirements %>
 <% else %>
     <% requirements_array = @requirements %>

@@ -3,7 +3,7 @@
 	<td><%= @test.lis_code %></td>
 	<td><%= @test.description %></td>
 	<td><%= @test.ready_for_reporting %></td>
-	<td><%= @test.verified %></td>
+	<td><%= @test.verification_done %></td>
 	<td><%= @test.result_type %></td>
 	<td><%= @test.result_raw %></td>
 	<td><%= @test.result_text %></td>
@@ -11,5 +11,5 @@
 	<% @ranges = @test.ranges %>
 	<td><%= render :partial => "/diagnostics/ranges/index" %></td>
 	<td><%= @test.references %></td>
-	<td><%= render :partial => "/tests/options" %></td>
+	<td><%= render :partial => "/diagnostics/tests/options" %></td>
 </tr>
