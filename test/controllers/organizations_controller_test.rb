@@ -4,7 +4,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
 
 	setup do 
 		Organization.create_index! force: true
-		NormalRange.create_index! force: true
+		#NormalRange.create_index! force: true
 		Tag.create_index! force: true
 		Barcode.create_index! force: true
 		Inventory::ItemType.create_index! force: true
@@ -53,7 +53,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         ##
         #########################################################
         @pathologist_role = Tag.new(name: "Pathologist",created_by_user: @u, tag_type: Tag::EMPLOYEE_TAG)
-        @pathologist_role.assign_id_from_name
+        
 		@pathologist_role.save
 		#puts "these are the pathologist role error messages ------------------"
 		#puts @pathologist_role.errors.full_messages.to_s
@@ -64,7 +64,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
 
 
 		@technician_role = Tag.new(name: "Technician", created_by_user: @u, tag_type: Tag::EMPLOYEE_TAG)
-		@technician_role.assign_id_from_name
+		
 		@technician_role.save
 
         ##########################################################
@@ -99,7 +99,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         #exit(1)
 
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		@headers = { "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json", "X-User-Token" => @u.authentication_token, "X-User-Es" => @u.client_authentication["testappid"], "X-User-Aid" => "testappid"}
 
@@ -111,7 +111,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
 
     end
 
-=begin
+
     test " -- creates an organization -- " do 
     	
     	post organizations_path, params: {organization: {name: "first item type", description: "a good lab", address: "a new place", role: "lab", verifiers: 2, phone_number: "9561137096"}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
@@ -122,6 +122,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
     	
     end
 
+
     test " -- organization created by the user is found in his member organizations -- " do 
 
     	post organizations_path, params: {organization: {name: "first item type", description: "a good lab", address: "a new place", role: "lab", verifiers: 2, phone_number: "9561137096"}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
@@ -130,7 +131,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
 
 		assert_equal "201", response.code.to_s
 
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
 		u = User.find(@u.id.to_s)
 		assert_equal 1, u.organization_members.size
@@ -149,8 +150,11 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
     	o.description = "dog"
     	o.created_by_user_id = @u.id.to_s
     	o.created_by_user = @u
-        o.assign_id_from_name
+        
     	o.save
+
+        ## forgot a refresh here.s
+        ## this would solve it.
 
     	#puts o.errors.full_messages.to_s
     	assert_equal true, o.errors.full_messages.blank?
@@ -158,8 +162,15 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
     	#puts "the headers are:"
     	#puts @pathan_headers.to_s
     	#puts user.attributes.to_s
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
-    	put profile_path(:id => @pathan.id.to_s, resource: "users"), params: {user: { organization_members: [{organization_id: "hello", employee_role_id: "Technician"}]}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @pathan_headers
+        
+
+       
+
+
+
+    	put profile_path(:id => @pathan.id.to_s, resource: "users"), params: {user: { organization_members: [{organization_id: o.id.to_s, employee_role_id: "Technician"}]}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @pathan_headers
 
 
     	#put profile_path(:id => @u.id.to_s, resource: "users"), params: {user: {organization_member_organization_id: "hello", organization_member_employee_role_id: "Technician"}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
@@ -168,7 +179,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
 
     	assert_equal "204", response.code.to_s
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
     	## get the user organization members
     	u = User.find(@pathan.id.to_s)
@@ -177,6 +188,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
     	assert_equal 1, u.organization_members.size
 
     end
+
 
     test " -- correctly shows the membership status of the user in the organization -- " do 
 
@@ -189,17 +201,20 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o.description = "dog"
         o.created_by_user_id = @u.id.to_s
         o.created_by_user = @u
-        o.assign_id_from_name
+        
         o.save
 
         assert_equal true, o.errors.full_messages.blank?
 
-        put profile_path(:id => @pathan.id.to_s, resource: "users"), params: {user: { organization_members: [{organization_id: "hello", employee_role_id: "Technician"}]}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @pathan_headers
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        put profile_path(:id => @pathan.id.to_s, resource: "users"), params: {user: { organization_members: [{organization_id: o.id.to_s, employee_role_id: @technician_role.id.to_s}]}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @pathan_headers
 
 
         assert_equal "204", response.code.to_s
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+        puts "---------------------- DOING USER FIND -----------------"
 
         u = User.find(@pathan.id.to_s)
 
@@ -207,6 +222,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         assert_equal Organization::USER_PENDING_VERIFICATION, u.organization_members[0].membership_status
 
     end 
+
 
     test " -- accepts user in organization, and correctly shows its membership status as accepted -- " do 
 
@@ -219,13 +235,15 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o.description = "dog"
         o.created_by_user_id = @u.id.to_s
         o.created_by_user = @u
-        o.assign_id_from_name
+        
         o.save
 
         assert_equal true, o.errors.full_messages.blank?
-            	   
+        
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
         pathan = User.find(@pathan.id.to_s)
-        pathan.organization_members.push(OrganizationMember.new(:organization_id => "hello", :employee_role_id => "Technician"))
+        pathan.organization_members.push(OrganizationMember.new(:organization_id => o.id.to_s, :employee_role_id => "Technician"))
         pathan.save
         assert_equal true, pathan.errors.full_messages.blank?
 
@@ -240,6 +258,8 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         put organization_path(o.id.to_s), params: {organization: {name: o.name, description: o.description, phone_number: o.phone_number, address: o.address, role: o.role, user_ids: o.user_ids}, :api_key => @ap_key, :current_app_id => "testappid"  }.to_json, headers: @headers
 
         assert_equal response.code.to_s, "204"
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
         pathan = User.find(pathan.id.to_s)
         assert_equal Organization::USER_VERIFIED, pathan.organization_members[0].membership_status        
@@ -256,7 +276,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o.description = "dog"
         o.created_by_user_id = @u.id.to_s
         o.created_by_user = @u
-        o.assign_id_from_name
+        
         o.save
 
         post organizations_path, params: {organization: {name: "child organization", description: "a good lab", address: "a new place", role: "lab", verifiers: 2, phone_number: "9561137096", parent_id: o.id.to_s}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @pathan_headers
@@ -266,17 +286,16 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         assert_equal "201", response.code.to_s
 
         ## should add this to the children of the parent.
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
         o = Organization.find(o.id.to_s)
         assert_equal o.children.size, 1
 
     end
 
-=end
     ## still header, and location shit is left.
     ## tomorrow.
     ## so next week will be for report, test, order, rates and payments.
-=begin
+
     test " -- cascades the impact to grandparents of the parent organization -- " do 
 
         ## so lets create one organization
@@ -292,7 +311,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o.description = "dog"
         o.created_by_user_id = @u.id.to_s
         o.created_by_user = @u
-        o.assign_id_from_name
+        
         o.save
 
 
@@ -305,7 +324,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o2.description = "dog"
         o2.created_by_user_id = @u.id.to_s
         o2.created_by_user = @u
-        o2.assign_id_from_name
+        
         o2.parent_id = o.id.to_s
         o2.save
 
@@ -316,7 +335,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         assert_equal "201", response.code.to_s
 
         ## should add this to the children of the parent.
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
         o = Organization.find(o.id.to_s)
         assert_equal o.children.size, 2
@@ -325,8 +344,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         assert_equal o2.children.size, 1   
 
     end
-=end
-=begin
+
     test " -- child organization records are accessible, and editable -- " do 
 
         ## now first make an organization by atif.
@@ -339,7 +357,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o.description = "dog"
         o.created_by_user_id = @atif.id.to_s
         o.created_by_user = @atif
-        o.assign_id_from_name
+        
         o.save
         puts o.errors.full_messages.to_s
         assert_equal true, o.errors.full_messages.blank?
@@ -353,13 +371,12 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         item_type_two.name = "second item type"
         item_type_two.barcode_required = true
         item_type_two.virtual_units = 10
-        item_type_two.assign_id_from_name
         item_type_two.save
         puts item_type_two.errors.full_messages.to_s
         assert_equal true, item_type_two.errors.full_messages.blank?
         
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
         
         @pathan = User.find(@pathan.id.to_s)
         @pathan.organization_members.push(OrganizationMember.new(organization_id: o.id.to_s, employee_role_id: "Technician"))
@@ -367,7 +384,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         @pathan.save
         assert_equal true, @pathan.errors.full_messages.blank?
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
         o = Organization.find(o.id.to_s)
         o.user_ids.push(@pathan.id.to_s)
@@ -377,7 +394,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         puts o.errors.full_messages.to_s
         assert_equal true, o.errors.full_messages.blank?
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
         ## okay so the organization setting is either not working or whatever its not working out.
 
@@ -389,9 +406,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         ## now we want to see what happens if it is a 
         ## non-related organization.  
     end
-=end
-    
-=begin
+
     test " -- can select a different organization using a header -- " do 
 
         ## now first make an organization by atif.
@@ -405,7 +420,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o.created_by_user_id = @atif.id.to_s
         o.created_by_user = @atif
         ## pathan is part of both organizations.
-        o.assign_id_from_name
+        
         o.save
         puts o.errors.full_messages.to_s
         assert_equal true, o.errors.full_messages.blank?
@@ -423,7 +438,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o2.created_by_user_id = @u.id.to_s
         o2.created_by_user = @u
         ## pathan is part of both organizations.
-        o2.assign_id_from_name
+        
         o2.save
         puts o2.errors.full_messages.to_s
         assert_equal true, o2.errors.full_messages.blank?
@@ -436,12 +451,11 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         item_type_two.name = "second item type"
         item_type_two.barcode_required = true
         item_type_two.virtual_units = 10
-        item_type_two.assign_id_from_name
         item_type_two.save
         puts item_type_two.errors.full_messages.to_s
         assert_equal true, item_type_two.errors.full_messages.blank?
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
         
         @pathan = User.find(@pathan.id.to_s)
         @pathan.organization_members.push(OrganizationMember.new(organization_id: o.id.to_s, employee_role_id: "Technician"))
@@ -450,7 +464,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         @pathan.save
         assert_equal true, @pathan.errors.full_messages.blank?
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
         o = Organization.find(o.id.to_s)
         o.user_ids.push(@pathan.id.to_s)
@@ -468,7 +482,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         puts o2.errors.full_messages.to_s
         assert_equal true, o2.errors.full_messages.blank?
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
         ## now its a part of two organizations.
         ## find the user and check the membership status of both first.
@@ -488,8 +502,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
 
         assert_equal response.code.to_s, "200"
     end
-=end
-=begin
+
     test " -- removes a parent organization -- " do 
             
         o = Organization.new
@@ -501,7 +514,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o.description = "dog"
         o.created_by_user_id = @u.id.to_s
         o.created_by_user = @u
-        o.assign_id_from_name
+        
         o.save
         assert_equal true, o.errors.full_messages.blank?
 
@@ -515,7 +528,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o2.description = "dog"
         o2.created_by_user_id = @u.id.to_s
         o2.created_by_user = @u
-        o2.assign_id_from_name
+        
         o2.parent_id = o.id.to_s
         o2.save
         assert_equal true, o2.errors.full_messages.blank?
@@ -530,22 +543,23 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o3.description = "dog"
         o3.created_by_user_id = @u.id.to_s
         o3.created_by_user = @u
-        o3.assign_id_from_name
         o3.parent_id = o2.id.to_s
         o3.save
         assert_equal true, o3.errors.full_messages.blank?
         ## now remove the parent id of organization two.
-        o2 = Organization.find(o2.id.to_s)
+        
         ## now remove it and see what happens.
         ## then move to add the location.
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
         puts "==============================================#!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ doing the update action ))))))))))))))))))))))))))))"
+
+        o2 = Organization.find(o2.id.to_s)
 
         put organization_path(o2.id.to_s), params: {organization: {name: o2.name, description: o2.description, phone_number: o2.phone_number, address: o2.address, role: o2.role, user_ids: o2.user_ids, parent_id: nil}, :api_key => @ap_key, :current_app_id => "testappid"  }.to_json, headers: @headers
 
         ## i have knocked off the parent.
         ## so the parent should have no children.
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
         o = Organization.find(o.id.to_s)
         puts "============================================="
@@ -554,15 +568,9 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         assert_equal true, o.children.blank?
 
     end
-=end
-    
-=begin
-    test " -- searches in the child organizations records also  -- " do 
 
-    end
-=end
-    
-=begin
+
+
     test " -- creates a location with the organization -- " do 
 
         post organizations_path, params: {organization: {name: "first item type", description: "a good lab", address: "a new place", role: "lab", verifiers: 2, phone_number: "9561137096", latitude: 22.23, longitude: 22, address: "hello world"}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
@@ -572,12 +580,18 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         
         assert_equal "201", response.code.to_s
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        organization = Organization.new(JSON.parse(response.body)["organization"])
 
+        puts "the organization id is: "
+        puts organization.id.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        ## this is not going by the name anymore.
         search_request = Geo::Location.search({
             query: {
                 term: {
-                    model_id: "first item type"
+                    model_id: organization.id.to_s
                 }
             }
         })
@@ -585,8 +599,8 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         assert_equal 1, search_request.response.hits.hits.size
 
     end    
-=end
-    
+
+=begin
     test " -- get all organizations -- " do 
 
         o = Organization.new
@@ -598,18 +612,19 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o.description = "dog"
         o.created_by_user_id = @u.id.to_s
         o.created_by_user = @u
-        o.assign_id_from_name
+        
         o.save
         assert_equal true, o.errors.full_messages.blank?
 
         ## so what is the current users organizatio.
 
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
         ##get organizations_path, 
         get organizations_path, params: {current_app_id: "testappid", api_key: @ap_key}, headers: @headers
 
         puts response.body.to_s
 
     end
+=end
 
 end

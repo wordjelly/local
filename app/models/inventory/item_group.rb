@@ -267,6 +267,7 @@ class Inventory::ItemGroup
 	##
 	##
 	########################################################
+=begin
 	def assign_id_from_name
 		puts "is the self id blank?"
 		puts self.id.to_s
@@ -288,6 +289,7 @@ class Inventory::ItemGroup
 			puts "teh self id is not blank."
 		end
 	end
+=end
 
 	## what is there in transfer?
 	## just give the item from one person to another.

@@ -149,12 +149,23 @@ class Inventory::ItemTransfer
 		self.transferred_object.run_callbacks(:find)
 	end
 
-	def assign_id_from_name
+	def assign_id_from_name(organization_id)
 		set_transferred_object
+		self.name = BSON::ObjectId.new.to_s if self.name.blank?
+		if self.id.blank?
+			if organization_id.blank?	
+				## this will happen for organization.		
+				self.id = (BSON::ObjectId.new.to_s + "-" + self.name)
+			else
+				self.id = organization_id + "-" + self.name
+			end
+		end
+=begin
 		if self.name.blank?
 			self.name = self.created_by_user.organization.name + "/" + self.class.name + "/" + self.transferred_object.id.to_s + "/" + Time.now.strftime('%-d/%-m/%Y/%-l:%M%P') + BSON::ObjectId.new.to_s
 			self.id = self.name
 		end
+=end
 	end
 	###########################################################
 	##

@@ -163,7 +163,7 @@ module Concerns::BaseControllerConcern
 		## for any date, it should default to nil if blank.
 		## 
 		#instance.arrived_on = nil
-		instance.send("assign_id_from_name") if instance.respond_to? :assign_id_from_name
+		#instance.send("assign_id_from_name") if instance.respond_to? :assign_id_from_name
 
 		if instance.respond_to? :versions
 			instance.verified_by_user_ids = [current_user.id.to_s]

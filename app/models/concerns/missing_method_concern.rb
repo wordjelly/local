@@ -90,7 +90,7 @@ module Concerns::MissingMethodConcern
 							class_name = virtus_attribute.member_type.primitive.to_s
 							unless class_name == "BasicObject"
 								## set the id , and call cascade on it.
-								self.send("#{virtus_attribute}").each do |obj|
+								self.send("#{virtus_attribute.name}").each do |obj|
 									obj.cascade_id_generation(org_id)
 								end
 							end

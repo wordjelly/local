@@ -72,7 +72,8 @@ class Inventory::Transaction
 	## after this, comments and item_transfers
 	## then items and item_groups
 	## and then we are done with inventory more or less
-	def assign_id_from_name
+=begin
+	def assign_id_from_name(organization_id)
 		#puts "Came to assign id from name"
 		if self.name.blank?
 
@@ -82,7 +83,7 @@ class Inventory::Transaction
 			self.id = self.name
 		end
 	end
-
+=end
 	## callbacks will be run, only we skip the finding of the transaction again.
 	## since we already have access to the transaction.
 	## so in the show callback we directly set the transaction from here itself.

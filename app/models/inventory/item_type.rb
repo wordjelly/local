@@ -72,17 +72,8 @@ class Inventory::ItemType
 		if document.created_by_user.organization.is_a_supplier?
 			document.public = Concerns::OwnersConcern::IS_PUBLIC
 		end
-	
 		document.cascade_id_generation(nil)
-	
 	end
 	
-	## how to clone this shit.
-	## if you are a supplier, make it public.	
-	## next we have item_groups
-	## give me the ui for that.
-	## first make 3 item types
-	## add them to the group
-	## then 
 
 end

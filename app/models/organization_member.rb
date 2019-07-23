@@ -15,9 +15,11 @@ class OrganizationMember
 
 	def set_membership_status(user_id)
 		if self.organization_id
+			puts "there is an organization id: #{self.organization_id}"
 			organization = Organization.find(self.organization_id)
 			organization.run_callbacks(:find)
 			self.organization = organization
+			puts "got an organization"
 			unless self.created_by_this_user.blank?
 				self.membership_status = Organization::USER_VERIFIED
 			else	
@@ -35,7 +37,7 @@ class OrganizationMember
 	end
 
 	def as_json(options={})
-		super.merge(:methods => [:organizaiton,:membership_status])
+		super(:methods => [:organizaiton,:membership_status])
 	end
 
 end	

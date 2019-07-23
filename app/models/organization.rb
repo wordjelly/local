@@ -9,9 +9,17 @@ class Organization
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::EsBulkIndexConcern
-	include Concerns::LocationConcern
+	## ORDER OF LOCATION CONCERN AFTER THE MISSING METHOD CONCERN
+	## AND ALSO THE CASCADE CALLBACK IS IMPORTANT
+	## IS IMPORTANT. THE BEFORE_SAVE CALLBACK IN THE LOCATION CONCERN
+	## NEEDS THE ORGANIZATIONS ID.
 	include Concerns::MissingMethodConcern
-
+	
+	before_save do |document|
+		cascade_id_generation(nil)
+	end
+	
+	include Concerns::LocationConcern
 	
 		
 	index_name "pathofast-organizations"
@@ -199,7 +207,10 @@ class Organization
 	############################################################
 	def load_users_pending_approval
 		## okay so here we have to do the nested search.
-		#puts "CAME TO LOAD USERS PENDING APPROVAL"
+		puts "CAME TO LOAD USERS PENDING APPROVAL"
+		puts "self id is:"
+		puts self.id.to_s
+
 		query = {
 			body: {
 				query: {
@@ -241,14 +252,17 @@ class Organization
 			}
 		}
 
-		#puts "pending user query is ------------------------------------>"
-		#puts JSON.pretty_generate(query)
+		puts "pending user query is ------------------------------------>"
+		puts JSON.pretty_generate(query)
 
 		result = User.es.search(query)
 
+		puts result.to_s
+		puts result.methods.to_s
+
 		self.users_pending_approval ||= []
 		result.results.each do |res|
-			#puts "the user pending approval is: #{res}"
+			puts "the user pending approval is: #{res}"
 			self.users_pending_approval << res
 		end
 
@@ -405,7 +419,7 @@ class Organization
 			aggregations: {
 				parent_organizations: {
 					terms: {
-						field: "name"
+						field: "_id"
 					}
 				}
 			}

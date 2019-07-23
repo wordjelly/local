@@ -5,7 +5,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 	setup do 
 
 		Organization.create_index! force: true
-		NormalRange.create_index! force: true
+		#NormalRange.create_index! force: true
 		Tag.create_index! force: true
 		Barcode.create_index! force: true
 		Inventory::ItemType.create_index! force: true

@@ -158,7 +158,7 @@ class Inventory::Item
 	##
 	##
 	########################################################
-	def assign_id_from_name
+	def assign_id_from_name(organization_id)
 		## so this is done
 		## make an item and item group controller.
 		## and views
