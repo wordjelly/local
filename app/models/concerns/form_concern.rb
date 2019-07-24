@@ -50,10 +50,15 @@ module Concerns::FormConcern
 
 							if virtus_attribute.respond_to? "member_type"
 
-								
 								class_name = virtus_attribute.member_type.primitive.to_s
 
 								script_id = BSON::ObjectId.new.to_s 
+
+								unless self.send(virtus_attribute.name).blank?
+									self.send(virtus_attribute.name).each do |arr_el|
+										element = '<div style="padding-left: 1rem;">' +  arr_el.build_form(root + "[" + virtus_attribute.name.to_s + "][]",readonly,"",scripts) + '</div>'
+									end
+								end
 
 								if class_name.to_s == "BasicObject"
 									
@@ -67,9 +72,7 @@ module Concerns::FormConcern
 
 
 									element = "<span><i class='material-icons add_nested_element' data-id='#{script_id}'>add_circle_outline</i>Add</span>"
-									#puts "the element becomes:"
-									#puts element
-									#exit(1)
+									
 								end
 								s = s + element
 								

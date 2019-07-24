@@ -3,7 +3,7 @@
 	<%= render :partial => "/shared/visibility", locals: {f: f} %>
 		
 	<% unless @report.new_record? %>
-		<%= render :partial => "images/image", locals: {model: @machine} %>
+		<%= render :partial => "images/image", locals: {model: @report} %>
 	<% end %>
 	
 	<%= build_nested_form(@report).html_safe %>	

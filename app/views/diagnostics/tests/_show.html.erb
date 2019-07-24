@@ -9,7 +9,7 @@
 	<td><%= @test.result_text %></td>
 	<td><%= @test.result_numeric %></td>
 	<% @ranges = @test.ranges %>
-	<td><%= render :partial => "/diagnostics/ranges/index" %></td>
+	<td><%= render :partial => "/diagnostics/ranges/summary" %></td>
 	<td><%= @test.references %></td>
 	<td><%= render :partial => "/diagnostics/tests/options" %></td>
 </tr>

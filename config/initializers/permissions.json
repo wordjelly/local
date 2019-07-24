@@ -553,6 +553,11 @@
 						"action_name" : "index",
 						"requires_authentication" : "yes",
 						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
 					}
 				]
 			},
@@ -581,6 +586,11 @@
 					},
 					{
 						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
 						"requires_authentication" : "yes",
 						"requires_authorization" : "yes"
 					}
