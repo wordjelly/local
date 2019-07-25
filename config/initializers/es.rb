@@ -4,7 +4,7 @@ remote_host.merge!({user: ENV["REMOTE_ES_USER"], password: ENV["REMOTE_ES_PASSWO
 $remote_es_client = Elasticsearch::Client.new hosts: [ remote_host], headers: {"Content-Type" => "application/json" }, request: { timeout: 45 }
 
 #host = {host: '192.168.1.2', scheme: 'http', port: 9200}
-host = {host: 'localhost', scheme: 'http', port: 9200}
+host = {host: 'localhost', scheme: 'http', port: ENV["LOCAL_ES_PORT"]}
 
 if Rails.env.production?
 	Elasticsearch::Persistence.client = Elasticsearch::Client.new hosts: [ remote_host], headers: {"Content-Type" => "application/json" }, request: { timeout: 145 }

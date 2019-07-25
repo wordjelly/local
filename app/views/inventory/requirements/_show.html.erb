@@ -1,5 +1,5 @@
 <tr>
-	<td><%= link_to @requirement.name, inventory_requirements_path(@requirement.id.to_s) %></td>
+	<td><%= link_to @requirement.name, inventory_requirement_path(@requirement.id.to_s) %></td>
 	<% @categories = @requirement.categories %>
 	<td><%= render :partial => "/inventory/categories/summary" %></td>
 	<td><%= render :partial => "/inventory/requirements/options" %></td>

@@ -83,6 +83,9 @@ module Concerns::BarcodeConcern
 	  	## We can call this explicitly ?
 	  	## not required.
 	  	def delete_barcode
+	  		## if the current document does not exist.
+	  		## only then.
+	  		## 
 	  		self.barcode_object.delete unless self.barcode_object.blank?
 	  	end
 

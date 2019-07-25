@@ -1,7 +1,7 @@
 PATH
   remote: /home/bhargav/Github/Auth
   specs:
-    wordjelly-auth (1.5.3)
+    wordjelly-auth (1.5.4)
       aws-sdk
       cloudinary
       daemons

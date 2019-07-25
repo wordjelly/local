@@ -2,10 +2,10 @@ class Inventory::Requirement
 
 	include Elasticsearch::Persistence::Model
 	include Concerns::AllFieldsConcern
-	include Concerns::BarcodeConcern
 	include Concerns::NameIdConcern
+	include Concerns::BarcodeConcern
 	include Concerns::ImageLoadConcern
-	include Concerns::OwnersConcern
+	#include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::TransferConcern
 	include Concerns::MissingMethodConcern
@@ -20,6 +20,8 @@ class Inventory::Requirement
 
 	def self.permitted_params
 		[
+			:name,
+			:barcode,
 			:priority,
 			{
 				:categories => Inventory::Category.permitted_params

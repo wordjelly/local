@@ -72,7 +72,7 @@ Auth.configure do |config|
 	##
 	##
 	########################################################
-	es_port = 9200
+	es_port = ENV["LOCAL_ES_PORT"]
 	if Rails.env.production?
 	  es_user = ENV["REMOTE_ES_USER"] 
 	  es_password = ENV["REMOTE_ES_PASSWORD"]
@@ -80,7 +80,7 @@ Auth.configure do |config|
 	  host.merge!({user: es_user, password: es_password})
 	  es_port = ENV["REMOTE_ES_PORT"]
 	else
-	  host = {host: 'localhost', scheme: 'http', port: 9200}
+	  host = {host: 'localhost', scheme: 'http', port: es_port}
 	end
 
 	Mongoid::Elasticsearch.prefix = Auth.configuration.brand_name.downcase + "_"

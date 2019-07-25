@@ -20,11 +20,13 @@ module Concerns::NameIdConcern
 	## @param[String] organization_id
 	def assign_id_from_name(organization_id)
 		if self.id.blank?
-			if organization_id.blank?	
-				## this will happen for organization.		
-				self.id = (BSON::ObjectId.new.to_s + "-" + self.name)
-			else
-				self.id = organization_id + "-" + self.name
+			unless self.name.blank?
+				if organization_id.blank?	
+					## this will happen for organization.		
+					self.id = (BSON::ObjectId.new.to_s + "-" + self.name)
+				else
+					self.id = organization_id + "-" + self.name
+				end
 			end
 		end
 	end

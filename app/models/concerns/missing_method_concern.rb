@@ -6,9 +6,40 @@ module Concerns::MissingMethodConcern
 
 	included do 
 
+		validate :validate_nested
+
 		before_save do |document|
 			document.nullify_nil_attributes
 			document.cascade_callbacks(:save){false}
+		end
+
+		def validate_nested
+			self.class.attribute_set.each do |virtus_attribute|
+				if virtus_attribute.primitive.to_s == "Array"
+					if virtus_attribute.respond_to? "member_type"
+						class_name = virtus_attribute.member_type.primitive.to_s
+						unless class_name == "BasicObject"
+							## this is because you have not typified versions
+							## and are storing it as a hash.
+							unless self.send(virtus_attribute.name).blank?
+								#puts "attribute name is: #{virtus_attribute.name.to_s}"
+								self.send(virtus_attribute.name).each do |arr|
+									puts "validating: #{virtus_attribute.name.to_s}"
+										
+									arr.validate_nested
+									unless arr.valid?
+										self.errors.add(virtus_attribute.name.to_sym,arr.errors.full_messages)
+										#error_messages.flatten
+									end
+									#puts arr.errors.full_messages.to_s
+									
+								end
+							end
+						end
+					end
+				end
+			end
+			
 		end
 
 		def new_record?

@@ -55,8 +55,12 @@ module Concerns::FormConcern
 								script_id = BSON::ObjectId.new.to_s 
 
 								unless self.send(virtus_attribute.name).blank?
-									self.send(virtus_attribute.name).each do |arr_el|
-										element = '<div style="padding-left: 1rem;">' +  arr_el.build_form(root + "[" + virtus_attribute.name.to_s + "][]",readonly,"",scripts) + '</div>'
+									if class_name.to_s == "BasicObject"
+										
+									else
+										self.send(virtus_attribute.name).each do |arr_el|
+											s += '<div style="padding-left: 1rem;">' +  arr_el.build_form(root + "[" + virtus_attribute.name.to_s + "][]",readonly,"",scripts) + '</div>'
+										end
 									end
 								end
 
@@ -69,7 +73,6 @@ module Concerns::FormConcern
 									dummy_entry = class_name.constantize.new
 									scripts[script_id] = '<script id="' + script_id +'" type="text/template" class="template"><div style="padding-left: 1rem;">' + dummy_entry.build_form(root + "[" + virtus_attribute.name.to_s + "][]",readonly,"",scripts) + "</div></script>"
 									
-
 
 									element = "<span><i class='material-icons add_nested_element' data-id='#{script_id}'>add_circle_outline</i>Add</span>"
 									
