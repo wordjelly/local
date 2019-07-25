@@ -65,7 +65,7 @@ module Concerns::FormConcern
 								end
 
 								if class_name.to_s == "BasicObject"
-									
+						
 									scripts[script_id] = '<script  id="' + script_id +'" type="text/template" class="template">' +  "<input type='text' name='" + root + "[" + virtus_attribute.name.to_s + "][]" + "' /></script>"
 									element = "<span><i data-id='#{script_id}' class='material-icons add_nested_element'>add_circle_outline</i>Add</span>"
 									

@@ -6,6 +6,7 @@
 
 	<a class="dropdown-trigger btn" href="#" data-target='orders'>Orders</a>
 
+	<a class="dropdown-trigger btn" href="#" data-target='patients'>Patients</a>
 	<!-- it is showing the images twice in organization, so gotta check that part. -->
 <!--
 	<a class="dropdown-trigger btn" href="#" data-target='packages'>Packages</a>
@@ -43,6 +44,11 @@
 	<ul id='orders' class='dropdown-content'>
 		<li><i class="material-icons">view_module</i><%= link_to " Pending Orders", business_orders_path %></li>
 		<li><i class="material-icons">view_module</i><%= link_to "New Order", new_business_order_path %></li>
+	</ul>
+
+	<ul id='patients' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to " Pending Orders", patients_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "New Patient", new_patient_path %></li>
 	</ul>
 
 
