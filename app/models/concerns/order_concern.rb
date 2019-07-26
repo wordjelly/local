@@ -95,7 +95,12 @@ module Concerns::OrderConcern
 	end
 
 	def load_patient
-		self.patient = Patient.find(self.patient_id) if self.patient_id
+		puts "CAME TO LOAD THE PATIENT"
+		if self.patient_id.blank?
+			self.errors.add(:patient_id,"Please choose a patient for this order.")
+		else
+			self.patient = Patient.find(self.patient_id)
+		end
 	end
 
 	def get_schedule

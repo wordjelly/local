@@ -55,6 +55,8 @@ class Organization
 
   	ROLES = [DOCTOR,LAB,CORPORATE,DISTRIBUTOR,SUPPLIER]
 
+  	PATIENT = "patient"
+
 	attribute :role, String, mapping: {type: 'keyword'}
 	validates_presence_of :role
 

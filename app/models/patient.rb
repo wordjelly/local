@@ -6,6 +6,7 @@ class Patient
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
+	include Concerns::NameIdConcern
 	include Concerns::MissingMethodConcern
 
 	SEX = ["Male","Female","Transgender","All"]
@@ -14,23 +15,21 @@ class Patient
 
 	## we will have to give that option everywhere else as well.
 	## so in effect it can only create one user per mobile_number for one organization.
+	## we can do name id concern.
 	## if it does 
 	before_save do |document|
-		unless document.mobile_number.blank?
-			if document.id.blank?
-				unless document.created_by_user.blank?
-					if document.created_by_user.is_an_organization_role?
-						unless document.created_by_user.organization_id.blank?
-							document.id = document.created_by_user.organization_id + "_" + document.mobile_number
-						end
-					else
-						document.id = document.mobile_number
-					end
-				end
+		document.assign_id_from_name(nil)
+	end
+
+	def assign_id_from_name(organization_id)
+		if ((self.id.blank?) && (!self.mobile_number.blank?))
+			if !self.created_by_user.organization.is_a_patient?
+				self.id = self.created_by_user.organization.id.to_s + "-" + self.mobile_number 
+			else
+				self.id = self.mobile_number
 			end
 		end
 	end
-
 
 	###########################################################
 	##
@@ -68,6 +67,8 @@ class Patient
 
 	attribute :sex, String
 	validates_presence_of :sex
+
+	attribute :name, String, mapping: {type: 'keyword'}, default: BSON::ObjectId.new.to_s
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -144,7 +145,9 @@ class Patient
 	attribute :medications_list, Array, mapping: {type: 'keyword'}
 	
 	after_find do |document|
-		document.current_age_in_hours = (Time.now - document.date_of_birth)/3600.0
+		unless document.date_of_birth.blank?
+			document.current_age_in_hours = (Time.now - document.date_of_birth)/3600.0
+		end
 	end
 	
 	#############################################################

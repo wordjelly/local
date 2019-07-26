@@ -1,7 +1,8 @@
-class PatientsController  < UsersController
+class PatientsController < ApplicationController
 
 	include Concerns::BaseControllerConcern
 
+	## 
 	## now everything comes from the base controller concern.
 =begin
 	respond_to :html, :json, :js

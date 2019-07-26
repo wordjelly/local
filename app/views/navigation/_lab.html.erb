@@ -30,7 +30,6 @@
 	<ul id='patients' class='dropdown-content'>
 		<% if current_user.owns_or_belongs_to_organization? %>
 			<li><i class="material-icons">view_module</i><%= link_to "Create Patient", new_patient_path %></li>
-
 			<li><i class="material-icons">view_module</i><%= link_to "View All Patients", patients_path %></li>
 		<% end %>
 	</ul>	

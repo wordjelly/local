@@ -22,9 +22,6 @@ module Concerns::BarcodeConcern
 	  	## so update will automatically not try to create a barcode.
 	  	after_find do |document|
 	  		document.skip_barcode_uniqeness = true
-	  		#tranfer.
-	  		#that means create an item_transfer.
-	  		#
 	  	end
 
 	  	## fastest way is to write a test
