@@ -63,15 +63,69 @@ module Concerns::FormConcern
 			}
 		end
 
-		def add_date_element
+		## @return[String] html snippet, for date selector.
+		def add_date_element(root,virtus_attribute)
+			
+			input_name = root + "[" + virtus_attribute.name.to_s + "]"
+
+			element =  '''
+				<input class="datepicker" type="text" name="''' + input_name + '''" value="''' + self.send(virtus_attribute.name.to_s).to_s + '''"></input>
+			'''
+
+			element += '''
+				<label for="''' + input_name + '''">''' + virtus_attribute.name.to_s + '''</label>
+			'''
+
+			element
 
 		end
 
-		def add_number_element
+
+		def add_float_element(root,virtus_attribute)
+
+			input_name = root + "[" + virtus_attribute.name.to_s + "]"
+						
+			element = '''
+				<input type="number" name="''' + input_name + '''" value="''' + self.send(virtus_attribute.name.to_s).to_s + '''"></input>
+			'''
+
+			element += '''
+				<label for="''' + input_name + '''">''' + virtus_attribute.name.to_s + '''</label>
+			'''
+
+			element
 
 		end
 
-		def add_text_element
+		def add_text_element(root,virtus_attribute)
+
+			input_name = root + "[" + virtus_attribute.name.to_s + "]"
+						
+			element = '''
+				<input type="text" name="''' + input_name + '''" value="''' + self.send(virtus_attribute.name.to_s).to_s + '''"></input>
+			'''
+
+			element += '''
+				<label for="''' + input_name + '''">''' + virtus_attribute.name.to_s + '''</label>
+			'''
+
+			element
+
+		end
+
+		## this gets overriden in the different things.
+		def summary_row
+
+		end
+
+		## should return the table, and th part.
+		def summary_table_headers
+
+		end
+
+		## how to add new of self.
+		## render that html.
+		def add_new
 
 		end
 
@@ -79,34 +133,53 @@ module Concerns::FormConcern
 			classify_attributes
 			## card initialize.
 			## add the title.
-			card = '''
+			non_array_attributes_card = '''
 				<div class="card">
 					<div class="card-content">
 						<div class="card-title">
+						#{self.name}
 						</div>
 			'''
 
-			self.non_array_attributes.each do |flat|
-				if flat.is_a_date?
-				elsif flat.is_a_number?
+			self.non_array_attributes.each do |nattr|
+				if nattr.primitive.to_s == "Date"
+					## add date element.
+					non_array_attributes_card += add_date_element(root,nattr)
+				elsif nattr.primitive.to_s == "Integer"
+					## add number element
+					non_array_attributes_card += add_float_element(root,nattr)
+				elsif nattr.primitive.to_s == "Float"
+					## add float element.
+					non_array_attributes_card += add_float_element(root,nattr)
 				else
+					non_array_attributes_card += add_text_element(root,nattr)
 				end
 			end
-			
-			self.plain_array_attributes.each do |plain_array|
 
-			end
+			non_array_attributes_card += "</div></div>"
+	
 
-			## open here 
-			## and then proceed.
+			self.object_array_attributes.each do |attr|
+				object_card = '''
+					<div class="card">
+						<div class="card-content">
+							<div class="card-title">
+								''' + attr.name.to_s + '''
+							</div>
+				'''
 
-			self.object_array_attributes.each do |object_array|
-
-				## for each array attribute
-				## render a summary row
-				## then render the entire form
-				## in a hidden div.
-
+				## why not use a collapsible list.
+				self.send(attr.name).each do |obj|
+					object_card += obj.summary
+					object_card += obj.new_build_form(root,readonly="no",form_html="",scripts={})
+					## render summary.
+					## so it should respond to a method called summary.
+					## then it should call new_build_form on it.
+				end
+				## add new should be rendered here.
+				## add new object, can have a method like that.
+				## render the add new for it.
+				object_card += '</div></div>'
 			end
 
 
