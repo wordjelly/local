@@ -7,6 +7,7 @@ class Business::Order
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::SearchOptionsConcern
 
 	index_name "pathofast-business-orders"
 	document_type "business/order"

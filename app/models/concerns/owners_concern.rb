@@ -19,6 +19,10 @@ module Concerns::OwnersConcern
 		
 		attr_accessor :created_by_user
 
+		## the organization is loaded from the currently_held_by_organization			
+		## its 
+		attr_accessor :organization
+
 		## set in the create action in base_controller_concern
 		## it is the created_by_user id.
 		attribute :created_by_user_id
@@ -94,9 +98,16 @@ module Concerns::OwnersConcern
 		end
 
 		## this also should be methodized to enable overrides.
-
 		before_save do |document|
 			document.add_owner_ids
+		end
+
+		after_find do |document|
+			unless document.class.name == "Organization"
+				unless document.currently_held_by_organization.blank?
+					document.organization = Organization.find(document.currently_held_by_organization)
+				end
+			end
 		end
 
 	end

@@ -1,12 +1,3 @@
-//$(document).on('submit','.order_form',function(event){
-	//console.log("got on submit");	
-	// now what do we do.
-	// on clicking the submit button.
-	// we will send by js.
-	// so we have total control.
-	//return false;
-//});
-
 var get_item_group_id = function(){
 	return $("#order_item_group_id").val();
 }
@@ -41,6 +32,16 @@ var get_template_report_ids = function(){
 	});
 	return template_report_ids;
 }
+
+/***
+on click choose report ->
+***/
+$(document).on('click','.choose_report',function(event){
+	// adds the report id to an attribute called 
+	// report ids.
+	// and nothing else.
+	// 
+});
 
 
 /****

@@ -4,7 +4,7 @@ class Diagnostics::Test
 	include Elasticsearch::Persistence::Model
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
-	include Concerns::OwnersConcern
+	#include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern

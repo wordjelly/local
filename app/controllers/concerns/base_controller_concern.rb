@@ -89,17 +89,6 @@ module Concerns::BaseControllerConcern
 			end
 		end
 
-		## what about merging query params
-		## for eg:
-		## term queries
-		## for any passed in params.
-
-		## either has the organization id, or its own id.
-		## i also need to sort out permissions for searchability.
-		
-		#puts "is there a current user"
-		#puts current_user.to_s
-
 		if current_user
 			if current_user.belongs_to_organization?
 				query[:bool][:must] << {
@@ -125,7 +114,9 @@ module Concerns::BaseControllerConcern
 			objects = results.response.hits.hits.map{|c|
 				obj = get_resource_class.new(c["_source"])
 				obj.id = c["_id"]
-				obj.run_callbacks(:find)
+				obj.run_callbacks(:find) do 
+					obj.apply_current_user(current_user)
+				end
 				obj
 			}
 			instance_variable_set("@#{get_resource_name.pluralize}",objects)
@@ -363,7 +354,9 @@ module Concerns::BaseControllerConcern
 		results = get_resource_class.search({query: query})
 		if results.response.hits.hits.size > 0
 			obj = get_resource_class.find(results.response.hits.hits[0]["_id"])
-			obj.run_callbacks(:find)
+			obj.run_callbacks(:find) do 
+				obj.apply_current_user(current_user)
+			end
 			set_images_instance_variable(obj)
 			set_alert_instance_variable(obj)
 			instance_variable_set("@#{get_resource_name}",obj)

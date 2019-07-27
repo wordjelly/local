@@ -6,7 +6,7 @@ class Diagnostics::Range
 	include Concerns::AllFieldsConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
-	include Concerns::OwnersConcern
+	#include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
 	include Concerns::VersionedConcern

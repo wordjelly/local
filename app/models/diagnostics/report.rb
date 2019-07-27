@@ -8,6 +8,7 @@ class Diagnostics::Report
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
+	include Concerns::SearchOptionsConcern
 	include Concerns::Diagmodule::Report::OutsourceConcern
 
 	index_name "pathofast-diagnostics-reports"
@@ -82,7 +83,8 @@ class Diagnostics::Report
 		      		:analyzer => "nGram_analyzer",
 		      		:search_analyzer => "whitespace_analyzer"
 		      	}
-		    }
+		    },
+	   	 	copy_to: "search_all"
 		    indexes :patient_id, type: 'keyword'
 		    indexes :tag_ids, type: 'keyword'
 		    indexes :statuses, type: 'nested', properties: Diagnostics::Status.index_properties
@@ -284,6 +286,37 @@ class Diagnostics::Report
 		end
 	end
 
+	#####################################################
+	##
+	##
+	## OVERRIDDEN FROM SEARCH OPTIONS CONCERN
+	##
+	##
+	#####################################################
+	def apply_current_user(current_user)
+		if belongs_to_user?(current_user)
+			## add the search options
+			##self.search_options[:]
+			self.search_options << {
+				:text => "Choose",
+				"data_id".to_sym => self.id.to_s,
+				:classes => ["choose_report"]
+			}
+		else
+			## now let's see how this works.
+			## now we need to know which organization this is
+			## this should be done after find.
+			## for the record.
+			self.search_options << {
+				:text => ("Outsource to" + self.organization.name),
+				"data_id".to_sym => self.id.to_s,
+				:class => ["choose_report","outsource"]
+			}
+		end
 
+		puts "the search options become:"
+		puts JSON.pretty_generate(self.search_options)
+
+	end
 
 end	

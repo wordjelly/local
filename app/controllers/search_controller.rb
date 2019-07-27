@@ -70,6 +70,9 @@ class SearchController < ApplicationController
 			puts c["_source"]
 			puts c["_type"]
 			c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
+			c.run_callbacks(:find) do 
+				c.apply_current_user(current_user)
+			end
 			c
 		}
 		respond_to do |format|
@@ -96,6 +99,9 @@ class SearchController < ApplicationController
 		puts mash.hits.hits.size.to_s
 		@search_results = mash.hits.hits.map{|c|
 			c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
+			c.run_callbacks(:find) do 
+				c.apply_current_user(current_user)
+			end
 			c
 		}
 		respond_to do |format|

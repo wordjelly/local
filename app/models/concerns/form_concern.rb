@@ -5,6 +5,7 @@ module Concerns::FormConcern
 	included do 
 
 
+		
 
 		def fields_not_show_in_form
 			["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids"]		
@@ -16,7 +17,101 @@ module Concerns::FormConcern
 			{}
 		end
 
-	
+
+		attr_accessor :object_array_attributes
+
+		attr_accessor :plain_array_attributes
+
+		attr_accessor :non_array_attributes
+
+		## first classify the attributes for the purpose of rendering.
+		## once this is done, make tabs out of the others
+		## so we have something called render attributes
+		## so we go and render the summary, and below it call render form.
+		## just keep it hidden.
+		## just show the summary, and keep the rest of it hidden.
+		## so take the array attributes.
+		## make tabs
+		## for each attribute
+		## render summary 
+		## render a row
+		## then in the same tr
+		## call build form on the nested attribute
+		## 
+		def classify_attributes
+			
+			self.object_array_attributes = []
+			
+			self.plain_array_attributes = []
+			
+			self.non_array_attributes = []
+
+			self.class.attribute_set.select{|c| 
+				if c.primitive.to_s == "Array"
+					if c.respond_to? "member_type"
+						if c.member_type.primitive.to_s != "BasicObject"
+							self.plain_array_attributes << c.name
+						else
+							self.object_array_attributes << c.name
+						end
+					else
+						c.non_array_attributes << c.name
+					end
+				else
+					c.non_array_attributes << c.name
+				end
+			}
+		end
+
+		def add_date_element
+
+		end
+
+		def add_number_element
+
+		end
+
+		def add_text_element
+
+		end
+
+		def new_build_form(root,readonly="no",form_html="",scripts={})
+			classify_attributes
+			## card initialize.
+			## add the title.
+			card = '''
+				<div class="card">
+					<div class="card-content">
+						<div class="card-title">
+						</div>
+			'''
+
+			self.non_array_attributes.each do |flat|
+				if flat.is_a_date?
+				elsif flat.is_a_number?
+				else
+				end
+			end
+			
+			self.plain_array_attributes.each do |plain_array|
+
+			end
+
+			## open here 
+			## and then proceed.
+
+			self.object_array_attributes.each do |object_array|
+
+				## for each array attribute
+				## render a summary row
+				## then render the entire form
+				## in a hidden div.
+
+			end
+
+
+		end
+
 		## @param[String] root: the root name for any input element.
 		## for eg if the name of the object is Inventory::Item, then this will be item. Whatever you would have passed into form_for as:"" the as option.
 		## as you traverse down nested trees, you have to go on appending the relevant stub to it.

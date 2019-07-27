@@ -102,6 +102,30 @@ module Concerns::MissingMethodConcern
 			end
 		end
 
+		## @param[User] current_user : the current user
+		## @called_from : 
+		## 1.base_controller_concern, in the after_find callback invocations, as a block
+		## 2.search_controller in #type_selector and #search
+		## allows customization of the current record based on the user
+		## is overriden in report, order.
+		## @return[nil]
+		def apply_current_user(current_user)
+
+		end
+
+
+
+		## @param[User] a user
+		## @return[Boolean] true : if the user or its organization are present in the owner_ids of the current record, provied that the current record responds_to owner ids., false in any other eventuality.
+		## @called_from : generally from the overriden apply_current_user invocations in different models.
+		def belongs_to_user?(user)
+			if self.respond_to? :owner_ids
+				((self.owner_ids.include? user.id.to_s) || (self.owner_ids.include? user.organization.id.to_s))
+			else
+				false
+			end
+		end
+
 		## call this before save in all the top level objects.
 		def cascade_id_generation(organization_id)
 			if self.class.name =~ /organization/i 

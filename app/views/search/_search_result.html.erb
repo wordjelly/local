@@ -11,7 +11,7 @@
 	<% if result.respond_to? "search_options" %>
 		<div>
 			<% result.search_options.each do |sopt| %>
-				<span style="margin-left: 10px;" data-id="<%= result.id.to_s %>"><%= sopt %></span>
+				<span style="margin-left: 10px;" data-id="<%= sopt[:data_id] %>" style="cursor:pointer;" class="<%= sopt[:classes].join(' ') %>"><%= sopt[:text] %></span>
 			<% end %>
 		</div>
 	<% end %>

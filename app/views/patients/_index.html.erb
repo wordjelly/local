@@ -15,7 +15,7 @@
         <tbody>
           <% @patients.each do |patient| %>
         	 <% @patient = patient %>
-           <%= render :partial => "show" %>
+           <%= render :partial => "/patients/show" %>
           <% end %>
         </tbody>
 </table>
