@@ -49,16 +49,16 @@ module Concerns::FormConcern
 			self.class.attribute_set.select{|c| 
 				if c.primitive.to_s == "Array"
 					if c.respond_to? "member_type"
-						if c.member_type.primitive.to_s != "BasicObject"
-							self.plain_array_attributes << c.name
+						if c.member_type.primitive.to_s == "BasicObject"
+							self.plain_array_attributes << c
 						else
-							self.object_array_attributes << c.name
+							self.object_array_attributes << c
 						end
 					else
-						c.non_array_attributes << c.name
+						self.non_array_attributes << c
 					end
 				else
-					c.non_array_attributes << c.name
+					self.non_array_attributes << c
 				end
 			}
 		end
@@ -123,11 +123,67 @@ module Concerns::FormConcern
 
 		end
 
-		## how to add new of self.
-		## render that html.
-		def add_new
-
+		def summary_table_open
+			'''
+				<table class="striped">
+			'''
 		end
+
+		def summary_table_body_open
+			'''
+				<tbody>
+			'''
+		end
+
+		def summary_table_body_close
+			'''
+				</tbody>
+			'''
+		end
+
+		def summary_table_close
+			'''
+				</table>
+			'''
+		end
+
+		## @param[String] root
+		## @param[String] collection_name : eg "reports"
+		## @param[Hash] scripts : the scripts hash
+		## @param[String] readonly 
+		def add_new_object(root,collection_name,scripts,readonly)
+			script_id = BSON::ObjectId.new.to_s
+
+			script_open = '<script id="' + script_id + '" type="text/template" class="template"><div style="padding-left: 1rem;">'
+
+			
+
+			
+			scripts[script_id] = script_open
+
+			scripts[script_id] +=  new_build_form(root + "[" + collection_name + "][]",readonly,"",scripts) + '</div></script>'
+		
+
+			element = "<span><i class='material-icons add_nested_element' data-id='#{script_id}'>add_circle_outline</i>Add</span>"
+			element
+		end
+
+		def add_tab_title(attribute_name)
+			'<li class="tab col s3 m3 l3"><a href="#' + attribute_name.to_s + '">' + attribute_name.to_s + '</a></li>'
+		end
+
+		def open_tab_content(attr_name)
+			'<div id="' + attr_name.to_s + '" class="col s12 m12 l12">'
+		end
+
+		def close_tab_content(attr_name)
+			'</div>'
+		end
+
+		## so this returns the new build form.
+		## now the summaries.
+		## today will deliver this.
+		## and 
 
 		def new_build_form(root,readonly="no",form_html="",scripts={})
 			classify_attributes
@@ -137,9 +193,24 @@ module Concerns::FormConcern
 				<div class="card">
 					<div class="card-content">
 						<div class="card-title">
-						#{self.name}
+			''' 
+
+			if self.respond_to? :name
+				if self.name.blank?
+					non_array_attributes_card += "New Record"
+				else
+					non_array_attributes_card += self.name
+				end
+			else
+				non_array_attributes_card += "New Record"
+			end
+
+
+			non_array_attributes_card += '''
 						</div>
 			'''
+
+			## so i could make it tabbed right away.
 
 			self.non_array_attributes.each do |nattr|
 				if nattr.primitive.to_s == "Date"
@@ -158,30 +229,61 @@ module Concerns::FormConcern
 
 			non_array_attributes_card += "</div></div>"
 	
+			object_array_attributes_cards = ''
+
+			tab_titles = '<div class="row"><div class="col s12 m12 l12">
+      		<ul class="tabs tabs-fixed-width">'
+
+			tab_content = ''
 
 			self.object_array_attributes.each do |attr|
-				object_card = '''
-					<div class="card">
-						<div class="card-content">
-							<div class="card-title">
-								''' + attr.name.to_s + '''
-							</div>
-				'''
+
+				tab_titles += add_tab_title(attr.name)
+
+
+				#object_card = '''
+				#	<div class="card">
+				#		<div class="card-content">
+				#			<div class="card-title">
+				#				''' + attr.name.to_s + '''
+				#			</div>
+				#'''
 
 				## why not use a collapsible list.
-				self.send(attr.name).each do |obj|
-					object_card += obj.summary
-					object_card += obj.new_build_form(root,readonly="no",form_html="",scripts={})
-					## render summary.
-					## so it should respond to a method called summary.
-					## then it should call new_build_form on it.
+				## first open the table.
+				## then add the summary headers
+				## then close the table.
+				empty_obj = attr.member_type.primitive.to_s.constantize.new
+				tab_content += open_tab_content(attr.name)
+				unless self.send(attr.name).blank?
+					tab_content += self.send(attr.name)[0].summary_table_open
+					tab_content += self.send(attr.name)[0].summary_table_headers
+					tab_content += self.send(attr.name)[0].summary_table_body_open
+					self.send(attr.name).each do |obj|
+						tab_content += obj.summary_row
+						tab_content += '''
+							<div class="nested_object_details" style="display:none;">
+						'''
+						tab_content += obj.new_build_form(root + "[" + attr.name.to_s + "][]",readonly="no","",scripts)
+						tab_content += '''
+							</div>
+						'''
+					end
+					tab_content += self.send(attr.name)[0].summary_table_body_close
+					tab_content += self.send(attr.name)[0].summary_table_close
 				end
-				## add new should be rendered here.
-				## add new object, can have a method like that.
-				## render the add new for it.
-				object_card += '</div></div>'
+				## that is the add new part.
+				tab_content += empty_obj.add_new_object(root,attr.name.to_s,scripts,readonly)
+				tab_content += close_tab_content(attr.name)
+				
+				puts "this is the tab content"
+				puts tab_content.to_s
+				#exit(1)
 			end
 
+			
+
+			non_array_attributes_card + tab_titles + '</ul></div>' + tab_content 
 
 		end
 

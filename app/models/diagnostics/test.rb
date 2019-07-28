@@ -201,6 +201,40 @@ class Diagnostics::Test
 		}
 	end
 
-	
+
+	###########################################################
+	##
+	##
+	## OVERRIDDEN FROM FORM CONCERN.
+	##
+	##
+	###########################################################
+	def summary_row
+		'''
+			<tr>
+				<td>#{self.name}</td>
+				<td>#{self.lis_code}</td>
+				<td>#{self.description}</td>
+				<td>#{self.ranges.size}</td>
+				<td><div class="edit_nested_object">Edit</div></td>
+			</tr>
+		'''
+	end
+
+	## should return the table, and th part.
+	## will return some headers.
+	def summary_table_headers
+		'''
+			<thead>
+	          <tr>
+	              <th>Name</th>
+	              <th>LIS CODE</th>
+	              <th>Description</th>
+	              <th>Total Ranges</th>
+	              <th>Options</th>
+	          </tr>
+	        </thead>
+		'''
+	end
 
 end

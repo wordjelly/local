@@ -58,5 +58,31 @@ class Inventory::Category
     	
 	end
 
+	def summary_row
+		'''
+			<tr>
+				<td>#{self.name}</td>
+				<td>#{self.quantity}</td>
+				<td>#{self.items.size}</td>
+				<td><div class="edit_nested_object">Edit</div></td>
+			</tr>
+		'''
+	end
+
+	## should return the table, and th part.
+	## will return some headers.
+	def summary_table_headers
+		'''
+			<thead>
+	          <tr>
+	              <th>Name</th>
+	              <th>Qunatity</th>
+	              <th>Total Items</th>
+	              <th>Options</th>
+	          </tr>
+	        </thead>
+		'''
+	end
+
 
 end

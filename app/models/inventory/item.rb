@@ -168,4 +168,36 @@ class Inventory::Item
 		end
 	end
 
+	#######################################################
+	##
+	##
+	## OVERRIDEN FROM FORM CONCERN.
+	##
+	##
+	#######################################################
+	def summary_row
+		'''
+			<tr>
+				<td>#{self.name}</td>
+				<td>#{self.expiry_date}</td>
+				<td><div class="edit_nested_object">Edit</div></td>
+			</tr>
+		'''
+	end
+
+	## should return the table, and th part.
+	## will return some headers.
+	def summary_table_headers
+		'''
+			<thead>
+	          <tr>
+	              <th>Name</th>
+	              <th>Expiry Date</th>
+	              <th>Options</th>
+	          </tr>
+	        </thead>
+		'''
+	end
+
+
 end

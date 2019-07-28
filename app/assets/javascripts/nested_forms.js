@@ -14,6 +14,8 @@ $(document).on('click','.add_nested_element',function(event){
 	var template = _.template($("#" + script_id).html());
 	console.log($("#" + script_id));
 	$(template({})).insertAfter($(this).parent());
+	$('.tabs').tabs();
+
 
 });
 

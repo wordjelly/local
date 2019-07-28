@@ -40,5 +40,29 @@ class Inventory::Requirement
 
 	end
 
+	def summary_row
+		'''
+			<tr>
+				<td>#{self.name}</td>
+				<td>#{self.categories.size}</td>
+				<td><div class="edit_nested_object">Edit</div></td>
+			</tr>
+		'''
+	end
+
+	## should return the table, and th part.
+	## will return some headers.
+	def summary_table_headers
+		'''
+			<thead>
+	          <tr>
+	              <th>Name</th>
+	              <th>Total Categories</th>
+	              <th>Options</th>
+	          </tr>
+	        </thead>
+		'''
+	end
+
 
 end

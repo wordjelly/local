@@ -206,4 +206,42 @@ class Diagnostics::Range
 		self.picked = 1
 	end
 
+	###########################################################
+	##
+	##
+	## OVERRIDDEN FROM FORM CONCERN
+	##
+	############################################################
+	def summary_row
+		'''
+			<tr>
+				<td>#{self.min_age}</td>
+				<td>#{self.max_age}</td>
+				<td>#{self.sex}</td>
+				<td>#{self.min_value}</td>
+				<td>#{self.max_value}</td>
+				<td>#{self.text_value}</td>
+				<td><div class="edit_nested_object">Edit</div></td>
+			</tr>
+		'''
+	end
+
+	## should return the table, and th part.
+	## will return some headers.
+	def summary_table_headers
+		'''
+			<thead>
+	          <tr>
+	              <th>Min Age</th>
+	              <th>Max Age</th>
+	              <th>Sex</th>
+	              <th>Min Value</th>
+	              <th>Max Value</th>
+	              <th>Text Value</th>
+	              <th>Options</th>
+	          </tr>
+	        </thead>
+		'''
+	end
+
 end 

@@ -319,4 +319,40 @@ class Diagnostics::Report
 
 	end
 
+	#############################################################3
+	##
+	##
+	## OVERRIDDEN FROM NESTED FORM.
+	##
+	##
+	#############################################################
+	## this gets overriden in the different things.
+	def summary_row
+		'''
+			<tr>
+				<td>#{self.name}</td>
+				<td>#{self.tests.size}</td>
+				<td>#{self.statuses.size}</td>
+				<td>#{self.requirements.size}</td>
+				<td><div class="edit_nested_object">Edit</div></td>
+			</tr>
+		'''
+	end
+
+	## should return the table, and th part.
+	## will return some headers.
+	def summary_table_headers
+		'''
+			<thead>
+	          <tr>
+	              <th>Name</th>
+	              <th>Total Tests</th>
+	              <th>Total Steps</th>
+	              <th>Total Requirements</th>
+	              <th>Options</th>
+	          </tr>
+	        </thead>
+		'''
+	end
+
 end	

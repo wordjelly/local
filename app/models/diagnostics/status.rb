@@ -214,5 +214,38 @@ class Diagnostics::Status
 		end
 	end
 
+	###########################################################
+	##
+	##
+	## OVERRIDDEN FROM FORM CONCERN
+	##
+	############################################################
+	def summary_row
+		'''
+			<tr>
+				<td>#{self.name}</td>
+				<td>#{self.duration}</td>
+				<td>#{self.requirements.size}</td>
+				<td><div class="edit_nested_object">Edit</div></td>
+			</tr>
+		'''
+	end
+
+	## should return the table, and th part.
+	## will return some headers.
+	def summary_table_headers
+		'''
+			<thead>
+	          <tr>
+	              <th>Name</th>
+	              <th>Duration</th>
+	              <th>Total Requirements</th>
+	              <th>Options</th>
+	          </tr>
+	        </thead>
+		'''
+	end
+
+
 
 end
