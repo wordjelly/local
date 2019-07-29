@@ -4,11 +4,8 @@ module Concerns::FormConcern
 
 	included do 
 
-
-		
-
 		def fields_not_show_in_form
-			["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids"]		
+			["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses"]		
 		end
 
 		## if the attribute name is mentioned in this hash.
@@ -16,7 +13,6 @@ module Concerns::FormConcern
 		def customizations(root)
 			{}
 		end
-
 
 		attr_accessor :object_array_attributes
 
@@ -47,6 +43,7 @@ module Concerns::FormConcern
 			self.non_array_attributes = []
 
 			self.class.attribute_set.select{|c| 
+				next if self.fields_not_show_in_form.include? c.name.to_s
 				if c.primitive.to_s == "Array"
 					if c.respond_to? "member_type"
 						if c.member_type.primitive.to_s == "BasicObject"
@@ -155,16 +152,13 @@ module Concerns::FormConcern
 			script_id = BSON::ObjectId.new.to_s
 
 			script_open = '<script id="' + script_id + '" type="text/template" class="template"><div style="padding-left: 1rem;">'
-
-			
-
 			
 			scripts[script_id] = script_open
 
 			scripts[script_id] +=  new_build_form(root + "[" + collection_name + "][]",readonly,"",scripts) + '</div></script>'
 		
+			element = "<a class='waves-effect waves-light btn-small add_nested_element' data-id='#{script_id}'><i class='material-icons left' >cloud</i>Add #{collection_name.singularize}</a>"
 
-			element = "<span><i class='material-icons add_nested_element' data-id='#{script_id}'>add_circle_outline</i>Add</span>"
 			element
 		end
 
@@ -231,13 +225,17 @@ module Concerns::FormConcern
 	
 			object_array_attributes_cards = ''
 
+			tab_titles = ''
 			tab_titles = '<div class="row"><div class="col s12 m12 l12">
-      		<ul class="tabs tabs-fixed-width">'
+      		<ul class="tabs tabs-fixed-width">' if (self.object_array_attributes.size > 0)
 
 			tab_content = ''
 
+			
+
 			self.object_array_attributes.each do |attr|
 
+				editable_tab_content = ''
 				tab_titles += add_tab_title(attr.name)
 
 
@@ -261,27 +259,25 @@ module Concerns::FormConcern
 					tab_content += self.send(attr.name)[0].summary_table_body_open
 					self.send(attr.name).each do |obj|
 						tab_content += obj.summary_row
-						tab_content += '''
-							<div class="nested_object_details" style="display:none;">
-						'''
-						tab_content += obj.new_build_form(root + "[" + attr.name.to_s + "][]",readonly="no","",scripts)
-						tab_content += '''
-							</div>
-						'''
+						editable_tab_content += '<div class="nested_object_details" id="' + obj.id.to_s.parameterize.underscore + '" style="display:none;">'
+						editable_tab_content += obj.new_build_form(root + "[" + attr.name.to_s + "][]",readonly="no","",scripts)
+						editable_tab_content += '</div>'
 					end
 					tab_content += self.send(attr.name)[0].summary_table_body_close
 					tab_content += self.send(attr.name)[0].summary_table_close
 				end
 				## that is the add new part.
 				tab_content += empty_obj.add_new_object(root,attr.name.to_s,scripts,readonly)
+				puts "--------------------------------------"
+				puts "editable tab content is:"
+				puts editable_tab_content
+				puts "--------------------------------------"
+				tab_content += editable_tab_content
 				tab_content += close_tab_content(attr.name)
 				
-				puts "this is the tab content"
-				puts tab_content.to_s
+				
 				#exit(1)
 			end
-
-			
 
 			non_array_attributes_card + tab_titles + '</ul></div>' + tab_content 
 
