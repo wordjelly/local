@@ -24,13 +24,14 @@ module Concerns::MissingMethodConcern
 							unless self.send(virtus_attribute.name).blank?
 								#puts "attribute name is: #{virtus_attribute.name.to_s}"
 								self.send(virtus_attribute.name).each do |arr|
-									puts "validating: #{virtus_attribute.name.to_s}"
+									#puts "validating: #{virtus_attribute.name.to_s}"
 										
 									arr.validate_nested
 									unless arr.valid?
 										self.errors.add(virtus_attribute.name.to_sym,arr.errors.full_messages)
 										#error_messages.flatten
 									end
+									
 									#puts arr.errors.full_messages.to_s
 									
 								end
@@ -113,8 +114,6 @@ module Concerns::MissingMethodConcern
 
 		end
 
-
-
 		## @param[User] a user
 		## @return[Boolean] true : if the user or its organization are present in the owner_ids of the current record, provied that the current record responds_to owner ids., false in any other eventuality.
 		## @called_from : generally from the overriden apply_current_user invocations in different models.
@@ -135,7 +134,7 @@ module Concerns::MissingMethodConcern
 				## if an organization id was already passed in .
 				## use it.
 				org_id = organization_id unless organization_id.blank?
-					
+				## if the name is blank, then what will you do.
 				## this is useful when 
 				## otherwise try to determine it.
 				if org_id.blank?

@@ -1,3 +1,4 @@
+require "schedule/minute"
 module Concerns::OrderConcern
 
 	extend ActiveSupport::Concern
@@ -15,6 +16,11 @@ module Concerns::OrderConcern
 		attribute :categories, Array[Inventory::Category] 
 
 		attribute :payments, Array[Business::Payment]
+
+		## a new report chosen is first added to these
+		## then internally is used to load the relevant report
+		## and populate the reports array.
+		attribute :template_report_ids, Array, mapping: {type: 'keyword'}
 
 		attribute :local_item_group_id
 
@@ -76,12 +82,14 @@ module Concerns::OrderConcern
 
 		end
 
-
 		before_save do |document|
+			#puts "came to before save of order--------------"
+			document.update_reports
 			document.load_patient
 			document.update_requirements
 			document.update_report_items
 			document.add_report_values
+			#puts "finished before save of order -------------"
 		end
 
 		after_save do |document|
@@ -89,17 +97,43 @@ module Concerns::OrderConcern
 		end
 
 		after_find do |document|
+			#puts " --------- triggered after find, to load patient. --------- "
 			document.load_patient
 		end
 
 	end
 
+
+	def update_reports
+		
+		self.reports.delete_if { |c|
+			!self.template_report_ids.include? c.id.to_s
+		}
+
+		existing_report_ids = self.reports.map{|c|
+			c.id.to_s
+		}
+
+		self.template_report_ids.each do |r_id|
+			unless existing_report_ids.include? r_id
+				report = Diagnostics::Report.find(r_id)
+				report.run_callbacks(:find)
+				self.reports << report
+			end
+		end
+
+	end
+
+	## give it a default value in the form itself.
+	## why is this schedule shit not working.
+
 	def load_patient
-		puts "CAME TO LOAD THE PATIENT"
+		#puts "CAME TO LOAD THE PATIENT"
 		if self.patient_id.blank?
 			self.errors.add(:patient_id,"Please choose a patient for this order.")
 		else
 			self.patient = Patient.find(self.patient_id)
+			#puts "found the patient."
 		end
 	end
 
@@ -301,6 +335,7 @@ module Concerns::OrderConcern
 	## it can be merged for the query.
 
 	def schedule
+
 		procedure_versions_hash = {}
 		## let me sort this out first.
 		## where is the start epoch.
@@ -336,7 +371,6 @@ module Concerns::OrderConcern
 				
 				puts "c duration: #{c.duration}"
 
-
 				c.from = prev_start.blank? ? (start_time) : (prev_start + c.duration) 
 
 				puts "c from is: #{c.from}"
@@ -367,6 +401,8 @@ module Concerns::OrderConcern
 					:id,
 					{:order => 
 						[
+							:name,
+							{:template_report_ids => []},
 							:patient_id,
 							:local_item_group_id,
 							:start_epoch,

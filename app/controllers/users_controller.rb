@@ -1,4 +1,4 @@
-class UsersController < BaseController
+class UsersController < ApplicationController
 
 	def create
 		super

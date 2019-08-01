@@ -1,0 +1,25 @@
+<% reports_array = [] %>
+<% if local_assigns[:reports] %>
+  <%= puts "reports are defined" %>
+  <% reports_array = reports %>
+<% else %>
+  <%= puts "reports are not defined" %>
+  <% reports_array = @reports %>
+<% end %>
+<table>
+  <thead>
+    <tr>
+        <th>Name</th>
+        <th>Total Tests</th>
+        <th>Total Steps</th>
+        <th>Total Requirements</th>
+        <th>Options</th>
+    </tr>
+  </thead>
+  <tbody>
+  	<% reports_array.each do |report| %>
+  	<% @report = report %>
+  	<%= render :partial => "/diagnostics/reports/show" %>
+  	<% end %>
+  </tbody>
+</table>

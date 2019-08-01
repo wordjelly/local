@@ -17,6 +17,7 @@ $(document).on('click','.add_nested_element',function(event){
 	$('.tabs').tabs();
 });
 
+
 $(document).on('click','.edit_nested_object',function(event){
 	console.log("clicked edit nested object");
 	var nested_element_id = $(this).attr("data-id");

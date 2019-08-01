@@ -162,12 +162,14 @@ module Concerns::FormConcern
 			element
 		end
 
-		def add_tab_title(attribute_name)
-			'<li class="tab col s3 m3 l3"><a href="#' + attribute_name.to_s + '">' + attribute_name.to_s + '</a></li>'
+		def add_tab_title(attribute_name,bson_id)
+			# here the title and content.
+			'<li class="tab col s3 m3 l3"><a href="#' + attribute_name.to_s + bson_id + '">' + attribute_name.to_s + '</a></li>'
 		end
 
-		def open_tab_content(attr_name)
-			'<div id="' + attr_name.to_s + '" class="col s12 m12 l12">'
+		def open_tab_content(attr_name,bson_id)
+			# here too the title and content
+			'<div id="' + attr_name.to_s + bson_id + '" class="col s12 m12 l12">'
 		end
 
 		def close_tab_content(attr_name)
@@ -181,8 +183,7 @@ module Concerns::FormConcern
 
 		def new_build_form(root,readonly="no",form_html="",scripts={})
 			classify_attributes
-			## card initialize.
-			## add the title.
+			
 			non_array_attributes_card = '''
 				<div class="card">
 					<div class="card-content">
@@ -207,17 +208,25 @@ module Concerns::FormConcern
 			## so i could make it tabbed right away.
 
 			self.non_array_attributes.each do |nattr|
-				if nattr.primitive.to_s == "Date"
-					## add date element.
-					non_array_attributes_card += add_date_element(root,nattr)
-				elsif nattr.primitive.to_s == "Integer"
-					## add number element
-					non_array_attributes_card += add_float_element(root,nattr)
-				elsif nattr.primitive.to_s == "Float"
-					## add float element.
-					non_array_attributes_card += add_float_element(root,nattr)
+				unless customizations(root)[nattr.name.to_s].blank?
+					
+					non_array_attributes_card += customizations(root)[nattr.name.to_s]
+
 				else
-					non_array_attributes_card += add_text_element(root,nattr)
+
+					if nattr.primitive.to_s == "Date"
+						## add date element.
+						non_array_attributes_card += add_date_element(root,nattr)
+					elsif nattr.primitive.to_s == "Integer"
+						## add number element
+						non_array_attributes_card += add_float_element(root,nattr)
+					elsif nattr.primitive.to_s == "Float"
+						## add float element.
+						non_array_attributes_card += add_float_element(root,nattr)
+					else
+						non_array_attributes_card += add_text_element(root,nattr)
+					end
+
 				end
 			end
 
@@ -231,13 +240,11 @@ module Concerns::FormConcern
 
 			tab_content = ''
 
-			
-
 			self.object_array_attributes.each do |attr|
 
 				editable_tab_content = ''
-				tab_titles += add_tab_title(attr.name)
-
+				bson_id = BSON::ObjectId.new.to_s
+				tab_titles += add_tab_title(attr.name,bson_id)
 
 				#object_card = '''
 				#	<div class="card">
@@ -252,7 +259,7 @@ module Concerns::FormConcern
 				## then add the summary headers
 				## then close the table.
 				empty_obj = attr.member_type.primitive.to_s.constantize.new
-				tab_content += open_tab_content(attr.name)
+				tab_content += open_tab_content(attr.name,bson_id)
 				unless self.send(attr.name).blank?
 					tab_content += self.send(attr.name)[0].summary_table_open
 					tab_content += self.send(attr.name)[0].summary_table_headers
@@ -268,18 +275,31 @@ module Concerns::FormConcern
 				end
 				## that is the add new part.
 				tab_content += empty_obj.add_new_object(root,attr.name.to_s,scripts,readonly)
-				puts "--------------------------------------"
-				puts "editable tab content is:"
-				puts editable_tab_content
-				puts "--------------------------------------"
+				#puts "--------------------------------------"
+				#puts "editable tab content is:"
+				#puts editable_tab_content
+				#puts "--------------------------------------"
 				tab_content += editable_tab_content
 				tab_content += close_tab_content(attr.name)
 				
-				
+				#so there is a clash in the names of the tab ids
+				#select requirements from the requirements to the 
+				#statuses
+				#how would we select though?
+				#autocomplete on requirements, provide
+				#so tab ids have to be made unique.
+				#report, and also 
+				#i'll sort out the requirements issues.
 				#exit(1)
 			end
 
-			non_array_attributes_card + tab_titles + '</ul></div>' + tab_content 
+			k = non_array_attributes_card + tab_titles  
+			
+			k += '</ul></div></div>' if (self.object_array_attributes.size > 0)
+			
+			k += tab_content
+			
+			k
 
 		end
 

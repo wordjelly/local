@@ -1,9 +1,10 @@
  <table>
         <thead>
           <tr>
+                <th>Created On</th>
                 <th>Order Name</th>
                 <th>Reports</th>
-                <th>Tubes</th>
+                <th>Consumables</th>
                 <th>Options</th>
             </tr>
         </thead>
@@ -11,7 +12,7 @@
         <tbody>
         	<% @orders.each do |order| %>
         	<% @order = order %>
-        	<%= render :partial => "/orders/show" %>
+        	<%= render :partial => "/business/orders/show" %>
         	<% end %>
         </tbody>
 </table>

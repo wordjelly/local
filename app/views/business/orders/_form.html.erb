@@ -1,34 +1,26 @@
-<div class="section page_content">
-	<%= render :partial => "shared/errors", locals: {model: @order} %>
-	<div class="section">
-		<% @patient = @order.patient %>
-		<% @patients = [@patient] %>
-		<div class="card">
-			<div class="card-content">
-				<div class="card-title">
-					Patient Details
+<%= form_for @order, as: :order, method: @order.new_record? ? :post : :put do |f| %>
+	<div class="section page_content">
+		<%= render :partial => "shared/errors", locals: {model: @order} %>
+		<div class="section">
+			<% @patient = @order.patient %>
+			<% @patients = [@patient] %>
+			<div class="card">
+				<div class="card-content">
+					<div class="card-title">
+						Patient Details
+					</div>
+					<%= render :partial => "/patients/index" %>	
 				</div>
-				<%= render :partial => "/patients/index" %>	
 			</div>
 		</div>
+		<%= render :partial => "/shared/visibility", locals: {f: f} %>
+			
+		<% unless @order.new_record? %>
+			<%= render :partial => "images/image", locals: {model: @order} %>
+		<% end %>
+		
+		<%= build_nested_form(@order).html_safe %>	
+
+		<%= f.submit "Submit" %>
 	</div>
-	<!-- first render the whole thing -->
-	<!-- but they will be forms -->
-	<!-- we have to work on the form per sae -->
-	<!-- each nested is a card? -->
-	<!-- inside it you see the summary -->
-	<!-- if you expand,  -->
-	<div class="section">
-		<div class="card">
-			<div class="card-content">
-				<div class="card-title">
-					Add/Remove Reports
-				</div>
-				<!-- for each nested, render summary -->
-				<!-- give an expand button -->
-				<!-- if expanded -->
-				<!-- so i'm gonna have to merge display nested, and nested form somehow -->
-			</div>
-		</div>
-	</div>
-</div>
+<% end %>

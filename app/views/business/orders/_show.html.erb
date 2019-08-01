@@ -1,10 +1,7 @@
 <tr>
-	<% unless @order.errors.empty? %>
-		<td><%= @order.errors.full_messages %></td>
-	<% else %>
-		<td><%= link_to @order.patient.name + "'s Tests", order_path(@order.id.to_s) %></td>
-		<td><%= render :partial => "/orders/reports_cell" %></td>
-		<td><%= render :partial => "/orders/tubes_cell" %></td>
-		<td><%= render :partial => "/orders/options" %></td>
-	<% end %>
+	<td><%= @order.created_at %></td>
+	<td><%= link_to @order.patient.full_name + "'s Tests", business_order_path(@order.id.to_s) %></td>
+	<td><%= @order.reports.size %></td>
+	<td><%= @order.categories.size %></td>
+	<td><%= render :partial => "/business/orders/options" %></td>
 </tr>

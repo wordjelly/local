@@ -142,8 +142,8 @@ module Concerns::BaseControllerConcern
 
 		instance = get_resource_class.new(get_model_params.except(@attributes_to_exclude))
 		## this is an attribute accessor.	
-		puts "is there a current user?"
-		puts current_user.to_s
+		##puts "is there a current user?"
+		##puts current_user.to_s
 		instance.created_by_user = current_user if current_user
 			
 		## this is an actual attribute.
@@ -179,6 +179,7 @@ module Concerns::BaseControllerConcern
 		## can this be done as a configuration.
 		## what about chekcing if it is a test env.?
 		#if Rails.env.test?
+		puts " ------------ CAME TO SAVE THE RECORD -------------- "
 		if Rails.env.test? || Rails.env.development?
 			if ENV["CREATE_UNIQUE_RECORDS"].blank?
 				instance.save(op_type: 'create')

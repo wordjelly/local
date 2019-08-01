@@ -1,5 +1,4 @@
-require 'schedule/minute'
-module Concerns::Schedule::OrderConcern
+module Concerns::Schedmodule::Order::OrderConcern
   	extend ActiveSupport::Concern
 
   	included do

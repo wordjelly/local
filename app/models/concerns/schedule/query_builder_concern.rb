@@ -296,7 +296,7 @@ module Concerns::Schedule::QueryBuilderConcern
   		#puts JSON.pretty_generate(self.global_minutes_hash)
   		## okay so gotta solve this shit out today
   		## so lets setup a simple scenario.
-  		exit(1)
+  		#exit(1)
   	end
 
   	#########################################################

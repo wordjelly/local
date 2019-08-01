@@ -2,14 +2,12 @@ require 'elasticsearch/persistence/model'
 class Schedule::Minute
 	include Elasticsearch::Persistence::Model
 	include Concerns::EsBulkIndexConcern
-	include Concerns::Schedule::MinuteConcern
-	include Concerns::Schedule::OrderConcern
+	include Concerns::Schedmodule::Minute::MinuteConcern
+	include Concerns::Schedmodule::Order::OrderConcern
 	include Concerns::Schedule::TestMethodsConcern
-	
 	
 	index_name "pathofast-schedule-minutes"
 	document_type "schedule/minute"
-
 
 	attribute :date, Date
 	attribute :working, Integer, :default => 1

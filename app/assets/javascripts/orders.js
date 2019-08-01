@@ -36,11 +36,15 @@ var get_template_report_ids = function(){
 /***
 on click choose report ->
 ***/
+
+var add_report_to_order = function(report_id){
+	$("form").first().append('<input name="order[template_report_ids][]" value="' + report_id + '" />');
+}
+
+
 $(document).on('click','.choose_report',function(event){
-	// adds the report id to an attribute called 
-	// report ids.
-	// and nothing else.
-	// 
+	add_report_to_order($(this).attr("data-id"));
+	$("form").first().submit();
 });
 
 
