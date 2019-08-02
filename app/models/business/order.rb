@@ -2,6 +2,8 @@ require 'elasticsearch/persistence/model'
 class Business::Order
 
 	include Elasticsearch::Persistence::Model
+	include ActiveModel::Validations
+  	include ActiveModel::Validations::Callbacks
 	index_name "pathofast-business-orders"
 	document_type "business/order"
 	include Concerns::NameIdConcern

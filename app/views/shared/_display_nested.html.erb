@@ -83,5 +83,5 @@
 </div>
 
 <div class="row options">
-	<%= link_to "Edit", send("edit_" + model.class.name.parameterize.underscore + "_path") %>
+	<%= link_to "Edit", send("edit_" + model.class.name.parameterize.underscore + "_path",model.id.to_s) %>
 </div>

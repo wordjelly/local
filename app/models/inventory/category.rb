@@ -7,7 +7,7 @@ class Inventory::Category
 	include Concerns::BarcodeConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
-	include Concerns::OwnersConcern
+	#include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::TransferConcern
 	include Concerns::MissingMethodConcern
@@ -59,14 +59,14 @@ class Inventory::Category
 	end
 
 	def summary_row
-		'''
+		'
 			<tr>
-				<td>#{self.name}</td>
-				<td>#{self.quantity}</td>
-				<td>#{self.items.size}</td>
+				<td>' + self.name + '</td>
+				<td>' + self.quantity.to_s + '</td>
+				<td>' + self.items.size.to_s + '</td>
 				<td><div class="edit_nested_object">Edit</div></td>
 			</tr>
-		'''
+		'
 	end
 
 	## should return the table, and th part.

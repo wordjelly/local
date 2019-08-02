@@ -5,7 +5,7 @@ module Concerns::FormConcern
 	included do 
 
 		def fields_not_show_in_form
-			["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses"]		
+			["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"]		
 		end
 
 		## if the attribute name is mentioned in this hash.
@@ -36,6 +36,8 @@ module Concerns::FormConcern
 		## 
 		def classify_attributes
 			
+			## now render the plain array attributes.
+
 			self.object_array_attributes = []
 			
 			self.plain_array_attributes = []
@@ -144,11 +146,28 @@ module Concerns::FormConcern
 			'''
 		end
 
+		def add_new_plain_array_element(root,collection_name,scripts,readonly)
+
+			script_id = BSON::ObjectId.new.to_s
+
+			script_open = '<script id="' + script_id + '" type="text/template" class="template"><div style="padding-left: 1rem;">'
+			
+			scripts[script_id] = script_open
+
+			scripts[script_id] +=  '<input type="text" name="' + root + '[' + collection_name + '][] /></script>'
+		
+			element = "<a class='waves-effect waves-light btn-small add_nested_element' data-id='#{script_id}'><i class='material-icons left' >cloud</i>Add #{collection_name.singularize}</a>"
+
+			element
+
+		end
+
 		## @param[String] root
 		## @param[String] collection_name : eg "reports"
 		## @param[Hash] scripts : the scripts hash
 		## @param[String] readonly 
 		def add_new_object(root,collection_name,scripts,readonly)
+			
 			script_id = BSON::ObjectId.new.to_s
 
 			script_open = '<script id="' + script_id + '" type="text/template" class="template"><div style="padding-left: 1rem;">'
@@ -160,6 +179,7 @@ module Concerns::FormConcern
 			element = "<a class='waves-effect waves-light btn-small add_nested_element' data-id='#{script_id}'><i class='material-icons left' >cloud</i>Add #{collection_name.singularize}</a>"
 
 			element
+
 		end
 
 		def add_tab_title(attribute_name,bson_id)
@@ -230,7 +250,40 @@ module Concerns::FormConcern
 				end
 			end
 
+			## now the plain array attributes card.
+
 			non_array_attributes_card += "</div></div>"
+
+
+			plain_array_attributes_block = ''
+
+
+			self.plain_array_attributes.each do |nattr|
+				plain_array_attributes_card = ''
+				
+				plain_array_attributes_card += '''
+					<div class="card">
+						<div class="card-content">
+							<div class="card-title">
+				'''
+
+				plain_array_attributes_card += nattr.name.to_s
+				
+				plain_array_attributes_card += '</div>'
+
+				self.send(nattr.name).each do |arr_el|
+					
+					plain_array_attributes_card += '<input type="text" name="' + root + '[' + nattr.name.to_s + '][]' + '" value="' + arr_el + '" />'
+				end 
+				
+				plain_array_attributes_card += add_new_plain_array_element(root,nattr.name.to_s,scripts,readonly)
+
+				plain_array_attributes_card += "</div></div>"
+					
+				plain_array_attributes_block += plain_array_attributes_card
+
+			end
+
 	
 			object_array_attributes_cards = ''
 
@@ -243,23 +296,15 @@ module Concerns::FormConcern
 			self.object_array_attributes.each do |attr|
 
 				editable_tab_content = ''
+				
 				bson_id = BSON::ObjectId.new.to_s
+				
 				tab_titles += add_tab_title(attr.name,bson_id)
 
-				#object_card = '''
-				#	<div class="card">
-				#		<div class="card-content">
-				#			<div class="card-title">
-				#				''' + attr.name.to_s + '''
-				#			</div>
-				#'''
-
-				## why not use a collapsible list.
-				## first open the table.
-				## then add the summary headers
-				## then close the table.
 				empty_obj = attr.member_type.primitive.to_s.constantize.new
+				
 				tab_content += open_tab_content(attr.name,bson_id)
+
 				unless self.send(attr.name).blank?
 					tab_content += self.send(attr.name)[0].summary_table_open
 					tab_content += self.send(attr.name)[0].summary_table_headers
@@ -293,7 +338,7 @@ module Concerns::FormConcern
 				#exit(1)
 			end
 
-			k = non_array_attributes_card + tab_titles  
+			k = non_array_attributes_card + plain_array_attributes_block + tab_titles  
 			
 			k += '</ul></div></div>' if (self.object_array_attributes.size > 0)
 			

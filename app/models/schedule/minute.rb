@@ -6,6 +6,9 @@ class Schedule::Minute
 	include Concerns::Schedmodule::Order::OrderConcern
 	include Concerns::Schedule::TestMethodsConcern
 	
+
+	HELLO = "hello"
+		
 	index_name "pathofast-schedule-minutes"
 	document_type "schedule/minute"
 

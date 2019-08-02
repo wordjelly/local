@@ -19,3 +19,5 @@ end
 		cls.constantize.send("create_index!",{force: true})
 	end
 end
+
+Schedule::Minute::HELLO

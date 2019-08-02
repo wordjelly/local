@@ -57,7 +57,13 @@ module Concerns::OwnersConcern
 		def organization_users_are_enrolled_with_organization
 			
 			## related to organization.
-			## that means either he created an organization, or  
+			## that means either he created an organization, or 
+			puts "failing here --------"
+			puts self.class.name.to_s 
+			puts "the self created by user is:"
+			puts self.created_by_user
+			puts "the self organization is:"
+			puts self.created_by_user.organization.to_s
 			if !self.created_by_user.has_organization?
 				self.errors.add(:created_by_user,"you have not yet been verified as belonging to this organization")
 			end

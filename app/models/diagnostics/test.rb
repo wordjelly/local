@@ -18,10 +18,10 @@ class Diagnostics::Test
 	attribute :name, String
 
 	## mapped in block
-	attribute :lis_code, String
+	attribute :lis_code, String, default: BSON::ObjectId.new.to_s
 
 	## mapped in block
-	attribute :description, String
+	attribute :description, String, default: "test"
 
 	## references
 	attribute :references, Array, mapping: {type: 'keyword'}, default: []
@@ -148,30 +148,35 @@ class Diagnostics::Test
 
 	## call from order.
 	def add_result(patient)
-		incorrect_result_format = false
-		
-		if self.result_text.blank?
-			if self.result_numeric.blank?
-				unless self.result_raw.strip.blank?
-					result_filters.each do |filter|
-						incorrect_result_format = (self.result_raw.strip.to_s =~ /#{filter}/i) if incorrect_result_format.blank?
+
+		unless self.result_raw.blank?
+
+			incorrect_result_format = false
+			
+			if self.result_text.blank?
+				if self.result_numeric.blank?
+					unless self.result_raw.strip.blank?
+						result_filters.each do |filter|
+							incorrect_result_format = (self.result_raw.strip.to_s =~ /#{filter}/i) if incorrect_result_format.blank?
+						end
 					end
 				end
 			end
-		end
-		if incorrect_result_format.blank?
-			if self.requires_numeric_result?
-				begin
-					self.result_numeric = self.result_raw.gsub(/[a-zA-Z[[:punct]]]/,'').to_f
+			if incorrect_result_format.blank?
+				if self.requires_numeric_result?
+					begin
+						self.result_numeric = self.result_raw.gsub(/[a-zA-Z[[:punct]]]/,'').to_f
+						self.result_text = self.result_raw
+						self.assign_range(patient)
+					rescue
+
+					end
+				else
 					self.result_text = self.result_raw
 					self.assign_range(patient)
-				rescue
-
 				end
-			else
-				self.result_text = self.result_raw
-				self.assign_range(patient)
 			end
+
 		end
 
 	end
@@ -210,21 +215,21 @@ class Diagnostics::Test
 	##
 	###########################################################
 	def summary_row
-		'''
+		'
 			<tr>
-				<td>#{self.name}</td>
-				<td>#{self.lis_code}</td>
-				<td>#{self.description}</td>
-				<td>#{self.ranges.size}</td>
+				<td>' + self.name + '</td>
+				<td>' + self.lis_code + '</td>
+				<td>' + self.description + '</td>
+				<td>' + self.ranges.size.to_s + '</td>
 				<td><div class="edit_nested_object">Edit</div></td>
 			</tr>
-		'''
+		'
 	end
 
 	## should return the table, and th part.
 	## will return some headers.
 	def summary_table_headers
-		'''
+		'
 			<thead>
 	          <tr>
 	              <th>Name</th>
@@ -234,7 +239,7 @@ class Diagnostics::Test
 	              <th>Options</th>
 	          </tr>
 	        </thead>
-		'''
+		'
 	end
 
 end

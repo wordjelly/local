@@ -2,6 +2,9 @@ require 'elasticsearch/persistence/model'
 class Diagnostics::Report
 
 	include Elasticsearch::Persistence::Model
+	include ActiveModel::Validations
+  	include ActiveModel::Validations::Callbacks
+
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
@@ -328,15 +331,15 @@ class Diagnostics::Report
 	#############################################################
 	## this gets overriden in the different things.
 	def summary_row
-		'''
+		'
 			<tr>
-				<td>#{self.name}</td>
-				<td>#{self.tests.size}</td>
-				<td>#{self.statuses.size}</td>
-				<td>#{self.requirements.size}</td>
+				<td>' + self.name + '</td>
+				<td>' + self.tests.size.to_s + '</td>
+				<td>' + self.statuses.size.to_s + '</td>
+				<td>' + self.requirements.size.to_s + '</td>
 				<td><div class="edit_nested_object">Edit</div></td>
 			</tr>
-		'''
+		'
 	end
 
 	## should return the table, and th part.

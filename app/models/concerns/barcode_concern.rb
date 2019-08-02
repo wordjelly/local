@@ -69,7 +69,15 @@ module Concerns::BarcodeConcern
 					self.barcode_object = Barcode.new
 					self.barcode_object.id = self.barcode
 					begin
-						self.barcode_object.save(op_type: 'create')
+						if Rails.env.test? || Rails.env.development?
+							if ENV["CREATE_UNIQUE_RECORDS"].blank?
+								self.barcode_object.save(op_type: 'create')
+							elsif ENV["CREATE_UNIQUE_RECORDS"] == "no"
+								self.barcode_object.save
+							end
+						else
+							self.barcode_object.save(op_type: 'create')
+						end
 					rescue
 						self.errors.add(:barcode,"this barcode has already been used")
 					end

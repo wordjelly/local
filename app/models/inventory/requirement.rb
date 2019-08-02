@@ -41,13 +41,13 @@ class Inventory::Requirement
 	end
 
 	def summary_row
-		'''
+		'
 			<tr>
-				<td>#{self.name}</td>
-				<td>#{self.categories.size}</td>
+				<td>' + self.name + '</td>
+				<td>' + self.categories.size.to_s + '</td>
 				<td><div class="edit_nested_object">Edit</div></td>
 			</tr>
-		'''
+		'
 	end
 
 	## should return the table, and th part.

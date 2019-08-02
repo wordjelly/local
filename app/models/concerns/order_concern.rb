@@ -82,14 +82,14 @@ module Concerns::OrderConcern
 
 		end
 
-		before_save do |document|
-			#puts "came to before save of order--------------"
+		## this should happen before the validations.
+		## not after.
+		before_validation do |document|
 			document.update_reports
 			document.load_patient
 			document.update_requirements
 			document.update_report_items
 			document.add_report_values
-			#puts "finished before save of order -------------"
 		end
 
 		after_save do |document|
@@ -107,6 +107,8 @@ module Concerns::OrderConcern
 	def update_reports
 		
 		self.reports.delete_if { |c|
+			## we have to trigger a remove report as well.
+			## actually that worked, but not exactly.
 			!self.template_report_ids.include? c.id.to_s
 		}
 
@@ -117,6 +119,7 @@ module Concerns::OrderConcern
 		self.template_report_ids.each do |r_id|
 			unless existing_report_ids.include? r_id
 				report = Diagnostics::Report.find(r_id)
+				report.created_by_user = User.find(report.created_by_user_id)
 				report.run_callbacks(:find)
 				self.reports << report
 			end
@@ -124,6 +127,9 @@ module Concerns::OrderConcern
 
 	end
 
+	## that's because before save happens after validate.
+	## and so its not triggering the first time.
+	## but is triggering thereafter.
 	## give it a default value in the form itself.
 	## why is this schedule shit not working.
 
