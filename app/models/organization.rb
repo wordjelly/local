@@ -36,7 +36,10 @@ class Organization
 	attribute :name, String, mapping: {type: 'keyword'}
 
 	#attribute :address, String, mapping: {type: 'keyword'}
-	
+	# lis security key is generated be default, and displayed
+	## it is never accepted as an external parameter.	
+	attribute :lis_security_key, String, mapping: {type: 'keyword'}, default: Devise.friendly_token.first(25)
+
 	attribute :phone_number, String, mapping: {type: 'keyword'}
 
 	attribute :description, String, mapping: {type: 'keyword'}

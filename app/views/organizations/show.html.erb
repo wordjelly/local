@@ -45,6 +45,20 @@
 </div>
 
 <div class="row">
+  <div class="card">
+    <div class="card-content">
+      <div class="card-title">
+        If you are using Pathofast LIS Solutions, Copy and Paste the 25 character LIS key into your local server. Do not share the key with anyone else.
+      </div>
+    </div>
+  </div>
+  <ul class="collection with-header">
+    <li class="collection-header"><h4>LIS SECURITY KEY</h4></li>
+    <li class="collection-item"><%= @organization.lis_security_key %></li>
+  </ul>
+</div>
+
+<div class="row">
   <%= render :partial => "/organizations/pending_users" %>
 </div>
 

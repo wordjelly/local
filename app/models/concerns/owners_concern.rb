@@ -17,6 +17,9 @@ module Concerns::OwnersConcern
 
 		attribute :owner_ids, Array, mapping: {type: 'keyword'}
 		
+		## skip owners validations.
+		attr_accessor :skip_owners_validations
+
 		attr_accessor :created_by_user
 
 		## the organization is loaded from the currently_held_by_organization			
@@ -28,11 +31,21 @@ module Concerns::OwnersConcern
 		attribute :created_by_user_id
 
 		## i think that will be the last organization.
+		## once an item is 
+		## we have to use this from the report.
+		## to check where that organization is in the owner ids.
+		## and barcode is that.
+		## whether it is valid or not.
+		## that's the way.
+		## is nested has to be set.
+		## only then can we know.
+		## so how to pass this downwards to the item ?
+		## 
 		attribute :currently_held_by_organization, String, mapping: {type: 'keyword'}
 
-		validate :created_user_exists
+		validate :created_user_exists, :unless => Proc.new{|c| !c.skip_owners_validations.blank?}
 			
-		validate :organization_users_are_enrolled_with_organization, :unless => Proc.new{|c| (c.new_record? && c.class.name == "Organization")}
+		validate :organization_users_are_enrolled_with_organization, :unless => Proc.new{|c| (c.new_record? && c.class.name == "Organization") || (!c.skip_owners_validations.blank?)}
 
 		attribute :public, Integer, mapping: {type: 'integer'}, default: Concerns::OwnersConcern::IS_PRIVATE
 
@@ -50,20 +63,26 @@ module Concerns::OwnersConcern
 			end
 		end
 
+		## depending on the context.
+		## we have to show custom options.
+		## make it easier to add more reprots
+		## see why there is duplication of the required reports
+		## and change the name of categ
 		## assign public roles by default.
-
 		## CHECKS THAT IF THE ROLE IS OF AN ORGANIZATION, THEN THE USER IS VERIFIED, AS BELONGING TO IT.
 		## this ensures that only verified organization users can interact with resources. 
 		def organization_users_are_enrolled_with_organization
 			
 			## related to organization.
 			## that means either he created an organization, or 
-			puts "failing here --------"
-			puts self.class.name.to_s 
-			puts "the self created by user is:"
-			puts self.created_by_user
-			puts "the self organization is:"
-			puts self.created_by_user.organization.to_s
+			#puts "failing here --------"
+			#puts self.class.name.to_s 
+			#puts "the self created by user is:"
+			#puts self.created_by_user
+			#puts "the self organization is:"
+			#puts self.created_by_user.organization.to_s
+			puts "class is: #{self.class.name}"
+			puts "skip validation: #{self.skip_owners_validations}"
 			if !self.created_by_user.has_organization?
 				self.errors.add(:created_by_user,"you have not yet been verified as belonging to this organization")
 			end
@@ -103,10 +122,12 @@ module Concerns::OwnersConcern
 			self.owner_ids.flatten!
 		end
 
+
 		## this also should be methodized to enable overrides.
 		before_save do |document|
 			document.add_owner_ids
 		end
+
 
 		after_find do |document|
 			unless document.class.name == "Organization"
@@ -137,6 +158,14 @@ module Concerns::OwnersConcern
 			self.errors.add(:owner_ids, "could not add the recipient to the owner ids of the object #owners_concern.rb")
 		end
 	end
+
+	## whether to show the public form or not.
+	## @return[Boolean] true/false : if we have to show the form selection 
+	## for visibility.
+	def show_visibility_selection
+		false
+	end
+
 
 
 end

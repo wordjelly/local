@@ -40,12 +40,12 @@ class Inventory::Requirement
 
 	end
 
-	def summary_row
+	def summary_row(args={})
 		'
 			<tr>
 				<td>' + self.name + '</td>
 				<td>' + self.categories.size.to_s + '</td>
-				<td><div class="edit_nested_object">Edit</div></td>
+				<td><div class="edit_nested_object"  data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
 			</tr>
 		'
 	end

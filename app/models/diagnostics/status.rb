@@ -220,13 +220,13 @@ class Diagnostics::Status
 	## OVERRIDDEN FROM FORM CONCERN
 	##
 	############################################################
-	def summary_row
+	def summary_row(args={})
 		'''
 			<tr>
 				<td>#{self.name}</td>
 				<td>#{self.duration}</td>
 				<td>#{self.requirements.size}</td>
-				<td><div class="edit_nested_object">Edit</div></td>
+				<td><div class="edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
 			</tr>
 		'''
 	end

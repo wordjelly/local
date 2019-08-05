@@ -37,9 +37,13 @@ class Diagnostics::Report
 	## calculated before_save in the set_procedure_version function
 	attribute :procedure_version, String, mapping: {type: "keyword"}
 	attribute :start_epoch, Integer, mapping: {type: 'integer'}
-	## WE SET PERMITTED
+	## WE SET a
 	## AND THEN THE FIRST ACTION TO CHECK IS 
 	## parse normal ranges.
+
+	## doesnt need to be a permitted param, is internally assigned.
+	#attribute :order_id, String, mapping: {type: 'keyword'}
+
 	settings index: { 
 	    number_of_shards: 1, 
 	    number_of_replicas: 0,
@@ -330,14 +334,14 @@ class Diagnostics::Report
 	##
 	#############################################################
 	## this gets overriden in the different things.
-	def summary_row
+	def summary_row(args={})
 		'
 			<tr>
 				<td>' + self.name + '</td>
 				<td>' + self.tests.size.to_s + '</td>
 				<td>' + self.statuses.size.to_s + '</td>
 				<td>' + self.requirements.size.to_s + '</td>
-				<td><div class="edit_nested_object">Edit</div></td>
+				<td><div class="edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
 			</tr>
 		'
 	end
@@ -356,6 +360,29 @@ class Diagnostics::Report
 	          </tr>
 	        </thead>
 		'''
+	end
+
+	## if the root is an order, we don't want the add new button.
+	def add_new_object(root,collection_name,scripts,readonly)
+			 
+		if root =~ /order/
+			''
+		else
+			
+			script_id = BSON::ObjectId.new.to_s
+
+			script_open = '<script id="' + script_id + '" type="text/template" class="template"><div style="padding-left: 1rem;">'
+			
+			scripts[script_id] = script_open
+
+			scripts[script_id] +=  new_build_form(root + "[" + collection_name + "][]",readonly,"",scripts) + '</div></script>'
+		
+			element = "<a class='waves-effect waves-light btn-small add_nested_element' data-id='#{script_id}'><i class='material-icons left' >cloud</i>Add #{collection_name.singularize}</a>"
+
+			element
+
+		end
+
 	end
 
 end	

@@ -5,6 +5,24 @@ module Concerns::MissingMethodConcern
 	extend ActiveSupport::Concern
 
 	included do 
+		include ActiveModel::Validations
+  		include ActiveModel::Validations::Callbacks
+		# before validate , we call a methdo on order
+		# it takes each report, and sets the parent report id
+		# on the children, as well as the organization id, where
+		# the report originated from.
+		# if it doesn't exist this is done,
+		# because otherwise, we will have to send this in from the 
+		# client side
+		# if you want to add an item.
+		# if you want to add a category
+		# we pass in the currently held by organization, and the parent id
+		# like of the report.
+		# we can have something like assign top level organization, user 
+		# so report -> goes to its 
+		#before_validation do |document|
+		#	document.assign_parent_details
+		#end
 
 		validate :validate_nested
 
@@ -12,6 +30,17 @@ module Concerns::MissingMethodConcern
 			document.nullify_nil_attributes
 			document.cascade_callbacks(:save){false}
 		end
+
+		#def assign_parent_details
+			## call on order.
+			## this can be called on any implementing object.
+			## then the validations can be done.
+		#end
+
+		## so for eg, it will call this method.
+		## and do it on the children.
+		## if anything is defined at all.
+		## so it will get set on the children.
 
 		def validate_nested
 			self.class.attribute_set.each do |virtus_attribute|
@@ -25,7 +54,9 @@ module Concerns::MissingMethodConcern
 								#puts "attribute name is: #{virtus_attribute.name.to_s}"
 								self.send(virtus_attribute.name).each do |arr|
 									#puts "validating: #{virtus_attribute.name.to_s}"
-										
+									#we don't validate owners inside nested.
+
+									arr.skip_owners_validations = true if arr.respond_to? :skip_owners_validations
 									arr.validate_nested
 									unless arr.valid?
 										self.errors.add(virtus_attribute.name.to_sym,arr.errors.full_messages)

@@ -44,4 +44,15 @@ module Concerns::ImageLoadConcern
 
 	end
 
+
+	## @return[Boolean] true/false : if the we have to show the upload image form button
+	## false by default, so you will never get the option to upload images
+	## by default.
+	def show_image_upload
+		false
+	end
+
+	## then there is the plain card.
+	## but first this.
+
 end

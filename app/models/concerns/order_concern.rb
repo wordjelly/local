@@ -311,7 +311,14 @@ module Concerns::OrderConcern
 			c.clear_all_items
 		}
 		self.categories.each do |category|
+			## prune items.
+			## take their barcodes
+			## check if unique for any of the destined organizations
+			## based on which reports its applicable to.
+			
 			category.items.each do |item|
+				## can this item be created at all?
+				## that's the first thing.f
 				self.reports.each do |report|
 					report.add_item(category,item)
 				end

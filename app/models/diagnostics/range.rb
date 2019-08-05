@@ -208,22 +208,24 @@ class Diagnostics::Range
 
 	###########################################################
 	##
-	##
 	## OVERRIDDEN FROM FORM CONCERN
+	## what will you show in the form.
+	## and that the tubes have been added or not.
+	## what about multiple categories.
 	##
 	############################################################
-	def summary_row
-		'''
+	def summary_row(args={})
+		'
 			<tr>
-				<td>#{self.min_age}</td>
-				<td>#{self.max_age}</td>
-				<td>#{self.sex}</td>
-				<td>#{self.min_value}</td>
-				<td>#{self.max_value}</td>
-				<td>#{self.text_value}</td>
-				<td><div class="edit_nested_object">Edit</div></td>
+				<td>' + self.min_age + '</td>
+				<td>' + self.max_age + '</td>
+				<td>' + self.sex + '</td>
+				<td>' + self.min_value + '</td>
+				<td>' + self.max_value + '</td>
+				<td>' + self.text_value + '</td>
+				<td><div class="edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
 			</tr>
-		'''
+		'
 	end
 
 	## should return the table, and th part.

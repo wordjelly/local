@@ -4,8 +4,21 @@ module Concerns::FormConcern
 
 	included do 
 
-		def fields_not_show_in_form
-			["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"]		
+		## this should be contextual.
+		def fields_not_to_render
+			["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","search_options"]		
+		end
+
+		## will check the keys for the root.
+		## if any of the keys are found in the root, then it will return that otherwise defaults to the star.
+		## so it will take the root and see if any of the keys have it.
+		## then will return that.
+		## otherwise will return these defaults.
+		## set for all.
+		def fields_not_to_show_in_form_hash(root="*")
+			{
+				"*" => ["outsourced_report_statuses","merged_statuses"]
+			}
 		end
 
 		## if the attribute name is mentioned in this hash.
@@ -19,6 +32,38 @@ module Concerns::FormConcern
 		attr_accessor :plain_array_attributes
 
 		attr_accessor :non_array_attributes
+
+		## a unique id is made for the object, 
+		## and used to set ids on divs and tabs
+		## this is used in summary row, and everywhere else.
+		## while making the form.
+		attr_accessor :unique_id_for_form_divs
+
+		def set_unique_id_for_form
+			self.unique_id_for_form_divs = (self.id.to_s.parameterize.underscore + BSON::ObjectId.new.to_s) if self.unique_id_for_form_divs.blank?
+		end
+
+
+		## returns the fileds which are to be hidden in the form, depending on the root context.
+		## @param[String] root : root is a string.
+		## @return[Array] list of fields, which are strings.
+		def fields_to_hide(root)
+			hash_of_fields = fields_not_to_show_in_form_hash
+			
+			fields_not_to_show_in_form = []
+
+			hash_of_fields.keys.each do |k|
+				if root =~ /#{Regexp.escape(k)}/
+					fields_not_to_show_in_form = hash_of_fields[k]
+					break
+				end
+			end
+
+			fields_not_to_show_in_form = hash_of_fields["*"] if fields_not_to_show_in_form.blank?
+
+			fields_not_to_show_in_form
+		end
+
 
 		## first classify the attributes for the purpose of rendering.
 		## once this is done, make tabs out of the others
@@ -34,10 +79,8 @@ module Concerns::FormConcern
 		## then in the same tr
 		## call build form on the nested attribute
 		## 
-		def classify_attributes
+		def classify_attributes(root)
 			
-			## now render the plain array attributes.
-
 			self.object_array_attributes = []
 			
 			self.plain_array_attributes = []
@@ -45,7 +88,8 @@ module Concerns::FormConcern
 			self.non_array_attributes = []
 
 			self.class.attribute_set.select{|c| 
-				next if self.fields_not_show_in_form.include? c.name.to_s
+				## this has to be contextual on the root.
+				next if fields_not_to_render.include? c.name.to_s
 				if c.primitive.to_s == "Array"
 					if c.respond_to? "member_type"
 						if c.member_type.primitive.to_s == "BasicObject"
@@ -62,12 +106,26 @@ module Concerns::FormConcern
 			}
 		end
 
+		## there are 2-3 possibilities.
+		## 1 -> manual entry (somehow has to be verified by two people)
+		## so if i for a test, enter the value manually, i can have a simple re-enter the value, in case of manual entry, another doctor has to verify that report ? or a technician has to verify that report, on clicking verify, it should satisfy a challenge ?
+		## of some kind.
+		## that all can be done
+		## then the generation of the impression -> can be automated from the grades in the test, or can be manually entered.
+		## in certain cases it is mandatory. 
+		## 2 -> lis entry (has to be verified)
+		## 3 -> lis re-run (request rerun has to be on)
+
+
+		## @param[String] root : the form root.
+		## @param[Virtus::Attribute] : the virtus attribute
+		## @param[Boolean] hidden : if true, then the element should be hidden, wrapped in a div with display none.
 		## @return[String] html snippet, for date selector.
-		def add_date_element(root,virtus_attribute)
+		def add_date_element(root,virtus_attribute,hidden)
 			
 			input_name = root + "[" + virtus_attribute.name.to_s + "]"
 
-			element =  '''
+			element =  	'''
 				<input class="datepicker" type="text" name="''' + input_name + '''" value="''' + self.send(virtus_attribute.name.to_s).to_s + '''"></input>
 			'''
 
@@ -75,12 +133,16 @@ module Concerns::FormConcern
 				<label for="''' + input_name + '''">''' + virtus_attribute.name.to_s + '''</label>
 			'''
 
-			element
+			if hidden == true
+				'<div style="display:none;">' + element + '</div>'
+			else
+				element
+			end
 
 		end
 
 
-		def add_float_element(root,virtus_attribute)
+		def add_float_element(root,virtus_attribute,hidden)
 
 			input_name = root + "[" + virtus_attribute.name.to_s + "]"
 						
@@ -94,9 +156,15 @@ module Concerns::FormConcern
 
 			element
 
+			if hidden == true
+				'<div style="display:none;">' + element + '</div>'
+			else
+				element
+			end
+
 		end
 
-		def add_text_element(root,virtus_attribute)
+		def add_text_element(root,virtus_attribute,hidden)
 
 			input_name = root + "[" + virtus_attribute.name.to_s + "]"
 						
@@ -110,10 +178,16 @@ module Concerns::FormConcern
 
 			element
 
+			if hidden == true
+				'<div style="display:none;">' + element + '</div>'
+			else
+				element
+			end
+
 		end
 
 		## this gets overriden in the different things.
-		def summary_row
+		def summary_row(args={})
 
 		end
 
@@ -166,6 +240,8 @@ module Concerns::FormConcern
 		## @param[String] collection_name : eg "reports"
 		## @param[Hash] scripts : the scripts hash
 		## @param[String] readonly 
+		## this will be a category.
+		## so we do this in categories.
 		def add_new_object(root,collection_name,scripts,readonly)
 			
 			script_id = BSON::ObjectId.new.to_s
@@ -196,13 +272,80 @@ module Concerns::FormConcern
 			'</div>'
 		end
 
-		## so this returns the new build form.
-		## now the summaries.
-		## today will deliver this.
-		## and 
+		def add_hidden_nested_object(editable_tab_content,tab_titles,tab_content,attr,root,scripts,readonly)
+			unless self.send(attr.name).blank?
+				self.send(attr.name).each do |obj|
+					obj.set_unique_id_for_form
+					#puts "doing object class: #{obj.class.name.to_s}"
+					#tab_content += obj.summary_row({"root" => root})
+					editable_tab_content += '<div class="nested_object_details" id="' + obj.unique_id_for_form_divs + '" style="display:none;">'
+					editable_tab_content += obj.new_build_form(root + "[" + attr.name.to_s + "][]",readonly="no","",scripts)
+					editable_tab_content += '</div>'
+				end
+			end
+			return editable_tab_content
+		end
+
+		def add_visible_nested_object(editable_tab_content,tab_titles,tab_content,attr,root,scripts,readonly)
+
+			bson_id = BSON::ObjectId.new.to_s
+				
+			## again here, we can have it as hidden ?
+			## these have to be hidden.
+			tab_titles += add_tab_title(attr.name,bson_id)
+
+			puts "after adding tab titles they becom:"
+			puts tab_titles.to_s
+
+			empty_obj = attr.member_type.primitive.to_s.constantize.new
+			
+			tab_content += open_tab_content(attr.name,bson_id)
+
+			unless self.send(attr.name).blank?
+				tab_content += self.send(attr.name)[0].summary_table_open
+				tab_content += self.send(attr.name)[0].summary_table_headers
+				tab_content += self.send(attr.name)[0].summary_table_body_open
+
+				self.send(attr.name).each do |obj|
+					obj.set_unique_id_for_form
+					#puts "doing object class: #{obj.class.name.to_s}"
+					tab_content += obj.summary_row({"root" => root})
+					editable_tab_content += '<div class="nested_object_details" id="' + obj.unique_id_for_form_divs + '" style="display:none;">'
+					editable_tab_content += obj.new_build_form(root + "[" + attr.name.to_s + "][]",readonly="no","",scripts)
+					editable_tab_content += '</div>'
+				end
+				tab_content += self.send(attr.name)[0].summary_table_body_close
+				tab_content += self.send(attr.name)[0].summary_table_close
+			end
+			## that is the add new part.
+			## so this can be a category, report or 
+			tab_content += empty_obj.add_new_object(root,attr.name.to_s,scripts,readonly)
+			#puts "--------------------------------------"
+			#puts "editable tab content is:"
+			#puts editable_tab_content
+			#puts "--------------------------------------"
+			tab_content += editable_tab_content
+			tab_content += close_tab_content(attr.name)
+
+			
+			#puts "the tab content returned is:"
+			#puts tab_content.to_s
+
+			return {
+				:titles => tab_titles,
+				:content => tab_content,
+				:editable => editable_tab_content
+			}
+
+		end
 
 		def new_build_form(root,readonly="no",form_html="",scripts={})
-			classify_attributes
+			
+			hidden_fields_list = fields_to_hide(root)
+
+			set_unique_id_for_form
+			
+			classify_attributes(root)
 			
 			non_array_attributes_card = '''
 				<div class="card">
@@ -220,6 +363,7 @@ module Concerns::FormConcern
 				non_array_attributes_card += "New Record"
 			end
 
+			#<a href="#categories5d45289cacbcd65941ef89ae" class="">categories</a>
 
 			non_array_attributes_card += '''
 						</div>
@@ -235,16 +379,15 @@ module Concerns::FormConcern
 				else
 
 					if nattr.primitive.to_s == "Date"
-						## add date element.
-						non_array_attributes_card += add_date_element(root,nattr)
+						non_array_attributes_card += add_date_element(root,nattr,(hidden_fields_list.include? nattr.name.to_s))
 					elsif nattr.primitive.to_s == "Integer"
 						## add number element
-						non_array_attributes_card += add_float_element(root,nattr)
+						non_array_attributes_card += add_float_element(root,nattr,(hidden_fields_list.include? nattr.name.to_s))
 					elsif nattr.primitive.to_s == "Float"
 						## add float element.
-						non_array_attributes_card += add_float_element(root,nattr)
+						non_array_attributes_card += add_float_element(root,nattr,(hidden_fields_list.include? nattr.name.to_s))
 					else
-						non_array_attributes_card += add_text_element(root,nattr)
+						non_array_attributes_card += add_text_element(root,nattr,(hidden_fields_list.include? nattr.name.to_s))
 					end
 
 				end
@@ -259,13 +402,24 @@ module Concerns::FormConcern
 
 
 			self.plain_array_attributes.each do |nattr|
+
+				card_style=''
+
+				hide_field = hidden_fields_list.include? nattr.name.to_s
+
+				if hide_field == true
+					card_style = "display:none;"
+				end
+
 				plain_array_attributes_card = ''
-				
-				plain_array_attributes_card += '''
-					<div class="card">
+					
+				## so this card has to be hidden.
+
+				plain_array_attributes_card += '
+					<div class="card" style="' + card_style + '">
 						<div class="card-content">
 							<div class="card-title">
-				'''
+				'
 
 				plain_array_attributes_card += nattr.name.to_s
 				
@@ -295,47 +449,33 @@ module Concerns::FormConcern
 
 			self.object_array_attributes.each do |attr|
 
+				## if this attribute has to be hidden, then only the editable tab content has to be populated.
+				hide_field = hidden_fields_list.include? attr.name.to_s
 				editable_tab_content = ''
-				
-				bson_id = BSON::ObjectId.new.to_s
-				
-				tab_titles += add_tab_title(attr.name,bson_id)
 
-				empty_obj = attr.member_type.primitive.to_s.constantize.new
-				
-				tab_content += open_tab_content(attr.name,bson_id)
+				puts "field name is: #{attr.name.to_s} and hide field is: #{hide_field.to_s} "
 
-				unless self.send(attr.name).blank?
-					tab_content += self.send(attr.name)[0].summary_table_open
-					tab_content += self.send(attr.name)[0].summary_table_headers
-					tab_content += self.send(attr.name)[0].summary_table_body_open
-					self.send(attr.name).each do |obj|
-						tab_content += obj.summary_row
-						editable_tab_content += '<div class="nested_object_details" id="' + obj.id.to_s.parameterize.underscore + '" style="display:none;">'
-						editable_tab_content += obj.new_build_form(root + "[" + attr.name.to_s + "][]",readonly="no","",scripts)
-						editable_tab_content += '</div>'
-					end
-					tab_content += self.send(attr.name)[0].summary_table_body_close
-					tab_content += self.send(attr.name)[0].summary_table_close
+				if hide_field == true
+					editable_tab_content = add_hidden_nested_object(editable_tab_content,tab_titles,tab_content,attr,root,scripts,readonly)
+				else
+					puts "going to add visible object"
+					results = add_visible_nested_object(editable_tab_content,tab_titles,tab_content,attr,root,scripts,readonly)
+					editable_tab_content = results[:editable]
+					tab_titles = results[:titles]
+					tab_content = results[:content]
 				end
-				## that is the add new part.
-				tab_content += empty_obj.add_new_object(root,attr.name.to_s,scripts,readonly)
-				#puts "--------------------------------------"
-				#puts "editable tab content is:"
-				#puts editable_tab_content
-				#puts "--------------------------------------"
-				tab_content += editable_tab_content
-				tab_content += close_tab_content(attr.name)
+
+				puts "tab title becomes:"
+				puts tab_titles
+
+				puts "tab content becomes:"
+				puts tab_content
+
+				puts "editable tab content is:"
+				puts editable_tab_content
+
+				puts "-------------------------- DONE FOR FIELD: #{attr.name.to_s} ----------------------- "
 				
-				#so there is a clash in the names of the tab ids
-				#select requirements from the requirements to the 
-				#statuses
-				#how would we select though?
-				#autocomplete on requirements, provide
-				#so tab ids have to be made unique.
-				#report, and also 
-				#i'll sort out the requirements issues.
-				#exit(1)
 			end
 
 			k = non_array_attributes_card + plain_array_attributes_block + tab_titles  

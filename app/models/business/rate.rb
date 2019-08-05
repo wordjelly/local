@@ -35,12 +35,12 @@ class Business::Rate
 		}
 	end
 
-	def summary_row
+	def summary_row(args={})
 		"
 			<tr>
 				<td>#{self.for_organization_id}</td>
 				<td>#{self.rate}</td>
-				<td><div class='edit_nested_object' data-id='#{self.id.to_s.parameterize.underscore}'>Edit</div></td>
+				<td><div class='edit_nested_object' data-id='#{self.unique_id_for_form_divs}'>Edit</div></td>
 			</tr>
 		"
 	end

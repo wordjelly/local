@@ -13,14 +13,27 @@ class Business::Order
 	include Concerns::MissingMethodConcern
 	include Concerns::SearchOptionsConcern
 	include Concerns::FormConcern
-
-	
 	include Concerns::Schedule::QueryBuilderConcern
 	include Concerns::OrderConcern
 	include Concerns::PdfConcern
 
 	before_save do |document|
 		document.cascade_id_generation(nil)
+	end
+
+	## these should be hidden.
+	## how to hide these fields ?
+	def fields_not_show_in_form
+		["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","procedure_versions_hash","latest_version","patient_id","template_report_ids","name"]	
+	end
+
+	## now to figure out why the fuck the tabs are neither being 
+	## seen nor working.
+
+	def fields_not_to_show_in_form_hash(root="*")
+		{
+			"*" => ["outsourced_report_statuses","merged_statuses","search_options","procedure_versions_hash","latest_version","patient_id","template_report_ids","name"]
+		}
 	end
 
 	## we add a hidden field called name.
@@ -49,5 +62,7 @@ class Business::Order
 			end
 		end
 	end
+
+	
 
 end
