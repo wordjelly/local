@@ -152,10 +152,42 @@ class Inventory::Category
 	## takes each item, in the category, takes its provided barcode, takes from self, the reports(optional/required) that this item is applicable to, gets that report from the incoming reports array, will delete the item if its not applicable to any basically will give an error. If a barcode is not applicable for a particular report, will add that in the cannot_be_added_to_reports, array for the item, and this is later used in the report#add_item def.
 	def prune_items(reports)
 		report_ids = self.optional_for_reports + self.required_for_reports
+			
+		organization_id_to_report_hash = {}
+
+		selected_reports = reports.select{|c| 
+			
+			if report_ids.include? c.id.to_s
+				if organization_id_to_report_hash[c.currently_held_by_organization].blank?
+					
+					organization_id_to_report_hash[c.currently_held_by_organization] = [c.id.to_s]
+
+				else
+
+					organization_id_to_report_hash[c.currently_held_by_organization] << c.id.to_s
+
+				end
+				true
+			else
+				false
+			end
+		}
+		
+
+		## group by organization.
 		## get the originating organization.
 		## check if its present there.
 		self.items.each do |it|
+			organization_id_to_report_hash.keys.each do |org_id|
 
+				i = Inventory::Item.find_with_organization(it.barcode,org_id)
+
+				## if this item exists.
+				## then check if it is available.
+				## if no barcode is provided, then what to do ?
+				## 
+
+			end
 		end
 	end
 

@@ -280,10 +280,42 @@ class Inventory::Item
 	## @param[String] organization_id : the id of the organization to which it is being checked, this is checked in the owner ids.
 	def self.find_with_organization(barcode,organization_id)
 		query = {
-			term: {
-				field: "barcode"
+			bool: {
+				must: [
+					{
+						term: {
+							barcode: {
+								value: barcode
+							}
+						}
+					},
+					{
+						term: {
+							owner_ids: {
+								value: organization_id
+							}
+						}
+					}
+				]
 			}
 		}
+
+		search_request = Inventory::Item.search(
+			{
+				size: 1,
+				query: query
+			}
+		)
+			
+		item = nil
+
+	 	search_request.response.hits.hits.each do |hit|
+	 		item = Inventory::Item.new(hit["_source"])
+	 		item.id = hit["_id"]
+	 		item.run_callbacks(:find)
+	 	end
+
+	 	item
 	end
 
 end
