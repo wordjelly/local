@@ -121,7 +121,6 @@ class Inventory::Item
 	## function named: Inventory::Item#check_applicability
 	attr_accessor :not_applicable_to_any_reports
 
-	#git remote add origin https://wordjelly:@github.com/wordjelly/local.git
 
 	validate :check_applicability
 	#########################################################
