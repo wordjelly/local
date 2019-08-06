@@ -16,6 +16,8 @@ class Inventory::Item
 	index_name "pathofast-inventory-items"
 	document_type "inventory/item"	
 
+	## what about the name.
+	
 	## its gonna be called barcode
 	## and the index name is going to be 
 	## is there no other way?
@@ -27,7 +29,7 @@ class Inventory::Item
 	## this will be the same.
 	## it is not cloned.
 	attribute :item_type_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
-	validates_presence_of :item_type_id
+	validates_presence_of :item_type_id, :if => Proc.new{|c| !c.barcode.blank?}
 
 	## so this is also to be having a local_item_group_id.
 	## that is also important at this stage.
@@ -44,7 +46,7 @@ class Inventory::Item
 	## where to add this, inside the local item group.
 
 	attribute :transaction_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
-	validates_presence_of :transaction_id
+	validates_presence_of :transaction_id, :if => Proc.new{|c| !c.barcode.blank?}
 
 	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
@@ -71,14 +73,27 @@ class Inventory::Item
 	attribute :barcode, String
 	validates_presence_of :barcode
 
+	## suppose that we don't have a barcode
+	## then how does it assign the id, and the name.
+	## that can come from the has_code.
+	## in that case, expiry date has to be provided.
+	## but transaction id is not necessary.
 
-	## some validations to be done if 
-	## these are set internally.
-	## of the patient.
-	## report can have patient id.
-	## this is also present on item group.
-	attribute :report_ids, Array, mapping: {type: 'keyword'}
-	attribute :patient_id, String, mapping: {type: 'keyword'}
+	## used in case the user does not have a barcoded tube
+	## the user is told to write this code on the tube
+	## alongwith the name of the patient.
+	## this is also used in case.
+	attribute :code, String, mapping: {type: 'keyword'}, default: SecureRandom.hex(3)
+
+	## this has to match the code parameter.
+	## it is expected to be entered by the user.
+	## it will be validated to match if provided.
+	attribute :use_code, String, mapping: {type: 'keyword'}
+
+	## @set_from : category => set_item_report_applicability
+	attribute :applicable_to_report_ids, Array, mapping: {type: 'keyword'}
+	
+	#attribute :patient_id, String, mapping: {type: 'keyword'}
 
 	attribute :contents_expiry_date, Date, mapping: {type: 'date', format: 'yyyy-MM-dd'}	
 
@@ -141,11 +156,13 @@ class Inventory::Item
 	#########################################################
 	#attribute :order_id, String, mapping: {type: 'keyword'}
 	#attribute :category_id, String, mapping: {type: 'keyword'}
-	
+		
+	## all the use_code and code are kept hidden.
+	## we will use javascript to enable the working of that.
 	def fields_not_to_show_in_form_hash(root="*")
 		{
 			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
-			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","item_type_id","supplier_item_group_id","local_item_group_id","transaction_id","filled_amount","expiry_date","report_ids","patient_id","contents_expiry_date","space","statuses","reports","name","location_id"]
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","item_type_id","supplier_item_group_id","local_item_group_id","transaction_id","filled_amount","expiry_date","report_ids","patient_id","contents_expiry_date","space","statuses","reports","name","location_id","use_code","code","available","applicable_to_report_ids"]
 		}
 	end
 	
@@ -176,7 +193,7 @@ class Inventory::Item
 	##
 	########################################################
 	def self.permitted_params
-		base = [:id,{:item => [:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space]}]
+		base = [:id,{:item => [:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space,:use_code,:code,:applicable_to_report_ids]}]
 		if defined? @permitted_params
 			base[1][:item] << @permitted_params
 			base[1][:item].flatten!
@@ -316,6 +333,7 @@ class Inventory::Item
 	 	end
 
 	 	item
+
 	end
 
 end

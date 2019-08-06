@@ -17,7 +17,7 @@ class Business::Order
 	include Concerns::OrderConcern
 	include Concerns::PdfConcern
 
-	before_save do |document|
+	before_validation do |document|
 		document.cascade_id_generation(nil)
 	end
 
@@ -63,6 +63,6 @@ class Business::Order
 		end
 	end
 
-	
+
 
 end

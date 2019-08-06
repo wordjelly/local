@@ -141,16 +141,15 @@ class Inventory::Category
 			element = "<a class='waves-effect waves-light btn-small add_nested_element' data-id='#{script_id}'><i class='material-icons left' >cloud</i>Add #{collection_name.singularize}</a>"
 
 			element
-
 		end
-
 	end
+
 
 	## @param[Array] report: Diagnostics::Report array of all the reports that have been added to the order.
 	## @return[nil]
 	## @called_from : Concerns::OrderConcern::update_report_items
 	## takes each item, in the category, takes its provided barcode, takes from self, the reports(optional/required) that this item is applicable to, gets that report from the incoming reports array, will delete the item if its not applicable to any basically will give an error. If a barcode is not applicable for a particular report, will add that in the cannot_be_added_to_reports, array for the item, and this is later used in the report#add_item def.
-	def prune_items(reports)
+	def set_item_report_applicability(reports)
 		report_ids = self.optional_for_reports + self.required_for_reports
 			
 		organization_id_to_report_hash = {}
@@ -173,22 +172,40 @@ class Inventory::Category
 			end
 		}
 		
+		items_not_available_for_any_organization = []
 
-		## group by organization.
-		## get the originating organization.
-		## check if its present there.
 		self.items.each do |it|
+			
+			applicable = false
+
 			organization_id_to_report_hash.keys.each do |org_id|
 
 				i = Inventory::Item.find_with_organization(it.barcode,org_id)
 
-				## if this item exists.
-				## then check if it is available.
-				## if no barcode is provided, then what to do ?
-				## 
-
+				if i.nil?
+					## here the item code is used.
+					## we have to add an error.
+					## somehow.
+				else
+					## add the transaction, name etc.
+					if i.is_available?
+						## then we don't add any errors.
+						## add the details of expiry date, transaction, and all the other stuff here.
+						## if its a denovo item, then skip these validations.
+						it.applicable_to_report_ids << organization_id_to_report_hash[org_id]
+						applicable = true
+					else
+						## here we add some errors.
+					end
+				end
 			end
+
+			it.applicable_to_report_ids.flatten!
+
+			it.errors.add(:applicable_to_report_ids,"You cannot use that barcode, either does not exist or has been used already. Please use another tube/barcode") if applicable == false
 		end
+
+
 	end
 
 
