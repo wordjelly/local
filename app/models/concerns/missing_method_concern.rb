@@ -159,11 +159,11 @@ module Concerns::MissingMethodConcern
 		## call this before save in all the top level objects.
 		def cascade_id_generation(organization_id)
 			
-			puts "self class is : #{self.class.name}, and org id: #{organization_id}"
+			#puts "self class is : #{self.class.name}, and org id: #{organization_id}"
 			
-			if self.class.name =~ /category/i
-				puts "it is a category and organization id incoming is: #{organization_id}"
-			end
+			#if self.class.name =~ /category/i
+			#	puts "it is a category and organization id incoming is: #{organization_id}"
+			#end
 
 			if self.class.name =~ /organization/i 
 				self.assign_id_from_name(nil)
