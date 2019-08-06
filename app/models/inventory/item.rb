@@ -16,24 +16,12 @@ class Inventory::Item
 	index_name "pathofast-inventory-items"
 	document_type "inventory/item"	
 
-	## what about the name.
-
-	## its gonna be called barcode
-	## and the index name is going to be 
-	## is there no other way?
-	## anything with a barcode has to have this in place.
-	## so the root of everything is the item type.
-	## the item type needs to be internal?
-	## so we have supplier item types and 
-	## what about the local item types?
-	## this will be the same.
-	## it is not cloned.
+	
 	attribute :item_type_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
-	#validates_presence_of :item_type_id, :if => Proc.new{|c| !c.barcode.blank?}
+	validates_presence_of :item_type_id, :if => Proc.new{|c| !c.barcode.blank?}
 
 	## so this is also to be having a local_item_group_id.
 	## that is also important at this stage.
-
 	attribute :supplier_item_group_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
 	## we need also an internal item_group_id.
@@ -46,10 +34,15 @@ class Inventory::Item
 	## where to add this, inside the local item group.
 
 	attribute :transaction_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
-	#validates_presence_of :transaction_id, :if => Proc.new{|c| !c.barcode.blank?}
+	validates_presence_of :transaction_id, :if => Proc.new{|c| !c.barcode.blank?}
 
 	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
+
+	## so now lets make inventory work.
+	## anand will create some item types (lithium and red top tube.)
+	## then pathofast will order them.
+	## then pathofast will use them in an order.
 
 
 	attribute :location_id, String, mapping: {type: 'keyword'}
@@ -57,7 +50,7 @@ class Inventory::Item
 	attribute :filled_amount, Float
 
 	attribute :expiry_date, Date, mapping: {type: 'date', format: 'yyyy-MM-dd'}
-	#validates_presence_of :expiry_date
+	validates_presence_of :expiry_date
 
 	## only the barcode has to be validated, depending again on the context
 	## for eg if the barcode exists in the inventory or not.
@@ -120,6 +113,7 @@ class Inventory::Item
 	## if this is set to true, it will be caught in the validation
 	## function named: Inventory::Item#check_applicability
 	attr_accessor :not_applicable_to_any_reports
+
 
 
 	validate :check_applicability
@@ -274,6 +268,7 @@ class Inventory::Item
 		return false
 	end
 
+	## @called_from : Inventory::Category#set_item_report_applicability(reports)
 	## @param[String] barcode : the item barcode
 	## @param[String] organization_id : the id of the organization to which it is being checked, this is checked in the owner ids.
 	def self.find_with_organization(barcode,organization_id)
@@ -317,8 +312,25 @@ class Inventory::Item
 
 	 	item
 
+	 	## if this item has been found.
+	 	## get its item type id, and check if that is
+	 	## having the category as is mentioned here.
+
 	end
 
+	## @called_from : Inventory::Category#set_item_report_applicability(reports)
+	## @param[String] category : the name fo the category
+	## @return[Boolean] true/false : gets the item_type_id, and finds the itemType, and checks whether the provided category is mentioned in this item_type
+	def is_of_category?(category)
+
+		begin
+			item_group = Inventory::ItemType.find(self.item_type_id)
+
+			item_group.categories.include? category
+		rescue
+			false
+		end
+	end
 
 	######################################################
 	##

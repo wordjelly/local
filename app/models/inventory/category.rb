@@ -183,19 +183,26 @@ class Inventory::Category
 				i = Inventory::Item.find_with_organization(it.barcode,org_id)
 
 				if i.nil?
-					## here the item code is used.
-					## we have to add an error.
-					## somehow.
+					## doesnt exist error
 				else
 					## add the transaction, name etc.
 					if i.is_available?
 						## then we don't add any errors.
 						## add the details of expiry date, transaction, and all the other stuff here.
 						## if its a denovo item, then skip these validations.
-						it.applicable_to_report_ids << organization_id_to_report_hash[org_id]
-						applicable = true
+						if i.is_of_category?(self.name)
+							it.applicable_to_report_ids << organization_id_to_report_hash[org_id]
+							applicable = true
+							it.attributes.merge({
+								expiry_date: i.expiry_date,
+								transaction_id: i.transaction_id,
+								item_type_id: i.item_type_id
+							})
+						else
+							## not of the same category error.
+						end
 					else
-						## here we add some errors.
+						## expired error
 					end
 				end
 			end
