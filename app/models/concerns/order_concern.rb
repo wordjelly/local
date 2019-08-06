@@ -311,28 +311,7 @@ module Concerns::OrderConcern
 			c.clear_all_items
 		}
 		self.categories.each do |category|
-			## prune items.
-			## take their barcodes
-			## check if unique for any of the destined organizations
-			## based on which reports its applicable to.
-			## so some organizations it cannot be added to 
-			## on that barcode
-			## so what happens next.
-			## if it was applicabele to any organization
-			## go forwards.
-			## actually there are no errors here ?
-			## if the barcode is no longer available.
-			## then there is an error.
-			## set that as an attribute accessor.
-			## item is not available.
-			## so what do we do 
-			## item does not exist
-			## what do we do.
-			## it doesnt get added to those reports.
-			## so we have an accessor called applicable_To_reports
-			## just add it wherever possible.
-			## if its not applicable to any reports,
-			## then register an error.
+			
 			category.set_item_report_applicability(self.reports)
 			category.items.each do |item|
 				## can this item be created at all?

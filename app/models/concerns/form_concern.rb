@@ -453,28 +453,28 @@ module Concerns::FormConcern
 				hide_field = hidden_fields_list.include? attr.name.to_s
 				editable_tab_content = ''
 
-				puts "field name is: #{attr.name.to_s} and hide field is: #{hide_field.to_s} "
+				#puts "field name is: #{attr.name.to_s} and hide field is: #{hide_field.to_s} "
 
 				if hide_field == true
 					editable_tab_content = add_hidden_nested_object(editable_tab_content,tab_titles,tab_content,attr,root,scripts,readonly)
 				else
-					puts "going to add visible object"
+					#puts "going to add visible object"
 					results = add_visible_nested_object(editable_tab_content,tab_titles,tab_content,attr,root,scripts,readonly)
 					editable_tab_content = results[:editable]
 					tab_titles = results[:titles]
 					tab_content = results[:content]
 				end
 
-				puts "tab title becomes:"
-				puts tab_titles
+				#puts "tab title becomes:"
+				#puts tab_titles
 
-				puts "tab content becomes:"
-				puts tab_content
+				#puts "tab content becomes:"
+				#puts tab_content
 
-				puts "editable tab content is:"
-				puts editable_tab_content
+				#puts "editable tab content is:"
+				#puts editable_tab_content
 
-				puts "-------------------------- DONE FOR FIELD: #{attr.name.to_s} ----------------------- "
+				#puts "-------------------------- DONE FOR FIELD: #{attr.name.to_s} ----------------------- "
 				
 			end
 

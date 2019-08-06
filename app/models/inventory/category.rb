@@ -202,9 +202,17 @@ class Inventory::Category
 
 			it.applicable_to_report_ids.flatten!
 
-			it.errors.add(:applicable_to_report_ids,"You cannot use that barcode, either does not exist or has been used already. Please use another tube/barcode") if applicable == false
+			## add a switch.
+			## error will be done on validation.
+
+			it.not_applicable_to_any_reports = true if applicable == false
 		end
 
+		self.items.each do |iti|
+			puts "the item is: #{iti.id.to_s}"
+			puts "errors are:"
+			puts iti.errors.full_messages
+		end
 
 	end
 

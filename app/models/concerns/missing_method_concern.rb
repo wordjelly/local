@@ -158,6 +158,13 @@ module Concerns::MissingMethodConcern
 
 		## call this before save in all the top level objects.
 		def cascade_id_generation(organization_id)
+			
+			puts "self class is : #{self.class.name}, and org id: #{organization_id}"
+			
+			if self.class.name =~ /category/i
+				puts "it is a category and organization id incoming is: #{organization_id}"
+			end
+
 			if self.class.name =~ /organization/i 
 				self.assign_id_from_name(nil)
 			else
@@ -183,6 +190,9 @@ module Concerns::MissingMethodConcern
 							class_name = virtus_attribute.member_type.primitive.to_s
 							unless class_name == "BasicObject"
 								## set the id , and call cascade on it.
+								if virtus_attribute.name =~ /item/i
+									puts "org id while going for item is: #{org_id}"
+								end
 								self.send("#{virtus_attribute.name}").each do |obj|
 									obj.cascade_id_generation(org_id)
 								end

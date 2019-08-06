@@ -17,7 +17,7 @@ class Inventory::Item
 	document_type "inventory/item"	
 
 	## what about the name.
-	
+
 	## its gonna be called barcode
 	## and the index name is going to be 
 	## is there no other way?
@@ -29,7 +29,7 @@ class Inventory::Item
 	## this will be the same.
 	## it is not cloned.
 	attribute :item_type_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
-	validates_presence_of :item_type_id, :if => Proc.new{|c| !c.barcode.blank?}
+	#validates_presence_of :item_type_id, :if => Proc.new{|c| !c.barcode.blank?}
 
 	## so this is also to be having a local_item_group_id.
 	## that is also important at this stage.
@@ -46,7 +46,7 @@ class Inventory::Item
 	## where to add this, inside the local item group.
 
 	attribute :transaction_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
-	validates_presence_of :transaction_id, :if => Proc.new{|c| !c.barcode.blank?}
+	#validates_presence_of :transaction_id, :if => Proc.new{|c| !c.barcode.blank?}
 
 	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
@@ -57,7 +57,7 @@ class Inventory::Item
 	attribute :filled_amount, Float
 
 	attribute :expiry_date, Date, mapping: {type: 'date', format: 'yyyy-MM-dd'}
-	validates_presence_of :expiry_date
+	#validates_presence_of :expiry_date
 
 	## only the barcode has to be validated, depending again on the context
 	## for eg if the barcode exists in the inventory or not.
@@ -71,7 +71,7 @@ class Inventory::Item
 	## then it will check in their inventory.
 	## not your's
 	attribute :barcode, String
-	validates_presence_of :barcode
+	#validates_presence_of :barcode
 
 	## suppose that we don't have a barcode
 	## then how does it assign the id, and the name.
@@ -115,36 +115,12 @@ class Inventory::Item
 	## -1 : NOT AVAILABLE
 	attribute :available, Integer, mapping: {type: 'integer'}, default: 1
 
-	#########################################################
-	##
-	##
-	## before_validation a method is called on order
-	## it take each category , gets the reports to which it is applicable
-	## then for each of those reports, checks which organization they
-	## belong to, (the outsourced organization), and then sets that
-	## on each of the items in the category.
-	## this is then used in the item validation, to see if this 
-	## item's barcode is unique and has never been used inside that
-	## organization
-	## suppose i scan a serum tube and it gets registered 
-	## either it has to be unique to me 
-	## we want to outsource homocysteiene.
-	## and we want to do urea and creat in the lab.
-	## we scanned our own code.
-	## and now we want to send it outside.
-	## so for homocysteine it doesn't register it on the report.
-	## as it is not from that organization.
-	## so you can add a barcode, it will check against all the applicable reports
-	## if it is unique for both, it will register
-	## otherwise only where required
-	## and then it can go forwards.
-	## is this necessary on items.
-	## so just take the reports
-	## check their origin
-	## check the items origins
-	## and register it wherever applicable.
-	#########################################################
-	
+		
+	## @set_from : Inventory::Category#set_item_report_applicability(reports)
+	## if this is set to true, it will be caught in the validation
+	## function named: Inventory::Item#check_applicability
+	attr_accessor :not_applicable_to_any_reports
+
 	#########################################################
 	##
 	##
@@ -181,8 +157,11 @@ class Inventory::Item
 	end
 
 
-	before_save do |document|
-		document.cascade_id_generation(nil)
+	before_validation do |document|
+		## here we don't need to call cascade_id_generation
+		## because there are no children.
+		## so we directly call assign_id from name.
+		document.assign_id_from_name(nil)
 	end
 
 	########################################################
@@ -259,13 +238,13 @@ class Inventory::Item
 	##
 	#######################################################
 	def summary_row(args={})
-		'''
+		'
 			<tr>
-				<td>#{self.name}</td>
-				<td>#{self.expiry_date}</td>
-				<td><div class="edit_nested_object">Edit</div></td>
+				<td>' + self.name + '</td>
+				<td>' + (self.expiry_date || "") + '</td>
+				<td><div class="edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
 			</tr>
-		'''
+		'
 	end
 
 	## should return the table, and th part.
@@ -332,8 +311,22 @@ class Inventory::Item
 	 		item.run_callbacks(:find)
 	 	end
 
+	 	#puts "returning the item : #{item}"
+
 	 	item
 
+	end
+
+
+	######################################################
+	##
+	##
+	## CHECK APPLICABILITY
+	##
+	##
+	######################################################
+	def check_applicability
+		self.errors.add(:applicable_to_report_ids,"The Item cannot be used as the barcode is invalid, use another barcode/tube") if (self.not_applicable_to_any_reports == true)
 	end
 
 end
