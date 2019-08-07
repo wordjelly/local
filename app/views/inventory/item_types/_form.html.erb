@@ -1,41 +1,14 @@
-<%= form_for @item_type, as: :item_type do |f| %>
+<!-- name, barcode_required, virtual_units, manufacturer_name, categories -->
+<%= form_for @item_type, as: :item_type, method: @item_type.new_record? ? :post : :put do |f| %>
 	
-	<!-- so lets just try to create this first -->
 	<%= render :partial => "/shared/visibility", locals: {f: f} %>
-
-	<div class="card">
-		<div class="card-content">
-			<div class="card-title">
-				Basic Details of this Item Type
-			</div>
-
-			<%= f.text_field :name %>
-			<%= f.label :name %>
-
-			<%= f.select :barcode_required , Inventory::ItemType::BARCODE_OPTIONS.map{|pk| [pk,pk]}, {include_blank: "Does this Item Need A Barcode", disabled: '', selected: ''} %>
-		</div>
-	</div>
-
-	<div class="card">
-		<div class="card-content">
-			<div class="card-title">
-				How Many Units are Included in This Item?
-				For eg: In one kit of TSH, there are 100 tests.
-				For eg: One EDTA Tube, is 1 tube.
-			</div>
-			<%= f.number_field :virtual_units %>
-			<%= f.label :virtual_units %>
-		</div>
-	</div>
-
-	<div class="card">
-		<div class="card-content">
-			<%= f.text_field :manufacturer_name %>
-			<%= f.label :manufacturer_name %>
-
-		</div>
-	</div>
+		
+	<% unless @item_type.new_record? %>
+		<%= render :partial => "images/image", locals: {model: item_type} %>
+	<% end %>
 	
+	<%= build_nested_form(@item_type).html_safe %>	
+
 	<%= f.submit "Submit" %>
 
 <% end %>

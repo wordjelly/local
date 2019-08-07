@@ -8,6 +8,7 @@ class Inventory::ItemType
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::FormConcern
 	include Concerns::VersionedConcern
 
 	index_name "pathofast-inventory-item-types"
@@ -35,7 +36,7 @@ class Inventory::ItemType
 
 	attribute :manufacturer_name, String, mapping: {type: 'keyword'}
 
-	attribute :categories, String, mapping: {type: 'keyword'}
+	attribute :categories, Array, mapping: {type: 'keyword'}
 
 	mapping do 
 		indexes :name,
@@ -52,6 +53,14 @@ class Inventory::ItemType
 			type: 'keyword',
 			copy_to: 'search_all'
 	end
+
+	def fields_not_to_show_in_form_hash(root="*")
+		{
+			"*" => ["verified_by_user_ids","rejected_by_user_ids","active","versions"]
+		}
+	end
+
+
 	## so how do we populate these?
 	## for scalar fields form is pending.
 	## all autocomplete on tags.

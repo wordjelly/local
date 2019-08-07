@@ -57,13 +57,13 @@ module Concerns::MissingMethodConcern
 									#we don't validate owners inside nested.
 
 									arr.skip_owners_validations = true if arr.respond_to? :skip_owners_validations
-									arr.validate_nested
-									unless arr.valid?
-										self.errors.add(virtus_attribute.name.to_sym,arr.errors.full_messages)
-										#error_messages.flatten
+									unless arr.is_a? Hash
+										arr.validate_nested
+										unless arr.valid?
+											self.errors.add(virtus_attribute.name.to_sym,arr.errors.full_messages)
+											#error_messages.flatten
+										end
 									end
-									
-									#puts arr.errors.full_messages.to_s
 									
 								end
 							end
@@ -194,7 +194,11 @@ module Concerns::MissingMethodConcern
 									puts "org id while going for item is: #{org_id}"
 								end
 								self.send("#{virtus_attribute.name}").each do |obj|
-									obj.cascade_id_generation(org_id)
+									unless obj.is_a? Hash
+										if obj.respond_to? :cascade_id_generation
+											obj.cascade_id_generation(org_id)
+										end
+									end
 								end
 							end
 						end

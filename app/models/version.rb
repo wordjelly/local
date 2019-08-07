@@ -4,9 +4,12 @@ class Version
 
 	include Elasticsearch::Persistence::Model
 	include Concerns::FormConcern
+	include Concerns::MissingMethodConcern
 	
 	attribute :attributes_string, String
 	attribute :control_doc_number, String
+
+	## here also we have to do display nested.
 
 	## @return[String] a control doc_number
 	## composed of current_year/current_epoch.to_s
@@ -28,5 +31,10 @@ class Version
 		end
 		tampering
 	end
+
+	## blocking this as we don't want anything to interfere here.
+	def cascade_id_generation(organization_id)
+		## don't do anything.		
+	end	
 	
 end

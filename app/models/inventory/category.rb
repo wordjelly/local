@@ -25,11 +25,11 @@ class Inventory::Category
 	#attribute :order_id, String, mapping: {type: 'keyword'}
 
 	def fields_not_to_show_in_form_hash(root="*")
-			{
-				"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
-				"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","name","quantity","required_for_reports","optional_for_reports","barcode"]
-			}
-		end
+		{
+			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","name","quantity","required_for_reports","optional_for_reports","barcode"]
+		}
+	end
 
 	def self.permitted_params
 		[

@@ -18,7 +18,9 @@
 //= require_tree .
 
 $(document).ready(function(){
-    $('.tabs').tabs();
+   
+        $('.tabs').tabs();
+   
     $('.modal').modal();
     $('.collapsible').collapsible();
     $('.dropdown-trigger').dropdown();
@@ -30,7 +32,9 @@ $(document).ready(function(){
 });
 
 $(document).on('turbolinks:load', function() {
-	$('.tabs').tabs();
+	
+        $('.tabs').tabs();
+    
     $('.modal').modal();
     $('.collapsible').collapsible();
     $('.dropdown-trigger').dropdown();

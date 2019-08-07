@@ -35,6 +35,8 @@ class Inventory::ItemGroup
 
 	## this is auto assigned from the barcode.
 	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
+	
+
 	## so here we want to scan the location id or have an autocomplete on it?
 	attribute :location_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
@@ -83,6 +85,10 @@ class Inventory::ItemGroup
 	attribute :report_ids, Array, mapping: {type: 'keyword'}
 	attribute :patient_id, String, mapping: {type: 'keyword'}
 
+	before_validation do |document|
+		document.cascade_id_generation(nil)
+	end
+
 	before_save do |document|
 		if document.supplier_id.blank?
 			document.supplier_id = document.created_by_user.organization.id.to_s
@@ -90,9 +96,6 @@ class Inventory::ItemGroup
 		if document.created_by_user.organization.is_a_supplier?
 			document.public = Concerns::OwnersConcern::IS_PUBLIC
 		end
-	
-		document.cascade_id_generation(nil)
-	
 	end
 
 	after_find do |document|

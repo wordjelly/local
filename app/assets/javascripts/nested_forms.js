@@ -13,6 +13,8 @@ $(document).on('click','.add_nested_element',function(event){
 	console.log("script id:" + script_id);
 	var template = _.template($("#" + script_id).html());
 	console.log($("#" + script_id));
+	console.log("the template is:");
+	console.log(template({}));
 	$(template({})).insertAfter($(this));
 	$('.tabs').tabs();
 });

@@ -54,6 +54,10 @@ class Inventory::Transaction
 	##we need quantity received
 	attribute :quantity_received, Float
 
+	before_validation do |document|
+		document.cascade_id_generation(nil)
+	end
+
 	##############################################################
 	##
 	##
@@ -72,18 +76,8 @@ class Inventory::Transaction
 	## after this, comments and item_transfers
 	## then items and item_groups
 	## and then we are done with inventory more or less
-=begin
-	def assign_id_from_name(organization_id)
-		#puts "Came to assign id from name"
-		if self.name.blank?
 
-			self.load_supplier_item_group
-			self.name = self.created_by_user.organization.name + "/" + self.class.name + "/" + self.supplier_item_group.name + "/" + Time.now.strftime('%-d/%-m/%Y/%-l:%M%P') + BSON::ObjectId.new.to_s
 
-			self.id = self.name
-		end
-	end
-=end
 	## callbacks will be run, only we skip the finding of the transaction again.
 	## since we already have access to the transaction.
 	## so in the show callback we directly set the transaction from here itself.
@@ -98,39 +92,42 @@ class Inventory::Transaction
 	end
 
 	def load_local_item_groups
-		response = Inventory::ItemGroup.search({
-			query: {
-				bool: {
-					must: [
-						{
-							term: {
-								transaction_id: self.id.to_s
+		unless self.id.blank?
+			response = Inventory::ItemGroup.search({
+				query: {
+					bool: {
+						must: [
+							{
+								term: {
+									transaction_id: self.id.to_s
+								}
+							},
+							{
+								term: {
+									cloned_from_item_group_id: self.supplier_item_group_id
+								}
 							}
-						},
-						{
-							term: {
-								cloned_from_item_group_id: self.supplier_item_group_id
-							}
-						}
-					]
+						]
+					}
 				}
-			}
-		})
+			})
 
-		puts "teh local item group is:" 
-		
-		puts response.results.size.to_s
-		
-		self.local_item_groups = []
-		
-		response.results.each do |hit|
-			local_item_group = Inventory::ItemGroup.find(hit.id.to_s)
-			## this is important to avoid an endless loop.
-			local_item_group.transaction = self
-			local_item_group.run_callbacks(:find)	
-			## here assign the current transaction.
-			self.local_item_groups << local_item_group
+			puts "teh local item group is:" 
+			
+			puts response.results.size.to_s
+			
+			self.local_item_groups = []
+			
+			response.results.each do |hit|
+				local_item_group = Inventory::ItemGroup.find(hit.id.to_s)
+				## this is important to avoid an endless loop.
+				local_item_group.transaction = self
+				local_item_group.run_callbacks(:find)	
+				## here assign the current transaction.
+				self.local_item_groups << local_item_group
+			end
 		end
+
 	end
 
 
@@ -145,22 +142,31 @@ class Inventory::Transaction
 	def clone_local_item_groups
 		## there can be n such groups.
 		self.quantity_received.to_i.times do 
-			local_item_group = Inventory::ItemGroup.new(self.supplier_item_group.attributes.except(:id,:barcode,:owner_ids,:currently_held_by_organization))
+			local_item_group = Inventory::ItemGroup.new(self.supplier_item_group.attributes.except(:id,:barcode,:owner_ids,:currently_held_by_organization,:name))
 			## this should ideally be working.
 			local_item_group.created_by_user = self.created_by_user
 			local_item_group.cloned_from_item_group_id = self.supplier_item_group.id.to_s
 			local_item_group.transaction_id = self.id.to_s
-			local_item_group.assign_id_from_name
+			#local_item_group.assign_id_from_name
 			begin
-				local_item_group.save(op_type: "create")
-				puts "the local item group was created."
-				puts "the errors are:"
-				puts local_item_group.errors.full_messages
-				puts "its id is"
-				puts local_item_group.id.to_s
-				puts "the created by user email is:"
-				puts self.created_by_user.email.to_s
-				puts "-------------------------------"
+				## here do that save thingy.
+				if Rails.env.test? || Rails.env.development?
+					if ENV["CREATE_UNIQUE_RECORDS"].blank?
+						local_item_group.save(op_type: "create")
+					elsif ENV["CREATE_UNIQUE_RECORDS"] == "no"
+						local_item_group.save
+					end
+				else
+					local_item_group.save(op_type: "create")
+				end
+				#puts "the local item group was created."
+				#puts "the errors are:"
+				#puts local_item_group.errors.full_messages
+				#puts "its id is"
+				#puts local_item_group.id.to_s
+				#puts "the created by user email is:"
+				#puts self.created_by_user.email.to_s
+				#puts "-------------------------------"
 				unless local_item_group.errors.blank?
 					self.errors.add(:local_item_groups, local_item_group.errors.full_messages.to_s)
 				end
@@ -197,6 +203,9 @@ class Inventory::Transaction
 		!self.quantity_received.blank?
 	end
 
+	before_validation do |document|
+		document.cascade_id_generation(nil)
+	end
 
 	before_save do |document|
 		#puts "document is received check?"
@@ -209,7 +218,7 @@ class Inventory::Transaction
 			end
 		end
 	
-		document.cascade_id_generation(nil)
+		
 	
 	end
 		

@@ -21,6 +21,7 @@ module Concerns::NameIdConcern
 	def assign_id_from_name(organization_id)
 		puts "Came to assign id from name -------------"
 		if self.id.blank?
+			self.name ||= BSON::ObjectId.new.to_s
 			unless self.name.blank?
 				if organization_id.blank?	
 					## this will happen for organization.		

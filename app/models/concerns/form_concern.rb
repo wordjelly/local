@@ -228,7 +228,7 @@ module Concerns::FormConcern
 			
 			scripts[script_id] = script_open
 
-			scripts[script_id] +=  '<input type="text" name="' + root + '[' + collection_name + '][] /></script>'
+			scripts[script_id] +=  '<input type="text" name="' + root + '[' + collection_name + '][]" /> <label for="' + root + '[' + collection_name + '][]">' + collection_name.singularize + '</label></div></script>'
 		
 			element = "<a class='waves-effect waves-light btn-small add_nested_element' data-id='#{script_id}'><i class='material-icons left' >cloud</i>Add #{collection_name.singularize}</a>"
 
@@ -339,6 +339,14 @@ module Concerns::FormConcern
 
 		end
 
+		## @param[Array => Virtus::Attribute] object_array_attributes : 
+		## @param[Array => String] hidden_fields_list : the list of strings which are the hidden fields.
+		## @return[Boolean] basically checks if there are any object array attributes that are not hidden.
+		## @called_from : #new_build_form 
+		def non_hidden_object_arrays_exist?(object_array_attributes,hidden_fields_list)
+			(object_array_attributes.map{|c| c.name.to_s} & hidden_fields_list).size < object_array_attributes.size
+		end
+
 		def new_build_form(root,readonly="no",form_html="",scripts={})
 			
 			hidden_fields_list = fields_to_hide(root)
@@ -442,10 +450,15 @@ module Concerns::FormConcern
 			object_array_attributes_cards = ''
 
 			tab_titles = ''
+
+			## only if these are not to be hidden.
+
 			tab_titles = '<div class="row"><div class="col s12 m12 l12">
-      		<ul class="tabs tabs-fixed-width">' if (self.object_array_attributes.size > 0)
+      		<ul class="tabs tabs-fixed-width">' if (non_hidden_object_arrays_exist?(object_array_attributes,hidden_fields_list))
 
 			tab_content = ''
+
+
 
 			self.object_array_attributes.each do |attr|
 
@@ -480,7 +493,7 @@ module Concerns::FormConcern
 
 			k = non_array_attributes_card + plain_array_attributes_block + tab_titles  
 			
-			k += '</ul></div></div>' if (self.object_array_attributes.size > 0)
+			k += '</ul></div></div>' if (non_hidden_object_arrays_exist?(object_array_attributes,hidden_fields_list))
 			
 			k += tab_content
 			
