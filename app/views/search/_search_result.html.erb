@@ -1,8 +1,22 @@
 <li class="collection-item search_result teal-text">
 <% link_text = (result.respond_to? "name") ? result.send("name") : result.id.to_s %>
 <% link_address = (result.class.name.underscore.downcase.gsub(/\//,'_') + "_path") %>
+
 <% link_description = (result.respond_to? "description") ? result.send("description") : "" %>
+
+<% organization_name = (result.respond_to? "organization") ? result.send("organization").name : "" %>
+
+<% created_at = result.created_at.strftime("%b %d %Y %I:%M %P") %>
+
+<% object_class = result.class.name.to_s %>
+
+<!-- lets beautify a bit -->
+<!-- i need the item class also. -->
+
 	<div>
+		<div class="chip"><%= object_class %></div>
+		<div class="chip"><%= organization_name %></div>
+		<div class="chip"><%= created_at %></div>
 		<%= link_to link_text, main_app.send(link_address,result.id.to_s) %>
 	</div>
 	<div>

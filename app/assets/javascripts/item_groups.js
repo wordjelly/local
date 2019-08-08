@@ -6,7 +6,7 @@ $(document).on('click','.add_item_definition',function(event){
 		<div class="card item_definition">
     		<div class="card-content">
       			<div class="card-title">
-					<input type="text" name="item_group[item_definitions][][item_type_id]" data-autocomplete-type="inventory-item-types" />
+					<input type="text" data-use-id="yes" name="item_group[item_definitions][][item_type_id]" data-autocomplete-type="inventory-item-types" />
 					<label for="item_group[item_definitions][][item_type_id]">Item Type Id</label>
 					<input type="text" name="item_group[item_definitions][][quantity]" />
 					<label for="item_group[item_definitions][][quantity]">Quantity</label>

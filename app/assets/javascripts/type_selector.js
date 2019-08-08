@@ -1,3 +1,5 @@
+
+
 $(document).on('keypress','input:text',function(e){
 
 	console.log("got keydown");
@@ -54,19 +56,23 @@ var add_multiple_selection = function(parent_input_element,list_item_name,list_i
 
 }
 
+
+// here i need to pass the id instead in case of 
 $(document).on('click','.autocomplete_dropdown_element',function(e){
-	$(this).parent().prev().val($(this).text());
-	$(this).parent().prev().attr("data-hit-id",$(this).attr("data-hit-id"));
-	//console.log("the data multiple value");
-	//console.log($(this).parent().prev().attr("data-multiple"));
-	// if there is a target for the id.
-	// like a class, then it will look for a sibling of the parent with that class, and add it to that.
 	
-	if($(this).parent().prev().attr("data-multiple") == "true"){
-		//sconsole.log("it is true");
-		add_multiple_selection($(this).parent().prev(),$(this).text(),$(this).attr("data-hit-id"));
+	// so now try to create an item group, 
+
+	if($(this).parent().prev().attr("data-use-id") == "yes"){
+		$(this).parent().prev().val($(this).attr("data-hit-id"));	
+	}
+	else{
+		$(this).parent().prev().val($(this).text());	
 	}
 
+	$(this).parent().prev().attr("data-hit-id",$(this).attr("data-hit-id"));
+	if($(this).parent().prev().attr("data-multiple") == "true"){
+		add_multiple_selection($(this).parent().prev(),$(this).text(),$(this).attr("data-hit-id"));
+	}
 	$("#autocomplete_dropdown").remove();
 });
 

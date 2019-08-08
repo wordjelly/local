@@ -91,6 +91,10 @@ class Inventory::Transaction
 		end
 	end
 
+	## okay so now check if all this works.
+	## so we now add a few items.
+	## i want some more information to be shown in the search bar.
+	## or i can check this bit.
 	def load_local_item_groups
 		unless self.id.blank?
 			response = Inventory::ItemGroup.search({

@@ -114,7 +114,17 @@ class Inventory::Item
 	## function named: Inventory::Item#check_applicability
 	attr_accessor :not_applicable_to_any_reports
 
+	## the item is not found
+	## @set_from : Inventory::Category#set_item_report_applicability(reports)
+	attr_accessor :not_found
 
+	## the item has expired or it has been used elsewhere 
+	## @set_from : Inventory::Category#set_item_report_applicability(reports)
+	attr_accessor :expired_or_already_used
+
+	## the item category is not the same as the current category
+	## @set_from : Inventory::Category#set_item_report_applicability(reports)
+	attr_accessor :different_category
 
 	validate :check_applicability
 	#########################################################
@@ -322,14 +332,18 @@ class Inventory::Item
 	## @param[String] category : the name fo the category
 	## @return[Boolean] true/false : gets the item_type_id, and finds the itemType, and checks whether the provided category is mentioned in this item_type
 	def is_of_category?(category)
-
+		#puts "the item type id is: #{self.item_type_id}"
 		begin
 			item_group = Inventory::ItemType.find(self.item_type_id)
-
+			#puts "item group is:"
+			#puts item_group.attributes.to_s
 			item_group.categories.include? category
-		rescue
+		rescue => e
+			puts "find error si:"
+			puts e.to_s
 			false
 		end
+		#exit(1)
 	end
 
 	######################################################
@@ -341,6 +355,9 @@ class Inventory::Item
 	######################################################
 	def check_applicability
 		self.errors.add(:applicable_to_report_ids,"The Item cannot be used as the barcode is invalid, use another barcode/tube") if (self.not_applicable_to_any_reports == true)
+		self.errors.add(:barcode, "This barcode was not found") if self.not_found == true
+		self.errors.add(:barcode, "This barcode was already used, or the tube has expired") if self.expired_or_already_used == true
+		self.errors.add(:different_category, "This tube is a of a different type and cannot be used") if self.different_category == true
 	end
 
 end

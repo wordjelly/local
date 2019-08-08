@@ -4,7 +4,8 @@
 	<%= render :partial => "/shared/visibility", locals: {f: f} %>
 		
 	<% unless @item_type.new_record? %>
-		<%= render :partial => "images/image", locals: {model: item_type} %>
+		<%= render :partial => "images/image", locals: {model: 
+			@item_type} %>
 	<% end %>
 	
 	<%= build_nested_form(@item_type).html_safe %>	
