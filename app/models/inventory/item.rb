@@ -78,10 +78,11 @@ class Inventory::Item
 	## this is also used in case.
 	attribute :code, String, mapping: {type: 'keyword'}, default: SecureRandom.hex(3)
 
+	attribute :use_code, String, mapping: {type: 'keyword'}
+
 	## this has to match the code parameter.
 	## it is expected to be entered by the user.
 	## it will be validated to match if provided.
-	attribute :use_code, String, mapping: {type: 'keyword'}
 
 	## @set_from : category => set_item_report_applicability
 	attribute :applicable_to_report_ids, Array, mapping: {type: 'keyword'}
@@ -93,6 +94,9 @@ class Inventory::Item
 	attr_accessor :statuses
 
 	attr_accessor :reports
+
+	## @used_in : self.customizations => custom html element to render a switch, to show the use code, in case the user does not have a barcode
+	## it is alwasy displayed after barcode.
 
 	attribute :space, Float, mapping: {type: 'float'}, default: 100.0
 	## its quantity can be only a maximum and defaults to 100
@@ -126,6 +130,10 @@ class Inventory::Item
 	## @set_from : Inventory::Category#set_item_report_applicability(reports)
 	attr_accessor :different_category
 
+	## the code provided in use_code, is not the same as the code provided in code.
+	## @set_from : Inventory::Category#set_item_report_applicability(reports)
+	attr_accessor :code_mismatch
+
 	validate :check_applicability
 	#########################################################
 	##
@@ -144,7 +152,14 @@ class Inventory::Item
 	def fields_not_to_show_in_form_hash(root="*")
 		{
 			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
-			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","item_type_id","supplier_item_group_id","local_item_group_id","transaction_id","filled_amount","expiry_date","report_ids","patient_id","contents_expiry_date","space","statuses","reports","name","location_id","use_code","code","available","applicable_to_report_ids"]
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","item_type_id","supplier_item_group_id","local_item_group_id","transaction_id","filled_amount","expiry_date","report_ids","patient_id","contents_expiry_date","space","statuses","reports","name","location_id","available","applicable_to_report_ids"]
+		}
+	end
+
+	def customizations(root)
+		#{}
+		{
+			"code" => '<div>If you do not have a tube with a barcode, write this code on the tube label.Please enter it into field below to confirm.</div><div>' + self.code + '</div>' 
 		}
 	end
 	
@@ -178,7 +193,7 @@ class Inventory::Item
 	##
 	########################################################
 	def self.permitted_params
-		base = [:id,{:item => [:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space,:use_code,:code,:applicable_to_report_ids]}]
+		base = [:id,{:item => [:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space,:code,:use_code,:applicable_to_report_ids]}]
 		if defined? @permitted_params
 			base[1][:item] << @permitted_params
 			base[1][:item].flatten!
@@ -200,6 +215,75 @@ class Inventory::Item
 		}
 	end
 
+	###########################################################
+	##
+	##
+	## CALLED FROM CATEGORY#set_item_report_applicability(reports)
+	## 
+	##
+	###########################################################
+
+	## @param[String] org_id : the organization id of the reports, to which this item is attempted to being added, these are
+	## @param[String] category_name : the name of the category to which the user has attempted to add this item, inside the order.
+	## @working : Loads the item from the inventory that corresponds to this barcode, and assigns its expiry, transaction id and other details to the item that has been created inside the category in the order.
+	def get_item_details_from_barcode(org_id,category_name,report_ids,applicable)
+		
+		unless self.barcode.blank?
+
+			i = Inventory::Item.find_with_organization(self.barcode,org_id)
+
+			if i.nil?
+				## doesnt exist error
+				self.not_found = true
+			else
+				## add the transaction, name etc.
+				if i.is_available?
+					## then we don't add any errors.
+					## add the details of expiry date, transaction, and all the other stuff here.
+					## if its a denovo item, then skip these validations.
+					#puts "the item category is: #{i.category}"
+					#puts "the current category is: #{self.name}"
+					#exit(1)
+					if i.is_of_category?(self.name)
+						self.applicable_to_report_ids << organization_id_to_report_hash[org_id]
+						applicable = true
+						#puts "found item attributes are:"
+						#puts i.attributes.to_s
+						self.expiry_date = i.expiry_date
+						self.transaction_id = i.transaction_id
+						self.item_type_id = i.item_type_id
+						#it.attributes.merge!({
+						#	expiry_date: i.expiry_date,
+						#	transaction_id: i.transaction_id,
+						#	item_type_id: i.item_type_id
+						#})
+						#puts "the item attributes become:"
+						#puts it.attributes.to_s
+						#exit(1)
+						#so now how to add the code.
+						#so we make a custom field.
+						#and render it as switch.
+						#which if clicked will show that.
+					else
+						## not of the same category error.
+						self.different_category = true
+					end
+				else
+					## expired error
+					self.expired_or_already_used = true
+				end
+		
+			end
+
+		end
+
+	end
+
+	## @Called_from : Inventory::Category#set_item_report_applicability(reports).
+	## @return[Boolean] : true/false , if the code has been provided in use_code field and it matches the original code field.
+	def code_matches?
+		(!self.use_code.blank?) && (self.code == self.use_code)
+	end
 	###########################################################
 	##
 	##
@@ -244,10 +328,17 @@ class Inventory::Item
 	##
 	#######################################################
 	def summary_row(args={})
+		date = nil
+		if !self.expiry_date.blank?
+			date = self.expiry_date.strftime("%b %d %Y %I:%M %P")
+		else
+			date = ""
+		end
+
 		'
 			<tr>
 				<td>' + self.name + '</td>
-				<td>' + (self.expiry_date || "") + '</td>
+				<td>' + date + '</td>
 				<td><div class="edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
 			</tr>
 		'
@@ -358,6 +449,7 @@ class Inventory::Item
 		self.errors.add(:barcode, "This barcode was not found") if self.not_found == true
 		self.errors.add(:barcode, "This barcode was already used, or the tube has expired") if self.expired_or_already_used == true
 		self.errors.add(:different_category, "This tube is a of a different type and cannot be used") if self.different_category == true
+		self.errors.add(:code_mismatch,"The code entered does not match the code provided, please try again.") if self.code_mismatch == true
 	end
 
 end

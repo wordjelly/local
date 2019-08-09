@@ -15,6 +15,7 @@
 //= require turbolinks
 //= require cloudinary
 //= require auth/auth_modals_and_navbar.js
+//= require pulsate.min.js
 //= require_tree .
 
 $(document).ready(function(){

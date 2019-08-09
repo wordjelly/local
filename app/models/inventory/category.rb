@@ -176,57 +176,26 @@ class Inventory::Category
 
 		self.items.each do |it|
 			
-			applicable = false
-
-			organization_id_to_report_hash.keys.each do |org_id|
-
-				i = Inventory::Item.find_with_organization(it.barcode,org_id)
-
-				if i.nil?
-					## doesnt exist error
-					it.not_found = true
+			if !it.use_code.blank?
+				if it.code_matches?
+					## in this case, we don't do any of the barcode level validations.
 				else
-					## add the transaction, name etc.
-					if i.is_available?
-						## then we don't add any errors.
-						## add the details of expiry date, transaction, and all the other stuff here.
-						## if its a denovo item, then skip these validations.
-						#puts "the item category is: #{i.category}"
-						#puts "the current category is: #{self.name}"
-						#exit(1)
-						if i.is_of_category?(self.name)
-							it.applicable_to_report_ids << organization_id_to_report_hash[org_id]
-							applicable = true
-							puts "found item attributes are:"
-							puts i.attributes.to_s
-							it.expiry_date = i.expiry_date
-							it.transaction_id = i.transaction_id
-							it.item_type_id = i.item_type_id
-							#it.attributes.merge!({
-							#	expiry_date: i.expiry_date,
-							#	transaction_id: i.transaction_id,
-							#	item_type_id: i.item_type_id
-							#})
-							puts "the item attributes become:"
-							puts it.attributes.to_s
-							#exit(1)
-						else
-							## not of the same category error.
-							it.different_category = true
-						end
-					else
-						## expired error
-						it.expired_or_already_used = true
-					end
+					it.code_mismatch = true
 				end
+
+			else
+				applicable = false
+
+				organization_id_to_report_hash.keys.each do |org_id|
+
+					it.get_item_details_from_barcode(org_id,self.name,organization_id_to_report_hash[org_id],applicable)
+				end
+
+				it.applicable_to_report_ids.flatten!
+
+				it.not_applicable_to_any_reports = true if applicable == false
 			end
 
-			it.applicable_to_report_ids.flatten!
-
-			## add a switch.
-			## error will be done on validation.
-
-			it.not_applicable_to_any_reports = true if applicable == false
 		end
 
 		self.items.each do |iti|
