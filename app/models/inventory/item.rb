@@ -50,7 +50,7 @@ class Inventory::Item
 	attribute :filled_amount, Float
 
 	attribute :expiry_date, Date, mapping: {type: 'date', format: 'yyyy-MM-dd'}
-	validates_presence_of :expiry_date
+	validates_presence_of :expiry_date, :if => Proc.new{|c| !c.barcode.blank?}
 
 	## only the barcode has to be validated, depending again on the context
 	## for eg if the barcode exists in the inventory or not.
@@ -157,9 +157,8 @@ class Inventory::Item
 	end
 
 	def customizations(root)
-		#{}
 		{
-			"code" => '<div>If you do not have a tube with a barcode, write this code on the tube label.Please enter it into field below to confirm.</div><div>' + self.code + '</div>' 
+			"code" => '<div>If you do not have a tube with a barcode, write this code on the tube label.Please enter it into field below to confirm.</div><div>' + self.code + '</div><div style="display:none"><input type="text" value="' + self.code + '" name="order[categories][][items][][code]" /></div>' 
 		}
 	end
 	
@@ -193,7 +192,7 @@ class Inventory::Item
 	##
 	########################################################
 	def self.permitted_params
-		base = [:id,{:item => [:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space,:code,:use_code,:applicable_to_report_ids]}]
+		base = [:id,{:item => [:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space,:use_code,:code,:applicable_to_report_ids]}]
 		if defined? @permitted_params
 			base[1][:item] << @permitted_params
 			base[1][:item].flatten!
@@ -282,8 +281,11 @@ class Inventory::Item
 	## @Called_from : Inventory::Category#set_item_report_applicability(reports).
 	## @return[Boolean] : true/false , if the code has been provided in use_code field and it matches the original code field.
 	def code_matches?
+		puts "use code is: #{self.use_code}"
+		puts "self code is: #{self.code}"
 		(!self.use_code.blank?) && (self.code == self.use_code)
 	end
+
 	###########################################################
 	##
 	##
@@ -315,8 +317,12 @@ class Inventory::Item
 		## make an item and item group controller.
 		## and views
 		## then we move to item transfer.
-		if self.id.blank?			
-			self.id = self.name = self.barcode
+		if self.id.blank?	
+			if self.code_matches?
+				self.id = self.name = self.code
+			else
+				self.id = self.name = self.barcode
+			end
 		end
 	end
 

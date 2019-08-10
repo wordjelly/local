@@ -9,7 +9,7 @@ module Concerns::FormConcern
 			["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","search_options"]		
 		end
 
-		## will check the keys for the root.
+		## will check dthe keys for the root.
 		## if any of the keys are found in the root, then it will return that otherwise defaults to the star.
 		## so it will take the root and see if any of the keys have it.
 		## then will return that.
@@ -294,8 +294,8 @@ module Concerns::FormConcern
 			## these have to be hidden.
 			tab_titles += add_tab_title(attr.name,bson_id)
 
-			puts "after adding tab titles they becom:"
-			puts tab_titles.to_s
+			#puts "after adding tab titles they becom:"
+			#puts tab_titles.to_s
 
 			empty_obj = attr.member_type.primitive.to_s.constantize.new
 			
