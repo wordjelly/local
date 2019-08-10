@@ -17,6 +17,8 @@ class Diagnostics::Report
 	index_name "pathofast-diagnostics-reports"
 	document_type "diagnostics/report"
 
+
+
 	## OBJECT ARRAYS
 	attribute :tests, Array[Diagnostics::Test]
 	attribute :statuses, Array[Diagnostics::Status]
@@ -107,6 +109,13 @@ class Diagnostics::Report
 		document.cascade_id_generation(nil)
 	end
 
+
+	def fields_not_to_show_in_form_hash(root="*")
+		{
+			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","description","patient_id","start_epoch","tag_ids"]
+		}
+	end
 	## generates a huge concated string using the reference status version 
 	## of each status in the report.
 	## then converts that into a base64 string.
@@ -348,7 +357,7 @@ class Diagnostics::Report
 
 	## should return the table, and th part.
 	## will return some headers.
-	def summary_table_headers
+	def summary_table_headers(args={})
 		'''
 			<thead>
 	          <tr>

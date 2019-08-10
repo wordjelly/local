@@ -48,28 +48,12 @@ $(document).on('click','.choose_report',function(event){
 });
 
 
-/****
-$(document).on('click','.submit_order',function(event){
-	var data = {
-		item_requirements: get_item_requirements(),
-		patient_id: get_patient_id(),
-		template_report_ids: get_template_report_ids(),
-		item_group_id: get_item_group_id()
-	}
-
-	console.log(data);
-	if($(this).parent().attr("id").indexOf("edit") != -1){
-		// if it is an edit form.
-		console.log("the form is being edited");
-		url = $(this).parent().attr("action") + ".js";
-		$.ajax({
-		    url: url,
-		    type: 'PUT',
-		    data: data
-		});
-	}
-	else{
-		$.post("/orders.js",data);
-	}
+/**
+ON CLICKING ADD REPORT MANUALLY
+**/
+$(document).on('click','.add_result_manually',function(event){
+	var nested_element_id = $(this).attr("data-id");
+	var nested_element = $("#" + nested_element_id);
+	var result_raw = nested_element.find('[name="order[reports][][tests][][result_raw]"]');
+	result_raw.parent().show();
 });	
-****/

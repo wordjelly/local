@@ -27,6 +27,8 @@ $(document).on('click','.edit_nested_object',function(event){
 	$("#" + nested_element_id).slideToggle();
 });
 
+
+
 /***
 removes an existing nested element.
 ***/

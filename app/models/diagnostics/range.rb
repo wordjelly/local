@@ -246,4 +246,9 @@ class Diagnostics::Range
 		'''
 	end
 
+	## @return[String] a combination of the 
+	def get_display_name
+		""
+	end
+
 end 

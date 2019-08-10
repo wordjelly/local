@@ -17,7 +17,7 @@ module Concerns::FormConcern
 		## set for all.
 		def fields_not_to_show_in_form_hash(root="*")
 			{
-				"*" => ["outsourced_report_statuses","merged_statuses"]
+				"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"]
 			}
 		end
 
@@ -192,7 +192,7 @@ module Concerns::FormConcern
 		end
 
 		## should return the table, and th part.
-		def summary_table_headers
+		def summary_table_headers(args={})
 
 		end
 
@@ -303,7 +303,7 @@ module Concerns::FormConcern
 
 			unless self.send(attr.name).blank?
 				tab_content += self.send(attr.name)[0].summary_table_open
-				tab_content += self.send(attr.name)[0].summary_table_headers
+				tab_content += self.send(attr.name)[0].summary_table_headers({"root" => root})
 				tab_content += self.send(attr.name)[0].summary_table_body_open
 
 				self.send(attr.name).each do |obj|

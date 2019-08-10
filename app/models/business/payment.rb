@@ -39,7 +39,7 @@ class Business::Payment
 
 	## should return the table, and th part.
 	## will return some headers.
-	def summary_table_headers
+	def summary_table_headers(args={})
 		'''
 			<thead>
 	          <tr>

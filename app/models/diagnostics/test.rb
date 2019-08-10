@@ -11,6 +11,8 @@ class Diagnostics::Test
 			
 	TEXTUAL_RESULT = "text"
 	NUMERIC_RESULT = "numeric"
+	DEFAULT_RESULT = "-"
+	DEFAULT_UNITS = "-"
 
 	index_name "pathofast-tests"
 
@@ -53,7 +55,10 @@ class Diagnostics::Test
 
 	attribute :result_numeric, Float, mapping: {type: 'float'}
 
-	attribute :result_raw, String, mapping: {type: 'keyword'}
+	attribute :result_raw, String, mapping: {type: 'keyword'}, default: DEFAULT_RESULT
+
+	attribute :units, String, mapping: {type: 'keyword'}, default: DEFAULT_UNITS
+
 
 	def self.permitted_params
 		[
@@ -69,7 +74,8 @@ class Diagnostics::Test
 			:verification_done,
 			:ready_for_reporting,
 			:result_type,
-			:result_raw
+			:result_raw,
+			:units
 		]
 
 	end
@@ -127,8 +133,18 @@ class Diagnostics::Test
 	    	},
 	    	result_raw: {
 	    		type: 'keyword'
-	    	}	
+	    	},
+	    	units: {
+	    		type: 'keyword'
+	    	}
 	    }	
+	end
+
+	def fields_not_to_show_in_form_hash(root="*")
+		{
+			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","lis_code","description","ready_for_reporting","verification_done","result_text","result_raw","result_numeric","result_type","references","units"]
+		}
 	end
 
 	## filter the incoming results
@@ -141,7 +157,6 @@ class Diagnostics::Test
 	#end
 	## should be done from the report ?
 	## or else how will we get the reference to the organization id ?
-
 	def result_filters
 		["undefined","nan","null","infinity","-",".","!"]
 	end
@@ -149,7 +164,7 @@ class Diagnostics::Test
 	## call from order.
 	def add_result(patient)
 
-		unless self.result_raw.blank?
+		unless (self.result_raw.blank? || self.result_raw == DEFAULT_RESULT)
 
 			incorrect_result_format = false
 			
@@ -206,6 +221,27 @@ class Diagnostics::Test
 		}
 	end
 
+	## @return[Diagnostics::Range] applicable range, or nil , if none has been picked yet.
+	## convenience method, used in summary_row, to get the applicable range and show its sex, and age.
+	def get_applicable_range
+		res = self.ranges.select{|c|
+			c.picked == 1
+		}
+		if res.blank?
+			nil
+		else
+			res[0]
+		end
+	end
+
+
+	def is_ready_for_reporting?
+		self.ready_for_reporting == -1 ? "Yes" : "No"
+	end
+
+	def is_verification_done?
+		self.verification_done == -1 ? "Verified"  : "Pending Verification"
+	end
 
 	###########################################################
 	##
@@ -215,31 +251,105 @@ class Diagnostics::Test
 	##
 	###########################################################
 	def summary_row(args={})
-		'
-			<tr>
-				<td>' + self.name + '</td>
-				<td>' + self.lis_code + '</td>
-				<td>' + self.description + '</td>
-				<td>' + self.ranges.size.to_s + '</td>
-				<td><div class="edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
-			</tr>
-		'
+		if args["root"] =~ /order/
+			inference = "-"
+			range_name = "-"
+			abnormal = "-"
+			if applicable_range = get_applicable_range
+				inference = applicable_range.inference
+				range_name = applicable_range.get_display_name 
+				abnormal = applicable_range.is_abnormal
+			end
+			'
+				<thead>
+		          <tr>
+		              <th>' + self.name + '</th>
+		              <th>' + (self.result_raw || DEFAULT_RESULT) + '</th>
+		              <th>' + (self.units || DEFAULT_UNITS) + '</th>
+		              <th>' + range_name + '</th>
+		              <th>' + inference + '</th>
+		              <th>' + self.is_ready_for_reporting? + '</th>
+		              <th>' + self.is_verification_done? + '</th>
+		              <th><div class="add_result_manually edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Add Result Manually</div>
+		              	  <div class="verify edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Verify</div>
+		              </th>
+		          </tr>
+		        </thead>
+			'
+		else
+			'
+				<tr>
+					<td>' + self.name + '</td>
+					<td>' + self.lis_code + '</td>
+					<td>' + self.description + '</td>
+					<td>' + self.ranges.size.to_s + '</td>
+					<td><div class="edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
+				</tr>
+			'
+		end
 	end
 
 	## should return the table, and th part.
 	## will return some headers.
-	def summary_table_headers
-		'
-			<thead>
-	          <tr>
-	              <th>Name</th>
-	              <th>LIS CODE</th>
-	              <th>Description</th>
-	              <th>Total Ranges</th>
-	              <th>Options</th>
-	          </tr>
-	        </thead>
-		'
+	def summary_table_headers(args={})
+=begin
+ <th>' + self.name + '</th>
+ <th>' + self.result_raw + '</th>
+ <th>' + self.units + '</th>
+ <th>' + range_name + '</th>
+ <th>' + inference + '</th>
+ <th>' + self.ready_for_reporting + '</th>
+ <th>' + self.verification_done + '</th>
+ <th><div class="add_result_manually edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Add Result Manually</div>
+  	  <div class="verify edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Verify</div>
+ </th>
+=end
+		if args["root"] =~ /order/
+			'
+				<thead>
+		          <tr>
+		              <th>Name</th>
+		              <th>Result</th>
+		              <th>Units</th>
+		              <th>Range Name</th>
+		              <th>Inference</th>
+		              <th>Ready For Reporting</th>
+		              <th>Verified</th>
+		              <th>Options</th>
+		          </tr>
+		        </thead>
+			'
+		else
+			'
+				<thead>
+		          <tr>
+		              <th>Name</th>
+		              <th>LIS CODE</th>
+		              <th>Description</th>
+		              <th>Total Ranges</th>
+		              <th>Options</th>
+		          </tr>
+		        </thead>
+			'
+		end
+	end
+
+	def add_new_object(root,collection_name,scripts,readonly)
+		if root =~ /order/
+			''
+		else
+			script_id = BSON::ObjectId.new.to_s
+
+			script_open = '<script id="' + script_id + '" type="text/template" class="template"><div style="padding-left: 1rem;">'
+			
+			scripts[script_id] = script_open
+
+			scripts[script_id] +=  new_build_form(root + "[" + collection_name + "][]",readonly,"",scripts) + '</div></script>'
+		
+			element = "<a class='waves-effect waves-light btn-small add_nested_element' data-id='#{script_id}'><i class='material-icons left' >cloud</i>Add #{collection_name.singularize}</a>"
+
+			element
+		end
 	end
 
 end

@@ -12,11 +12,13 @@ class Inventory::Item
 	include Concerns::TransferConcern
 	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
-	
-	index_name "pathofast-inventory-items"
-	document_type "inventory/item"	
 
 	
+	index_name "pathofast-inventory-items"
+
+	document_type "inventory/item"	
+
+
 	attribute :item_type_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	validates_presence_of :item_type_id, :if => Proc.new{|c| !c.barcode.blank?}
 
@@ -134,6 +136,7 @@ class Inventory::Item
 	## @set_from : Inventory::Category#set_item_report_applicability(reports)
 	attr_accessor :code_mismatch
 
+
 	validate :check_applicability
 	#########################################################
 	##
@@ -178,9 +181,6 @@ class Inventory::Item
 
 
 	before_validation do |document|
-		## here we don't need to call cascade_id_generation
-		## because there are no children.
-		## so we directly call assign_id from name.
 		document.assign_id_from_name(nil)
 	end
 
@@ -281,8 +281,8 @@ class Inventory::Item
 	## @Called_from : Inventory::Category#set_item_report_applicability(reports).
 	## @return[Boolean] : true/false , if the code has been provided in use_code field and it matches the original code field.
 	def code_matches?
-		puts "use code is: #{self.use_code}"
-		puts "self code is: #{self.code}"
+		#puts "use code is: #{self.use_code}"
+		#puts "self code is: #{self.code}"
 		(!self.use_code.blank?) && (self.code == self.use_code)
 	end
 
@@ -352,7 +352,7 @@ class Inventory::Item
 
 	## should return the table, and th part.
 	## will return some headers.
-	def summary_table_headers
+	def summary_table_headers(args={})
 		'''
 			<thead>
 	          <tr>
@@ -436,11 +436,8 @@ class Inventory::Item
 			#puts item_group.attributes.to_s
 			item_group.categories.include? category
 		rescue => e
-			puts "find error si:"
-			puts e.to_s
 			false
 		end
-		#exit(1)
 	end
 
 	######################################################
