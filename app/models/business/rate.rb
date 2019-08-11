@@ -16,9 +16,10 @@ class Business::Rate
 	attribute :for_organization_id, String, mapping: {type: 'keyword'}, default: Business::Rate::UNIVERSAL_ORGANIZATION_ID
 	attribute :rate, Float
 	attribute :name, String, mapping: {type: 'keyword'}, default: BSON::ObjectId.new.to_s
-
+	
+	
 	def self.permitted_params
-		[:for_organization_id, :rate]
+		[:id,:for_organization_id, :rate]
 	end
 
 	def self.index_properties

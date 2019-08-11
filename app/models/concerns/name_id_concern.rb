@@ -19,7 +19,7 @@ module Concerns::NameIdConcern
 	## and update that in the controller tests.
 	## @param[String] organization_id
 	def assign_id_from_name(organization_id)
-		puts "Came to assign id from name -------------"
+		#puts "Came to assign id from name -------------"
 		if self.id.blank?
 			self.name ||= BSON::ObjectId.new.to_s
 			unless self.name.blank?

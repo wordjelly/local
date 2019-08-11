@@ -105,12 +105,13 @@ module Concerns::OrderConcern
 
 
 	def update_reports
-		
+		## problem is here.
 		self.reports.delete_if { |c|
-			## we have to trigger a remove report as well.
-			## actually that worked, but not exactly.
+
+
 			!self.template_report_ids.include? c.id.to_s
 		}
+
 
 		existing_report_ids = self.reports.map{|c|
 			c.id.to_s
@@ -361,7 +362,14 @@ module Concerns::OrderConcern
 			## and still fuse the queries
 
 			## we consider the desired start time and the procedure, as a parameter for commonality.
-
+			puts "procedure version is:"
+			puts report.procedure_version
+			puts "report name is: "
+			puts report.name.to_s
+			puts "start epoch is:"
+			puts report.start_epoch
+			l = report.procedure_version + "_"
+			d = report.start_epoch.to_s + "_"
 			effective_version = report.procedure_version + "_" + report.start_epoch.to_s
 			if procedure_versions_hash[effective_version].blank?
 				procedure_versions_hash[effective_version] =

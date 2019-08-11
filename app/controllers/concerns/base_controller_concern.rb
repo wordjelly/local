@@ -105,8 +105,8 @@ module Concerns::BaseControllerConcern
 			end
 		end
 
-		puts "index action final query is--------------->"
-		puts JSON.pretty_generate(query)
+		#puts "index action final query is--------------->"
+		#puts JSON.pretty_generate(query)
 
 		results = get_resource_class.search({query: query})
 
@@ -282,10 +282,21 @@ module Concerns::BaseControllerConcern
 			## the get_model_params
 			## should have a default value for certain things.
 			## how do we ensure that?
+			puts "IT DOES NOT RESPOND TO VERSIONING"
 			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
 		end
 
-		
+		puts " ------ FROM UPDATE IN BASE CONTROLLER CONCERN"
+
+		@order.reports.each do |report|
+			puts "report name is: #{report.name}"
+			report.tests.each do |test|
+				puts "test name is: #{test.name}"
+				puts "test result raw is: #{test.result_raw}"
+			end
+		end
+
+		puts " ---------- ENDING HERE ---------------- "
 
 		instance_variable_get("@#{get_resource_name}").send("save")
 		set_errors_instance_variable(instance_variable_get("@#{get_resource_name}"))
@@ -346,8 +357,8 @@ module Concerns::BaseControllerConcern
 		query = add_authorization_clause(query) if (@action_permissions["requires_authorization"] == "yes")
 		
 		## so only its own user has been added.
-		puts "query after adding authorization clause is:"
-		puts JSON.pretty_generate(query)
+		#puts "query after adding authorization clause is:"
+		#puts JSON.pretty_generate(query)
 
 		#puts "resource class is:"
 		#puts get_resource_class.to_s
@@ -513,7 +524,7 @@ module Concerns::BaseControllerConcern
 	def get_model_params
 		#puts "The controller path is:"
 		#puts controller_path.to_s
-		puts "the symbol chosen is:#{controller_path.classify.demodulize.underscore.downcase.to_sym}"
+		#puts "the symbol chosen is:#{controller_path.classify.demodulize.underscore.downcase.to_sym}"
 		attributes = permitted_params.fetch(controller_path.classify.demodulize.underscore.downcase.to_sym,{})
 		#puts "the attributes become:"
 		#puts attributes.to_s

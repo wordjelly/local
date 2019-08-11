@@ -104,9 +104,9 @@ class Diagnostics::Report
 		end
 	end
 	
-	before_save do |document|
+	before_validation do |document|
 		document.set_procedure_version
-		document.cascade_id_generation(nil)
+		document.cascade_id_generation(nil) if document.id.blank?
 	end
 
 
@@ -124,7 +124,14 @@ class Diagnostics::Report
 		self.statuses.map{|c|
 			procedure_version+= c.updated_at.to_s
 		}
+		procedure_version = BSON::ObjectId.new.to_s if procedure_version.blank?
 		self.procedure_version = Base64.encode64(procedure_version)
+		#puts "the procedure version becomes:"
+		#puts self.procedure_version
+		#puts "is the provedure version nil?"
+		#puts procedure_version.nil?
+		#puts "is the start epoch nil"
+		#puts start_epoch.nil?
 	end
 
 	def self.permitted_params

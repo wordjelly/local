@@ -212,9 +212,9 @@ class Organization
 	############################################################
 	def load_users_pending_approval
 		## okay so here we have to do the nested search.
-		puts "CAME TO LOAD USERS PENDING APPROVAL"
-		puts "self id is:"
-		puts self.id.to_s
+		#puts "CAME TO LOAD USERS PENDING APPROVAL"
+		#puts "self id is:"
+		#puts self.id.to_s
 
 		query = {
 			body: {
@@ -257,17 +257,17 @@ class Organization
 			}
 		}
 
-		puts "pending user query is ------------------------------------>"
-		puts JSON.pretty_generate(query)
+		#puts "pending user query is ------------------------------------>"
+		#puts JSON.pretty_generate(query)
 
 		result = User.es.search(query)
 
-		puts result.to_s
-		puts result.methods.to_s
+		#puts result.to_s
+		#puts result.methods.to_s
 
 		self.users_pending_approval ||= []
 		result.results.each do |res|
-			puts "the user pending approval is: #{res}"
+			#puts "the user pending approval is: #{res}"
 			self.users_pending_approval << res
 		end
 
@@ -318,7 +318,7 @@ class Organization
 	 	## so this is the organization's location
 	 	## this is used in location concern.
 	 	## we can use that in the organization also.
-
+	 	
 	end
 	
 	def assign_employee_roles

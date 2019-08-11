@@ -20,6 +20,7 @@ class Inventory::Requirement
 
 	def self.permitted_params
 		[
+			:id,
 			:name,
 			:barcode,
 			:priority,

@@ -16,7 +16,7 @@ class Business::Payment
 	#attribute :order_id, String, mapping: {type: 'keyword'}
 
 	def self.permitted_params
-		[:amount]
+		[:id,:amount]
 	end	
 
 	def self.index_properties

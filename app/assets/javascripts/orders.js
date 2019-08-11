@@ -57,3 +57,4 @@ $(document).on('click','.add_result_manually',function(event){
 	var result_raw = nested_element.find('[name="order[reports][][tests][][result_raw]"]');
 	result_raw.parent().show();
 });	
+

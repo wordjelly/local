@@ -81,8 +81,8 @@ module Concerns::OwnersConcern
 			#puts self.created_by_user
 			#puts "the self organization is:"
 			#puts self.created_by_user.organization.to_s
-			puts "class is: #{self.class.name}"
-			puts "skip validation: #{self.skip_owners_validations}"
+			#puts "class is: #{self.class.name}"
+			#puts "skip validation: #{self.skip_owners_validations}"
 			if !self.created_by_user.has_organization?
 				self.errors.add(:created_by_user,"you have not yet been verified as belonging to this organization")
 			end

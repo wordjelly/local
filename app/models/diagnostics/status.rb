@@ -145,6 +145,7 @@ class Diagnostics::Status
 	########################################################
 	def self.permitted_params
 		base = [
+			:id,
 			:name,
 			:description,
 			:duration,

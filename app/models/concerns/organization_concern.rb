@@ -210,8 +210,8 @@ module Concerns::OrganizationConcern
     ## @param[Hash] headers : the hash of headers
     ## get on with it.
     def set_organization_from_header(headers)
-    	puts "-----------------------------the headers coming in to the organization concern def are:----------------------"
-    	puts headers.to_s
+    	#puts "-----------------------------the headers coming in to the organization concern def are:----------------------"
+    	#puts headers.to_s
     	if headers[Concerns::OrganizationConcern::ORGANIZATION_ID_HEADER]
     		applicable_organizations = self.organization_members.select{|c|
     			((c.organization_id == headers[Concerns::OrganizationConcern::ORGANIZATION_ID_HEADER]) && (c.membership_status == Organization::USER_VERIFIED))

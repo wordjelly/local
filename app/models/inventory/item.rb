@@ -192,7 +192,7 @@ class Inventory::Item
 	##
 	########################################################
 	def self.permitted_params
-		base = [:id,{:item => [:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space,:use_code,:code,:applicable_to_report_ids]}]
+		base = [:id,{:item => [:name,:available,:id,:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space,:use_code,:code,:applicable_to_report_ids]}]
 		if defined? @permitted_params
 			base[1][:item] << @permitted_params
 			base[1][:item].flatten!
@@ -319,7 +319,11 @@ class Inventory::Item
 		## then we move to item transfer.
 		if self.id.blank?	
 			if self.code_matches?
+				puts "code matched."
 				self.id = self.name = self.code
+				puts "self id : #{self.id}"
+				puts "self name : #{self.name}"
+				puts "self code: #{self.code}"
 			else
 				self.id = self.name = self.barcode
 			end
@@ -340,6 +344,12 @@ class Inventory::Item
 		else
 			date = ""
 		end
+
+		## give a dropdown for available text values
+		## and nothing else can be entered.
+		## i just want to test if the matching is working, and a
+		## range is being picked or not.
+		## then we go for dropdown.
 
 		'
 			<tr>

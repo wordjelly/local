@@ -23,7 +23,7 @@ class Diagnostics::Range
 
 	def customizations(root)
 		root ||= self.class.name.classify.demodulize.underscore.downcase
-		puts "root is: #{root}"
+		#puts "root is: #{root}"
 
 		k = ApplicationController.helpers.select_tag(root + "[sex]" ,ApplicationController.helpers.options_for_select(GENDERS), {:class => "browser-default"})
 		k += "<label>Select Gender</label>".html_safe
@@ -97,6 +97,16 @@ class Diagnostics::Range
 	## normal -> -1
 	attribute :is_abnormal, Integer, mapping: {type: 'integer'}, default: 1	
 
+	## is default => 1
+	## is not_default => -1
+	## default range means the range which is used to populate the default value
+	## for any test
+	## for eg: a range for schistocytes, is marked as default, with a value of absent
+	## this is then used to auto give a value to the test.
+	## of course this value will only ever be applied once the test
+	## is marked as ready for reporting.
+	attribute :is_default_range,Integer, mapping: {type: 'integer'}, default: -1
+
 	before_save do |document|
 		document.set_min_and_max_age
 	end
@@ -129,6 +139,7 @@ class Diagnostics::Range
 	
 	def self.permitted_params
 		[
+			:id,
 			:min_age_years,
 			:min_age_months,
 			:min_age_days,
@@ -143,11 +154,12 @@ class Diagnostics::Range
 			:inference,
 			:comment,
 			:is_abnormal,
+			:is_default_range,
 			:text_value,
-			:picked
+			:picked,
+			:inference
 		]
-	end
-
+	
 	def self.index_properties
 		{
 			min_age_years: {
@@ -197,6 +209,12 @@ class Diagnostics::Range
 			},
 			picked: {
 				type: 'integer'
+			},
+			is_default_range: {
+				type: 'integer'
+			},
+			inference: {
+				type: 'text'
 			}
     	}
     	

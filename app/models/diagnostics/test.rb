@@ -48,7 +48,7 @@ class Diagnostics::Test
 	## result types have to be defined.
 	## whether it is numerical or textual
 	## and both values are defined.
-	## so an add value function has to be defined.
+	## so an add value function has to be definsed.
 	attribute :result_type, String, mapping: {type: 'keyword'}, default: TEXTUAL_RESULT
 	
 	attribute :result_text, String, mapping: {type: 'keyword'}
@@ -62,6 +62,7 @@ class Diagnostics::Test
 
 	def self.permitted_params
 		[
+			:id,
 			:name,
 			:lis_code,
 			:description,
@@ -77,7 +78,6 @@ class Diagnostics::Test
 			:result_raw,
 			:units
 		]
-
 	end
 
 	def self.index_properties
@@ -158,14 +158,18 @@ class Diagnostics::Test
 	## should be done from the report ?
 	## or else how will we get the reference to the organization id ?
 	def result_filters
-		["undefined","nan","null","infinity","-",".","!"]
+		["undefined","nan","null","infinity",DEFAULT_RESULT,".","!"]
 	end
 
 	## call from order.
 	def add_result(patient)
-
+		puts "Called add result with patient data"
+		puts "the result raw is:"
+		puts self.result_raw.to_s
 		unless (self.result_raw.blank? || self.result_raw == DEFAULT_RESULT)
-
+			
+			puts "result is not raw and not the default result."
+			
 			incorrect_result_format = false
 			
 			if self.result_text.blank?
@@ -220,6 +224,15 @@ class Diagnostics::Test
 			end
 		}
 	end
+
+	## test name is Schistocytes
+	## value -> Absent
+	## we can have a default value -> matching a default range.
+	## so that will auto match.
+	## so that is populated on show.
+	## mark a range as default.
+	## it is available only for text values
+	## for eg :  
 
 	## @return[Diagnostics::Range] applicable range, or nil , if none has been picked yet.
 	## convenience method, used in summary_row, to get the applicable range and show its sex, and age.

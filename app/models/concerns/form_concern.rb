@@ -103,7 +103,8 @@ module Concerns::FormConcern
 				else
 					self.non_array_attributes << c
 				end
-			}
+			} 
+			
 		end
 
 		## there are 2-3 possibilities.
@@ -162,6 +163,26 @@ module Concerns::FormConcern
 				element
 			end
 
+		end
+
+		## adds the id element.
+		## it is always hidden.
+		## adds it as a hidden element to the non_array_attributes.
+		def add_id_element(root)
+
+			input_name = root + "[id]"
+						
+			element = '''
+				<input type="text" name="''' + input_name + '''" value="''' + self.send("id").to_s + '''"></input>
+			'''
+
+			element += '''
+				<label for="''' + input_name + '''">id</label>
+			'''
+
+			
+			'<div style="display:none;">' + element + '</div>'
+			
 		end
 
 		def add_text_element(root,virtus_attribute,hidden)
@@ -401,13 +422,16 @@ module Concerns::FormConcern
 				end
 			end
 
-			## now the plain array attributes card.
+			## add id. to this.
+			non_array_attributes_card += add_id_element(root)
+
 
 			non_array_attributes_card += "</div></div>"
 
 
 			plain_array_attributes_block = ''
 
+			## see why colloquials are not working.
 
 			self.plain_array_attributes.each do |nattr|
 

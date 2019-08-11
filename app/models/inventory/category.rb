@@ -33,6 +33,7 @@ class Inventory::Category
 
 	def self.permitted_params
 		[
+			:id,
 			:quantity,
 			:name,
 			{
