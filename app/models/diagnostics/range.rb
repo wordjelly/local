@@ -147,7 +147,9 @@ class Diagnostics::Range
 			:name, 
 			:machine, 
 			:kit, 
-			:reference
+			:reference,
+			:min_age,
+			:max_age
 		]
 	end
 
@@ -206,6 +208,12 @@ class Diagnostics::Range
 			},
 			inference: {
 				type: 'text'
+			},
+			min_age: {
+				type: 'integer'
+			},
+			max_age: {
+				type: 'integer'
 			}
     	}
     	
