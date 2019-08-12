@@ -108,7 +108,16 @@ module Concerns::BaseControllerConcern
 		#puts "index action final query is--------------->"
 		#puts JSON.pretty_generate(query)
 
-		results = get_resource_class.search({query: query})
+		results = get_resource_class.search(
+			{
+				sort: {
+					"updated_at".to_sym => {
+						"order".to_sym => "desc"
+					}
+				},
+				query: query
+			}
+		)
 
 		if results.response.hits.hits.size > 0
 			objects = results.response.hits.hits.map{|c|
@@ -282,12 +291,12 @@ module Concerns::BaseControllerConcern
 			## the get_model_params
 			## should have a default value for certain things.
 			## how do we ensure that?
-			puts "IT DOES NOT RESPOND TO VERSIONING"
+			#puts "IT DOES NOT RESPOND TO VERSIONING"
 			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
 		end
 
-		puts " ------ FROM UPDATE IN BASE CONTROLLER CONCERN"
-
+		#puts " ------ FROM UPDATE IN BASE CONTROLLER CONCERN"
+=begin
 		@order.reports.each do |report|
 			puts "report name is: #{report.name}"
 			report.tests.each do |test|
@@ -295,7 +304,7 @@ module Concerns::BaseControllerConcern
 				puts "test result raw is: #{test.result_raw}"
 			end
 		end
-
+=end
 		puts " ---------- ENDING HERE ---------------- "
 
 		instance_variable_get("@#{get_resource_name}").send("save")

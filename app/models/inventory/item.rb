@@ -179,7 +179,6 @@ class Inventory::Item
 
 	end
 
-
 	before_validation do |document|
 		document.assign_id_from_name(nil)
 	end
@@ -319,11 +318,11 @@ class Inventory::Item
 		## then we move to item transfer.
 		if self.id.blank?	
 			if self.code_matches?
-				puts "code matched."
+				#puts "code matched."
 				self.id = self.name = self.code
-				puts "self id : #{self.id}"
-				puts "self name : #{self.name}"
-				puts "self code: #{self.code}"
+				#puts "self id : #{self.id}"
+				#puts "self name : #{self.name}"
+				#puts "self code: #{self.code}"
 			else
 				self.id = self.name = self.barcode
 			end
@@ -350,7 +349,6 @@ class Inventory::Item
 		## i just want to test if the matching is working, and a
 		## range is being picked or not.
 		## then we go for dropdown.
-
 		'
 			<tr>
 				<td>' + self.name + '</td>

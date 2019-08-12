@@ -68,6 +68,8 @@ class Inventory::Category
     	
 	end
 
+	
+
 	## @param[Hash] args : argument 
 	def summary_row(args={})
 		## those become hidden.

@@ -166,6 +166,8 @@ class Diagnostics::Test
 		puts "Called add result with patient data"
 		puts "the result raw is:"
 		puts self.result_raw.to_s
+		puts "result text is:"
+		puts self.result_text.to_s
 		unless (self.result_raw.blank? || self.result_raw == DEFAULT_RESULT)
 			
 			puts "result is not raw and not the default result."
@@ -176,11 +178,19 @@ class Diagnostics::Test
 				if self.result_numeric.blank?
 					unless self.result_raw.strip.blank?
 						result_filters.each do |filter|
-							incorrect_result_format = (self.result_raw.strip.to_s =~ /#{filter}/i) if incorrect_result_format.blank?
+							puts "filter is :#{filter}"
+							puts "result raw strip is"
+							if result_raw.strip.to_s =~ /#{Regexp.escape(filter)}/i
+								puts "got a match filter #{filter}"
+							end
 						end
 					end
 				end
 			end
+			
+			puts "incorrect result format is:"
+			puts incorrect_result_format.to_s
+
 			if incorrect_result_format.blank?
 				if self.requires_numeric_result?
 					begin
@@ -209,6 +219,7 @@ class Diagnostics::Test
 	end
 
 	def assign_range(patient)
+		puts "came to assign range."
 		self.ranges.map{|c|
 			if patient.meets_range_requirements?(c)
 				if self.requires_numeric_result?

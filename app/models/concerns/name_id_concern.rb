@@ -19,9 +19,16 @@ module Concerns::NameIdConcern
 	## and update that in the controller tests.
 	## @param[String] organization_id
 	def assign_id_from_name(organization_id)
-		#puts "Came to assign id from name -------------"
+		#puts "Came to assign id from name with class------------- #{self.class.name}"
+		#puts "the id is: #{self.id.to_s}"
 		if self.id.blank?
-			self.name ||= BSON::ObjectId.new.to_s
+			#puts "id is blank."
+			#puts "name is blank? #{self.name.blank?}"
+			if self.name.blank?
+				self.name = BSON::ObjectId.new.to_s
+			end
+			#self.name ||= BSON::ObjectId.new.to_s
+			#puts "name becomes: #{self.name}"
 			unless self.name.blank?
 				if organization_id.blank?	
 					## this will happen for organization.		
@@ -30,6 +37,7 @@ module Concerns::NameIdConcern
 					self.id = organization_id + "-" + self.name
 				end
 			end
+			#puts "id becomes: #{self.id.to_s}"
 		end
 	end
 

@@ -103,16 +103,20 @@ class Diagnostics::Report
 			indexes :start_epoch, type: 'integer'
 		end
 	end
-	
+		
+	## if it has a created by user.
 	before_validation do |document|
 		document.set_procedure_version
-		document.cascade_id_generation(nil) if document.id.blank?
+		#puts "cascade id generation being triggered."
+		#puts "the created by user is:"
+		#puts document.created_by_user
+		document.cascade_id_generation(nil) unless document.created_by_user.blank?
 	end
 
 
 	def fields_not_to_show_in_form_hash(root="*")
 		{
-			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
+			"*" => ["create unless document.created_by_user.blank?d_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
 			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","description","patient_id","start_epoch","tag_ids"]
 		}
 	end
@@ -126,12 +130,6 @@ class Diagnostics::Report
 		}
 		procedure_version = BSON::ObjectId.new.to_s if procedure_version.blank?
 		self.procedure_version = Base64.encode64(procedure_version)
-		#puts "the procedure version becomes:"
-		#puts self.procedure_version
-		#puts "is the provedure version nil?"
-		#puts procedure_version.nil?
-		#puts "is the start epoch nil"
-		#puts start_epoch.nil?
 	end
 
 	def self.permitted_params

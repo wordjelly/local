@@ -69,7 +69,7 @@ module Concerns::OrderConcern
 			    
 		    	indexes :name, type: 'keyword', fields: {
 			      	:raw => {
-			      		:type => "text",
+			      		:type => "texabrat",
 			      		:analyzer => "nGram_analyzer",
 			      		:search_analyzer => "whitespace_analyzer"
 			      	}
@@ -140,7 +140,7 @@ module Concerns::OrderConcern
 			self.errors.add(:patient_id,"Please choose a patient for this order.")
 		else
 			self.patient = Patient.find(self.patient_id)
-			#puts "found the patient."
+			self.patient.run_callbacks(:find)
 		end
 	end
 

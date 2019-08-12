@@ -27,6 +27,8 @@ module Concerns::MissingMethodConcern
 		validate :validate_nested
 
 		before_save do |document|
+			puts "CAME TO BEFORE SAVE ------------------- in missing method concern #{document.class.name}"
+			puts "ERRORS AT THIS STAGE: #{document.errors.full_messages}"
 			document.nullify_nil_attributes
 			document.cascade_callbacks(:save){false}
 		end
@@ -43,6 +45,7 @@ module Concerns::MissingMethodConcern
 		## so it will get set on the children.
 
 		def validate_nested
+			#puts "Came to validate nested in class: #{self.class.name}"
 			self.class.attribute_set.each do |virtus_attribute|
 				if virtus_attribute.primitive.to_s == "Array"
 					if virtus_attribute.respond_to? "member_type"
@@ -71,7 +74,8 @@ module Concerns::MissingMethodConcern
 					end
 				end
 			end
-			
+			#puts "errors are:"
+			#puts self.errors.full_messages
 		end
 
 		def new_record?
@@ -111,6 +115,7 @@ module Concerns::MissingMethodConcern
 		## or whatever call you want, just pass callback
 		## currently this has only been hooked into before_save
 		def cascade_callbacks(callback)
+			#puts " ----- DOING CASCADE CALLBACKS ----------- #{self.class.name}"
 			self.class.attribute_set.each do |virtus_attribute|
 				if virtus_attribute.primitive.to_s == "Array"
 					if virtus_attribute.respond_to? "member_type"
@@ -159,7 +164,7 @@ module Concerns::MissingMethodConcern
 		## call this before save in all the top level objects.
 		def cascade_id_generation(organization_id)
 			
-			#puts "self class is : #{self.class.name}, and org id: #{organization_id}"
+			#puts "DOING CASCADE ID GENERATION self class is : #{self.class.name}, and org id: #{organization_id}"
 			
 			#if self.class.name =~ /category/i
 			#	puts "it is a category and organization id incoming is: #{organization_id}"
