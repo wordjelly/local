@@ -163,14 +163,14 @@ class Diagnostics::Test
 
 	## call from order.
 	def add_result(patient)
-		puts "Called add result with patient data"
-		puts "the result raw is:"
-		puts self.result_raw.to_s
-		puts "result text is:"
-		puts self.result_text.to_s
+		#puts "Called add result with patient data"
+		#puts "the result raw is:"
+		#puts self.result_raw.to_s
+		#puts "result text is:"
+		#puts self.result_text.to_s
 		unless (self.result_raw.blank? || self.result_raw == DEFAULT_RESULT)
 			
-			puts "result is not raw and not the default result."
+			#puts "result is not raw and not the default result."
 			
 			incorrect_result_format = false
 			
@@ -178,18 +178,18 @@ class Diagnostics::Test
 				if self.result_numeric.blank?
 					unless self.result_raw.strip.blank?
 						result_filters.each do |filter|
-							puts "filter is :#{filter}"
-							puts "result raw strip is"
+							#puts "filter is :#{filter}"
+							#puts "result raw strip is"
 							if result_raw.strip.to_s =~ /#{Regexp.escape(filter)}/i
-								puts "got a match filter #{filter}"
+								#puts "got a match filter #{filter}"
 							end
 						end
 					end
 				end
 			end
 			
-			puts "incorrect result format is:"
-			puts incorrect_result_format.to_s
+			#puts "incorrect result format is:"
+			#puts incorrect_result_format.to_s
 
 			if incorrect_result_format.blank?
 				if self.requires_numeric_result?
@@ -219,7 +219,7 @@ class Diagnostics::Test
 	end
 
 	def assign_range(patient)
-		puts "came to assign range."
+		#puts "came to assign range."
 		self.ranges.map{|c|
 			if patient.meets_range_requirements?(c)
 				if self.requires_numeric_result?
@@ -260,12 +260,15 @@ class Diagnostics::Test
 
 
 	def is_ready_for_reporting?
-		self.ready_for_reporting == -1 ? "Yes" : "No"
+		self.ready_for_reporting == -1 ? "No" : "Yes"
 	end
 
 	def is_verification_done?
-		self.verification_done == -1 ? "Verified"  : "Pending Verification"
+		self.verification_done == -1 ? "Pending Verification"  : "Verified"
 	end
+
+	## and then after verified => dispatch report.
+	## this can be done at the level of the report only =>
 
 	###########################################################
 	##
@@ -357,6 +360,17 @@ class Diagnostics::Test
 			'
 		end
 	end
+
+	## @called_from : Business::Order#verify, before_validations
+	## verifies the test if report verify_all is true.
+	## will verify the test only if the picked_range is not abnormal.
+	def verify_if_normal
+		unless get_applicable_range.blank?
+			if get_applicable_range.is_abnormal == -1
+				self.verification_done = 1 if self.is_ready_for_reporting?
+			end
+		end 	
+	end	
 
 	def add_new_object(root,collection_name,scripts,readonly)
 		if root =~ /order/

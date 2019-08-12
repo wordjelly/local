@@ -16,6 +16,8 @@ class Diagnostics::Range
 	GENDERS = ["Male","Female","Other"]
 	DEFAULT_GENDER = "Not Selected"
 	DEFAULT_TEXT_VALUE = "Not Entered"
+	
+
 
 	def fields_not_show_in_form
 		["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","min_age","max_age"]		

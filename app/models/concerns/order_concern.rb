@@ -90,6 +90,7 @@ module Concerns::OrderConcern
 			document.update_requirements
 			document.update_report_items
 			document.add_report_values
+			document.verify
 		end
 
 		after_save do |document|
@@ -340,6 +341,17 @@ module Concerns::OrderConcern
 					test.add_result(self.patient) 
 				}
 			}
+		end
+	end
+
+
+	def verify
+		self.reports.each do |report|
+			if report.verify_all == Diagnostics::REPORT::VERIFY_ALL
+				report.tests.each do |test|
+					test.verify_if_normal
+				end
+			end
 		end
 	end
 

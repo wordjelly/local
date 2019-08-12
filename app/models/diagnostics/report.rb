@@ -17,6 +17,8 @@ class Diagnostics::Report
 	index_name "pathofast-diagnostics-reports"
 	document_type "diagnostics/report"
 
+	VERIFY_ALL = 1
+
 
 
 	## OBJECT ARRAYS
@@ -45,6 +47,18 @@ class Diagnostics::Report
 
 	## doesnt need to be a permitted param, is internally assigned.
 	#attribute :order_id, String, mapping: {type: 'keyword'}
+
+	## default : -1, (means don't)
+	## if set to 1 -> it will set verified as true only on those 
+	## tests which (a. are not already verified, are ready for reporting, and whose picked range is not abnormal)
+	attribute :verify_all, Integer, mapping: {type: 'integer'}, default: -1
+
+
+	## you can either make a report out of an order
+	## or you can make a report out of an individual report.
+	## order -> will generate comprehensive report automatically ?
+	## also report.
+	## it will generate a summary and also the detailed reports. 
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -107,12 +121,10 @@ class Diagnostics::Report
 	## if it has a created by user.
 	before_validation do |document|
 		document.set_procedure_version
-		#puts "cascade id generation being triggered."
-		#puts "the created by user is:"
-		#puts document.created_by_user
 		document.cascade_id_generation(nil) unless document.created_by_user.blank?
 	end
 
+	
 
 	def fields_not_to_show_in_form_hash(root="*")
 		{
