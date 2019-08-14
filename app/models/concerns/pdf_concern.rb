@@ -4,6 +4,10 @@ module Concerns::PdfConcern
 
 	included do 
 		attribute :latest_version, String, mapping: {type: "keyword"}
+		attribute :pdf_url, String, mapping: {type: "keyword"}
+
+		## unless blank, will not do generate_pdf.
+		attr_accessor :skip_pdf_generation
 	end
 
 	CLOUDINARY_RESULT_OK = "ok"
@@ -16,37 +20,58 @@ module Concerns::PdfConcern
 		PdfJob.perform_later([self.class.name, self.id.to_s])
 	end
 
-	
-
 	## will set the pdf_uploaded_to_cloudinary_variable, to true, if the upload is successfull.
 	## this is going to happen in a background job.
 	def generate_pdf
-		## first we try to generate the pdf.
-=begin
+			
+		return unless self.skip_pdf_generation.blank?
+
 		file_name = get_file_name
+	    
 	    ac = ActionController::Base.new
+	    
+	    ## how they want the report to be structured.
+	    puts "file name is: #{file_name}"
+
+	    puts Rails.root.join('public', "#{file_name}.pdf")
+
 	    pdf = ac.render_to_string pdf: file_name,
-	               template: "#{self.class.name.underscore.pluralize}/show.pdf.erb",
-	               locals: {:object => self},
-	               layout: "pdf/application.html.erb"
+            template: "#{ Auth::OmniAuth::Path.pathify(self.class.name).pluralize}/show.pdf.erb",
+            locals: {:object => self},
+            layout: "pdf/application.html.erb",
+            footer: {
+           		html: {   
+           			template:'/layouts/pdf/footer.html.erb'
+                }
+            }       
+
+        save_path = Rails.root.join('public',"#{file_name}.pdf")
+		File.open(save_path, 'wb') do |file|
+		  file << pdf
+		end
+=begin
 	    Tempfile.open(file_name) do |f| 
 		  f.binmode
 		  f.write pdf
 		  f.close 
-
+		  #IO.write("#{Rails.root.join("public","test.pdf")}",pdf)
 		  response = Cloudinary::Uploader.upload(File.open(f.path), :public_id => file_name, :upload_preset => "report_pdf_files")
+		  puts "response is: #{response}"
 		  self.latest_version = response['version'].to_s
-
-		  #puts "latest version is; #{self.latest_version}"
+		  self.pdf_url = response["url"]
 		end
 =end
-		self.save		
+
+		self.skip_pdf_generation = true
+		
+		#self.save		
+
 	end
 
 
-
+	## @return[String] file_name : consists of a bson object id and the current time.
 	def get_file_name
-		self.id.to_s + "_" + self.created_at.strftime("%b_%-d_%Y")
+		BSON::ObjectId.new.to_s + "_" + Time.now.strftime("%b_%-d_%Y")
 	end
 
 end

@@ -1,52 +1,20 @@
-<div class="card">
-	<div class="card-content">
-		<div class="card-title">
-			<%= Time.now.strftime("%b %-d %Y, %I:%M %P") %> | Pending Amount
-		</div>
-		<div>
-			<h5><%= @order.account_statement[:pending] %></h5>
+<% unless object.patient.blank? %>
+	<% @patient = object.patient %>
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Patient Details
+			</div>
+			Name: <%= @patient.full_name %>
+			Age: <%= @patient.age %>
+			Sex: <%= @patient.sex %>
 		</div>
 	</div>
-</div>
-
-<h4 class="header">Bills</h4>
-<table class="striped bill">
-    <thead>
-      	<tr>
-          <th>Serial No</th>
-      		<th>Report Date</th>
-          <th>Report Name</th>
-          <th>Bill Amount</th>
-      	</tr>
-    </thead>
-    <tbody>
-    	<% @order.account_statement[:bill].each_with_index{|bill,key| %>
-    		<tr>
-    			<td><%= key + 1 %></td>
-          <td><%= bill[:date] %></td>
-    			<td><%= bill[:text_value] %></td>
-    			<td><%= bill[:amount] %></td>
-    		</tr>
-    	<% } %>
-    </tbody>
-</table>
-
-<h4 class="header">Payments</h4>
-<table class="striped payment">
-    <thead>
-      	<tr>
-            <th>Serial No</th>
-            <th>Payment Date</th>
-          	<th>Amount</th>
-      	</tr>
-    </thead>
-    <tbody>
-    	<% @order.account_statement[:payment].each_with_index{|payment,key| %>
-    		<tr>
-    			<td><%= key + 1 %></td>
-          <td><%= payment[:date] %></td>
-    			<td><%= payment[:amount] %></td>
-    		</tr>
-    	<% } %>
-    </tbody>
-</table>
+<% end %>
+<%= render :partial => "/business/orders/report_summary" %>
+<!-- now take each report and show it on a new page -->
+<% object.reports.each do |report| %>
+	<!-- render the pdf view, take each test and generate its summary row. -->
+	<!-- here will come the signing authority -->
+<% end %>
+<!-- so first i build a pdf view, which is basically a show view for test and report -->

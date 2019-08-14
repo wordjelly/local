@@ -1,0 +1,35 @@
+<% if @order.has_abnormal_reports? %>
+	<h5>Summary of Abnormal Results</h5>
+	<% @order.reports.each do |report| %>
+		<% if report.all_tests_verified? %>
+			<% if report.has_abnormal_tests? %>
+				<div class="card">
+					<div class="card-content">
+						<div class="card-title">
+							<%= report.name %>
+						</div>
+						<% t = Diagnostics::Test.new %>
+						<table class="striped">
+							<%= t.summary_table_headers({"root" => "order"}) %>
+							<% report.tests.each do |test| %>
+								<% if test.is_abnormal? %>
+									<%= test.summary_row({"root" => "order"}) %>
+								<% end %>
+							<% end %>
+						</table>
+					</div>
+				</div>
+			<% end %>
+		<% end %>
+	<% end %>
+<% else %>
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				All Reports are within normal ranges.
+			</div>
+		</div>
+	</div>
+<% end %>
+<h5>Detailed Reports Follow</h5>
+<%= render :partial => "/layouts/pdf/page_break" %>

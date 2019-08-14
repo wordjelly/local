@@ -13,6 +13,8 @@ class Diagnostics::Test
 	NUMERIC_RESULT = "numeric"
 	DEFAULT_RESULT = "-"
 	DEFAULT_UNITS = "-"
+	VERIFIED = 1
+	NOT_VERIFIED = -1
 
 	index_name "pathofast-tests"
 
@@ -58,6 +60,19 @@ class Diagnostics::Test
 	attribute :result_raw, String, mapping: {type: 'keyword'}, default: DEFAULT_RESULT
 
 	attribute :units, String, mapping: {type: 'keyword'}, default: DEFAULT_UNITS
+
+
+	## @return[Boolean] true/false : true if there is an applicable range and it is abnormal.
+	## false otherwise
+	## @called_from : order_concern.rb#has_abnormal_reports , which is in turn called from views/business/orders/report_summary, which is in turn called from views/business/orders/show.pdf.erb
+	## the idea is to check if any of the tests are abnormal, so that we can show them in the summary.
+	def is_abnormal?
+		if range = self.get_applicable_range
+			range.is_abnormal == Diagnostics::Range::ABNORMAL
+		else
+			return false
+		end
+	end
 
 
 	def self.permitted_params
@@ -218,22 +233,29 @@ class Diagnostics::Test
 		self.result_type == NUMERIC_RESULT
 	end
 
+	## so this way it picks both the normal and abnormal range
+	## while both may be the same.
 	def assign_range(patient)
-		#puts "came to assign range."
-		self.ranges.map{|c|
+		normal_range_index = nil
+		self.ranges.each_with_index.map{|c,i|
 			if patient.meets_range_requirements?(c)
+				if c.is_normal_range?
+					normal_range_index = i if normal_range_index.blank?
+				end
 				if self.requires_numeric_result?
 					if ((self.result_numeric >= c.min_value) && (self.result_numeric <= c.max_value))
-						c.pick_range
+						c.pick_range	
 					end
 				elsif self.requires_text_result?
 					if self.result_text == c.text_value
 						c.pick_range
 					end
 				end
-				break
 			end
 		}
+		if normal_range_picked == false
+			self.ranges[normal_range_index].pick_normal_range unless normal_range_index.blank?
+		end
 	end
 
 	## test name is Schistocytes
@@ -258,6 +280,11 @@ class Diagnostics::Test
 		end
 	end
 
+	## gets the first range, 
+	def get_applicable_normal_range
+
+	end
+
 
 	def is_ready_for_reporting?
 		self.ready_for_reporting == -1 ? "No" : "Yes"
@@ -278,15 +305,21 @@ class Diagnostics::Test
 	##
 	###########################################################
 	def summary_row(args={})
+
 		if args["root"] =~ /order/
+			
 			inference = "-"
+			
 			range_name = "-"
+			
 			abnormal = "-"
+
 			if applicable_range = get_applicable_range
 				inference = applicable_range.inference
 				range_name = applicable_range.get_display_name 
 				abnormal = applicable_range.is_abnormal
 			end
+
 			'
 				<thead>
 		          <tr>

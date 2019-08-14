@@ -91,6 +91,7 @@ module Concerns::OrderConcern
 			document.update_report_items
 			document.add_report_values
 			document.verify
+			document.generate_pdf
 		end
 
 		after_save do |document|
@@ -98,12 +99,10 @@ module Concerns::OrderConcern
 		end
 
 		after_find do |document|
-			#puts " --------- triggered after find, to load patient. --------- "
 			document.load_patient
 		end
 
 	end
-
 
 	def update_reports
 		## problem is here.
@@ -374,12 +373,12 @@ module Concerns::OrderConcern
 			## and still fuse the queries
 
 			## we consider the desired start time and the procedure, as a parameter for commonality.
-			puts "procedure version is:"
-			puts report.procedure_version
-			puts "report name is: "
-			puts report.name.to_s
-			puts "start epoch is:"
-			puts report.start_epoch
+			#puts "procedure version is:"
+			#puts report.procedure_version
+			#puts "report name is: "
+			#puts report.name.to_s
+			#puts "start epoch is:"
+			#puts report.start_epoch
 			l = report.procedure_version + "_"
 			d = report.start_epoch.to_s + "_"
 			effective_version = report.procedure_version + "_" + report.start_epoch.to_s
@@ -401,15 +400,15 @@ module Concerns::OrderConcern
 			prev_start = nil
 			procedure_versions_hash[proc][:statuses].map{|c|
 				
-				puts "start time: #{start_time}"
+				#puts "start time: #{start_time}"
 				
-				puts "prev start: #{prev_start}"
+				#puts "prev start: #{prev_start}"
 				
-				puts "c duration: #{c.duration}"
+				#puts "c duration: #{c.duration}"
 
 				c.from = prev_start.blank? ? (start_time) : (prev_start + c.duration) 
 
-				puts "c from is: #{c.from}"
+				#puts "c from is: #{c.from}"
 
 				c.to = c.from + Diagnostics::Status::MAX_DELAY
 				prev_start = c.to
@@ -427,6 +426,13 @@ module Concerns::OrderConcern
 		Schedule::Minute.schedule_order(self)
 	
 				
+	end
+
+
+	def has_abnormal_reports?
+		self.reports.select{|c|
+			c.has_abnormal_reports?
+		}.size > 0
 	end
 
 

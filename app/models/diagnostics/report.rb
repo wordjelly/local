@@ -12,14 +12,13 @@ class Diagnostics::Report
 	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
 	include Concerns::SearchOptionsConcern
+	include Concerns::PdfConcern
 	include Concerns::Diagmodule::Report::OutsourceConcern
 
 	index_name "pathofast-diagnostics-reports"
 	document_type "diagnostics/report"
 
 	VERIFY_ALL = 1
-
-
 
 	## OBJECT ARRAYS
 	attribute :tests, Array[Diagnostics::Test]
@@ -33,6 +32,7 @@ class Diagnostics::Report
 	attribute :description, String, mapping: {type: 'keyword'}
 	attribute :patient_id, String, mapping: {type: 'keyword'}
 	attribute :tag_ids, Array, mapping: {type: "keyword"}, default: []
+
 	## 1 -> request rerun
 	## you have to enter a comment in the range
 	## 
@@ -53,12 +53,13 @@ class Diagnostics::Report
 	## tests which (a. are not already verified, are ready for reporting, and whose picked range is not abnormal)
 	attribute :verify_all, Integer, mapping: {type: 'integer'}, default: -1
 
-
-	## you can either make a report out of an order
-	## or you can make a report out of an individual report.
-	## order -> will generate comprehensive report automatically ?
-	## also report.
-	## it will generate a summary and also the detailed reports. 
+	## stat marked, means the report will be released as soon as it is ready, without waiting for other reports in the patient order.
+	## it also gets priority.
+	## default : -1 -> means its not stat
+	## 1 -> means its stat.
+	## @used_in : 
+	attribute :stat, Integer, mapping: {type: 'integer'}, default: -1
+		
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -115,6 +116,8 @@ class Diagnostics::Report
 		    indexes :rates, type: 'nested', properties: Business::Rate.index_properties
 		    indexes :tests, type: 'nested', properties: Diagnostics::Test.index_properties
 			indexes :start_epoch, type: 'integer'
+			indexes :verify_all, type: 'integer'
+			indexes :stat, type: 'integer'
 		end
 	end
 		
@@ -155,6 +158,8 @@ class Diagnostics::Report
 						:description,
 						:start_epoch,
 						:procedure_version,
+						:verify_all,
+						:stat,
 						{:tag_ids => []},
 						{
 							:requirements => Inventory::Requirement.permitted_params
@@ -216,6 +221,12 @@ class Diagnostics::Report
 				:properties => Diagnostics::Test.index_properties
 			},
 			:start_epoch => {
+				:type => 'integer'
+			},
+			:verify_all => {
+				:type => 'integer'
+			},
+			:stat => {
 				:type => 'integer'
 			}
 		}
@@ -409,6 +420,22 @@ class Diagnostics::Report
 
 		end
 
+	end
+
+	## @return[Boolean] true/false : true if all the tests are verified.
+	## @called_from : views/business/orders/report_summary
+	def all_tests_verified?
+		self.tests.select{|c|
+			c.verification_done == Diagnostics::Test::NOT_VERIFIED
+		}.size == 0
+	end
+
+	## @return[Boolean] true/false : true if any of the tests are abnormal.
+	## @called_from : views/business/orders/report_summary
+	def has_abnormal_tests?
+		self.tests.select{|c|
+			c.is_abnormal?
+		}.size > 0
 	end
 
 end	

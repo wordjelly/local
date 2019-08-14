@@ -16,6 +16,7 @@ class Diagnostics::Range
 	GENDERS = ["Male","Female","Other"]
 	DEFAULT_GENDER = "Not Selected"
 	DEFAULT_TEXT_VALUE = "Not Entered"
+	ABNORMAL = 1
 	
 
 
@@ -99,6 +100,14 @@ class Diagnostics::Range
 
 	attribute :inference, String, mapping: {type: 'text'}
 
+	## @set_from : Diagnostics::Test#assign_Range
+	## in that function, the range which suits the value and 
+	## age and sex, is first picked, as the "picked" range
+	## that may be abnormal or normal.
+	## in case an abnormal range is picked, we also need to pick one range
+	## as the normal range. This is marked as "normal_picked", this
+	## is required to show as the normal biological reference range.
+	attribute :normal_picked, Integer, mapping: {type: 'integer'}, default: -1
 
 	before_save do |document|
 		document.set_min_and_max_age
@@ -225,6 +234,10 @@ class Diagnostics::Range
 		self.picked = 1
 	end
 
+	def pick_normal_range
+		self.normal_picked = 1
+	end
+
 	###########################################################
 	##
 	## OVERRIDDEN FROM FORM CONCERN
@@ -268,6 +281,14 @@ class Diagnostics::Range
 	## @return[String] a combination of the 
 	def get_display_name
 		""
+	end
+
+	def is_normal_range?
+
+	end
+
+	def is_abnormal_range?
+
 	end
 
 end 

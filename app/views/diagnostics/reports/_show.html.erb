@@ -12,6 +12,8 @@
 -->
 <!-- this was currently being set inside item_requirements -->
 <!-- those items had to preexist, but we had -->
+<!-- so when i'm showing a report, i will be rendering show itself -->
+<!-- the show partial -->
 <tr>
 	<td><%= link_to @report.name, diagnostics_report_path(@report.id.to_s) %></td>
 	<td><%= @report.tests.size %></td>

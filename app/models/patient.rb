@@ -145,12 +145,8 @@ class Patient
 	attribute :medications_list, Array, mapping: {type: 'keyword'}
 	
 	after_find do |document|
-		puts "doing after find for PATIENT ==============="
 		unless document.date_of_birth.blank?
-			puts "date of birth is not blank."
 			document.current_age_in_hours = (Time.now - document.date_of_birth)/3600.0
-			puts "current age in hours is:"
-			puts document.current_age_in_hours
 		end
 	end
 	
@@ -205,24 +201,20 @@ class Patient
 	end
 
 	def meets_range_requirements?(range)
-		 puts "came to check meets range requiremetns."
-		 puts "range sex is: #{range.sex}"
-		 puts "self sex si: #{self.sex}"
-		 puts "range min age is: #{range.min_age}"
-		 puts "range max age is: #{range.max_age}"
-		 puts "current age in hours: #{self.current_age_in_hours}"
 		 if range.sex == self.sex
 		 	if ((range.min_age <= self.current_age_in_hours) && (range.max_age >= self.current_age_in_hours))
-		 		puts "will return TRUE."
 		 		return true
 		 	end
 		 end
-		 puts "will return FAlSE"
 		 return false
 	end
 
 	def self.permitted_params
 		[:id , {:patient => [:first_name,:last_name,:date_of_birth, :sex, :email, :mobile_number, :address, :allergies, :anticoagulants, :diabetic, :asthmatic, :heart_problems, {:medications_list => []}]}]
+	end
+
+	def has_history?
+		false
 	end
 
 end
