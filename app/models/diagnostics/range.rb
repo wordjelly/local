@@ -24,6 +24,13 @@ class Diagnostics::Range
 		["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","min_age","max_age"]		
 	end
 
+	def fields_not_to_show_in_form_hash(root="*")
+		{
+			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","min_age","max_age","picked","normal_picked","active"],
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","min_age","max_age"]
+		}
+	end
+
 	def customizations(root)
 		root ||= self.class.name.classify.demodulize.underscore.downcase
 		#puts "root is: #{root}"
@@ -160,7 +167,9 @@ class Diagnostics::Range
 			:kit, 
 			:reference,
 			:min_age,
-			:max_age
+			:max_age,
+			:normal_picked,
+			:active
 		]
 	end
 

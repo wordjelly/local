@@ -1,4 +1,3 @@
-require "schedule/minute"
 module Concerns::OrderConcern
 
 	extend ActiveSupport::Concern
@@ -91,17 +90,26 @@ module Concerns::OrderConcern
 			document.update_report_items
 			document.add_report_values
 			document.verify
+			document.set_accessors
 			document.generate_pdf
-		end
-
-		after_save do |document|
-			document.schedule
 		end
 
 		after_find do |document|
 			document.load_patient
+			document.set_accessors
 		end
 
+	end
+
+	## sets the accessors of order, if any, and also those of the
+	## child elements.
+	def set_accessors
+		self.reports.each do |report|
+			report.set_accessors
+			report.tests.each do |test|
+				test.set_accessors
+			end
+		end
 	end
 
 	def update_reports
@@ -346,7 +354,7 @@ module Concerns::OrderConcern
 
 	def verify
 		self.reports.each do |report|
-			if report.verify_all == Diagnostics::REPORT::VERIFY_ALL
+			if report.verify_all == Diagnostics::Report::VERIFY_ALL
 				report.tests.each do |test|
 					test.verify_if_normal
 				end
@@ -362,76 +370,10 @@ module Concerns::OrderConcern
 	## if its start and end time is exactly the same
 	## it can be merged for the query.
 
-	def schedule
-
-		procedure_versions_hash = {}
-		## let me sort this out first.
-		## where is the start epoch.
-		self.reports.each do |report|
-			## so first by start time
-			## then by procedure
-			## and still fuse the queries
-
-			## we consider the desired start time and the procedure, as a parameter for commonality.
-			#puts "procedure version is:"
-			#puts report.procedure_version
-			#puts "report name is: "
-			#puts report.name.to_s
-			#puts "start epoch is:"
-			#puts report.start_epoch
-			l = report.procedure_version + "_"
-			d = report.start_epoch.to_s + "_"
-			effective_version = report.procedure_version + "_" + report.start_epoch.to_s
-			if procedure_versions_hash[effective_version].blank?
-				procedure_versions_hash[effective_version] =
-				{
-					statuses: report.statuses,
-					reports: [report.id.to_s],
-					start_time: report.start_epoch
-				} 
-			else
-				procedure_versions_hash[effective_version][:reports] << report.id.to_s
-			end
-		end
-
-		## give the statuses the :from and :to timings.
-		procedure_versions_hash.keys.each do |proc|
-			start_time = procedure_versions_hash[proc][:start_time]
-			prev_start = nil
-			procedure_versions_hash[proc][:statuses].map{|c|
-				
-				#puts "start time: #{start_time}"
-				
-				#puts "prev start: #{prev_start}"
-				
-				#puts "c duration: #{c.duration}"
-
-				c.from = prev_start.blank? ? (start_time) : (prev_start + c.duration) 
-
-				#puts "c from is: #{c.from}"
-
-				c.to = c.from + Diagnostics::Status::MAX_DELAY
-				prev_start = c.to
-			}
-		end
-
-		self.procedure_versions_hash = procedure_versions_hash
-		## so we can just pass the whole order.
-		#puts "came to schedule order"
-
-		#puts "procedure versions hash is:"
-
-		#puts JSON.pretty_generate(self.procedure_versions_hash)
-
-		Schedule::Minute.schedule_order(self)
-	
-				
-	end
-
 
 	def has_abnormal_reports?
 		self.reports.select{|c|
-			c.has_abnormal_reports?
+			c.has_abnormal_tests?
 		}.size > 0
 	end
 
@@ -456,7 +398,8 @@ module Concerns::OrderConcern
 					    	},
 					    	{
 					    		:reports => Diagnostics::Report.permitted_params[1][:report]
-					    	}
+					    	},
+					    	:procedure_versions_hash
 						]
 					}
 				]

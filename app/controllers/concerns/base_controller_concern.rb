@@ -288,11 +288,22 @@ module Concerns::BaseControllerConcern
 			end		
 
 		else
-			## the get_model_params
-			## should have a default value for certain things.
-			## how do we ensure that?
-			#puts "IT DOES NOT RESPOND TO VERSIONING"
+			
+			new_instance = get_resource_class.new(get_model_params)
+			instance_variable_get("@#{get_resource_name}").send("determine_changed_attributes",new_instance)
+			puts "order changed attributes:"
+			puts @order.changed_attributes
+			@order.reports.each do |report|
+				puts "the report changed attributes are:"
+				puts report.changed_attributes
+				report.tests.each do |test|
+					puts "Test changed attributes are:"
+					puts test.changed_attributes
+				end
+			end
+			#exit(1)
 			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
+
 		end
 
 		#puts " ------ FROM UPDATE IN BASE CONTROLLER CONCERN"

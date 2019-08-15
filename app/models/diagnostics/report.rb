@@ -59,7 +59,25 @@ class Diagnostics::Report
 	## 1 -> means its stat.
 	## @used_in : 
 	attribute :stat, Integer, mapping: {type: 'integer'}, default: -1
-		
+			
+
+	####################################################
+	##
+	##
+	## ACCESSORS : SET AFTER_FIND.
+	##
+	##
+	####################################################
+	attr_accessor :report_all_tests_verified
+	attr_accessor :report_has_abnormal_tests
+
+	## @called_from : after_find in Concerns::OrderConcern#after_find
+	## sets all the accessors, and these are included in the json
+	## representation of this element.
+	def set_accessors
+		self.report_all_tests_verified = self.all_tests_verified?
+		self.report_has_abnormal_tests = self.has_abnormal_tests?
+	end
 
 	settings index: { 
 	    number_of_shards: 1, 
@@ -131,8 +149,8 @@ class Diagnostics::Report
 
 	def fields_not_to_show_in_form_hash(root="*")
 		{
-			"*" => ["create unless document.created_by_user.blank?d_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
-			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","description","patient_id","start_epoch","tag_ids"]
+			"*" => ["create unless document.created_by_user.blank?d_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","pdf_url","latest_version","request_rerun","start_epoch","verify_all","stat","outsource_to_organization_id","outsource_from_status_category","outsource_from_status_id","patient_id"],
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","description","patient_id","start_epoch","tag_ids","pdf_url","latest_version"]
 		}
 	end
 	## generates a huge concated string using the reference status version 
@@ -160,6 +178,10 @@ class Diagnostics::Report
 						:procedure_version,
 						:verify_all,
 						:stat,
+						:request_rerun,
+						:outsource_to_organization_id, 
+						:outsource_from_status_category, 
+						:outsource_from_status_id,
 						{:tag_ids => []},
 						{
 							:requirements => Inventory::Requirement.permitted_params
@@ -437,5 +459,16 @@ class Diagnostics::Report
 			c.is_abnormal?
 		}.size > 0
 	end
+
+	###########################################################
+	##
+	## override with methods to include all the attr_accessors.
+	##
+	## if you call to_json on order, then and only then these additional methods are included, calling, as_json on order, does not include these methods.
+	###########################################################
+	def as_json(options={})
+		super(:methods => [:report_has_abnormal_tests,:report_all_tests_verified])
+	end
+	##########################################################
 
 end	

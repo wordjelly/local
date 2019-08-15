@@ -1,5 +1,6 @@
-<% unless object.patient.blank? %>
-	<% @patient = object.patient %>
+<% @order = object %>
+<% unless @order.patient.blank? %>
+	<% @patient = @order.patient %>
 	<div class="card">
 		<div class="card-content">
 			<div class="card-title">
@@ -13,7 +14,9 @@
 <% end %>
 <%= render :partial => "/business/orders/report_summary" %>
 <!-- now take each report and show it on a new page -->
-<% object.reports.each do |report| %>
+<% @order.reports.each do |report| %>
+	<% @report = report %>
+	<%= render :partial => "/diagnostics/reports/pdf/show" %>
 	<!-- render the pdf view, take each test and generate its summary row. -->
 	<!-- here will come the signing authority -->
 <% end %>

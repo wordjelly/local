@@ -7,6 +7,8 @@ module Concerns::MissingMethodConcern
 	included do 
 		include ActiveModel::Validations
   		include ActiveModel::Validations::Callbacks
+
+  		attr_accessor :changed_attributes
 		# before validate , we call a methdo on order
 		# it takes each report, and sets the parent report id
 		# on the children, as well as the organization id, where
@@ -159,6 +161,92 @@ module Concerns::MissingMethodConcern
 			else
 				false
 			end
+		end
+
+		## different objects have the permitted params 
+		## mentioned differently
+		## for controller facing objects
+		## it consists of the id and then the next element is a hash with a key as the name of the object and the values as an array of their permitted params
+		## for more deeper nested objects, its just a flat array
+		## so first we get the list of permitted params.
+		## all those params have to be passed in.
+		## 
+		def get_permitted_params
+
+		end
+
+		## @return[nil]
+		## will return nothing
+		## will just add the names of the attributes that have changed
+		## to each attribute in self.
+		##  
+		def determine_changed_attributes(instance)
+
+
+
+			self.changed_attributes = []
+			self.class.attribute_set.select{|c| 
+				
+				## if a field is missing in the incoming hash
+				## we will be merging with existing,
+				## so that is not considered as a modification.
+				## so non permitted attributes can be ignored in this way.
+				
+				
+
+				if c.primitive.to_s == "Array"
+					if c.respond_to? "member_type"
+						if c.member_type.primitive.to_s == "BasicObject"
+							#self.plain_array_attributes << c
+							#rule out nil
+							if ((instance.send(c.name).blank?) || (self.send(c.name).blank?))
+								unless ((instance.send(c.name).blank?) && (self.send(c.name).blank?))
+									self.changed_attributes << c.name
+								end
+							else
+								self.changed_attributes << c.name unless (instance.send(c.name).sort == self.send(c.name).sort)
+							end
+						else
+							
+							if ((self.send(c.name).blank?) || (instance.send(c.name).blank?))
+
+								## if they are not equal, then changed.
+								unless ((self.send(c.name).blank?) && (instance.send(c.name).blank?))
+
+									self.changed_attributes << c.name
+
+								end
+
+							else
+							
+								self.send(c.name).each_with_index {|val,key|
+									val.determine_changed_attributes(instance.send(c.name)[key])
+									## pass this backwards.
+									if val.changed_attributes.size > 0
+										self.changed_attributes << c.name
+									end
+								}
+
+							end
+						end
+					else
+						#self.non_array_attributes << c
+						unless ((self.send(c.name).blank?) && (instance.send(c.name).blank?))
+
+							self.changed_attributes << c.name unless (instance.send(c.name) == self.send(c.name))								
+
+						end
+						
+					end
+				else
+					#self.non_array_attributes << c
+					unless ((self.send(c.name).blank?) && (instance.send(c.name).blank?))
+
+						self.changed_attributes << c.name unless (instance.send(c.name) == self.send(c.name))								
+
+					end
+				end
+			}
 		end
 
 		## call this before save in all the top level objects.

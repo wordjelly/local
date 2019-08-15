@@ -33,6 +33,11 @@ class Organization
 	USER_REJECTED = "Rejected"
 	OWNER_EMPLOYEE_ROLE_ID = "Owner"
 
+	## 1 centimeter is 37.7952755906
+	CM_TO_PIXEL = 37.7952755906
+
+	
+
 	attribute :name, String, mapping: {type: 'keyword'}
 
 	#attribute :address, String, mapping: {type: 'keyword'}
@@ -40,7 +45,26 @@ class Organization
 	## it is never accepted as an external parameter.	
 	attribute :lis_security_key, String, mapping: {type: 'keyword'}, default: Devise.friendly_token.first(25)
 
+	## the primary phone number.
 	attribute :phone_number, String, mapping: {type: 'keyword'}
+
+	## what facilities you have.
+	attribute :facilities, Array, mapping: {type: 'keyword'}
+
+	## What accredditation you have.
+	attribute :accreditations, Array, mapping: {type: 'keyword'}
+
+	## your timings -> mon-sun : 8 am to 8 pm, sun closed
+	attribute :timings, Array, mapping: {type: 'keyword'}
+
+	## alternative phone numbers
+	attribute :alternative_phone_numbers, Array, mapping: {type: 'keyword'}
+
+	## locations of different centers.
+	attribute :centers, Array, mapping: {type: 'keyword'}
+
+	## what is the slogan of the organization.
+	attribute :slogan, String, mapping: {type: 'keyword'}
 
 	attribute :description, String, mapping: {type: 'keyword'}
 
@@ -118,6 +142,80 @@ class Organization
 	#validates_presence_of :address
 
 	validates_presence_of :phone_number
+
+
+
+	#########################################################
+	##	##
+	## REPORT OPTIONS
+	## FOR YOUR OWN ORGANIZATION
+	##
+	#########################################################
+	
+	# each report in the pdf should be on a new page
+	attribute :each_report_on_new_page, String, mapping: {type: 'keyword'}, default: 'yes'
+
+	# generates pdf's of orders, where all reports are not yet verified
+	attribute :generate_partial_order_reports, String, mapping: {type: 'keyword'}, default: 'yes'
+		
+	# signatures 
+	# eg : lab owner, some technician etc.
+	# these signatures will be added in addition to the doctor who has signed the report
+	attribute :additional_employee_signatures, Array, mapping: {type: 'keyword'}
+		
+	# user ids of doctors/employees who can verify the reports.
+	attribute :who_can_verify_reports, Array, mapping: {type: 'keyword'}
+
+	# whether letter head should be printed or not?
+	attribute :we_have_pre_printed_letter_heads, String, mapping: {type: 'keyword'}, default: 'no'
+	attribute :space_to_leave_for_pre_printed_letter_head_in_cm, Float, mapping: {type: 'float'}
+
+	
+	# whether you have pre printed footers
+	attribute :we_have_pre_printed_footers, String, mapping: {type: 'keyword'}, default: 'no'
+	attribute :space_to_leave_for_pre_printed_footer_in_cm, Float, mapping: {type: 'float'}
+
+
+	attribute :generate_header, String, mapping: {type: 'keyword'}, default: 'yes'
+
+	
+	DEFAULT_PARAMETERS_TO_INCLUDE_IN_HEADER = ["phone_number","address","name","timings"]
+	attribute :parameters_to_include_in_header, Array, mapping: {type: 'keyword'}, default: DEFAULT_PARAMETERS_TO_INCLUDE_IN_HEADER	
+
+	## in the report -> we have certain things.
+	## who can verify it ?
+	## we have to calculate what has changed in the incoming hash.
+	## for each object level.
+	## go over each attribute, compare to existing.
+	## and see if the organization can do that or not 
+	## and if the user can do that or not.
+
+	#########################################################
+	##
+	##
+	## REPORT OPTIONS
+	## FOR OUTSOURCED REPORTS
+	##
+	#########################################################
+
+	## if you want it on the outsourced organization letter head, then it will have to be generated on a seperate page
+	## and it will be signed by their doctors.
+	attribute :outsourced_reports_have_original_letter_head, String, mapping: {type: 'keyword'}, default: 'no'
+
+	## if you want it directly on your letter head, then do you want a sign on it or not.
+	## if yes, then it will be signed.
+	attribute :outsourced_reports_have_our_letter_head, String, mapping: {type: 'keyword'}, default: 'yes'
+
+	## so that's it, for the options 
+	## now just determine whose report it is and render.
+
+	#########################################################
+	##
+	##
+	## 
+	##
+	##
+	#########################################################
 
     mapping do
       

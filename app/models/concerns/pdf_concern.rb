@@ -27,6 +27,7 @@ module Concerns::PdfConcern
 		return unless self.skip_pdf_generation.blank?
 
 		file_name = get_file_name
+		file_name = "test"
 	    
 	    ac = ActionController::Base.new
 	    
@@ -35,8 +36,10 @@ module Concerns::PdfConcern
 
 	    puts Rails.root.join('public', "#{file_name}.pdf")
 
+	    ## expects the pdf template to be in the views under a /pdf folder
+
 	    pdf = ac.render_to_string pdf: file_name,
-            template: "#{ Auth::OmniAuth::Path.pathify(self.class.name).pluralize}/show.pdf.erb",
+            template: "#{ Auth::OmniAuth::Path.pathify(self.class.name).pluralize}/pdf/show.pdf.erb",
             locals: {:object => self},
             layout: "pdf/application.html.erb",
             footer: {

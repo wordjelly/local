@@ -62,6 +62,69 @@ class Diagnostics::Test
 	attribute :units, String, mapping: {type: 'keyword'}, default: DEFAULT_UNITS
 
 
+	attr_accessor :display_result
+	attr_accessor :display_normal_biological_interval
+	attr_accessor :display_count_or_grade
+	attr_accessor :display_comments_or_inference
+	attr_accessor :test_is_abnormal
+	attr_accessor :test_is_ready_for_reporting
+	attr_accessor :test_is_verified
+	
+	## @called_from : after_find in Concerns::OrderConcern#after_find
+	## sets all the accessors, and these are included in the json
+	## representation of this element.
+	def set_accessors
+
+		# display result
+		if self.result_type == TEXTUAL_RESULT
+			self.display_result = self.result_text
+		elsif self.result_type == NUMERIC_RESULT
+			self.display_result = self.result_numeric
+		end
+
+		# normal interval
+		if normal_range = get_applicable_normal_range
+			if normal_range.text_value == Diagnostics::Range::DEFAULT_TEXT_VALUE
+				## show the min to max values.
+				self.display_normal_biological_interval = normal_range.min_value.to_s + "-" + normal_range.max_value.to_s
+			else
+				## show the text value.
+				self.display_normal_biological_interval = normal_range.text_value
+			end		 
+		end
+
+		## okay now check that it gets abnormal correctly.
+		## and why the tube is not being registered on the report
+		## what options does the organization have to have.
+		## so who should sign?
+		## do we have each
+		## report on new page
+
+
+
+		# count/grade
+		# comments
+		if applicable_range = get_applicable_range
+			self.display_count_or_grade = (applicable_range.grade || applicable_range.count || "-")
+			self.display_comments_or_inference = applicable_range.inference
+		end
+
+		# is abnormal
+		self.test_is_abnormal = self.is_abnormal?
+
+		# test is ready for reporting
+		self.test_is_ready_for_reporting = self.is_ready_for_reporting?
+		
+		# test is verified.
+		self.test_is_verified = self.is_verification_done?
+
+		# test units.
+
+
+	end
+
+
+
 	## @return[Boolean] true/false : true if there is an applicable range and it is abnormal.
 	## false otherwise
 	## @called_from : order_concern.rb#has_abnormal_reports , which is in turn called from views/business/orders/report_summary, which is in turn called from views/business/orders/show.pdf.erb
@@ -72,6 +135,17 @@ class Diagnostics::Test
 		else
 			return false
 		end
+	end
+
+	def is_ready_for_reporting?
+		## for this to be set, we need to have the reportable status
+		## to have been set as completed.
+		## so i can set this manually for the moment.
+		self.ready_for_reporting == -1 ? "No" : "Yes"
+	end
+
+	def is_verification_done?
+		self.verification_done == -1 ? "Pending Verification"  : "Verified"
 	end
 
 
@@ -90,6 +164,8 @@ class Diagnostics::Test
 			:verification_done,
 			:ready_for_reporting,
 			:result_type,
+			:result_text,
+			:result_numeric,
 			:result_raw,
 			:units
 		]
@@ -157,8 +233,8 @@ class Diagnostics::Test
 
 	def fields_not_to_show_in_form_hash(root="*")
 		{
-			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
-			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","lis_code","description","ready_for_reporting","verification_done","result_text","result_raw","result_numeric","result_type","references","units"]
+			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","ready_for_reporting","verification_done","result_text","result_numeric","result_raw"],
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","lis_code","description","verification_done","result_text","result_raw","result_numeric","result_type","references","units"]
 		}
 	end
 
@@ -208,13 +284,13 @@ class Diagnostics::Test
 
 			if incorrect_result_format.blank?
 				if self.requires_numeric_result?
-					begin
+					#begin
 						self.result_numeric = self.result_raw.gsub(/[a-zA-Z[[:punct]]]/,'').to_f
 						self.result_text = self.result_raw
 						self.assign_range(patient)
-					rescue
+					#rescue => e
 
-					end
+					#end
 				else
 					self.result_text = self.result_raw
 					self.assign_range(patient)
@@ -226,36 +302,43 @@ class Diagnostics::Test
 	end
 
 	def requires_numeric_result?
-		self.result_type == TEXTUAL_RESULT
+		self.result_type == NUMERIC_RESULT
 	end
 
 	def requires_text_result?
-		self.result_type == NUMERIC_RESULT
+		self.result_type == TEXTUAL_RESULT
 	end
 
 	## so this way it picks both the normal and abnormal range
 	## while both may be the same.
 	def assign_range(patient)
 		normal_range_index = nil
+		puts "came to assign range"
 		self.ranges.each_with_index.map{|c,i|
 			if patient.meets_range_requirements?(c)
+				puts "the patient meets the requirements."
 				if c.is_normal_range?
+					puts "it is a normal range"
 					normal_range_index = i if normal_range_index.blank?
 				end
 				if self.requires_numeric_result?
+					puts "it requires a numeric result"
 					if ((self.result_numeric >= c.min_value) && (self.result_numeric <= c.max_value))
+						puts "picks the range for the numeric result"
 						c.pick_range	
 					end
 				elsif self.requires_text_result?
+					puts "it requires a text result"
 					if self.result_text == c.text_value
+						puts "picks the text range"
 						c.pick_range
 					end
 				end
 			end
 		}
-		if normal_range_picked == false
-			self.ranges[normal_range_index].pick_normal_range unless normal_range_index.blank?
-		end
+		
+		self.ranges[normal_range_index].pick_normal_range unless normal_range_index.blank?
+		
 	end
 
 	## test name is Schistocytes
@@ -282,21 +365,32 @@ class Diagnostics::Test
 
 	## gets the first range, 
 	def get_applicable_normal_range
+		
+		res = self.ranges.select{|c|
+			c.normal_picked = 1
+		}
 
-	end
+		if res.blank?
+			nil	
+		else
+			res[0]
+		end
 
-
-	def is_ready_for_reporting?
-		self.ready_for_reporting == -1 ? "No" : "Yes"
-	end
-
-	def is_verification_done?
-		self.verification_done == -1 ? "Pending Verification"  : "Verified"
 	end
 
 	## and then after verified => dispatch report.
 	## this can be done at the level of the report only =>
 
+
+	###########################################################
+	##
+	## override with methods to include all the attr_accessors.
+	##
+	###########################################################
+	def as_json(options={})
+		super(:methods => [:display_result,:display_normal_biological_interval,:display_count_or_grade,:display_comments_or_inference,:test_is_abnormal,:test_is_ready_for_reporting,:test_is_verified])
+	end
+	## okay so these are included.
 	###########################################################
 	##
 	##

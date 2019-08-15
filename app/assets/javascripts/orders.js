@@ -58,3 +58,11 @@ $(document).on('click','.add_result_manually',function(event){
 	result_raw.parent().show();
 });	
 
+$(document).on('click','.verify',function(event){
+	var nested_element_id = $(this).attr("data-id");
+	var nested_element = $("#" + nested_element_id);
+	var verification_done = nested_element.find('[name="order[reports][][tests][][verification_done]"]');
+	verification_done.val("1");
+	$(".edit_order").first().submit();
+});	
+
