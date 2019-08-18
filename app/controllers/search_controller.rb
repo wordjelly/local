@@ -88,12 +88,19 @@ class SearchController < ApplicationController
 
 	def type_selector
 			
-		## but the current user has to be used
-		## and this has to be exposed to json also
-		## 
+		 
 		@type = params[:type]
-		#puts "autocomplete type is: #{@type}"
-		response = Elasticsearch::Persistence.client.search index: "pathofast-#{@type}", body: build_query
+
+		## you can directly pass the name of the 
+		@index_name = params[:index_name] || "pathofast-#{@type}"
+			
+		## now does the user have a name.	
+		## so just make sure it is there in search all
+		## and you can get the users.
+		## of the current organization.
+		## go for user.
+		
+		response = Elasticsearch::Persistence.client.search index: @index_name, body: build_query
 		mash = Hashie::Mash.new response 
 		puts "the total hits are:"
 		puts mash.hits.hits.size.to_s

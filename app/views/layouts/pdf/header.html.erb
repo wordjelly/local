@@ -1,0 +1,82 @@
+<% @order = object %>
+<% organization =  @order.created_by_user.organization %>
+<div id="header">
+  <!-- do we leave space for the letter head or do we make a letter head ? -->
+  <!-- currently held by organization id -->
+  	<% if organization.we_have_pre_printed_letter_heads == Organization::YES %>
+  	<!-- there are  pre printed letter heads -->
+  		<div style="height: <%= organization.space_to_leave_for_pre_printed_letter_head_in_cm*Organization::CM_TO_PIXEL; %>px"></div>
+  	<% else %>
+  		<% if organization.generate_header == Organization::YES %>
+  			<h3 class="teal-text text-darken-1"><%= organization.name %></h3>
+  			<!-- show the slogan if it is included -->
+  			<% if organization.parameters_to_include_in_header.include? "slogan" %>
+  				<% unless organization.slogan.blank? %>
+  					<h5 class="teal-text text-darken-1"><%= organiztion.slogan %></h5>
+  				<% end %>
+  			<% end %>
+
+  			<!-- phone numbers -->
+  			<h6 class="grey-text">
+	  			<% if organization.parameters_to_include_in_header.include? "phone_number" %>
+	  				<% unless organization.phone_number.blank? %>
+	  					Tel : <span><%= organization.phone_number %></span>	
+	  				<% end %>
+	  				<% organization.alternative_phone_numbers.each do |alt_ph| %>
+	  					<span>|<%= alt_ph %></span>
+	  				<% end %>
+	  			<% end %>
+	  			<% if organization.parameters_to_include_in_header.include? "fax_number" %>
+	  				<% unless organization.fax_number.blank? %>
+	  					<span>|<%= organization.fax_number %></span>
+	  				<% end %>
+	  			<% end %>
+  			</h6>
+			
+			<!-- Address/Centers/Facilities -->
+  			<h6 class="grey-text">
+	  			<% if organization.parameters_to_include_in_header.include? "address" %>
+	  				<span> | Address</span>
+	  				<% unless organization.address.blank? %>
+	  					<span><%= organization.address %></span>	
+	  				<% end %>
+	  			<% end %>
+	  			<% if organization.parameters_to_include_in_header.include? "centers" %>
+	  				<span> | Centers :</span>
+	  				<% unless organization.centers.blank? %>
+	  					<% organization.centers.each do |center| %>
+	  						<span><%= center %>|</span>
+	  					<% end %>
+	  				<% end %>
+	  			<% end %>
+	  			<% if organization.parameters_to_include_in_header.include? "facilities" %>
+	  				<span> | Facilities :</span>
+	  				<% unless organization.facilities.blank? %>
+	  					<% organization.facilities.each do |facility| %>
+	  						<span><%= facility %>|</span>
+	  					<% end %>
+	  				<% end %>
+	  			<% end %>
+	  			<% if organization.parameters_to_include_in_header.include? "accreditations" %>
+	  				<span> | Accreditations :</span>
+	  				<% unless organization.accreditations.blank? %>
+	  					<% organization.accreditations.each do |accreditation| %>
+	  						<span><%= organization.accreditation %>|</span>
+	  					<% end %>
+	  				<% end %>
+	  			<% end %>
+  			</h6>
+  		<% end %>
+  		<!-- render patient details on each page ? -->
+  		<% if organization.show_patient_details_on_each_page == Organization::YES %>
+  			<% patient = @order.patient %>
+  			<div class="divider">
+			  	<h6>Name: <%= patient.full_name %> | Age: <%= patient.age %> | Gender: <%= patient.sex %> | Date of Birth: <%= patient.date_of_birth %></h6>
+			  	<h6>Referring Doctor: <%= patient.referring_doctor %> | Mobile Number: <%= patient.mobile_number %> | Address : <%= patient.address %></h6>
+  			</div>
+  		<% end %>
+  		<!-- if outsourced reports have their own letter heads -->
+  		<!-- then this header and footer wont' work -->
+  		<!-- those will be seperate pdf's -->
+  	<% end %>
+</div>

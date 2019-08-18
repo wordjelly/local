@@ -32,6 +32,8 @@ class Organization
 	USER_PENDING_VERIFICATION = "Pending Verification"
 	USER_REJECTED = "Rejected"
 	OWNER_EMPLOYEE_ROLE_ID = "Owner"
+	YES = 1
+	NO = 0
 
 	## 1 centimeter is 37.7952755906
 	CM_TO_PIXEL = 37.7952755906
@@ -47,6 +49,12 @@ class Organization
 
 	## the primary phone number.
 	attribute :phone_number, String, mapping: {type: 'keyword'}
+
+	## the fax number
+	attribute :fax_number, String, mapping: {type: 'keyword'}
+
+	## the website
+	attribute :website, String, mapping: {type: 'keyword'}
 
 	## what facilities you have.
 	attribute :facilities, Array, mapping: {type: 'keyword'}
@@ -135,15 +143,11 @@ class Organization
 	attr_accessor :owned_by_current_user
 	attr_accessor :current_user_role_id
 
-	OWNED_BY_CURRENT_USER = "yes"
+	OWNED_BY_CURRENT_USER = YES
 
 	attr_accessor :locations
 
-	#validates_presence_of :address
-
 	validates_presence_of :phone_number
-
-
 
 	#########################################################
 	##	##
@@ -153,11 +157,11 @@ class Organization
 	#########################################################
 	
 	# each report in the pdf should be on a new page
-	attribute :each_report_on_new_page, String, mapping: {type: 'keyword'}, default: 'yes'
+	attribute :each_report_on_new_page, Integer, mapping: {type: 'integer'}, default: YES
 
 	# generates pdf's of orders, where all reports are not yet verified
-	attribute :generate_partial_order_reports, String, mapping: {type: 'keyword'}, default: 'yes'
-		
+	attribute :generate_partial_order_reports, Integer, mapping: {type: 'integer'}, default: YES
+	
 	# signatures 
 	# eg : lab owner, some technician etc.
 	# these signatures will be added in addition to the doctor who has signed the report
@@ -167,28 +171,30 @@ class Organization
 	attribute :who_can_verify_reports, Array, mapping: {type: 'keyword'}
 
 	# whether letter head should be printed or not?
-	attribute :we_have_pre_printed_letter_heads, String, mapping: {type: 'keyword'}, default: 'no'
-	attribute :space_to_leave_for_pre_printed_letter_head_in_cm, Float, mapping: {type: 'float'}
+	attribute :we_have_pre_printed_letter_heads, Integer, mapping: {type: 'integer'}, default: NO
+
+	DEFAULT_HEADER_SPACE_TO_LEAVE = 5.0
+
+	attribute :space_to_leave_for_pre_printed_letter_head_in_cm, Float, mapping: {type: 'float'}, default: DEFAULT_HEADER_SPACE_TO_LEAVE
 
 	
 	# whether you have pre printed footers
-	attribute :we_have_pre_printed_footers, String, mapping: {type: 'keyword'}, default: 'no'
-	attribute :space_to_leave_for_pre_printed_footer_in_cm, Float, mapping: {type: 'float'}
+	attribute :we_have_pre_printed_footers, Integer, mapping: {type: 'integer'}, default: NO
 
 
-	attribute :generate_header, String, mapping: {type: 'keyword'}, default: 'yes'
+	DEFAULT_FOOTER_SPACE_TO_LEAVE = 5.0
+
+	attribute :space_to_leave_for_pre_printed_footer_in_cm, Float, mapping: {type: 'float'}, default: DEFAULT_FOOTER_SPACE_TO_LEAVE
+
+
+	attribute :generate_header, Integer, mapping: {type: 'integer'}, default: YES
 
 	
 	DEFAULT_PARAMETERS_TO_INCLUDE_IN_HEADER = ["phone_number","address","name","timings"]
+
 	attribute :parameters_to_include_in_header, Array, mapping: {type: 'keyword'}, default: DEFAULT_PARAMETERS_TO_INCLUDE_IN_HEADER	
 
-	## in the report -> we have certain things.
-	## who can verify it ?
-	## we have to calculate what has changed in the incoming hash.
-	## for each object level.
-	## go over each attribute, compare to existing.
-	## and see if the organization can do that or not 
-	## and if the user can do that or not.
+	attribute :show_patient_details_on_each_page, Integer, mapping: {type: 'integer'}, default: YES
 
 	#########################################################
 	##
@@ -200,14 +206,23 @@ class Organization
 
 	## if you want it on the outsourced organization letter head, then it will have to be generated on a seperate page
 	## and it will be signed by their doctors.
-	attribute :outsourced_reports_have_original_letter_head, String, mapping: {type: 'keyword'}, default: 'no'
+	## in this case, do these in the end.
+	## still group by signing authority.
+	## if they are being generated on your letter head.
+	## then -> 
+	attribute :outsourced_reports_have_original_format, Integer, mapping: {type: 'integer'}, default: NO
 
 	## if you want it directly on your letter head, then do you want a sign on it or not.
 	## if yes, then it will be signed.
-	attribute :outsourced_reports_have_our_letter_head, String, mapping: {type: 'keyword'}, default: 'yes'
+	## apply our letter head settings (could be blank, then it will have the sign of those who sign your outsourced reports.)
+	## if this is yes -> then it will also have to be provided something for which of our employees will sign outsourced reports.
+	attribute :use_our_letter_head_settings_for_outsourced_reports, Integer, mapping: {type: 'keyword'}, default: 1
+
+	attribute :which_of_our_employees_will_resign_outsourced_reports,Array, mapping: {type: 'keyword'}, default: [] 
 
 	## so that's it, for the options 
 	## now just determine whose report it is and render.
+	attribute :add_processed_at_footnote_if_using_our_letter_head, Integer, mapping: {type: 'integer'}, default: YES
 
 	#########################################################
 	##
@@ -259,7 +274,40 @@ class Organization
 
 	## so these are the permitted params.
 	def self.permitted_params
-		base = [:id,{:organization => [:parent_id, :role, :name, :description, :phone_number, {:user_ids => []}, :role_name,  {:role_ids => []}, {:rejected_user_ids => []}] }]
+
+		base = 
+		[
+			:id,
+			{:organization => 
+				[
+				 :parent_id,
+				 :role,
+				 :name,
+				 :description,
+				 :phone_number, 
+				 {:user_ids => []},
+				 :role_name,  
+				 {:role_ids => []}, 
+				 {:rejected_user_ids => []}, 
+				 :each_report_on_new_page,
+				 :generate_partial_order_reports, 
+				 {:additional_employee_signatures => []},
+				 {:who_can_verify_reports => []},
+				 :we_have_pre_printed_letter_heads,
+				 :space_to_leave_for_pre_printed_letter_head_in_cm, 
+				 :we_have_pre_printed_footers, 
+				 :space_to_leave_for_pre_printed_letter_head_in_cm, 
+				 :generate_header,
+				 {:parameters_to_include_in_header => []}, 
+				 :show_patient_details_on_each_page, 
+				 :outsourced_reports_have_original_format, 
+				 :use_our_letter_head_settings_for_outsourced_reports,
+				 {:which_of_our_employees_will_resign_outsourced_reports => []},
+				 :add_processed_at_footnote_if_using_our_letter_head
+				] 
+			}
+		]
+
 		if defined? @permitted_params
 			base[1][:organization] << @permitted_params
 			base[1][:organization].flatten!

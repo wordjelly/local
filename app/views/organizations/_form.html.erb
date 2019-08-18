@@ -31,7 +31,7 @@
   	<% end %>
 
 
-  	<h6><i class="material-icons" id="toggle_advanced">add</i>Advanced</h6>
+  	<h6><i class="material-icons toggle" data-target-id="advanced">add</i>Advanced</h6>
 	
 	<!-- abstract into a seperate partial -->
 	<div id="advanced" style="display:none;">
@@ -42,24 +42,109 @@
 		<%= render :partial => "/organizations/settings", locals: {f: f} %>
 	</div>
 
+	<h6><i class="material-icons toggle" data-target-id="report_options">add</i>Report Format and Outsourcing Options</h6>
+
+	<div id="report_options" style="display:none;">
+		<!--  -->
+		<% [:additional_employee_signatures, :who_can_verify_reports, :which_of_our_employees_will_resign_outsourced_reports].each do |ar| %>
+			<div class="card">
+				<div class="card-content">
+					<div class="card-title">
+
+					</div>
+					<%= f.text_field ar , :data => {:autocomplete_type => "users", :index_name => "pathofast_pathofast-users", :multiple => true, :multiple_element_name => "organization[#{ar}][]"}, :autocomplete => "off" %>
+
+					<%= f.label ar %>
+
+					<%= render :partial => "/shared/display_array", locals: {model: @organization, multiple_el: "#{ar}"} %>
+				</div>
+			</div>
+		<% end %>
+
+		<!-- we have to also add all this stuff -->
+
+		<!-- we want some select options for the parameters to include in the headers, then the doctors signatures. -->
+		<div class="card">
+			<div class="card-content">
+				<div class="card-title">
+					Letter Head Options
+				</div>
+
+				<h6 id="toggle_pre_printed_letter_head" class="toggle" data-target-id="pre_printed_letter_head">Click Here If You have pre printed letter heads</h6>
+				<div id="pre_printed_letter_head" style="display:none;">				
+
+					<label>
+						<%= f.check_box :we_have_pre_printed_letter_heads, id: "we_have_pre_printed_letter_heads" %>
+						<span>Tick this box if you have papers with your letter head already printed on them.</span>
+					</label>
+
+
+					<%= f.number_field :space_to_leave_for_pre_printed_letter_head_in_cm %>
+					<%= f.label :space_to_leave_for_pre_printed_letter_head_in_cm %>
+
+					<label>
+						<%= f.check_box :we_have_pre_printed_footers, id: "we_have_pre_printed_letter_heads" %>
+						<span>Tick this box if you have papers with footers already printed on them.</span>
+					</label>
+
+					<%= f.number_field :space_to_leave_for_pre_printed_footer_in_cm %>
+					<%= f.label :space_to_leave_for_pre_printed_footer_in_cm %>
+				</div>
+
+				<label>
+					<%= f.check_box :show_patient_details_on_each_page, id: "show_patient_details_on_each_page" %>
+					<span>Tick this box to show the patients details on each page of the report(NABL norms)</span>
+				</label>
+
+				<h6 id="toggle_custom_letter_head" data-target-id="custom_letter_head" class="toggle">Click Here If You want to automatically generate your letter head</h6>
+				<div id="custom_letter_head">
+					<label>
+						<%= f.check_box :generate_header, id: "generate_header" %>
+						<span>Tick this box to enable generation of letter head</span>
+					</label>
+
+					<h6>Select the fields which you want shown in your letter head</h6>
+					<% Organization::DEFAULT_PARAMETERS_TO_INCLUDE_IN_HEADER + [:fax_number,:website, :facilities,:accreditations,:timings,:alternative_phone_numbers, :slogan, :centers].each do |letter_head_option| %>
+						<div>
+						<label>
+							<%= f.check_box letter_head_option, id: letter_head_option.to_s %>
+							<span><%= letter_head_option %></span>
+						</label>
+						</div>
+
+					<% end %>
+
+				</div>
+			</div>
+		</div>
+
+		<h6 data-target-id="outsourced_report_options" class="toggle">Click here to Set Outsourced report options</h6>
+		<div class="card" id="outsourced_report_options">
+			<div class="card-content">
+				<div class="card-title">
+					Outsourced Report Options
+				</div>
+				<div>
+					<label>
+						<%= f.check_box :outsourced_reports_have_original_format, id: "outsourced_reports_have_original_letter_head" %>
+						<span>Reports Outsourced should be generated on the letterhead of the outsourced lab</span>
+					</label>
+				</div>				
+				<div>
+					<label>
+						<%= f.check_box :use_our_letter_head_settings_for_outsourced_reports, id: "use_our_letter_head_settings_for_outsourced_reports" %>
+						<span>Outsourced reports are generated on your letter head</span>
+					</label>
+				</div>
+				<div>
+					<label>
+						<%= f.check_box :add_processed_at_footnote_if_using_our_letter_head, id: "add_processed_at_footnote_if_using_our_letter_head" %>
+						<span>Add a "Processed At : Name of Original Lab" for outsourced reports</span>
+					</label>
+				</div>
+			</div>
+		</div>
+
+	</div>
 	<%= f.submit "Submit" %>
-
 <% end %>
-
-<!-- next step is how am i going to sort out the architecture for the rest of it -->
-<!-- and its visibility issues -->
-<!-- first a UI for our creation of a report, its ranges etc,-->
-<!-- i want to first sort that out -->
-<!-- then we move to the creation of an order -->
-<!-- via a patient, order scheduling, without statuses -->
-<!-- and interfacing with LIS, this won't be very problematic -->
-<!-- problem will come with requirements -->
-<!-- that is the issue actually -->
-<!-- so they enter report names , and outsource to pathofast -->
-<!-- and upload their letter head -->
-<!-- if outsource is true, how does the visibility play out -->
-<!-- we can add the outsourced organziation as an owner also -->
-<!-- that can work -->
-<!-- so ownership comes -->
-<!-- how does the patient integration work, so we make an order with a patient name ?, or do we put the patient in the order?, will be simpler -->
-<!-- so each time you create a new patient, or search existing -->

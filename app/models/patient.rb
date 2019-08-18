@@ -60,6 +60,8 @@ class Patient
 	attribute :date_of_birth, DateTime
 	validates_presence_of :date_of_birth
 
+	attribute :referring_doctor, String, mapping: {type: 'keyword'}
+
 	attr_accessor :current_age_in_hours
 
 	attribute :address, String
@@ -210,7 +212,7 @@ class Patient
 	end
 
 	def self.permitted_params
-		[:id , {:patient => [:first_name,:last_name,:date_of_birth, :sex, :email, :mobile_number, :address, :allergies, :anticoagulants, :diabetic, :asthmatic, :heart_problems, {:medications_list => []}]}]
+		[:id , {:patient => [:first_name,:last_name,:date_of_birth, :sex, :email, :mobile_number, :address, :allergies, :anticoagulants, :diabetic, :asthmatic, :heart_problems, {:medications_list => []}, :referring_doctor]}]
 	end
 
 	def has_history?

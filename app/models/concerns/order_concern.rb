@@ -15,7 +15,6 @@ module Concerns::OrderConcern
 		attribute :categories, Array[Inventory::Category] 
 
 		attribute :payments, Array[Business::Payment]
-
 		## a new report chosen is first added to these
 		## then internally is used to load the relevant report
 		## and populate the reports array.
@@ -81,6 +80,12 @@ module Concerns::OrderConcern
 
 		end
 
+		## do this on order.
+		## only.
+		validate :can_modify
+
+		validate :tests_verified_by_authorized_users_only
+
 		## this should happen before the validations.
 		## not after.
 		before_validation do |document|
@@ -99,6 +104,62 @@ module Concerns::OrderConcern
 			document.set_accessors
 		end
 
+	end
+
+		
+	## validation called from self.
+	def tests_verified_by_authorized_users_only
+		self.changed_attributes.each do |attr|
+			if attr.to_s == "reports"
+				self.reports.each do |r|
+					if r.changed_attributes.include? "tests"
+						r.tests.each do |test|
+							if test.changed_attributes.include? "verification_done"
+								## can the current user do this ?
+
+							end
+						end
+					end
+				end
+			end
+		end
+	end	
+
+
+	def current_can_verify_test?(report,test) 
+		
+		report_issuer_organization = Organization.find(report.currently_held_by_organization_id)
+
+		
+
+	end
+
+	## @called from : self, it is a validation.
+	def can_modify
+		self.changed_attributes.each do |attr|
+			if attr.to_s == "reports"
+				## reports were edited.
+				## for each report, if it has changed attributes
+				## check and add.
+				## don't need to dive further in.
+				self.reports.each do |r|
+					unless r.changed_attributes.blank?
+						if r.owner_ids.include? self.created_by_user_id
+						elsif r.owner_ids.include? self.created_by_user.organization.id.to_s
+						else
+							self.errors.add(:reports,"You cannot edit #{attr.name.to_s}")
+						end
+					end
+				end		
+			else
+				## only in case of 
+				if self.owner_ids.include? self.created_by_user.id.to_s
+				elsif self.owner_ids.include? self.created_by_user.organization.id.to_s
+				else
+					self.errors.add(:owner_ids,"You cannot edit the field: #{attr.to_s}")
+				end
+			end
+		end
 	end
 
 	## sets the accessors of order, if any, and also those of the
@@ -362,6 +423,8 @@ module Concerns::OrderConcern
 		end
 	end
 
+
+
 	## how to synchronize the queries.
 	## group statuses by query ?
 	## maybe that will work, if the start time and end time is the same ?
@@ -375,6 +438,71 @@ module Concerns::OrderConcern
 		self.reports.select{|c|
 			c.has_abnormal_tests?
 		}.size > 0
+	end
+
+	##############################################################
+	##
+	##
+	## OVERRIDE GENERATE PDF.
+	##
+	##
+	##############################################################
+	def generate_pdf
+			
+		return unless self.skip_pdf_generation.blank?
+
+		file_name = get_file_name
+		file_name = "test"
+	    
+	    ac = ActionController::Base.new
+
+	    ## we have to pass organization
+	    ## reports
+	    ## reports will have to carry a signed by.
+	    ## that will be used to sign it.
+	    ## that can be picked up from the report itself.
+
+	    
+	    pdf = ac.render_to_string pdf: file_name,
+            template: "#{ Auth::OmniAuth::Path.pathify(self.class.name).pluralize}/pdf/show.pdf.erb",
+            locals: {:object => self},
+            layout: "pdf/application.html.erb",
+            header: {
+            	html: {
+            		template:'/layouts/pdf/header.html.erb',
+            		layout: '/layouts/pdf/empty_layout.html.erb',
+            		locals: {:object => self}
+            	}
+            },
+            footer: {
+           		html: {   
+           			template:'/layouts/pdf/footer.html.erb',
+           			layout: '/layouts/pdf/empty_layout.html.erb',
+            		locals: {:object => self}
+                }
+            }       
+
+        save_path = Rails.root.join('public',"#{file_name}.pdf")
+		File.open(save_path, 'wb') do |file|
+		  file << pdf
+		end
+=begin
+	    Tempfile.open(file_name) do |f| 
+		  f.binmode
+		  f.write pdf
+		  f.close 
+		  #IO.write("#{Rails.root.join("public","test.pdf")}",pdf)
+		  response = Cloudinary::Uploader.upload(File.open(f.path), :public_id => file_name, :upload_preset => "report_pdf_files")
+		  puts "response is: #{response}"
+		  self.latest_version = response['version'].to_s
+		  self.pdf_url = response["url"]
+		end
+=end
+
+		self.skip_pdf_generation = true
+		
+		#self.save		
+
 	end
 
 

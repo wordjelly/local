@@ -59,7 +59,9 @@ class Diagnostics::Report
 	## 1 -> means its stat.
 	## @used_in : 
 	attribute :stat, Integer, mapping: {type: 'integer'}, default: -1
-			
+	
+
+	
 
 	####################################################
 	##

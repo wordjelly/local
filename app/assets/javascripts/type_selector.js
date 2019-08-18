@@ -6,6 +6,8 @@ $(document).on('keypress','input:text',function(e){
 
 	var autocomplete_type = $(this).attr("data-autocomplete-type");
 
+	var index_name = $(this).attr("data-index-name");
+
 	var input_value = $(this).val();
 
 	if(autocomplete_type == null){
@@ -16,7 +18,8 @@ $(document).on('keypress','input:text',function(e){
 			url: "/app_search/type_selector",
 			data: {
 				type: autocomplete_type,
-				query: 	input_value
+				query: 	input_value,
+				index_name: index_name
 			},
 			dataType: "script"
 		});

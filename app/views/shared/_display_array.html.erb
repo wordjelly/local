@@ -2,11 +2,15 @@
 <% unless model.send(multiple_el).blank? %>
 	<ul class="collection">
 		<% model.send(multiple_el).each_with_index {|item,key| %>
-			<li class='collection-item'> 
-				<% if model.send(multiple_objects)[key].respond_to? :name %>
-					<%= model.send(multiple_objects)[key].name %>
-				<% else %>
+			<li class='collection-item'>
+				<% if local_assigns[:multiple_objects].blank? %>
 					<%= item %>
+				<% else %> 
+					<% if model.send(multiple_objects)[key].respond_to? :name %>
+						<%= model.send(multiple_objects)[key].name %>
+					<% else %>
+						<%= item %>
+					<% end %>
 				<% end %>
 				<input type='hidden' value="<%= item.to_s %>" name="<%= model.class.name.downcase.singularize %>[<%= multiple_el %>][]" />
 				<i class='material-icons delete_multiple_item' style='cursor:pointer;'>close

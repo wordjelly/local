@@ -28,6 +28,8 @@ module Concerns::MissingMethodConcern
 
 		validate :validate_nested
 
+		
+
 		before_save do |document|
 			puts "CAME TO BEFORE SAVE ------------------- in missing method concern #{document.class.name}"
 			puts "ERRORS AT THIS STAGE: #{document.errors.full_messages}"
@@ -45,6 +47,19 @@ module Concerns::MissingMethodConcern
 		## and do it on the children.
 		## if anything is defined at all.
 		## so it will get set on the children.
+
+		## what i want to do is this
+		## call a function called validate
+		## if there is a created_by_user
+		## so for order it is there.
+		## then on its children, do nothing.
+		## just set the created by user on all its nested attributes.
+		## currently held by organization id.
+		## its actually correct its only on the top level objects
+		## one option is to have the test with but it does not have that
+		## so we need a def which takes the current_user
+		## and also the currently held by organization id.
+		## if it is defined, then it is ignored.
 
 		def validate_nested
 			#puts "Came to validate nested in class: #{self.class.name}"
@@ -163,36 +178,52 @@ module Concerns::MissingMethodConcern
 			end
 		end
 
-		## different objects have the permitted params 
-		## mentioned differently
-		## for controller facing objects
-		## it consists of the id and then the next element is a hash with a key as the name of the object and the values as an array of their permitted params
-		## for more deeper nested objects, its just a flat array
-		## so first we get the list of permitted params.
-		## all those params have to be passed in.
-		## 
-		def get_permitted_params
-
-		end
+		
 
 		## @return[nil]
 		## will return nothing
 		## will just add the names of the attributes that have changed
 		## to each attribute in self.
-		##  
+		## current_user
+		## first determine who owns the report.
+		## so for each object ->
+		## organization of current user , known.
+		## if he owns, it , or is the organization -> he can change
+		## pass in the parent's organization also.
 		def determine_changed_attributes(instance)
 
+			params_list = []
+			resource_name = self.class.name.split("::")[-1].downcase
+			
+			self.class.permitted_params.each do |k|
+				if k.is_a? Hash
+					if k.keys[0].to_s == resource_name
+						params_list = k[resource_name.to_sym]
+					end
+				end
+			end
 
+			if params_list.blank?
+				params_list = self.class.permitted_params
+			end
 
+			params_list.map!{|c|
+				if c.is_a? Hash
+					c.keys[0]
+				else
+					c 
+				end
+			}
+
+		
 			self.changed_attributes = []
 			self.class.attribute_set.select{|c| 
-				
-				## if a field is missing in the incoming hash
-				## we will be merging with existing,
-				## so that is not considered as a modification.
-				## so non permitted attributes can be ignored in this way.
-				
-				
+								
+				next unless params_list.include? c.name.to_sym
+
+				# if it is blank ignore it.
+				next if instance.send(c.name).nil?
+
 
 				if c.primitive.to_s == "Array"
 					if c.respond_to? "member_type"

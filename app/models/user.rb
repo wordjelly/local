@@ -16,6 +16,11 @@ class User
               mappings: {
                   "document" => {
                       properties: {
+                        search_all: { 
+                          type: 'text', 
+                          analyzer: 'nGram_analyzer', 
+                          search_analyzer: "whitespace_analyzer"
+                        },
                         tags:  {
                             type: "text",
                             analyzer: "nGram_analyzer",
@@ -34,10 +39,12 @@ class User
                             type: "keyword"
                           },
                           first_name: {
-                            type: "keyword"
+                            type: "keyword",
+                            copy_to: 'search_all'
                           },
                           last_name: {
-                            type: "keyword"
+                            type: "keyword",
+                            copy_to: 'search_all'
                           },
                           address: {
                             type: "keyword"

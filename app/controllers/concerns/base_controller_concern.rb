@@ -282,28 +282,12 @@ module Concerns::BaseControllerConcern
 					v.assign_control_doc_number
 
 					instance_variable_get("@#{get_resource_name}").send("versions").push(v)
-
 				end
-
 			end		
-
 		else
-			
 			new_instance = get_resource_class.new(get_model_params)
 			instance_variable_get("@#{get_resource_name}").send("determine_changed_attributes",new_instance)
-			puts "order changed attributes:"
-			puts @order.changed_attributes
-			@order.reports.each do |report|
-				puts "the report changed attributes are:"
-				puts report.changed_attributes
-				report.tests.each do |test|
-					puts "Test changed attributes are:"
-					puts test.changed_attributes
-				end
-			end
-			#exit(1)
 			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
-
 		end
 
 		#puts " ------ FROM UPDATE IN BASE CONTROLLER CONCERN"
@@ -459,7 +443,10 @@ module Concerns::BaseControllerConcern
 	## after sign_up -> check for patients, where verified == false, and mobile_number is same, will have 
 	## we dont find an existing user -> we send a message to that mobile to sign up
 	## they sign up.
-	## 
+	## this is overriden in the Orders Controller.
+	## as more than one organization should be allowed to edit 
+	## it if there is outsourcing.
+	## so here we check if any report has been owned by this organziation.
 	## @return[Hash] : the updated query, to include only those resources, that have 
 	def add_authorization_clause(query)
 		#puts "is there a current user?"
@@ -479,8 +466,8 @@ module Concerns::BaseControllerConcern
 			## but that is a changable location
 			
 			## this bug was hiding here.
-			puts "the current user organization is:"
-			puts current_user.organization.to_s
+			## puts "the current user organization is:"
+			## puts current_user.organization.to_s
 			unless current_user.organization.blank?
 				#if current_user.verified_as_belonging_to_organization.blank?
 				#	puts "user is not verified as belonging to the given organization, so we cannot use its organization id to check for ownership"

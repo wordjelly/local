@@ -47,6 +47,19 @@ class Diagnostics::Test
 	## -1 is not yet verification_done.
 	attribute :verification_done, Integer, mapping: {type: 'integer'}, default: -1
 
+
+	## verification done by is an array
+	## user ids of those who verified this report.
+	## this has a validation to check if they are permitted.
+	## this again has to be done from the order
+	## so here before_validation, they will simply uniq the 
+	## user ids.
+	## incase added more than once.
+	## then these peoples signatures, have to be got.
+	## that is not a big problem.
+	## again that is called from report.
+	attribute :verification_done_by, Array, mapping: {type: 'keyword'}
+
 	## result types have to be defined.
 	## whether it is numerical or textual
 	## and both values are defined.
@@ -491,10 +504,11 @@ class Diagnostics::Test
 	## @called_from : Business::Order#verify, before_validations
 	## verifies the test if report verify_all is true.
 	## will verify the test only if the picked_range is not abnormal.
-	def verify_if_normal
+	def verify_if_normal(created_by_user)
 		unless get_applicable_range.blank?
 			if get_applicable_range.is_abnormal == -1
 				self.verification_done = 1 if self.is_ready_for_reporting?
+				
 			end
 		end 	
 	end	
