@@ -1,33 +1,7 @@
-<!-- first comes the letter head -->
-<% @order = object %>
-<% unless @order.patient.blank? %>
-	<% @patient = @order.patient %>
-	<div class="card">
-		<div class="card-content">
-			<div class="card-title">
-				Patient Details
-			</div>
-			Name: <%= @patient.full_name %>
-			Age: <%= @patient.age %>
-			Sex: <%= @patient.sex %>
-		</div>
-	</div>
-<% end %>
+<% if order.organization.generate_report_summary == Organization::YES %>
 <%= render :partial => "/business/orders/report_summary" %>
-<!-- now take each report and show it on a new page -->
-<!-- reports are grouped by the doctor who signed them -->
-<!-- if some reports are outsourced, then it will apply outsourced template to them. -->
-<!-- first step is to group the reports -->
-<!-- do the outsourced reports have to be rendered on their original -->
-<!-- if yes, then we have to seperate them out -->
-<!-- secondly, do we want a new report on every page, or continuous reports? if continuous, then we have to group the reports signed by a given doctor. -->
-<!-- reports to render have been pre grouped based on the settings.-->
-<% @order.reports.each do |report| %>
-	<% if @order.created_by_user.organization.outsourced_reports_have_original_format == Organization::YES %>
-		<!-- if the report is internal only then render it -->
-	<% else %>
-		<% @report = report %>
-		<%= render :partial => "/diagnostics/reports/pdf/show" %>
-	<% end %>
+<% end %>
+<% order.reports.each do |report| %>
+	<%= render :partial => "/diagnostics/reports/pdf/show", locals: {order: order, organization: organization} %>
 <% end %>
 

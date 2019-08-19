@@ -1,12 +1,12 @@
-<h5><%= @report.name %></h5>
+<h5><%= report.name %></h5>
 <div class="divider"></div>
 
 <table class="striped">
 <%= render :partial => "/diagnostics/tests/pdf/show_table_headers" %>
 	<tbody>
-		<% @report.tests.each do |test| %>
-			<% @test = test %>
-			<%= render :partial => "/diagnostics/tests/pdf/show_table_row" %>
+		<% report.tests.each do |test| %>
+			<%= render :partial => "/diagnostics/tests/pdf/show_table_row", locals: {report: report, test: test, organization: organization, order: order} %>
 		<% end %>
 	</tbody>
 </table>
+

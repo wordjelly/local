@@ -7,6 +7,8 @@ class User
   
   include Concerns::OrganizationConcern
 
+  
+
   create_es_index({
         index_name: "pathofast-users",
         index_options:  {

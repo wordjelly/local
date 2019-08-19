@@ -189,12 +189,22 @@ class Organization
 
 	attribute :generate_header, Integer, mapping: {type: 'integer'}, default: YES
 
+	## whether a summary of reports should be generated or not.
+	## this is the covering page of the reports, and includes the 
+	attribute :generate_report_summary, Integer, mapping: {type: 'integer'}, default: YES
+
+	attribute :generate_footer, Integer, mapping: {type: 'integer'}, default: YES
+
 	
 	DEFAULT_PARAMETERS_TO_INCLUDE_IN_HEADER = ["phone_number","address","name","timings"]
 
 	attribute :parameters_to_include_in_header, Array, mapping: {type: 'keyword'}, default: DEFAULT_PARAMETERS_TO_INCLUDE_IN_HEADER	
 
 	attribute :show_patient_details_on_each_page, Integer, mapping: {type: 'integer'}, default: YES
+
+	## if this is true, then the signatures of all the people who have verified the tests in the report, will appear after the report, together with any additional signatories.
+	## if this is false, then all the signatures will be grouped together at the end of the order.
+	attribute :signature_after_every_report, Integer, mapping: {type: 'integer'}, default: NO
 
 	#########################################################
 	##
@@ -297,6 +307,8 @@ class Organization
 				 :we_have_pre_printed_footers, 
 				 :space_to_leave_for_pre_printed_letter_head_in_cm, 
 				 :generate_header,
+				 :generate_report_summary,
+				 :generate_footer,
 				 {:parameters_to_include_in_header => []}, 
 				 :show_patient_details_on_each_page, 
 				 :outsourced_reports_have_original_format, 

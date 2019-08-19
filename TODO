@@ -140,3 +140,6 @@ upto me.
 ## all this minimum 3 weeks -> so basically month end.
 ## thereafter app in 1 month more.
 
+##  i would like to do signatures and payments, and report inference generation.
+## then we add emails, and configure mailgun.
+## after that, we move to checking why the tubes are getting fucked.

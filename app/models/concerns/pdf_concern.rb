@@ -5,7 +5,8 @@ module Concerns::PdfConcern
 	included do 
 		attribute :latest_version, String, mapping: {type: "keyword"}
 		attribute :pdf_url, String, mapping: {type: "keyword"}
-
+		## the cloudinary urls of files that were converted into pdfs
+		attribute :pdf_urls, Array, mapping: {type: "keyword"}, default: []
 		## unless blank, will not do generate_pdf.
 		attr_accessor :skip_pdf_generation
 	end

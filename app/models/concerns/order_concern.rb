@@ -471,13 +471,13 @@ module Concerns::OrderConcern
 				## so i want to generate these reports
 				## on their letter head
 				## seperately.
-				generate_pdf(self.reports_by_organization[organization_id],organization_id)
+				build_pdf(self.reports_by_organization[organization_id],organization_id)
 
 			end
 
 		else
 
-			generate_pdf(self.reports.map{|c| c.id.to_s},self.organization.id.to_s)
+			build_pdf(self.reports.map{|c| c.id.to_s},self.organization.id.to_s)
 
 		end
 
@@ -488,9 +488,7 @@ module Concerns::OrderConcern
 	def build_pdf(report_ids,organization_id)
 		
 		file_name = self.id.to_s + "_" + self.patient.full_name + "_" + organization_id.to_s
-	    
-		
-	    
+	   
 	    ac = ActionController::Base.new
 
 	    pdf = ac.render_to_string pdf: file_name,

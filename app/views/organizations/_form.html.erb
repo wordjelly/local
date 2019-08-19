@@ -115,6 +115,13 @@
 					<% end %>
 
 				</div>
+				<div id="toggle custom_footer" data-target-id="custom_footer" class="toggle">Click Her If you want to automatically generate a page footer</div>
+				<div id="custom_footer">
+					<label>
+						<%= f.check_box :generate_footer, id: "generate_footer" %>
+						<span>Tick this box to enable generation of page footer</span>
+					</label>
+				</div>
 			</div>
 		</div>
 
