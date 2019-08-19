@@ -115,8 +115,17 @@ module Concerns::OrderConcern
 					if r.changed_attributes.include? "tests"
 						r.tests.each do |test|
 							if test.changed_attributes.include? "verification_done"
-								## can the current user do this ?
+								## simple enough. 
+								report_issuer_organization = Organization.find(report.currently_held_by_organization_id)
+								if report_issuer_organization.user_can_verify_test?(self.created_by_user,test)
 
+									if test.verification_done == Diagnostics::Test::VERIFIED
+										test.verification_done_by << self.created_by_user.id.to_s
+									end
+
+								else
+									test.errors.add(:verification_done,"You do not have sufficient permissions to verify this test")
+								end
 							end
 						end
 					end
@@ -126,13 +135,6 @@ module Concerns::OrderConcern
 	end	
 
 
-	def current_can_verify_test?(report,test) 
-		
-		report_issuer_organization = Organization.find(report.currently_held_by_organization_id)
-
-		
-
-	end
 
 	## @called from : self, it is a validation.
 	def can_modify
@@ -451,34 +453,62 @@ module Concerns::OrderConcern
 			
 		return unless self.skip_pdf_generation.blank?
 
-		file_name = get_file_name
-		file_name = "test"
+		reports_by_organization = {}
+
+		self.reports.each do |report|
+			if reports_by_organization[report.currently_held_by_organization_id].blank?
+				reports_by_organization[report.currently_held_by_organization_id] = [report.id.to_s]
+			else
+				reports_by_organization[report.currently_held_by_organization_id].blank?
+				reports_by_organization[report.currently_held_by_organization_id] << report.id.to_s
+			end
+		end
+
+		if self.organization.outsourced_reports_have_original_format == Organization::YES
+
+			self.reports_by_organization.keys.each do |organization_id|
+
+				## so i want to generate these reports
+				## on their letter head
+				## seperately.
+				generate_pdf(self.reports_by_organization[organization_id],organization_id)
+
+			end
+
+		else
+
+			generate_pdf(self.reports.map{|c| c.id.to_s},self.organization.id.to_s)
+
+		end
+
+	end
+
+	## @param[Array] report_ids : the array of report ids.
+	## @param[String] organization_id : the id of the organization on whose letter head the reports have to be generated.
+	def build_pdf(report_ids,organization_id)
+		
+		file_name = self.id.to_s + "_" + self.patient.full_name + "_" + organization_id.to_s
+	    
+		
 	    
 	    ac = ActionController::Base.new
 
-	    ## we have to pass organization
-	    ## reports
-	    ## reports will have to carry a signed by.
-	    ## that will be used to sign it.
-	    ## that can be picked up from the report itself.
-
-	    
 	    pdf = ac.render_to_string pdf: file_name,
             template: "#{ Auth::OmniAuth::Path.pathify(self.class.name).pluralize}/pdf/show.pdf.erb",
-            locals: {:object => self},
+            locals: {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id)},
             layout: "pdf/application.html.erb",
             header: {
             	html: {
             		template:'/layouts/pdf/header.html.erb',
             		layout: '/layouts/pdf/empty_layout.html.erb',
-            		locals: {:object => self}
+            		locals: {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id)}
             	}
             },
             footer: {
            		html: {   
            			template:'/layouts/pdf/footer.html.erb',
            			layout: '/layouts/pdf/empty_layout.html.erb',
-            		locals: {:object => self}
+            		locals: {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id)}
                 }
             }       
 
@@ -504,7 +534,6 @@ module Concerns::OrderConcern
 		#self.save		
 
 	end
-
 
 	module ClassMethods
 

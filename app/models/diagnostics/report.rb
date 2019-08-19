@@ -61,7 +61,6 @@ class Diagnostics::Report
 	attribute :stat, Integer, mapping: {type: 'integer'}, default: -1
 	
 
-	
 
 	####################################################
 	##

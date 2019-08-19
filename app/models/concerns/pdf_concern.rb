@@ -31,23 +31,6 @@ module Concerns::PdfConcern
 	    
 	    ac = ActionController::Base.new
 	    
-	    ## how they want the report to be structured.
-	    #puts "file name is: #{file_name}"
-
-	    #puts Rails.root.join('public', "#{file_name}.pdf")
-
-	    ## expects the pdf template to be in the views under a /pdf folder
-	    ## let this much work.
-	    ## make an outsourced report
-	    ## and an internal report
-	    ## one for kondhwa and one from pathofast.
-	    ## and play around with the settings till it works.
-	    ## basically generate pdf.
-	    ## first update the organization form.
-	    ## add arrays
-	    ## drop down for user names.
-	    ## add the ids into it.
-
 	    pdf = ac.render_to_string pdf: file_name,
             template: "#{ Auth::OmniAuth::Path.pathify(self.class.name).pluralize}/pdf/show.pdf.erb",
             locals: {:object => self},

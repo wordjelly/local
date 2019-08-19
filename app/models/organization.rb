@@ -216,8 +216,7 @@ class Organization
 	## if yes, then it will be signed.
 	## apply our letter head settings (could be blank, then it will have the sign of those who sign your outsourced reports.)
 	## if this is yes -> then it will also have to be provided something for which of our employees will sign outsourced reports.
-	attribute :use_our_letter_head_settings_for_outsourced_reports, Integer, mapping: {type: 'keyword'}, default: 1
-
+	
 	attribute :which_of_our_employees_will_resign_outsourced_reports,Array, mapping: {type: 'keyword'}, default: [] 
 
 	## so that's it, for the options 
@@ -301,7 +300,6 @@ class Organization
 				 {:parameters_to_include_in_header => []}, 
 				 :show_patient_details_on_each_page, 
 				 :outsourced_reports_have_original_format, 
-				 :use_our_letter_head_settings_for_outsourced_reports,
 				 {:which_of_our_employees_will_resign_outsourced_reports => []},
 				 :add_processed_at_footnote_if_using_our_letter_head
 				] 
@@ -655,5 +653,11 @@ class Organization
 		Organization.flush_bulk
 	end
 
+	# @param[User] : user
+	# @param[Diagnostics::Test] : test
+	# @return[Boolean] true/false 
+	def user_can_verify_test?(user,test)
+		self.who_can_verify_reports.include? user.id.to_s
+	end
 	
 end
