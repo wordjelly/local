@@ -7,7 +7,6 @@ class User
   
   include Concerns::OrganizationConcern
 
-  
 
   create_es_index({
         index_name: "pathofast-users",
@@ -84,7 +83,9 @@ class User
 
   attr_accessor :pending_patients
 
- 
+  ## the qualification and signature of the doctor
+  ## it is a Credential Object.
+  attr_accessor :credential 
 
 	##########################################################
 	##
@@ -152,8 +153,42 @@ class User
     ############################################################
     after_find do |document|
       document.set_patients_pending_approval
+      document.load_credentials
     end
 
+    #######################################################
+    ##
+    ##
+    ## LOAD CREDENTIALS.
+    ##
+    ##
+    #####################################################
+
+    ## @return[nil]
+    ## sets the credential associated with this user
+    def load_credentials
+      search_request = Credential.search({
+        query: {
+          term: {
+            user_id: self.id.to_s
+          }
+        }
+      })
+      if search_request.response.hits.hits.size >= 1
+            #puts "got a credential"
+            credential = Credential.new(search_request.response.hits.hits[0]["_source"])
+            credential.id = search_request.response.hits.hits[0]["_id"]
+            self.credential = credential
+      end
+    end
+
+    ## what next
+    ## we have done signature.
+    ## should i check report generation.
+    ## okay we make two labs.
+    ## and get on with it.
+    ## we have to explore all the options.
+    ## incorporte credential in the report footers.
     ############################################################
     ##
     ##

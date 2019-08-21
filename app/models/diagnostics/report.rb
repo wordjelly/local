@@ -15,6 +15,7 @@ class Diagnostics::Report
 	include Concerns::PdfConcern
 	include Concerns::Diagmodule::Report::OutsourceConcern
 
+
 	index_name "pathofast-diagnostics-reports"
 	document_type "diagnostics/report"
 
@@ -59,8 +60,16 @@ class Diagnostics::Report
 	## 1 -> means its stat.
 	## @used_in : 
 	attribute :stat, Integer, mapping: {type: 'integer'}, default: -1
-	
-
+		
+	####################################################
+	##
+	##
+	## SET AFTER FIND IN THE ORDER CONCERN.
+	## GIVES ACCESS TO THE ORDER ORGANIZATION INSIDE THE REPORT
+	## 
+	##
+	####################################################
+	attr_accessor :order_organization
 
 	####################################################
 	##
@@ -71,13 +80,20 @@ class Diagnostics::Report
 	####################################################
 	attr_accessor :report_all_tests_verified
 	attr_accessor :report_has_abnormal_tests
+	attr_accessor :report_is_outsourced
 
 	## @called_from : after_find in Concerns::OrderConcern#after_find
 	## sets all the accessors, and these are included in the json
 	## representation of this element.
+	## @param[Organization] organization:  the organization that has created the order in the first place
 	def set_accessors
 		self.report_all_tests_verified = self.all_tests_verified?
 		self.report_has_abnormal_tests = self.has_abnormal_tests?
+		self.report_is_outsourced = self.is_outsourced?
+		self.tests.each do |test|
+			test.order_organization = self.order_organization
+			test.set_accessors
+		end
 	end
 
 	settings index: { 
@@ -461,6 +477,13 @@ class Diagnostics::Report
 		}.size > 0
 	end
 
+	## @return[Boolean] true/false : the order organization is passed in after_Find from order_concern. We compare that to the currently held by organization on the report. If they are not the same, then the report has been outsourced.
+	## this is used to set the accessor :report_is_outsourced
+	## and this accessor is also available in the json representation of this object.
+	def is_outsourced?
+		self.currently_held_by_organization.id.to_s != self.order_organization.id.to_s
+	end
+
 	###########################################################
 	##
 	## override with methods to include all the attr_accessors.
@@ -468,7 +491,7 @@ class Diagnostics::Report
 	## if you call to_json on order, then and only then these additional methods are included, calling, as_json on order, does not include these methods.
 	###########################################################
 	def as_json(options={})
-		super(:methods => [:report_has_abnormal_tests,:report_all_tests_verified])
+		super(:methods => [:report_has_abnormal_tests,:report_all_tests_verified, :report_is_outsourced])
 	end
 	##########################################################
 

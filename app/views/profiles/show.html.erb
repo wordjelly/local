@@ -27,9 +27,16 @@
     <li class="collection-item"><div>Email: <%= @profile_resource.email %></div></li>
     <li class="collection-item"><div>Phone Number: <%= @profile_resource.additional_login_param %></div></li>
 </ul>
+
+<!-- what should be next ? -->
+<!-- ignore test from report, like sometimes we need to do a manual urine, ignore by default, show only if abnormal -->
     
 <%= render :partial => "pending_patients" %>
 <%= render :partial => "approved_patients" %>
 <%= render :partial => "rejected_patients" %>
-
+<%= puts @profile_resource.credential %>
+<% if @credential = @profile_resource.credential %>
+    <%= puts "got a credential in the view." %>
+    <%= render :partial => "/credentials/show" %>
+<% end %>
 <%= link_to "Edit", edit_profile_path(:id => @profile_resource.id.to_s, :resource => "users") %>

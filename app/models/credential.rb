@@ -15,10 +15,30 @@ class Credential
 
 	attribute :qualifications, Array, mapping: {type: 'keyword'}
 
-	attribute :registration_number, Array, mapping: {type: 'keyword'}
+	attribute :registration_number, String, mapping: {type: 'keyword'}
 
 	attribute :user_id, String, mapping: {type: 'keyword'}
 
+	attribute :name, String, mapping: {type: 'keyword'}, default: BSON::ObjectId.new.to_s
 
+	def self.permitted_params
+		base = 
+		[
+			:id,
+				{:credential => 
+					[
+						:id,
+						:user_id,
+						{:qualifications => []},
+						:registration_number
+					]
+				}
+		]
+		base
+	end
+
+	def show_image_upload
+		true
+	end
 
 end

@@ -591,7 +591,7 @@ class Organization
 		## we can do something like that. 
 
 		#puts "=-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&== updating parent chain"
-
+		
 
 		search_request.response.aggregations.parent_organizations.buckets.each do |porg_bucket|
 
@@ -670,6 +670,11 @@ class Organization
 	# @return[Boolean] true/false 
 	def user_can_verify_test?(user,test)
 		self.who_can_verify_reports.include? user.id.to_s
+	end
+
+	## will return true.
+	def show_image_upload
+		true
 	end
 	
 end

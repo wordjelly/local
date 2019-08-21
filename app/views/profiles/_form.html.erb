@@ -24,6 +24,8 @@
 
 	<% end %>
 
+
+
 	<!-- show the organization member form -->
 	<!-- so here we add the new one, after it has been selected via an organization -->
 	<!-- this is added -->
@@ -37,6 +39,12 @@
 		<input type="text" name="user[organization_members][][employee_role_id]" value="<%= @profile_resource.organization_member_employee_role_id %>"/>
 		<label for="user[organization_members][][employee_role_id]">Employee Role Id</label>
 	<% end %>	
+
+	<% if f.object.credential.blank? %>
+		<%= link_to "Add Qualifications and Signature", new_credential_path(:credential => {:user_id => f.object.id.to_s}) %>
+	<% else %>
+		<%= link_to "Edit your qualifications/Signature", edit_credential_path(f.object.credential.id.to_s) %>
+	<% end %>
 
 	<%= render :partial => "/profiles/patients_pending_approval_form_partial" %>
 

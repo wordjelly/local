@@ -3,6 +3,7 @@ class ProfilesController < Auth::ProfilesController
 	respond_to :json,:html,:js
 
 	def show
+		## we can load credentials after_find.
 		@profile_resource.m_client = self.m_client
 		puts @profile_resource.attributes_to_return_with_profile
 		respond_to do |format|

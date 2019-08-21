@@ -15,6 +15,8 @@ class Diagnostics::Test
 	DEFAULT_UNITS = "-"
 	VERIFIED = 1
 	NOT_VERIFIED = -1
+	YES = 1
+	NO = 0
 
 	index_name "pathofast-tests"
 
@@ -74,6 +76,10 @@ class Diagnostics::Test
 
 	attribute :units, String, mapping: {type: 'keyword'}, default: DEFAULT_UNITS
 
+	# so it will be included in the report only if abnormal
+	# otherwise we have include by default.
+	# all are included.
+	attribute :only_include_in_report_if_abnormal, Integer, mapping: {type: 'integer'}, default: YES 
 
 	attr_accessor :display_result
 	attr_accessor :display_normal_biological_interval
@@ -82,6 +88,17 @@ class Diagnostics::Test
 	attr_accessor :test_is_abnormal
 	attr_accessor :test_is_ready_for_reporting
 	attr_accessor :test_is_verified
+
+	####################################################
+	##
+	##
+	## SET FROM SET_ACCESSORS IN REPORT.
+	## GIVES ACCESS TO THE ORDER ORGANIZATION INSIDE THE REPORT
+	## 
+	##
+	####################################################
+	attr_accessor :order_organization
+
 	
 	## @called_from : after_find in Concerns::OrderConcern#after_find
 	## sets all the accessors, and these are included in the json

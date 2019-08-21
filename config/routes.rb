@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     resources :statuses
   end
 
+
+
   namespace :geo do 
     resources :locations
     resources :spots
@@ -34,7 +36,7 @@ Rails.application.routes.draw do
   
   resources :barcodes
   
-
+  resources :credentials
 
   ## now after create add that there.
   ## not from item_type

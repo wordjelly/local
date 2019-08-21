@@ -167,11 +167,10 @@ module Concerns::OrderConcern
 	## sets the accessors of order, if any, and also those of the
 	## child elements.
 	def set_accessors
+		## can we not bubble down inside report.
 		self.reports.each do |report|
+			report.order_organization = self.organization
 			report.set_accessors
-			report.tests.each do |test|
-				test.set_accessors
-			end
 		end
 	end
 
