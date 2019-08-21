@@ -226,7 +226,7 @@ class Organization
 	## if yes, then it will be signed.
 	## apply our letter head settings (could be blank, then it will have the sign of those who sign your outsourced reports.)
 	## if this is yes -> then it will also have to be provided something for which of our employees will sign outsourced reports.
-	
+	## defaults to the who_can_verify_reports
 	attribute :which_of_our_employees_will_resign_outsourced_reports,Array, mapping: {type: 'keyword'}, default: [] 
 
 	## so that's it, for the options 
@@ -591,7 +591,7 @@ class Organization
 		## we can do something like that. 
 
 		#puts "=-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&== updating parent chain"
-		
+
 
 		search_request.response.aggregations.parent_organizations.buckets.each do |porg_bucket|
 

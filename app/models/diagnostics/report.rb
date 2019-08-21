@@ -82,6 +82,10 @@ class Diagnostics::Report
 	attr_accessor :report_has_abnormal_tests
 	attr_accessor :report_is_outsourced
 
+	## could be the signatories from the primary organization, includes any additional staff signatures. Primary signatories are first filtered to see if they can sign on this report, like a microbiologist can sign on a microbilogy report.
+	## set from #order_concern#group_reports_by_organization.
+	attr_accessor :final_signatories
+
 	## @called_from : after_find in Concerns::OrderConcern#after_find
 	## sets all the accessors, and these are included in the json
 	## representation of this element.
@@ -484,6 +488,18 @@ class Diagnostics::Report
 		self.currently_held_by_organization.id.to_s != self.order_organization.id.to_s
 	end
 
+	## @return[Boolean] true/false : true if the user can sign the report.
+	## @called_from : order_concern#group_reports_by_organization
+	def can_sign?(user)
+		true
+	end
+
+	## @return[Array] list of user_ids who have verified the tests in this report.
+	def gather_signatories
+		verifying_user_ids = self.tests.map{|c|
+			c.verification_done_by				
+		}.uniq
+	end
 	###########################################################
 	##
 	## override with methods to include all the attr_accessors.

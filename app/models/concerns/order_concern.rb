@@ -433,14 +433,51 @@ module Concerns::OrderConcern
 	## somehow.
 	## if its start and end time is exactly the same
 	## it can be merged for the query.
-
-
 	def has_abnormal_reports?
 		self.reports.select{|c|
 			c.has_abnormal_tests?
 		}.size > 0
 	end
 
+	def group_reports_by_organization
+		reports_by_organization = {}
+		user_ids = []
+		## all the user ids that may need to be signatories.
+		self.reports.each do |report|
+			if reports_by_organization[report.currently_held_by_organization_id].blank?
+				## get its signing user ids.
+				## add them to the array.
+				reports_by_organization[report.currently_held_by_organization_id] = [report.id.to_s]
+				user_ids << report.verification_done_by
+			
+			else
+				reports_by_organization[report.currently_held_by_organization_id].blank?
+				reports_by_organization[report.currently_held_by_organization_id] << report.id.to_s
+				user_ids << report.verification_done_by
+			end
+
+			if self.organization.outsourced_reports_have_original_format == Organization::YES
+
+				report.final_signatories = report.verification_done_by
+
+				report.final_signatories.reject! { |c|  !report.can_sign?(c)}
+
+				report.final_signatories += self.organization.additional_employee_signatures
+
+			else
+
+				## all the people who are supposed to sign.
+				report.final_signatories = self.organization.which_of_our_employees_will_resign_outsourced_reports
+
+				report.final_signatories.reject! { |c|  !report.can_sign?(c)}
+
+				report.final_signatories += report.organization.additional_employee_signatures
+
+
+			end
+		end
+
+	end
 	##############################################################
 	##
 	##
@@ -452,16 +489,13 @@ module Concerns::OrderConcern
 			
 		return unless self.skip_pdf_generation.blank?
 
-		reports_by_organization = {}
+		
 
-		self.reports.each do |report|
-			if reports_by_organization[report.currently_held_by_organization_id].blank?
-				reports_by_organization[report.currently_held_by_organization_id] = [report.id.to_s]
-			else
-				reports_by_organization[report.currently_held_by_organization_id].blank?
-				reports_by_organization[report.currently_held_by_organization_id] << report.id.to_s
-			end
-		end
+		## when you group the reports
+		## you will set on the reports
+		## the users hash on the order
+		## and which user ids will be signing on that report
+		## 
 
 		if self.organization.outsourced_reports_have_original_format == Organization::YES
 

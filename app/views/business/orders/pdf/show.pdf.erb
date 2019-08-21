@@ -1,26 +1,29 @@
 <% if order.organization.generate_report_summary == Organization::YES %>
-<%= render :partial => "/business/orders/report_summary" %>
+	<%= render :partial => "/business/orders/report_summary" %>
 <% end %>
-<!-- here you decide whether to show the report after this or not -->
-<!-- SIGNATURE GENERATION -->
-<!-- run this on the first report -->
-<% if report.report_is_outsourced %>
-	<!-- if the report is outsourced, then, it depends on whether it is on our letter head or not. -->
-	<!-- are we printing it on our own letterhead -->
-	<% if report.order_organization.outsourced_reports_have_original_format == Organization::NO %>
-			<!-- we are not printing this on our letterhead -->
-			<!-- in this case check if all signatures at end -->
-			<!-- defaults to the settings in the primary organization -->
-			<!-- we have grouped the reports by organization -->
 
-	<% else %>
-			<!-- we are -->
-	<% end %>
+<% signing_organization = get_signing_organization(reports) %>
 
-<% else %>
+<% users_hash = {} %>
 
-<% end %>
 <% reports.each do |report| %>
 	<%= render :partial => "/diagnostics/reports/pdf/show", locals: {order: order, organization: organization} %>
-<% end %>
+	<!-- that is something defined at verification time -->
 
+	<% user_ids_who_primarily_verified_report = report.gather_signatories %>
+	
+	<% if signing_organization.signature_after_every_report == Organization::YES %>
+		
+		<!-- if signing organization is same as report organization, then these guys can sign -->
+		<!-- if signing organization is different from report organization, then get its users who sign, and call can sign.-->
+
+	<% end %>
+	<!-- is every report on a new page ? -->
+	<!-- again this depends on the signing organization -->
+	<!-- then we have to make a page break -->
+<% end %>
+<% if signing_organization.signature_after_every_report == Organization::NO %>
+		<!-- render the signatures of all of them here -->
+		<!-- render the signature of whoever will be signing -->
+		<!-- add a hook to customize those -->
+<% end %>
