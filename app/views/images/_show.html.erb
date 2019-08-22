@@ -10,7 +10,7 @@
 		      <p>Image created on : <%= @image.created_at %></p>
 		    </div>
 		    <div class="card-action">
-		      <%= link_to "Delete", image_path(:id => @image.id.to_s), method: :delete, :remote => :true %>
+		      <%= link_to "Delete", pathofast_image_path(:id => @image.id.to_s), method: :delete, :remote => :true %>
 		    </div>
 		  </div>
 		</div>

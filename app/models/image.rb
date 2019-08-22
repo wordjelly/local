@@ -74,6 +74,7 @@ class Image
 
   ## this should destroy the image.
   before_destroy do |document|
+    puts "triggered before destroy-----------"
     Cloudinary::Uploader.destroy(document.id.to_s)
   end
 

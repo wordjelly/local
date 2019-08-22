@@ -30,7 +30,8 @@ Rails.application.routes.draw do
   resources :patients
   resources :employees
 
-  resources :images
+  resources :images, as: :pathofast_images
+  
   resources :tags
   resources :organizations
   

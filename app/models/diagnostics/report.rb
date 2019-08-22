@@ -60,7 +60,11 @@ class Diagnostics::Report
 	## 1 -> means its stat.
 	## @used_in : 
 	attribute :stat, Integer, mapping: {type: 'integer'}, default: -1
-		
+	
+	## this is generated before_validation.
+	## it is generated from the def order_concern#generate_report_impression
+	attribute :impression, String, mapping: {type: 'text'}
+
 	####################################################
 	##
 	##

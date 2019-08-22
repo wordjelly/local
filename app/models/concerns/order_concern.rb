@@ -24,6 +24,16 @@ module Concerns::OrderConcern
 
 		attribute :procedure_versions_hash, Hash
 
+		## key -> user_id
+		## value -> user object
+		## @used_in : self in #group_reports_by_organization
+		## used to make a hash of user objects
+		## these are used in the pdf/show to render the signature and credentials 
+		attr_accessor :users_hash
+
+		## reports by organization
+		attr_accessor :reports_by_organization
+
 		settings index: { 
 		    number_of_shards: 1, 
 		    number_of_replicas: 0,
@@ -67,7 +77,7 @@ module Concerns::OrderConcern
 			    
 		    	indexes :name, type: 'keyword', fields: {
 			      	:raw => {
-			      		:type => "texabrat",
+			      		:type => "text",
 			      		:analyzer => "nGram_analyzer",
 			      		:search_analyzer => "whitespace_analyzer"
 			      	}
@@ -96,6 +106,8 @@ module Concerns::OrderConcern
 			document.add_report_values
 			document.verify
 			document.set_accessors
+			document.generate_report_impressions
+			document.group_reports_by_organization
 			document.generate_pdf
 		end
 
@@ -440,43 +452,51 @@ module Concerns::OrderConcern
 	end
 
 	def group_reports_by_organization
-		reports_by_organization = {}
-		user_ids = []
+		self.reports_by_organization = {}
+		self.users_hash = {}
 		## all the user ids that may need to be signatories.
+		## your final signatories are now fixed.
+		## now all you have to decide is whether to render them 
 		self.reports.each do |report|
-			if reports_by_organization[report.currently_held_by_organization_id].blank?
+			if self.reports_by_organization[report.currently_held_by_organization_id].blank?
 				## get its signing user ids.
 				## add them to the array.
-				reports_by_organization[report.currently_held_by_organization_id] = [report.id.to_s]
+				self.reports_by_organization[report.currently_held_by_organization_id] = [report.id.to_s]
 				user_ids << report.verification_done_by
 			
 			else
-				reports_by_organization[report.currently_held_by_organization_id].blank?
-				reports_by_organization[report.currently_held_by_organization_id] << report.id.to_s
+				self.reports_by_organization[report.currently_held_by_organization_id].blank?
+				self.reports_by_organization[report.currently_held_by_organization_id] << report.id.to_s
 				user_ids << report.verification_done_by
+				user_ids.map{|c|
+					self.users_hash[c] = User.find(c) if self.users_hash[c].blank?
+				}
 			end
 
 			if self.organization.outsourced_reports_have_original_format == Organization::YES
 
 				report.final_signatories = report.verification_done_by
 
-				report.final_signatories.reject! { |c|  !report.can_sign?(c)}
+				report.final_signatories.reject! { |c|  !report.can_sign?(users_hash[c])}
 
 				report.final_signatories += self.organization.additional_employee_signatures
+				
+
 
 			else
 
 				## all the people who are supposed to sign.
 				report.final_signatories = self.organization.which_of_our_employees_will_resign_outsourced_reports
 
-				report.final_signatories.reject! { |c|  !report.can_sign?(c)}
+				report.final_signatories.reject! { |c|  !report.can_sign?(users_hash[c])}
 
 				report.final_signatories += report.organization.additional_employee_signatures
 
+				## so now we have all this.
 
 			end
 		end
-
+		
 	end
 	##############################################################
 	##
@@ -514,6 +534,18 @@ module Concerns::OrderConcern
 
 		end
 
+	end
+
+	## @called_from : SELF#before_validation
+	def generate_report_impressions
+		self.reports.each do |report|
+			if report.impression.blank?
+				report.impression = ""
+				report.tests.each do |test|
+					report.impression += (" " + test.inference)
+				end
+			end
+		end
 	end
 
 	## @param[Array] report_ids : the array of report ids.

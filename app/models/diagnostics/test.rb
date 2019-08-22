@@ -79,7 +79,15 @@ class Diagnostics::Test
 	# so it will be included in the report only if abnormal
 	# otherwise we have include by default.
 	# all are included.
+	# this is to be in the report if it is abnormal,
+	# otherwise don't include it.
 	attribute :only_include_in_report_if_abnormal, Integer, mapping: {type: 'integer'}, default: YES 
+
+
+	# for the report function #all_tests_verified?
+	# to return true, this test must have a value.
+	# and must be verified
+	attribute :test_must_have_value, Integer, mapping: {type: 'integer'}, default: YES
 
 	attr_accessor :display_result
 	attr_accessor :display_normal_biological_interval
@@ -197,7 +205,9 @@ class Diagnostics::Test
 			:result_text,
 			:result_numeric,
 			:result_raw,
-			:units
+			:units,
+			:only_include_in_report_if_abnormal,
+			:test_must_have_value
 		]
 	end
 

@@ -1,4 +1,4 @@
-module ApplicationHelper
+module OrderPdfHelper
 	
 	## @return[Organization] signing_organization : the organization whose representatives will sign on the report.
 	def get_signing_organization(reports)
@@ -8,6 +8,12 @@ module ApplicationHelper
 		results = {
 			:signing_organization => nil
 		}
+
+		## make some dummy users
+		## give them each credentials.
+		## make three reports by one organization
+		## and one report by the other organization
+		## then 
 
 		if first_report.report_is_outsourced
 
