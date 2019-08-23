@@ -385,6 +385,7 @@ class Diagnostics::Report
 	##
 	#####################################################
 	def apply_current_user(current_user)
+		self.search_options ||= []
 		if belongs_to_user?(current_user)
 			## add the search options
 			##self.search_options[:]
