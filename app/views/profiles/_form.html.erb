@@ -17,20 +17,12 @@
 
 	<br>
 
-	<% @profile_resource.organization_members.each do |morg| %>
-
-		<% @organization_member = morg %>
-		<%= render :partial => "/organization_members/show" %>
-
+	<% f.object.organization_members.each do |om| %>
+		<%= render :partial => "/organization_members/form", locals: {om: om, f: f} %>
 	<% end %>
 
-
-
-	<!-- show the organization member form -->
-	<!-- so here we add the new one, after it has been selected via an organization -->
-	<!-- this is added -->
-	<!-- now we search inside the organization to check for verified , and pending etc -->
-	<!-- okay so this is not working at the moment -->
+	
+	<!-- if you click on "Join Organization" on any organization page, then it will redirect to this form, with this field filled in -->
 	<% if @profile_resource.show_join_organization_form? %>
 		<h5>Join Organization : Click submit to join this organization in the specified role</h5>
 		<input type="text" name="user[organization_members][][organization_id]" value="<%= @profile_resource.organization_member_organization_id %>" />

@@ -43,9 +43,9 @@ module Concerns::OwnersConcern
 		## 
 		attribute :currently_held_by_organization, String, mapping: {type: 'keyword'}
 
-		validate :created_user_exists, :unless => Proc.new{|c| !c.skip_owners_validations.blank?}
+		validate :created_user_exists, :unless => Proc.new{|c| c.skip_owners_validations.blank?}
 			
-		validate :organization_users_are_enrolled_with_organization, :unless => Proc.new{|c| (c.new_record? && c.class.name == "Organization") || (!c.skip_owners_validations.blank?)}
+		validate :organization_users_are_enrolled_with_organization, :unless => Proc.new{|c| (c.new_record? && c.class.name == "Organization") || (c.skip_owners_validations.blank?)}
 
 		attribute :public, Integer, mapping: {type: 'integer'}, default: Concerns::OwnersConcern::IS_PRIVATE
 

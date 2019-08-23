@@ -14,7 +14,7 @@ class OrganizationMember
 	CREATED_BY_THIS_USER = "yes"
 
 	def set_membership_status(user_id)
-		if self.organization_id
+		unless self.organization_id.blank?
 			puts "there is an organization id: #{self.organization_id}"
 			organization = Organization.find(self.organization_id)
 			organization.run_callbacks(:find)

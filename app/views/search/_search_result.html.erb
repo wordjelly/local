@@ -4,7 +4,12 @@
 
 <% link_description = (result.respond_to? "description") ? result.send("description") : "" %>
 
-<% organization_name = (result.respond_to? "organization") ? result.send("organization").name : "" %>
+<% organization_name = "" %>
+<% if result.class.name =~ /Organization/ %>
+	<% organization_name = result.name %>
+<% else %>
+	<% organization_name = (result.respond_to? "organization") ? result.send("organization").name : "" %>
+<% end %>
 
 <% created_at = result.created_at.strftime("%b %d %Y %I:%M %P") %>
 

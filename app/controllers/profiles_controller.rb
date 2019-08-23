@@ -22,6 +22,8 @@ class ProfilesController < Auth::ProfilesController
 		puts "came to edit action."
 		puts "the resource params are"
 		puts @resource_params.to_s
+		## if you show it as an attribute then it will show everytime.
+		## thats why i had done it like that.
 		@profile_resource.attributes.merge!(@resource_params)
 		puts "the organization id is:"
 		puts @profile_resource.organization_member_organization_id
@@ -37,7 +39,7 @@ class ProfilesController < Auth::ProfilesController
 		check_for_update(@profile_resource)
 
 		@profile_resource.assign_attributes(@resource_params)
-
+		#exit(1)
 		@profile_resource.m_client = self.m_client
 
 		respond_to do |format|
@@ -87,24 +89,9 @@ class ProfilesController < Auth::ProfilesController
 	  				
 	  				## so this is an employee_role_id.
 	  				## that is now permitted.
-	  				permitted_arr = [:organization_id, :role, :first_name, :last_name, :date_of_birth, :sex, :address,:employee_role_id,{:organization_members => [:organization_id, :employee_role_id]}, :organization_member_organization_id, :organization_member_employee_role_id]
+	  				permitted_arr = [:organization_id, :role, :first_name, :last_name, :date_of_birth, :sex, :address,:employee_role_id,{:organization_members => [:organization_id, :employee_role_id, :created_by_this_user, :_id]}, :organization_member_organization_id, :organization_member_employee_role_id]
 	  				
 
-=begin
-
-	  				if current_signed_in_resource.is_admin?({:task => "resend_reset_password_link"})
-	  					permitted_params << [:created_by_admin]
-	  				end
-
-	  				if current_signed_in_resource.is_admin?({:task => "create_admin"})
-	  					permitted_arr << [:admin, :created_by_admin, :android_token, :ios_token]
-	  				end
-
-	  				if current_signed_in_resource.is_admin?({:task => "create_worker"})
-	  					permitted_arr << [:step_id, :procedure_id, :worker, :action, :action_from, :action_to, :android_token, :ios_token]
-	  				end
-
-=end
 
 	  				permitted_arr = permitted_arr.flatten.uniq
 	  				filters << {model.downcase.to_sym => permitted_arr }

@@ -36,9 +36,19 @@ class Tag
 		[:id , {:tag => [:name, :tag_type]}]
 	end
 
-	before_save do |document|
-		document.cascade_id_generation(nil)
+	before_validation do |document|
+		document.assign_id_from_name(nil)
 	end
 
-	
+	## USED IN SOME TESTS AND RAKE TASKS
+	def self.create_default_employee_roles
+		["Pathologist","Technician","Supervisor"].each do |role_name|
+			t = Tag.new(name: role_name, tag_type: EMPLOYEE_TAG, skip_owners_validation: true)
+			t.save
+			unless t.errors.full_messages.blank?
+				puts t.errors.full_messages.to_s
+				exit(1)
+			end
+		end
+	end
 end

@@ -33,6 +33,7 @@ module Concerns::OrganizationConcern
 		## when he has chosen the organization id, it 
 		## can derive those things.
 		embeds_many :organization_members, class_name:"OrganizationMember"
+		accepts_nested_attributes_for :organization_members, reject_if: ->(attrs){ attrs[:organization_id].blank? }
 
 		## these are permitted, as being easy to add to the form.
 		## so what hapepns with this exactly ?
@@ -97,14 +98,13 @@ module Concerns::OrganizationConcern
 			document.set_organization
 		end
 
-
-
-		before_save do |document|
-			if document.organization_members.blank?
-				document.organization_members = []
-			end
-		end
 	end
+
+	## how much longer
+	## report pdf -> is done.
+	## need to sort out sending emails, and notifications
+	## patient is done, just physician id/email.
+	## 
 
 	###############################################
 	##
@@ -184,16 +184,17 @@ module Concerns::OrganizationConcern
 
     def set_organization
     	#puts " ----------- !!!!!!!!!!!!!! ------------ "
-    	#puts "Came to set organization"
-    	#puts "the organization members are:"
-    	#puts self.organization_members.to_s
-
+    	puts "Came to set organization"
+    	puts "the organization members are:"
+    	puts self.organization_members.to_s
+    	puts "self organization is:"
+    	puts self.organization.to_s
     	if self.organization.blank?
     		k = self.organization_members.select{|c|
-    			c.membership_status == Organization::USER_VERIFIED
+    			(c.membership_status == Organization::USER_VERIFIED) || (c.created_by_this_user == OrganizationMember::CREATED_BY_THIS_USER)
     		}
-    		#puts "organizations that were verified for this user are:"
-    		#puts k.to_s
+    		puts "k is:"
+    		puts k.to_s
     		unless k.blank?
     			if self.organization = Organization.find(k[0].organization_id)
     				self.organization.current_user_role_id = k[0].employee_role_id
@@ -202,8 +203,9 @@ module Concerns::OrganizationConcern
     				end
     			end
     		end
-    		#puts "the organization that was set for this user is $$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    		#puts self.organization.to_s
+    		puts "the organization that was set for this user is $$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    		puts self.organization.to_s
+    		puts "----------------------------------------"
     	end
     end
 
@@ -224,22 +226,12 @@ module Concerns::OrganizationConcern
     	end
     end
 
-    ## the two fields  :organization_member_organization_id
-    ## :organization_member_employee_role_id
-    ## are populated when a user clicks join on the organiztion page
-    ## they are sent to the edit page
-    ## the form bit to add this latest organization
-    ## to the organization members is rendered only 
-    ## if this organization id is not already present
-    ## in the users organization members
-    ## this will not happen if the user has already added these, in a previous edit action
-    ## since these two are fields, they are saved, so 
-    ## this needs to be checked before rendering edit.
+   
     def show_join_organization_form?
-    	existing_member = self.organization_members.select{|c|
-    		c.organization_id == self.organization_member_organization_id
-    	}
-    	existing_member.size == 0
+		## if the attributes are blank, dont show it.
+		return false if self.organization_member_organization_id.blank?
+		## if this is the same as any existing member, done show it.
+		self.organization_members.select{|c| c.organization_id == self.organization_member_organization_id}.size == 0
     end
 
 end
