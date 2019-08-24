@@ -3,13 +3,14 @@ require 'elasticsearch/persistence/model'
 class Inventory::Transaction
 
 	include Elasticsearch::Persistence::Model
+		include Concerns::MissingMethodConcern
+
 	include Concerns::AllFieldsConcern
 	include Concerns::BarcodeConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
-	include Concerns::MissingMethodConcern
 	#include Concerns::VersionedConcern
 
 	CHEQUE = "CHEQUE"

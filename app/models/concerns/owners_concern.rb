@@ -124,15 +124,32 @@ module Concerns::OwnersConcern
 
 
 		## this also should be methodized to enable overrides.
-		before_save do |document|
+		#before_save do |document|
+			
+		#end
+
+		before_validation do |document|
 			document.add_owner_ids
-		end
-
-
-		after_find do |document|
+			#puts "DOING SET ORGANIZATION BEFORE VALIDATION FOR CLASS: #{self.class.name}"
 			unless document.class.name == "Organization"
 				unless document.currently_held_by_organization.blank?
 					document.organization = Organization.find(document.currently_held_by_organization)
+				end
+			end
+		end
+
+		## so this callback is not getting triggered on the 
+		## report.
+		## to load the organization.
+		## so we are not being able to cascade these callbacks.
+		after_find do |document|
+			puts "doing after find for class: #{document.class.name}"
+			puts "document currently held by organization: #{document.currently_held_by_organization}"
+			unless document.class.name == "Organization"
+				unless document.currently_held_by_organization.blank?
+					document.organization = Organization.find(document.currently_held_by_organization)
+					puts "document organization is:"
+					puts document.organization.to_s
 				end
 			end
 		end

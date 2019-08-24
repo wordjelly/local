@@ -28,13 +28,18 @@ module Concerns::MissingMethodConcern
 
 		validate :validate_nested
 
+		before_validation do |document|
+			#puts "-------- EXECUTING BEFORE VALIDATION FOR CLASS: #{document.class.name} ---------- "
+			document.cascade_callbacks(:validation)
+		end
 		
 
 		before_save do |document|
-			puts "CAME TO BEFORE SAVE ------------------- in missing method concern #{document.class.name}"
-			puts "ERRORS AT THIS STAGE: #{document.errors.full_messages}"
+			#puts "CAME TO BEFORE SAVE ------------------- in missing method concern #{document.class.name}"
+			#puts "ERRORS AT THIS STAGE: #{document.errors.full_messages}"
 			document.nullify_nil_attributes
 			document.cascade_callbacks(:save){false}
+			#document.cascade_callbacks(:find){false}
 		end
 
 		#def assign_parent_details
@@ -134,18 +139,25 @@ module Concerns::MissingMethodConcern
 		def cascade_callbacks(callback)
 			#puts " ----- DOING CASCADE CALLBACKS ----------- #{self.class.name}"
 			self.class.attribute_set.each do |virtus_attribute|
+				#puts "doing attribute: #{virtus_attribute.name}"
 				if virtus_attribute.primitive.to_s == "Array"
+					#puts "is an array"
 					if virtus_attribute.respond_to? "member_type"
 						class_name = virtus_attribute.member_type.primitive.to_s
 						unless class_name == "BasicObject"
+							#puts "its not a base object"
 							## this is because you have not typified versions
 							## and are storing it as a hash.
+							#puts "reports size is:---------------"
+							#puts self.reports.size.to_s
 							unless self.send(virtus_attribute.name).blank?
-								#puts "attribute name is: #{virtus_attribute.name.to_s}"
+
+								#puts "attribute name not blank is: #{virtus_attribute.name.to_s}"
 								self.send(virtus_attribute.name).each do |arr|
 									#puts "arr is: #{arr}"
 									#puts "callback si: #{callback}"
 									unless arr.is_a? Hash
+										puts "running array callback on class: #{arr.class.name} and callback: #{callback}"
 										arr.run_callbacks(callback)
 									end
 								end
@@ -179,7 +191,7 @@ module Concerns::MissingMethodConcern
 		end
 
 		
-
+			
 		## @return[nil]
 		## will return nothing
 		## will just add the names of the attributes that have changed

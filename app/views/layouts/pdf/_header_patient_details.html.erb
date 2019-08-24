@@ -1,5 +1,5 @@
 <% if organization.show_patient_details_on_each_page == Organization::YES %>
-	<% patient = patient.patient %>
+	<% patient = order.patient %>
 	<div class="divider">
   	<h6>Name: <%= patient.full_name %> | Age: <%= patient.age %> | Gender: <%= patient.sex %> | Date of Birth: <%= patient.date_of_birth %></h6>
   	<h6>Referring Doctor: <%= patient.referring_doctor %> | Mobile Number: <%= patient.mobile_number %> | Address : <%= patient.address %></h6>

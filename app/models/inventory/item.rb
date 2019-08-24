@@ -3,6 +3,8 @@ require 'elasticsearch/persistence/model'
 class Inventory::Item
 
 	include Elasticsearch::Persistence::Model
+	## MUST BE FIRST 
+	include Concerns::MissingMethodConcern
 	include Concerns::AllFieldsConcern
 	include Concerns::BarcodeConcern
 	include Concerns::NameIdConcern
@@ -10,7 +12,6 @@ class Inventory::Item
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::TransferConcern
-	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
 
 	

@@ -3,6 +3,10 @@ require 'elasticsearch/persistence/model'
 module Concerns::AllFieldsConcern
 	extend ActiveSupport::Concern
 	included do 
+
+		include ActiveModel::Validations
+  		include ActiveModel::Validations::Callbacks
+		
 		settings index: { 
 	    number_of_shards: 1, 
 	    number_of_replicas: 0,

@@ -1,11 +1,11 @@
 require 'elasticsearch/persistence/model'
 class Inventory::Comment
 	include Elasticsearch::Persistence::Model
+	include Concerns::MissingMethodConcern
 	include Concerns::AllFieldsConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
-	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
 	
 	index_name "pathofast-inventory-comments"

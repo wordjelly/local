@@ -5,21 +5,21 @@
 <div id="header">
   <!-- do we leave space for the letter head or do we make a letter head ? -->
   <!-- currently held by order_organization id -->
-  	<% if order_organization.id.to_s != organization.id.to_s %>
+  	<% if order.organization.id.to_s != organization.id.to_s %>
   		<!-- header will be force generated -->
   		<!-- generate header using organization -->
   		<%= render :partial => "/layouts/pdf/letter_head", locals: {organization: organization} %>
   		<%= render :partial => "/layouts/pdf/header_patient_details", locals: {order: order, organization: organization} %>
   	<% else %>
   		
-  		<% if order_organization.we_have_pre_printed_letter_heads == Organization::YES %>
+  		<% if order.organization.we_have_pre_printed_letter_heads == Organization::YES %>
   			<!-- there are  pre printed letter heads -->
-  			<div style="height: <%= order_organization.space_to_leave_for_pre_printed_letter_head_in_cm*Organization::CM_TO_PIXEL; %>px"></div>
+  			<div style="height: <%= order.organization.space_to_leave_for_pre_printed_letter_head_in_cm*Organization::CM_TO_PIXEL; %>px"></div>
 	  	<% else %>
-	  		<% if order_organization.generate_header == Organization::YES %>
-	  			<%= render :partial => "/layouts/pdf/letter_head", locals: {organization: order_organization} %>
+	  		<% if order.organization.generate_header == Organization::YES %>
+	  			<%= render :partial => "/layouts/pdf/letter_head", locals: {organization: order.organization} %>
 	  		<% end %>
-	  		<%= render :partial => "/layouts/pdf/header_patient_details", locals: {order: order, organization: order_organization} %>
+	  		<%= render :partial => "/layouts/pdf/header_patient_details", locals: {order: order, organization: order.organization} %>
 	  	<% end %>
   	<% end %>
 </div>

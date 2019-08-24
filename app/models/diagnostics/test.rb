@@ -349,6 +349,7 @@ class Diagnostics::Test
 		self.result_type == TEXTUAL_RESULT
 	end
 
+	
 	## so this way it picks both the normal and abnormal range
 	## while both may be the same.
 	def assign_range(patient)
@@ -381,17 +382,10 @@ class Diagnostics::Test
 		
 	end
 
-	## test name is Schistocytes
-	## value -> Absent
-	## we can have a default value -> matching a default range.
-	## so that will auto match.
-	## so that is populated on show.
-	## mark a range as default.
-	## it is available only for text values
-	## for eg :  
-
+	
 	## @return[Diagnostics::Range] applicable range, or nil , if none has been picked yet.
 	## convenience method, used in summary_row, to get the applicable range and show its sex, and age.
+	## it may be normal/abnormal.
 	def get_applicable_range
 		res = self.ranges.select{|c|
 			c.picked == 1
@@ -403,7 +397,8 @@ class Diagnostics::Test
 		end
 	end
 
-	## gets the first range, 
+	## gets the first range,
+	## returns the applicable normal range for this patient. 
 	def get_applicable_normal_range
 		
 		res = self.ranges.select{|c|

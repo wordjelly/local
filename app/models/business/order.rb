@@ -2,6 +2,14 @@ require 'elasticsearch/persistence/model'
 require 'schedule/minute'
 class Business::Order
 
+	##################################################
+	##
+	##
+	## ORDER OF ALL INCLUDES IS CRITICAL
+	##
+	##
+	##################################################
+
 	include Elasticsearch::Persistence::Model
 	include ActiveModel::Validations
   	include ActiveModel::Validations::Callbacks
@@ -15,8 +23,9 @@ class Business::Order
 	include Concerns::SearchOptionsConcern
 	include Concerns::FormConcern
 	include Concerns::Schedule::QueryBuilderConcern
-	include Concerns::OrderConcern
 	include Concerns::PdfConcern
+	include Concerns::OrderConcern
+	
 
 	before_validation do |document|
 		document.cascade_id_generation(nil)

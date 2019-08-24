@@ -2,12 +2,12 @@ require 'elasticsearch/persistence/model'
 class Inventory::ItemType
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::MissingMethodConcern
 	include Concerns::AllFieldsConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
-	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
 	include Concerns::VersionedConcern
 

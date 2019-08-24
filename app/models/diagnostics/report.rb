@@ -490,7 +490,11 @@ class Diagnostics::Report
 	## this is used to set the accessor :report_is_outsourced
 	## and this accessor is also available in the json representation of this object.
 	def is_outsourced?
-		self.currently_held_by_organization.id.to_s != self.order_organization.id.to_s
+		puts "self organization is:"
+		puts self.organization.to_s
+		puts "self order organization is:"
+		puts self.order_organization.to_s
+		self.organization.id.to_s != self.order_organization.id.to_s
 	end
 
 	## @return[Boolean] true/false : true if the user can sign the report.
@@ -501,7 +505,7 @@ class Diagnostics::Report
 
 	## @return[Array] list of user_ids who have verified the tests in this report.
 	def gather_signatories
-		verifying_user_ids = self.tests.map{|c|
+		self.tests.map{|c|
 			c.verification_done_by				
 		}.uniq
 	end

@@ -1,6 +1,8 @@
 class Inventory::Requirement
 
 	include Elasticsearch::Persistence::Model
+		include Concerns::MissingMethodConcern
+
 	include Concerns::AllFieldsConcern
 	include Concerns::NameIdConcern
 	include Concerns::BarcodeConcern
@@ -8,7 +10,6 @@ class Inventory::Requirement
 	#include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::TransferConcern
-	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
 	
 	index_name "pathofast-inventory-requirements"

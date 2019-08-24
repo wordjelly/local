@@ -1,6 +1,6 @@
-<% if @order.has_abnormal_reports? %>
+<% if order.has_abnormal_reports? %>
 	<h5>Summary of Abnormal Results</h5>
-	<% @order.reports.each do |report| %>
+	<% order.reports.each do |report| %>
 		<% if report.all_tests_verified? %>
 			<% if report.has_abnormal_tests? %>
 				<div class="card">

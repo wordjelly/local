@@ -92,9 +92,9 @@ module Concerns::OrderConcern
 
 		## do this on order.
 		## only.
-		validate :can_modify
+		validate :can_modify, :if => Proc.new{|c| !c.changed_attributes.blank?}
 
-		validate :tests_verified_by_authorized_users_only
+		validate :tests_verified_by_authorized_users_only, :if => Proc.new{|c| !c.changed_attributes.blank?}
 
 		## this should happen before the validations.
 		## not after.
@@ -188,6 +188,12 @@ module Concerns::OrderConcern
 
 	def update_reports
 		## problem is here.
+		puts "came to update reports"
+		puts "template report id is:"
+		puts self.template_report_ids
+
+
+
 		self.reports.delete_if { |c|
 
 
@@ -199,14 +205,23 @@ module Concerns::OrderConcern
 			c.id.to_s
 		}
 
+		puts "existing report ids are:"
+		puts existing_report_ids
+		puts existing_report_ids.class.name.to_s
+
 		self.template_report_ids.each do |r_id|
+			puts "doing template report id: #{r_id}"
 			unless existing_report_ids.include? r_id
 				report = Diagnostics::Report.find(r_id)
 				report.created_by_user = User.find(report.created_by_user_id)
+				puts "report found is: #{report.id.to_s}"
 				report.run_callbacks(:find)
+
 				self.reports << report
 			end
 		end
+
+
 
 	end
 
@@ -457,25 +472,24 @@ module Concerns::OrderConcern
 		## all the user ids that may need to be signatories.
 		## your final signatories are now fixed.
 		## now all you have to decide is whether to render them 
+		## who all have verified the report ?
+		## that is the thing here.
 		self.reports.each do |report|
-			if self.reports_by_organization[report.currently_held_by_organization_id].blank?
-				## get its signing user ids.
-				## add them to the array.
-				self.reports_by_organization[report.currently_held_by_organization_id] = [report.id.to_s]
-				user_ids << report.verification_done_by
-			
+			user_ids = []
+			if self.reports_by_organization[report.organization.id.to_s].blank?
+				self.reports_by_organization[report.organization.id.to_s] = [report.id.to_s]
+				user_ids << report.gather_signatories			
 			else
-				self.reports_by_organization[report.currently_held_by_organization_id].blank?
-				self.reports_by_organization[report.currently_held_by_organization_id] << report.id.to_s
-				user_ids << report.verification_done_by
-				user_ids.map{|c|
-					self.users_hash[c] = User.find(c) if self.users_hash[c].blank?
-				}
+				self.reports_by_organization[report.organization.id.to_s].blank?
+				self.reports_by_organization[report.organization.id.to_s] << report.id.to_s
+				user_ids << report.gather_signatories				
 			end
+
+			user_ids.map{|c| self.users_hash[c] = User.find(c) if self.users_hash[c].blank? }
 
 			if self.organization.outsourced_reports_have_original_format == Organization::YES
 
-				report.final_signatories = report.verification_done_by
+				report.final_signatories = report.gather_signatories
 
 				report.final_signatories.reject! { |c|  !report.can_sign?(users_hash[c])}
 
@@ -519,20 +533,58 @@ module Concerns::OrderConcern
 
 		if self.organization.outsourced_reports_have_original_format == Organization::YES
 
+			## get the signing organization.
+			## and pass it in as a local.
+			## at this stage itself.
+
 			self.reports_by_organization.keys.each do |organization_id|
 
 				## so i want to generate these reports
 				## on their letter head
 				## seperately.
-				build_pdf(self.reports_by_organization[organization_id],organization_id)
+				build_pdf(self.reports_by_organization[organization_id],organization_id,get_signing_organization(self.reports_by_organization[organization_id]))
 
 			end
 
 		else
 
-			build_pdf(self.reports.map{|c| c.id.to_s},self.organization.id.to_s)
+			build_pdf(self.reports.map{|c| c.id.to_s},self.organization.id.to_s,get_signing_organization(self.reports))
 
 		end
+
+	end
+
+	## @Called_from : self#generate_pdf
+	def get_signing_organization(reports)
+
+		first_report = reports.first
+
+		results = {
+			:signing_organization => nil
+		}
+
+		## make some dummy users
+		## give them each credentials.
+		## make three reports by one organization
+		## and one report by the other organization
+		## then 
+
+		if first_report.report_is_outsourced
+
+			if first_report.order_organization.outsourced_reports_have_original_format == Organization::NO
+						
+					results[:signing_organization] = first_report.organization
+			else
+					results[:signing_organization] = first_report.order_organization
+			end
+
+		else
+
+			results[:signing_organization] = first_report.order_organization
+
+		end
+
+		return results[:signing_organization]
 
 	end
 
@@ -542,7 +594,7 @@ module Concerns::OrderConcern
 			if report.impression.blank?
 				report.impression = ""
 				report.tests.each do |test|
-					report.impression += (" " + test.inference)
+					report.impression += (" " + (test.display_comments_or_inference || ""))
 				end
 			end
 		end
@@ -550,7 +602,8 @@ module Concerns::OrderConcern
 
 	## @param[Array] report_ids : the array of report ids.
 	## @param[String] organization_id : the id of the organization on whose letter head the reports have to be generated.
-	def build_pdf(report_ids,organization_id)
+	## @param[Organization] signing_organzation : the organization whose representatives will sign on the report.
+	def build_pdf(report_ids,organization_id,signing_organization)
 		
 		file_name = self.id.to_s + "_" + self.patient.full_name + "_" + organization_id.to_s
 	   
@@ -558,20 +611,20 @@ module Concerns::OrderConcern
 
 	    pdf = ac.render_to_string pdf: file_name,
             template: "#{ Auth::OmniAuth::Path.pathify(self.class.name).pluralize}/pdf/show.pdf.erb",
-            locals: {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id)},
+            locals: {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id), :signing_organization => signing_organization},
             layout: "pdf/application.html.erb",
             header: {
             	html: {
             		template:'/layouts/pdf/header.html.erb',
             		layout: '/layouts/pdf/empty_layout.html.erb',
-            		locals: {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id)}
+            		locals:  {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id), :signing_organization => signing_organization}
             	}
             },
             footer: {
            		html: {   
            			template:'/layouts/pdf/footer.html.erb',
            			layout: '/layouts/pdf/empty_layout.html.erb',
-            		locals: {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id)}
+            		locals: {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id), :signing_organization => signing_organization}
                 }
             }       
 
