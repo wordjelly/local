@@ -64,9 +64,10 @@ module Concerns::MissingMethodConcern
 		## so we need a def which takes the current_user
 		## and also the currently held by organization id.
 		## if it is defined, then it is ignored.
-
+		## so the next step is to add some tubes
+		## and see why the patient details are not coming through.
 		def validate_nested
-			puts "Came to validate nested in class: #{self.class.name}"
+			#puts "Came to validate nested in class: #{self.class.name}"
 			self.class.attribute_set.each do |virtus_attribute|
 				if virtus_attribute.primitive.to_s == "Array"
 					if virtus_attribute.respond_to? "member_type"
@@ -155,7 +156,7 @@ module Concerns::MissingMethodConcern
 									#puts "arr is: #{arr}"
 									#puts "callback si: #{callback}"
 									unless arr.is_a? Hash
-										puts "running array callback #{callback} on class: #{arr.class.name} and callback: #{callback}"
+										#puts "running array callback #{callback} on class: #{arr.class.name} and callback: #{callback}"
 										arr.run_callbacks(callback)
 									end
 								end
@@ -311,6 +312,7 @@ module Concerns::MissingMethodConcern
 				## otherwise try to determine it.
 				if org_id.blank?
 					if self.respond_to? :created_by_user
+						#puts "self class name is: #{self.class.name.to_s}"
 						org_id = self.created_by_user.organization.id.to_s
 					else
 						raise("no organization specified") if organization_id.blank?

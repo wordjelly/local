@@ -97,9 +97,9 @@ class SearchController < ApplicationController
 			puts "the search result is:"
 			puts c["_source"]
 			puts c["_type"]
-			c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
+			c = c["_type"].underscore.classify.constantize.new(c["_source"].to_h.merge(:id => c["_id"]))
 			c.run_callbacks(:find) do 
-				c.apply_current_user(current_user)
+				c.apply_current_user(current_user) if c.respond_to? :apply_current_user
 			end
 			c
 		}

@@ -2,12 +2,13 @@ require 'elasticsearch/persistence/model'
 class Patient
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::MissingMethodConcern
 	include Concerns::AllFieldsConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::NameIdConcern
-	include Concerns::MissingMethodConcern
+	
 
 	SEX = ["Male","Female","Transgender","All"]
 
@@ -119,7 +120,8 @@ class Patient
 		      		:analyzer => "nGram_analyzer",
 		      		:search_analyzer => "whitespace_analyzer"
 		      	}
-		    }
+		    },
+	   	 	copy_to: "search_all"
 
 		    indexes :last_name, type: 'keyword', fields: {
 		      	:raw => {
@@ -127,7 +129,8 @@ class Patient
 		      		:analyzer => "nGram_analyzer",
 		      		:search_analyzer => "whitespace_analyzer"
 		      	}
-		    }
+		    },
+	   	 	copy_to: "search_all"
 
 		end
 
@@ -218,5 +221,7 @@ class Patient
 	def has_history?
 		false
 	end
+
+	alias name full_name
 
 end

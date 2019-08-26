@@ -88,8 +88,33 @@ namespace :pathofast do
 
     Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
-    ## add some tags
-   
+    u1 = User.find(u1.id.to_s)
+    u2 = User.find(u2.id.to_s)
+    u3 = User.find(u3.id.to_s)
+    
+
+    ## create a report by pathofast.
+    reports_file_path = Rails.root.join('test','test_json_models','diagnostics','reports','hemogram.json')
+    reports = JSON.parse(IO.read(reports_file_path))
+    hemogram_report = Diagnostics::Report.new(reports["reports"][0])
+    hemogram_report.created_by_user = u1
+    hemogram_report.created_by_user_id = u1.id.to_s
+    hemogram_report.save
+    puts "ERRORS CREATING HEMOGRAM REPORT: #{hemogram_report.errors.full_messages}"    
+
+    Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+    ## create a patient by pathofast.
+    patients_file_path = Rails.root.join('test','test_json_models','patients','aditya_raut.json')
+    patients = JSON.parse(IO.read(patients_file_path))
+    patient = Patient.new(patients["patients"][0])
+    patient.created_by_user = u1
+    patient.created_by_user_id = u1.id.to_s
+    patient.save
+    puts "ERRORS CREATING Aditya Raut Patient: #{patient.errors.full_messages}"
+
+    Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
   end
 
 end

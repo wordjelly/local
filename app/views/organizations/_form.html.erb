@@ -52,13 +52,7 @@
 					<div class="card-title">
 						<!-- we have enable use id -->
 					</div>
-					<!-- so you have to have something simpler -->
-					<!-- if the incoming key is missing, then what to do -->
-					<!-- that is the issue -->
-					<!-- what about a dummy field, that is hidden 
-					? -->
-					<!-- so we have to wipe these elements -->
-					<!-- at merge ? -->
+					<!-- so now see if the credential gets loaded or not -->
 					<%= text_field_tag BSON::ObjectId.new.to_s , "", :data => {:autocomplete_type => "#{ar}", :index_name => "pathofast_pathofast-users", :multiple => true, :multiple_element_name => "organization[#{ar}][]", "use-id" => "yes"}, :autocomplete => "off" %>
 
 					<%= f.label ar %>

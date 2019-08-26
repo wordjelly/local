@@ -1,0 +1,25 @@
+<!-- :order, :order_organization, :reports will be available as locals -->
+<!-- the order_organization passed in as a local may be an outside order_organization, in which case, these are treated as outsourced reports -->
+<!-- so first compare the order_organizations -->
+<!-- the order order_organization, is the order_organization who made the order -->
+<div id="header">
+  <!-- do we leave space for the letter head or do we make a letter head ? -->
+  <!-- currently held by order_organization id -->
+    <% if order.organization.id.to_s != organization.id.to_s %>
+      <!-- header will be force generated -->
+      <!-- generate header using organization -->
+      <%= render :partial => "/layouts/pdf/letter_head", locals: {organization: organization} %>
+      <%= render :partial => "/layouts/pdf/header_patient_details", locals: {order: order, organization: organization} %>
+    <% else %>
+      
+      <% if order.organization.we_have_pre_printed_letter_heads == Organization::YES %>
+        <!-- there are  pre printed letter heads -->
+        <div style="height: <%= order.organization.space_to_leave_for_pre_printed_letter_head_in_cm*Organization::CM_TO_PIXEL; %>px"></div>
+      <% else %>
+        <% if order.organization.generate_header == Organization::YES %>
+          <%= render :partial => "/layouts/pdf/letter_head", locals: {organization: order.organization, order: order} %>
+        <% end %>
+        <%= render :partial => "/layouts/pdf/header_patient_details", locals: {order: order, organization: order.organization} %>
+      <% end %>
+    <% end %>
+</div>

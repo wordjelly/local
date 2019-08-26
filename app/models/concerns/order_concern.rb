@@ -613,7 +613,7 @@ module Concerns::OrderConcern
 	## @param[Organization] signing_organzation : the organization whose representatives will sign on the report.
 	def build_pdf(report_ids,organization_id,signing_organization)
 		
-		file_name = self.id.to_s + "_" + self.patient.full_name + "_" + organization_id.to_s
+		file_name = self.id.to_s + "_" + self.patient.full_name
 	   
 	    ac = ActionController::Base.new
 
@@ -623,15 +623,15 @@ module Concerns::OrderConcern
             layout: "pdf/application.html.erb",
             header: {
             	html: {
-            		template:'/layouts/pdf/header.html.erb',
-            		layout: '/layouts/pdf/empty_layout.html.erb',
+            		template:'/layouts/pdf/header.pdf.erb',
+            		layout: "pdf/application.html.erb",
             		locals:  {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id), :signing_organization => signing_organization}
             	}
             },
             footer: {
            		html: {   
-           			template:'/layouts/pdf/footer.html.erb',
-           			layout: '/layouts/pdf/empty_layout.html.erb',
+           			template:'/layouts/pdf/footer.pdf.erb',
+           			layout: "pdf/application.html.erb",
             		locals: {:order => self, :reports => self.reports.select{|c| report_ids.include? c.id.to_s}, :organization => Organization.find(organization_id), :signing_organization => signing_organization}
                 }
             }       
@@ -639,7 +639,7 @@ module Concerns::OrderConcern
         save_path = Rails.root.join('public',"#{file_name}.pdf")
 		File.open(save_path, 'wb') do |file|
 		  file << pdf
-		  self.pdf_urls << save_path
+		  self.pdf_urls = [save_path]
 		end
 
 		## now display the pdf urls.
