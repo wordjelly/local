@@ -184,17 +184,17 @@ module Concerns::OrganizationConcern
 
     def set_organization
     	#puts " ----------- !!!!!!!!!!!!!! ------------ "
-    	puts "Came to set organization"
-    	puts "the organization members are:"
-    	puts self.organization_members.to_s
-    	puts "self organization is:"
-    	puts self.organization.to_s
+    	#puts "Came to set organization"
+    	#puts "the organization members are:"
+    	#puts self.organization_members.to_s
+    	#puts "self organization is:"
+    	#puts self.organization.to_s
     	if self.organization.blank?
     		k = self.organization_members.select{|c|
     			(c.membership_status == Organization::USER_VERIFIED) || (c.created_by_this_user == OrganizationMember::CREATED_BY_THIS_USER)
     		}
-    		puts "k is:"
-    		puts k.to_s
+    		#puts "k is:"
+    		#puts k.to_s
     		unless k.blank?
     			if self.organization = Organization.find(k[0].organization_id)
     				self.organization.current_user_role_id = k[0].employee_role_id
@@ -203,9 +203,9 @@ module Concerns::OrganizationConcern
     				end
     			end
     		end
-    		puts "the organization that was set for this user is $$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    		puts self.organization.to_s
-    		puts "----------------------------------------"
+    		#puts "the organization that was set for this user is $$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    		#puts self.organization.to_s
+    		#puts "----------------------------------------"
     	end
     end
 

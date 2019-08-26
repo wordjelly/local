@@ -28,25 +28,24 @@ module Concerns::MissingMethodConcern
 
 		validate :validate_nested
 
+		## what about after_find callbacks.
+
+
 		before_validation do |document|
-			#puts "-------- EXECUTING BEFORE VALIDATION FOR CLASS: #{document.class.name} ---------- "
 			document.cascade_callbacks(:validation)
 		end
 		
 
 		before_save do |document|
-			#puts "CAME TO BEFORE SAVE ------------------- in missing method concern #{document.class.name}"
-			#puts "ERRORS AT THIS STAGE: #{document.errors.full_messages}"
 			document.nullify_nil_attributes
 			document.cascade_callbacks(:save){false}
-			#document.cascade_callbacks(:find){false}
 		end
 
-		#def assign_parent_details
-			## call on order.
-			## this can be called on any implementing object.
-			## then the validations can be done.
-		#end
+
+		after_find do |document|
+			document.cascade_callbacks(:find)
+		end
+
 
 		## so for eg, it will call this method.
 		## and do it on the children.
@@ -67,7 +66,7 @@ module Concerns::MissingMethodConcern
 		## if it is defined, then it is ignored.
 
 		def validate_nested
-			#puts "Came to validate nested in class: #{self.class.name}"
+			puts "Came to validate nested in class: #{self.class.name}"
 			self.class.attribute_set.each do |virtus_attribute|
 				if virtus_attribute.primitive.to_s == "Array"
 					if virtus_attribute.respond_to? "member_type"
@@ -86,7 +85,6 @@ module Concerns::MissingMethodConcern
 										arr.validate_nested
 										unless arr.valid?
 											self.errors.add(virtus_attribute.name.to_sym,arr.errors.full_messages)
-											#error_messages.flatten
 										end
 									end
 									
@@ -157,7 +155,7 @@ module Concerns::MissingMethodConcern
 									#puts "arr is: #{arr}"
 									#puts "callback si: #{callback}"
 									unless arr.is_a? Hash
-										puts "running array callback on class: #{arr.class.name} and callback: #{callback}"
+										puts "running array callback #{callback} on class: #{arr.class.name} and callback: #{callback}"
 										arr.run_callbacks(callback)
 									end
 								end
@@ -327,7 +325,7 @@ module Concerns::MissingMethodConcern
 							unless class_name == "BasicObject"
 								## set the id , and call cascade on it.
 								if virtus_attribute.name =~ /item/i
-									puts "org id while going for item is: #{org_id}"
+									#puts "org id while going for item is: #{org_id}"
 								end
 								self.send("#{virtus_attribute.name}").each do |obj|
 									unless obj.is_a? Hash

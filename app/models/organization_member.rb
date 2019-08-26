@@ -15,12 +15,15 @@ class OrganizationMember
 
 	def set_membership_status(user_id)
 		unless self.organization_id.blank?
-			puts "there is an organization id: #{self.organization_id}"
+			#puts "there is an organization id: #{self.organization_id}"
 			organization = Organization.find(self.organization_id)
 			organization.run_callbacks(:find)
 			self.organization = organization
-			puts "got an organization"
+			#puts "got an organization"
 			unless self.created_by_this_user.blank?
+				## if the organization member was created by the same user in which it is housed
+				## otherwise we have a problem.
+				## then it is directly verified.
 				self.membership_status = Organization::USER_VERIFIED
 			else	
 				if organization.has_verified_user?(user_id)

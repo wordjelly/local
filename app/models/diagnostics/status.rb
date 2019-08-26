@@ -158,7 +158,13 @@ class Diagnostics::Status
 			:reduce_prior_capacity_by,
 			{
 				:requirements => Inventory::Requirement.permitted_params
-			}
+			},
+			:created_at,
+	    	:updated_at,
+	    	:public,
+	    	:currently_held_by_organization,
+	    	:created_by_user_id,
+	    	:owner_ids
 		]
 		
 		if defined? @permitted_params

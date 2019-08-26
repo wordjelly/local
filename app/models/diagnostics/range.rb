@@ -169,7 +169,13 @@ class Diagnostics::Range
 			:min_age,
 			:max_age,
 			:normal_picked,
-			:active
+			:active,
+			:created_at,
+	    	:updated_at,
+	    	:public,
+	    	:currently_held_by_organization,
+	    	:created_by_user_id,
+	    	:owner_ids
 		]
 	end
 

@@ -96,6 +96,10 @@ module Concerns::OrderConcern
 
 		validate :tests_verified_by_authorized_users_only, :if => Proc.new{|c| !c.changed_attributes.blank?}
 
+		## after find is not being done for the reports.
+		## i think.
+		## okay so why did it generate the report.
+		## now let me add one signature.
 		## this should happen before the validations.
 		## not after.
 		before_validation do |document|
@@ -111,6 +115,7 @@ module Concerns::OrderConcern
 			document.generate_pdf
 		end
 
+		
 		after_find do |document|
 			document.load_patient
 			document.set_accessors
@@ -124,8 +129,10 @@ module Concerns::OrderConcern
 		self.changed_attributes.each do |attr|
 			if attr.to_s == "reports"
 				self.reports.each do |r|
+					next if r.changed_attributes.blank?
 					if r.changed_attributes.include? "tests"
 						r.tests.each do |test|
+							next if test.changed_attributes.blank?
 							if test.changed_attributes.include? "verification_done"
 								## simple enough. 
 								report_issuer_organization = Organization.find(report.currently_held_by_organization_id)
@@ -188,9 +195,9 @@ module Concerns::OrderConcern
 
 	def update_reports
 		## problem is here.
-		puts "came to update reports"
-		puts "template report id is:"
-		puts self.template_report_ids
+		#puts "came to update reports"
+		#puts "template report id is:"
+		#puts self.template_report_ids
 
 
 
@@ -205,16 +212,17 @@ module Concerns::OrderConcern
 			c.id.to_s
 		}
 
-		puts "existing report ids are:"
-		puts existing_report_ids
-		puts existing_report_ids.class.name.to_s
+		#puts "existing report ids are:"
+		#puts existing_report_ids
+		#puts existing_report_ids.class.name.to_s
 
 		self.template_report_ids.each do |r_id|
-			puts "doing template report id: #{r_id}"
+			#puts "doing template report id: #{r_id}"
 			unless existing_report_ids.include? r_id
 				report = Diagnostics::Report.find(r_id)
 				report.created_by_user = User.find(report.created_by_user_id)
-				puts "report found is: #{report.id.to_s}"
+				
+				#puts "report found is: #{report.id.to_s}"
 				report.run_callbacks(:find)
 
 				self.reports << report
@@ -379,9 +387,9 @@ module Concerns::OrderConcern
 						self.categories.each do |existing_category|
 							if existing_category.name == category.name
 									
-								puts "the existing category quantity is: #{existing_category.quantity}"
+								#puts "the existing category quantity is: #{existing_category.quantity}"
 
-								puts "the category quantity is: #{category.quantity}"
+								#puts "the category quantity is: #{category.quantity}"
 
 								existing_category.quantity += category.quantity
 
@@ -631,7 +639,11 @@ module Concerns::OrderConcern
         save_path = Rails.root.join('public',"#{file_name}.pdf")
 		File.open(save_path, 'wb') do |file|
 		  file << pdf
+		  self.pdf_urls << save_path
 		end
+
+		## now display the pdf urls.
+		
 =begin
 	    Tempfile.open(file_name) do |f| 
 		  f.binmode
@@ -672,7 +684,13 @@ module Concerns::OrderConcern
 					    	{
 					    		:reports => Diagnostics::Report.permitted_params[1][:report]
 					    	},
-					    	:procedure_versions_hash
+					    	:procedure_versions_hash,
+					    	:created_at,
+					    	:updated_at,
+					    	:public,
+					    	:currently_held_by_organization,
+					    	:created_by_user_id,
+					    	:owner_ids
 						]
 					}
 				]

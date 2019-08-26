@@ -2,7 +2,7 @@ class SearchController < ApplicationController
 	
 	include Concerns::BaseControllerConcern
 
-	def build_query
+	def permissions_clauses(index_name)
 
 		should_clauses = [
 			{
@@ -12,25 +12,54 @@ class SearchController < ApplicationController
 			}
 		]
 
-		## let me add the 
-
 		if current_user
-			## it has a verified / owns or belongs to an organization
-			should_clauses << {
-				term: {
-					owner_ids: current_user.id.to_s
-				}
-			}
-			
-			if current_user.has_organization?
+			searching_users_index = false
+			if !@index_name.blank?
+				if @index_name =~ /pathofast\-users/
+					searching_users_index = true
+					if current_user.has_organization?
+						## first get the users organization.
+						user_organization = 
+						Organization.find(current_user.organization.id.to_s)
+						verified_users = user_organization.user_ids
+						
+						should_clauses << {
+							ids: {
+								values: verified_users + [current_user.id.to_s]
+							}
+						}
+					end
+				end
+			end 
+
+			if searching_users_index.blank?
+
 				should_clauses << {
-					terms: {
-						owner_ids: current_user.organization.all_organizations
+					term: {
+						owner_ids: current_user.id.to_s
 					}
 				}
+				
+				if current_user.has_organization?
+					should_clauses << {
+						terms: {
+							owner_ids: current_user.organization.all_organizations
+						}
+					}
+				end
+
 			end
 
 		end
+
+		should_clauses
+
+
+	end
+
+	def build_query
+
+		should_clauses = permissions_clauses(nil)
 
 		query = {
 			size: 100,
@@ -63,7 +92,13 @@ class SearchController < ApplicationController
 	end
 
 	def search
-		response = Elasticsearch::Persistence.client.search index: "pathofast-*", body: build_query
+
+		@type = params[:type]
+
+		## you can directly pass the name of the 
+		@index_name = params[:index_name] || "pathofast-#{@type}"
+
+		response = Elasticsearch::Persistence.client.search index: "pathofast*", body: build_query
 		mash = Hashie::Mash.new response 
 		@search_results = mash.hits.hits.map{|c|
 			puts "the search result is:"
@@ -99,15 +134,19 @@ class SearchController < ApplicationController
 		## and you can get the users.
 		## of the current organization.
 		## go for user.
+		## so the organization that was sent in, should be there as 
+		## verified in the organizationmembers.
 		
 		response = Elasticsearch::Persistence.client.search index: @index_name, body: build_query
 		mash = Hashie::Mash.new response 
-		puts "the total hits are:"
-		puts mash.hits.hits.size.to_s
+		#puts "the total hits are:"
+		#puts mash.hits.hits.size.to_s
 		@search_results = mash.hits.hits.map{|c|
-			c = c["_type"].underscore.classify.constantize.new(c["_source"].merge(:id => c["_id"]))
-			c.run_callbacks(:find) do 
-				c.apply_current_user(current_user)
+			c = c["_type"].underscore.classify.constantize.new(c["_source"].to_h.merge(:id => c["_id"]))
+			c.run_callbacks(:find) do
+				if c.respond_to? :apply_current_user 
+					c.apply_current_user(current_user)
+				end
 			end
 			c
 		}

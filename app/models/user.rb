@@ -8,6 +8,9 @@ class User
   include Concerns::OrganizationConcern
 
 
+  ## the index name specified here, getting a prefix of
+  ## pathofast_
+  ## so the final index name becomes: pathofast_pathofast-users
   create_es_index({
         index_name: "pathofast-users",
         index_options:  {
@@ -15,7 +18,7 @@ class User
                 index: Auth::Concerns::EsConcern::AUTOCOMPLETE_INDEX_SETTINGS
               },
               mappings: {
-                  "document" => {
+                  "user" => {
                       properties: {
                         search_all: { 
                           type: 'text', 
@@ -159,7 +162,7 @@ class User
     #######################################################
     ##
     ##
-    ## LOAD CREDENTIALS.
+    ## LOAD CREDENTIALS
     ##
     ##
     #####################################################

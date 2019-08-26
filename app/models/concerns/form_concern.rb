@@ -5,8 +5,10 @@ module Concerns::FormConcern
 	included do 
 
 		## this should be contextual.
+
 		def fields_not_to_render
-			["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","search_options"]		
+			#["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","search_options"]		
+			[]
 		end
 
 		## will check dthe keys for the root.

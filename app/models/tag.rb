@@ -43,7 +43,7 @@ class Tag
 	## USED IN SOME TESTS AND RAKE TASKS
 	def self.create_default_employee_roles
 		["Pathologist","Technician","Supervisor"].each do |role_name|
-			t = Tag.new(name: role_name, tag_type: EMPLOYEE_TAG, skip_owners_validation: true)
+			t = Tag.new(name: role_name, tag_type: EMPLOYEE_TAG, skip_owners_validations: true)
 			t.save
 			unless t.errors.full_messages.blank?
 				puts t.errors.full_messages.to_s

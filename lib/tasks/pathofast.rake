@@ -37,11 +37,13 @@ namespace :pathofast do
     u1.save
     u1.confirm
     u1.save
-
+    ## so in this case, the type has to be set 
+    ## and by default it is becoming document.
+    
     Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-
+    ## so this is a pretty major problem.
     ## refresh the fucking index, i have no idea what is happening here.
-
+  
 
     ## this is a supplier
     u2 = User.new(email: "anand_chem@gmail.com", password: "cocostan", confirmed_at: Time.now)

@@ -153,6 +153,7 @@ upto me.
 ## TEST MUST HAVE VALUE IS NOT YET INCORPORATED IN ALL_TESTS_VERIFIED FUNCTION OF REPORT
 ## ONLY REPORT IF ABNORMAL, AND MUST HAVE VALUE MAY CLASH.
 ## KNOCK OF PDF URLS, FROM ALL FORMS.
+## MODIFY MONGOID-ELASTICSEARCH GEM TO CHANGE THE index.rb file to remove blanked mapping type as document.
 ## payments - module is remaining, make option for prepaid payments.
 ## time incorporation for fasting and pp.
 ## rates with packages, and lab rates -> easy to directly add discount for a particular lab on all rates.

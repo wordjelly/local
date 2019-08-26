@@ -30,22 +30,11 @@ module Concerns::OwnersConcern
 		## it is the created_by_user id.
 		attribute :created_by_user_id
 
-		## i think that will be the last organization.
-		## once an item is 
-		## we have to use this from the report.
-		## to check where that organization is in the owner ids.
-		## and barcode is that.
-		## whether it is valid or not.
-		## that's the way.
-		## is nested has to be set.
-		## only then can we know.
-		## so how to pass this downwards to the item ?
-		## 
 		attribute :currently_held_by_organization, String, mapping: {type: 'keyword'}
 
-		validate :created_user_exists, :unless => Proc.new{|c| c.skip_owners_validations.blank?}
+		validate :created_user_exists, :if => Proc.new{|c| c.skip_owners_validations.blank?}
 			
-		validate :organization_users_are_enrolled_with_organization, :unless => Proc.new{|c| (c.new_record? && c.class.name == "Organization") || (c.skip_owners_validations.blank?)}
+		validate :organization_users_are_enrolled_with_organization
 
 		attribute :public, Integer, mapping: {type: 'integer'}, default: Concerns::OwnersConcern::IS_PRIVATE
 
@@ -54,6 +43,7 @@ module Concerns::OwnersConcern
 		## why does it need to have a role?
 		### CHECKS THAT THERE IS A CREATED_USER, AND THAT IT HAS A ROLE.
 		def created_user_exists
+
 			if self.created_by_user.blank?
 				self.errors.add(:created_by_user,"There is no creating user")
 			#else
@@ -73,18 +63,15 @@ module Concerns::OwnersConcern
 		## this ensures that only verified organization users can interact with resources. 
 		def organization_users_are_enrolled_with_organization
 			
-			## related to organization.
-			## that means either he created an organization, or 
-			#puts "failing here --------"
-			#puts self.class.name.to_s 
-			#puts "the self created by user is:"
-			#puts self.created_by_user
-			#puts "the self organization is:"
-			#puts self.created_by_user.organization.to_s
-			#puts "class is: #{self.class.name}"
-			#puts "skip validation: #{self.skip_owners_validations}"
-			if !self.created_by_user.has_organization?
-				self.errors.add(:created_by_user,"you have not yet been verified as belonging to this organization")
+			if (self.new_record? && self.class.name == "Organization")
+			
+			elsif !self.skip_owners_validations.blank?
+			
+			else
+				puts "class is: #{self.class.name}, skip validations is: #{self.skip_owners_validations}"
+				if !self.created_by_user.has_organization?
+					self.errors.add(:created_by_user,"you have not yet been verified as belonging to this organization")
+				end
 			end
 
 		end
@@ -128,12 +115,17 @@ module Concerns::OwnersConcern
 			
 		#end
 
+		#this callback should also cascade.
+		#after_find -> cascade callbacks on after_find.
+		#otherwise this won't work.
+
 		before_validation do |document|
 			document.add_owner_ids
-			#puts "DOING SET ORGANIZATION BEFORE VALIDATION FOR CLASS: #{self.class.name}"
 			unless document.class.name == "Organization"
+				puts "doing before validation on class: #{document.class.name} with currently held by organization :#{document.currently_held_by_organization}"
 				unless document.currently_held_by_organization.blank?
 					document.organization = Organization.find(document.currently_held_by_organization)
+					puts "the organization becomes: #{document.organization.id.to_s}"
 				end
 			end
 		end
@@ -142,14 +134,12 @@ module Concerns::OwnersConcern
 		## report.
 		## to load the organization.
 		## so we are not being able to cascade these callbacks.
-		after_find do |document|
-			puts "doing after find for class: #{document.class.name}"
-			puts "document currently held by organization: #{document.currently_held_by_organization}"
+		after_find do |document|			
 			unless document.class.name == "Organization"
 				unless document.currently_held_by_organization.blank?
+					puts "doing after find on class: #{document.class.name}"
 					document.organization = Organization.find(document.currently_held_by_organization)
-					puts "document organization is:"
-					puts document.organization.to_s
+					puts "the organization becomes: #{document.organization.id.to_s}"
 				end
 			end
 		end

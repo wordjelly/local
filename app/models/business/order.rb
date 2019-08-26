@@ -15,11 +15,11 @@ class Business::Order
   	include ActiveModel::Validations::Callbacks
 	index_name "pathofast-business-orders"
 	document_type "business/order"
+	include Concerns::MissingMethodConcern
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
-	include Concerns::MissingMethodConcern
 	include Concerns::SearchOptionsConcern
 	include Concerns::FormConcern
 	include Concerns::Schedule::QueryBuilderConcern

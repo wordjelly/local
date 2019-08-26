@@ -241,9 +241,6 @@ module Concerns::BaseControllerConcern
 		#puts "the model params are:"
 		#puts get_model_params.to_s
 
-		if current_user
-			instance_variable_get("@#{get_resource_name}").send("created_by_user=",current_user) 
-		end
 		
 		if instance_variable_get("@#{get_resource_name}").respond_to? :versions
 			
@@ -285,27 +282,43 @@ module Concerns::BaseControllerConcern
 				end
 			end		
 		else
+
+			puts "*****************************"
+			puts "BEFORE doing deep merge:"
+
+			@order.categories.each do |category|
+				puts category.items.size
+			end
+
+			puts "****************************"
+
 			new_instance = get_resource_class.new(get_model_params)
 			instance_variable_get("@#{get_resource_name}").send("determine_changed_attributes",new_instance)
-			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("merge",get_model_params))
+			#older one.
+			#instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("deep_merge",get_model_params))
+			# basically merging either ways, whatever is in the incoming
+			# will overwrite whatever is 
+			# what we can do is ignore nil values incoming.
+			# but that will be top level only
+			# doesnt 
+			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").merge(get_model_params))
+			
+		
 		end
 
-		#puts " ------ FROM UPDATE IN BASE CONTROLLER CONCERN"
-=begin
-		@order.reports.each do |report|
-			puts "report name is: #{report.name}"
-			report.tests.each do |test|
-				puts "test name is: #{test.name}"
-				puts "test result raw is: #{test.result_raw}"
-			end
+		if current_user
+			instance_variable_get("@#{get_resource_name}").send("created_by_user=",current_user) 
 		end
-=end
-		puts " ---------- ENDING HERE ---------------- "
+		
+	
+		#puts " ---------- ENDING HERE ---------------- "
 
 		instance_variable_get("@#{get_resource_name}").send("save")
 		set_errors_instance_variable(instance_variable_get("@#{get_resource_name}"))
 		set_alert_instance_variable(instance_variable_get("@#{get_resource_name}"))
 		instance_variable_get("@#{get_resource_name}").send("run_callbacks","find".to_sym)
+
+
 
 		respond_to do |format|
 			format.html do 
@@ -379,13 +392,6 @@ module Concerns::BaseControllerConcern
 		else
 			not_found("no such model exists, or the current user does not have authorization to interact with the model")
 		end
-		
-		## get category by id.
-		## let me get this over with.
-		## or first check that query before i forget how it works.
-		## so let me check why that is not working.
-		## then move forwards.
-		
 	end
 
 	def set_images_instance_variable(obj)
@@ -549,7 +555,8 @@ module Concerns::BaseControllerConcern
 				return attributes.keep_if{|k,v| @action_permissions["parameters_allowed_on_non_authenticated_user"].include? k}
 			end
 		end
-		puts "returning attributes: #{attributes}"
+		puts "attributes returned"
+		puts JSON.pretty_generate(attributes)
 		return attributes
 	end
 

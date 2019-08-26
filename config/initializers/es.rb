@@ -20,4 +20,34 @@ end
 	end
 end
 
-Schedule::Minute::HELLO
+## overrides method from wordjelly/mongoid-elasticsearch
+## there we made a blanket document type as "type"
+## link to that: https://github.com/wordjelly/mongoid-elasticsearch/blob/7a387df3b86d3d1763d18376fdccfcfa79fadce3/lib/mongoid/elasticsearch/index.rb#L19
+## ill have to modify the gem.
+module Mongoid
+  module Elasticsearch
+    class Index
+        def type
+            klass.model_name.collection.singularize
+        end 
+    end 
+  end
+end
+=begin
+class ::Hash
+    def deep_merge_nil(second)
+        merger = proc { |key, v1, v2| }
+        compound_merger = proc {|key,v1,v2|
+        	Hash === v1 && Hash === v2 ? v1.deep_merge_nil(v2, &merger) : [:undefined, nil, :nil].include?(v2) ? v1 : v2 
+        	## if either is blank.
+        	## then take the one which is not blank.
+        	## if either is an array, then what ?
+        	## if the sizes of incoming and existing are different
+        	## precedence to incoming.
+        	## if sizes are the same, then check ids, 
+        	## so we have to custom merge logic.
+        }
+        self.merge(second, &merger)
+    end
+end
+=end
