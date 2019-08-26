@@ -294,6 +294,9 @@ module Concerns::BaseControllerConcern
 			# what we can do is ignore nil values incoming.
 			# but that will be top level only
 			# doesnt 
+			# so i have to deep cleanse get_model_params
+			# to snsure that any empty array is cleaned of null or empty values
+			# we have to write a recursive function for this.
 			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").merge(get_model_params))
 			
 		
@@ -547,8 +550,31 @@ module Concerns::BaseControllerConcern
 		end
 		puts "attributes returned"
 		puts JSON.pretty_generate(attributes)
-		return attributes
+
+		#deep_clean_arrays(attributes)
+=begin
+		attributes = {
+			:k => 2,
+			:hello => ["",""],
+			:bye => {
+				:hello => ["",""]
+			},
+			:three => {
+				:hello => [
+					{
+						:hello => ["",""]
+					}
+				]
+			}
+
+		}
+=end
+		puts JSON.pretty_generate(attributes.deep_clean_arrays)
+
+		return attributes.deep_clean_arrays
 	end
+
+	
 
 	def permitted_params
 		#puts "the resource class is: #{get_resource_class}"

@@ -17,5 +17,8 @@
 				</i>
 			</li>
 		<% } %>
+		<!-- add a blank element in case all the elements are deleted -->
+
 	</ul>
 <% end %>
+<input type='hidden' name="<%= model.class.name.downcase.singularize %>[<%= multiple_el %>][]" />

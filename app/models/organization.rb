@@ -446,7 +446,9 @@ class Organization
 	def load_employee_roles
 		self.employee_roles ||= []
 		self.role_ids.each do |rid|
-			self.employee_roles << Tag.find(rid)
+			unless rid.blank?
+				self.employee_roles << Tag.find(rid)
+			end
 		end
 	end	
 
