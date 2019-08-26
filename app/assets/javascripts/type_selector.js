@@ -1,5 +1,3 @@
-
-
 $(document).on('keypress','input:text',function(e){
 
 	console.log("got keydown");
@@ -38,7 +36,6 @@ $(document).on('click','.delete_multiple_item',function(event){
 /**
 **/
 var add_multiple_selection = function(parent_input_element,list_item_name,list_item_id){
-	
 
 	var multiple_element_name = parent_input_element.attr("data-multiple-element-name");
 	

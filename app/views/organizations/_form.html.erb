@@ -50,9 +50,9 @@
 			<div class="card">
 				<div class="card-content">
 					<div class="card-title">
-
+						<!-- we have enable use id -->
 					</div>
-					<%= f.text_field ar , :data => {:autocomplete_type => "users", :index_name => "pathofast_pathofast-users", :multiple => true, :multiple_element_name => "organization[#{ar}][]"}, :autocomplete => "off" %>
+					<%= text_field_tag BSON::ObjectId.new.to_s , "", :data => {:autocomplete_type => "#{ar}", :index_name => "pathofast_pathofast-users", :multiple => true, :multiple_element_name => "organization[#{ar}][]", "use-id" => "yes"}, :autocomplete => "off" %>
 
 					<%= f.label ar %>
 

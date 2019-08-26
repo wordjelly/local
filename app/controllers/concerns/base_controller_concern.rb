@@ -234,13 +234,6 @@ module Concerns::BaseControllerConcern
 	## instance.as_json()
 
 	def update
-		#puts " --------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
-		#puts "the params are:"
-		#puts params.to_s
-
-		#puts "the model params are:"
-		#puts get_model_params.to_s
-
 		
 		if instance_variable_get("@#{get_resource_name}").respond_to? :versions
 			
@@ -283,14 +276,14 @@ module Concerns::BaseControllerConcern
 			end		
 		else
 
-			puts "*****************************"
-			puts "BEFORE doing deep merge:"
+			#puts "*****************************"
+			#puts "BEFORE doing deep merge:"
 
-			@order.categories.each do |category|
-				puts category.items.size
-			end
+			#@order.categories.each do |category|
+			#	puts category.items.size
+			#end
 
-			puts "****************************"
+			#puts "****************************"
 
 			new_instance = get_resource_class.new(get_model_params)
 			instance_variable_get("@#{get_resource_name}").send("determine_changed_attributes",new_instance)
@@ -341,10 +334,7 @@ module Concerns::BaseControllerConcern
 
 
 	def set_model
-		## so make the controllers and routes
-		## just override this thing.
-		## 
-
+		
 		query = {
 			bool: {
 				must: [

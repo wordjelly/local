@@ -13,43 +13,36 @@ class SearchController < ApplicationController
 		]
 
 		if current_user
-			searching_users_index = false
-			if !@index_name.blank?
-				if @index_name =~ /pathofast\-users/
-					searching_users_index = true
-					if current_user.has_organization?
-						## first get the users organization.
-						user_organization = 
-						Organization.find(current_user.organization.id.to_s)
-						verified_users = user_organization.user_ids
-						
-						should_clauses << {
-							ids: {
-								values: verified_users + [current_user.id.to_s]
-							}
-						}
-					end
-				end
-			end 
-
-			if searching_users_index.blank?
+			
+			if current_user.has_organization?
+				## first get the users organization.
+				user_organization = 
+				Organization.find(current_user.organization.id.to_s)
+				verified_users = user_organization.user_ids
+				
+				should_clauses << {
+					ids: {
+						values: verified_users + [current_user.id.to_s]
+					}
+				}
 
 				should_clauses << {
-					term: {
-						owner_ids: current_user.id.to_s
+					terms: {
+						owner_ids: current_user.organization.all_organizations
 					}
 				}
 				
-				if current_user.has_organization?
-					should_clauses << {
-						terms: {
-							owner_ids: current_user.organization.all_organizations
-						}
-					}
-				end
-
 			end
+			
+		
+			should_clauses << {
+				term: {
+					owner_ids: current_user.id.to_s
+				}
+			}
+			
 
+			
 		end
 
 		should_clauses
