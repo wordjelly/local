@@ -112,10 +112,11 @@ module Concerns::OrderConcern
 			document.set_accessors
 			document.generate_report_impressions
 			document.group_reports_by_organization
-			document.generate_pdf
-
 		end
 
+		after_validation do |document|
+			document.generate_pdf
+		end
 		
 		after_find do |document|
 			document.load_patient
@@ -128,6 +129,8 @@ module Concerns::OrderConcern
 	## validation called from self.
 	## okay so this is not working.
 	## for whatever reason.
+	## lost here on the order.
+
 	def tests_verified_by_authorized_users_only
 		puts "the changed attributes are:"
 		puts self.changed_attributes.to_s
@@ -150,8 +153,10 @@ module Concerns::OrderConcern
 							if test.changed_attributes.include? "verification_done"
 								 
 								puts "verification done has changed."
-								report_issuer_organization = Organization.find(report.currently_held_by_organization_id)
-								if report_issuer_organization.user_can_verify_test?(self.created_by_user,test)
+								
+								if r.organization.user_can_verify_test?(self.created_by_user,test)
+
+									puts "user is allowed to verify the test"
 
 									if test.verification_done == Diagnostics::Test::VERIFIED
 										test.verification_done_by << self.created_by_user.id.to_s
@@ -181,6 +186,8 @@ module Concerns::OrderConcern
 				## don't need to dive further in.
 				self.reports.each do |r|
 					unless r.changed_attributes.blank?
+						#puts "r owner ids are:"
+						#puts r.owner_ids.to_s
 						if r.owner_ids.include? self.created_by_user_id
 						elsif r.owner_ids.include? self.created_by_user.organization.id.to_s
 						else

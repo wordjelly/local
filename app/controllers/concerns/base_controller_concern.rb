@@ -276,25 +276,8 @@ module Concerns::BaseControllerConcern
 			end		
 		else
 
-			 
-			merged = get_resource_class.new(instance_variable_get("@#{get_resource_name}").send("attributes").merge(get_model_params))
+			assign_incoming_attributes
 
-			merged.determine_changed_attributes(instance_variable_get("@#{get_resource_name}"))
-
-			#merged.reports.each do |report|
-			#	puts report.changed_attributes
-			#	report.tests.each do |tst|
-			#		puts tst.changed_attributes
-			#	end
-			#end
-			#exit(1)
-
-			instance_variable_set("@#{get_resource_name}",merged)
-
-
-			# now assign the instance variable to merged.
-			#instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").merge(get_model_params))
-			# now compare these two.
 		end
 
 		if current_user
@@ -327,9 +310,12 @@ module Concerns::BaseControllerConcern
 				end
 			end
 		end
-
 	end
 
+
+	def assign_incoming_attributes 
+		get_model_params.assign_attributes(instance_variable_get("@#{get_resource_name}"))
+	end
 
 	def set_model
 		
@@ -564,7 +550,7 @@ module Concerns::BaseControllerConcern
 
 		}
 =end
-		puts JSON.pretty_generate(attributes.deep_clean_arrays)
+		#puts JSON.pretty_generate(attributes.deep_clean_arrays)
 
 		return attributes.deep_clean_arrays
 	end

@@ -219,16 +219,7 @@ class Diagnostics::Report
 				    	},
 				    	{
 				    		:tests => Diagnostics::Test.permitted_params
-				    	},
-				    	:created_at,
-				    	:updated_at,
-				    	:public,
-				    	:currently_held_by_organization,
-				    	:created_by_user_id,
-				    	:owner_ids,
-				    	:procedure_version,
-				    	:outsourced_report_statuses,
-				    	:merged_statuses
+				    	}
 					]
 				}
 			]

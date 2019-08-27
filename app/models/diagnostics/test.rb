@@ -207,13 +207,7 @@ class Diagnostics::Test
 			:result_raw,
 			:units,
 			:only_include_in_report_if_abnormal,
-			:test_must_have_value,
-			:created_at,
-	    	:updated_at,
-	    	:public,
-	    	:currently_held_by_organization,
-	    	:created_by_user_id,
-	    	:owner_ids
+			:test_must_have_value
 		]
 	end
 
