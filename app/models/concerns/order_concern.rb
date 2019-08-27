@@ -113,6 +113,7 @@ module Concerns::OrderConcern
 			document.generate_report_impressions
 			document.group_reports_by_organization
 			document.generate_pdf
+
 		end
 
 		
@@ -125,16 +126,30 @@ module Concerns::OrderConcern
 
 		
 	## validation called from self.
+	## okay so this is not working.
+	## for whatever reason.
 	def tests_verified_by_authorized_users_only
+		puts "the changed attributes are:"
+		puts self.changed_attributes.to_s
+		#exit(1)
 		self.changed_attributes.each do |attr|
+
 			if attr.to_s == "reports"
+				puts "changed attribute is: reports"
 				self.reports.each do |r|
+					puts "repoort changed parameters are:"
+					puts r.changed_attributes.to_s
 					next if r.changed_attributes.blank?
 					if r.changed_attributes.include? "tests"
+						puts "changed attribute is :tests"
 						r.tests.each do |test|
+							puts "test changed parameters are:"
+							puts test.changed_attributes.to_s
 							next if test.changed_attributes.blank?
+							puts "the test changed attributes are: #{test.changed_attributes}"
 							if test.changed_attributes.include? "verification_done"
-								## simple enough. 
+								 
+								puts "verification done has changed."
 								report_issuer_organization = Organization.find(report.currently_held_by_organization_id)
 								if report_issuer_organization.user_can_verify_test?(self.created_by_user,test)
 
@@ -151,6 +166,7 @@ module Concerns::OrderConcern
 				end
 			end
 		end
+		#exit(1)
 	end	
 
 
@@ -483,7 +499,9 @@ module Concerns::OrderConcern
 		## who all have verified the report ?
 		## that is the thing here.
 		self.reports.each do |report|
+			
 			user_ids = []
+
 			if self.reports_by_organization[report.organization.id.to_s].blank?
 				self.reports_by_organization[report.organization.id.to_s] = [report.id.to_s]
 				user_ids << report.gather_signatories			

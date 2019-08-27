@@ -515,6 +515,7 @@ class Diagnostics::Report
 	## @return[Array] list of user_ids who have verified the tests in this report.
 	def gather_signatories
 		self.tests.map{|c|
+			puts "coming from Diagnostics::Report#gather_signatories -> test: #{c.name} , verification done by: #{c.verification_done_by}"
 			c.verification_done_by				
 		}.uniq
 	end

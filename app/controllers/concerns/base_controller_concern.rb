@@ -276,30 +276,25 @@ module Concerns::BaseControllerConcern
 			end		
 		else
 
-			#puts "*****************************"
-			#puts "BEFORE doing deep merge:"
+			 
+			merged = get_resource_class.new(instance_variable_get("@#{get_resource_name}").send("attributes").merge(get_model_params))
 
-			#@order.categories.each do |category|
-			#	puts category.items.size
+			merged.determine_changed_attributes(instance_variable_get("@#{get_resource_name}"))
+
+			#merged.reports.each do |report|
+			#	puts report.changed_attributes
+			#	report.tests.each do |tst|
+			#		puts tst.changed_attributes
+			#	end
 			#end
+			#exit(1)
 
-			#puts "****************************"
+			instance_variable_set("@#{get_resource_name}",merged)
 
-			new_instance = get_resource_class.new(get_model_params)
-			instance_variable_get("@#{get_resource_name}").send("determine_changed_attributes",new_instance)
-			#older one.
-			#instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").send("deep_merge",get_model_params))
-			# basically merging either ways, whatever is in the incoming
-			# will overwrite whatever is 
-			# what we can do is ignore nil values incoming.
-			# but that will be top level only
-			# doesnt 
-			# so i have to deep cleanse get_model_params
-			# to snsure that any empty array is cleaned of null or empty values
-			# we have to write a recursive function for this.
-			instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").merge(get_model_params))
-			
-		
+
+			# now assign the instance variable to merged.
+			#instance_variable_get("@#{get_resource_name}").send("attributes=",instance_variable_get("@#{get_resource_name}").send("attributes").merge(get_model_params))
+			# now compare these two.
 		end
 
 		if current_user
@@ -548,8 +543,8 @@ module Concerns::BaseControllerConcern
 				return attributes.keep_if{|k,v| @action_permissions["parameters_allowed_on_non_authenticated_user"].include? k}
 			end
 		end
-		puts "attributes returned"
-		puts JSON.pretty_generate(attributes)
+		#puts "attributes returned"
+		#puts JSON.pretty_generate(attributes)
 
 		#deep_clean_arrays(attributes)
 =begin

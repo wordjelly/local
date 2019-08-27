@@ -10,12 +10,14 @@
 						</div>
 						<% t = Diagnostics::Test.new %>
 						<table class="striped">
-							<%= t.summary_table_headers({"root" => "order"}) %>
-							<% report.tests.each do |test| %>
-								<% if test.is_abnormal? %>
-									<%= test.summary_row({"root" => "order"}) %>
-								<% end %>
-							<% end %>
+							<%= render :partial => "/diagnostics/tests/pdf/show_table_headers" %>
+								<tbody>
+									<% report.tests.each do |test| %>
+										<% if test.is_abnormal? %>
+											<%= render :partial => "/diagnostics/tests/pdf/show_table_row", locals: {report: report, test: test, organization: organization, order: order} %>
+										<% end %>
+									<% end %>
+								</tbody>
 						</table>
 					</div>
 				</div>

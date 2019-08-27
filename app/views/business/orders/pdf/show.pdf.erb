@@ -1,13 +1,13 @@
 <% if order.organization.generate_report_summary == Organization::YES %>
-	<%= render :partial => "/business/orders/report_summary", locals: {order: order} %>
+	<%= render :partial => "/business/orders/report_summary", locals: {order: order, organization: organization} %>
 <% end %>
 <!-- if the format is the same or not, and if the organization is the same or not -->
-
 <% reports.each do |report| %>
 	<%= render :partial => "/diagnostics/reports/pdf/show", locals: {order: order, organization: organization, report: report} %>
-	
+	<% puts "the signing organization is:" %>
+	<% puts signing_organization %>
 	<% if signing_organization.signature_after_every_report == Organization::YES %>
-		<% reports.final_signatories.each_slice(3) do |slice| %>
+		<% report.final_signatories.each_slice(3) do |slice| %>
 			<div class="signatures row">
 				<% slice.each do |user_id| %>
 					<%= render :partial => "/diagnostics/reports/pdf/signatures", locals: {user: order.users_hash[user_id]} %>

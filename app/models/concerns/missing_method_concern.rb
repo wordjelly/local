@@ -203,6 +203,10 @@ module Concerns::MissingMethodConcern
 		## pass in the parent's organization also.
 		def determine_changed_attributes(instance)
 
+			#puts "came to determine changed attributes with class: #{self.class.name} ======================================================================================================================================="
+
+			#exit(1)
+
 			params_list = []
 			resource_name = self.class.name.split("::")[-1].downcase
 			
@@ -226,15 +230,19 @@ module Concerns::MissingMethodConcern
 				end
 			}
 
+			#puts "params list is: #{params_list}"
 		
 			self.changed_attributes = []
 			self.class.attribute_set.select{|c| 
-								
+
 				next unless params_list.include? c.name.to_sym
 
-				# if it is blank ignore it.
+				# if it is blank ignore it
+				#puts "attempting attribute: #{c.name}"
 				next if instance.send(c.name).nil?
 
+				#puts "Attribute name is -------------------->"
+				#puts c.name.to_s
 
 				if c.primitive.to_s == "Array"
 					if c.respond_to? "member_type"
@@ -282,13 +290,22 @@ module Concerns::MissingMethodConcern
 					end
 				else
 					#self.non_array_attributes << c
+
 					unless ((self.send(c.name).blank?) && (instance.send(c.name).blank?))
 
-						self.changed_attributes << c.name unless (instance.send(c.name) == self.send(c.name))								
-
+						self.changed_attributes << c.name unless (instance.send(c.name) == self.send(c.name))		
+						#if(c.name.to_s == "ready_for_reporting")
+							#puts "self send is: #{self.ready_for_reporting}"
+							#puts "instance send is: #{instance.ready_for_reporting}"
+							#puts self.changed_attributes.to_s
+							#exit(1)
+						#end						
 					end
 				end
 			}
+
+
+
 		end
 
 		## call this before save in all the top level objects.
