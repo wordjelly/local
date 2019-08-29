@@ -125,15 +125,13 @@ module Concerns::OrderConcern
 
 	end
 
-		
 	## validation called from self.
 	## okay so this is not working.
 	## for whatever reason.
 	## lost here on the order.
 
 	def tests_verified_by_authorized_users_only
-		puts "the changed attributes are:"
-		puts self.changed_attributes.to_s
+		
 		#exit(1)
 		self.changed_attributes.each do |attr|
 
@@ -375,9 +373,11 @@ module Concerns::OrderConcern
 	end
 
 	## first reset all the required quantitis.
-	def reset_category_quantities
+	def reset_category_quantities_and_reports
 		self.categories.map {|cat|
 			cat.quantity = 0	
+			cat.required_for_reports = []
+			cat.optional_for_reports = []
 		}
 	end
 
@@ -392,7 +392,7 @@ module Concerns::OrderConcern
 	## before starting will clear all the quantites from existing elements of hte categories array.
 	## and then will add a category if it doesn't exist, and if it exists, will increment its quantity.
 	def update_requirements
-		reset_category_quantities
+		reset_category_quantities_and_reports
 		self.reports.map{|report|
 			report.requirements.each do |req|
 				options = req.categories.size
@@ -410,10 +410,6 @@ module Concerns::OrderConcern
 						self.categories.each do |existing_category|
 							if existing_category.name == category.name
 									
-								#puts "the existing category quantity is: #{existing_category.quantity}"
-
-								#puts "the category quantity is: #{category.quantity}"
-
 								existing_category.quantity += category.quantity
 
 								if options > 1
@@ -439,9 +435,12 @@ module Concerns::OrderConcern
 		self.reports.map{|c|
 			c.clear_all_items
 		}
+
 		self.categories.each do |category|
-			
+			puts "doing category: #{category.name}"
+
 			category.set_item_report_applicability(self.reports)
+			
 			category.items.each do |item|
 				## can this item be created at all?
 				## that's the first thing.f
@@ -554,8 +553,6 @@ module Concerns::OrderConcern
 				report.final_signatories += self.organization.additional_employee_signatures
 
 			end
-
-			
 
 		end
 		
@@ -743,6 +740,56 @@ module Concerns::OrderConcern
 				base[1][:order].flatten!
 			end
 			base
+		end
+
+		##########################################################
+		##
+		##
+		##
+		###########################################################
+		## @Called_from : interfaces_controller.rb
+		## @Return[Array:Business::Orders] 
+		def self.find_orders(items)
+			## adds bulk search items.
+			## { index: 'myindex', type: 'mytype', search: { query: { query_string: { query: '"Test 1"' } } } }
+			items.each do |item|
+				add_bulk_item({
+					index: Business::Order.index_name,
+					search: {
+						query: {
+							bool: {
+								should: [
+									{
+										term: {
+											barcode: item.code
+										}
+									},
+									{
+										term: {
+											code: item.code
+										}
+									}
+								]
+							}
+						}
+					}
+				})
+			end
+			flush_bulk
+			## get the search_results.
+			orders = []
+			self.search_results.each do |response|
+				response.hits.hits.each do |hit|
+					order = Business::Order.new(hit["_source"])
+					order.id = hit["_id"]
+					orders << order
+				end
+			end
+
+			
+
+			orders
+
 		end
 
 	end

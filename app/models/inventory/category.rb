@@ -27,7 +27,7 @@ class Inventory::Category
 	def fields_not_to_show_in_form_hash(root="*")
 		{
 			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
-			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","name","quantity","required_for_reports","optional_for_reports","barcode"]
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","name","quantity","barcode"]
 		}
 	end
 
@@ -154,11 +154,14 @@ class Inventory::Category
 	## takes each item, in the category, takes its provided barcode, takes from self, the reports(optional/required) that this item is applicable to, gets that report from the incoming reports array, will delete the item if its not applicable to any basically will give an error. If a barcode is not applicable for a particular report, will add that in the cannot_be_added_to_reports, array for the item, and this is later used in the report#add_item def.
 	def set_item_report_applicability(reports)
 		report_ids = self.optional_for_reports + self.required_for_reports
-			
+		
+
 		organization_id_to_report_hash = {}
 
 		selected_reports = reports.select{|c| 
 			
+
+
 			if report_ids.include? c.id.to_s
 				if organization_id_to_report_hash[c.currently_held_by_organization].blank?
 					
@@ -174,6 +177,9 @@ class Inventory::Category
 				false
 			end
 		}
+
+		puts "selected reports are:"
+		puts selected_reports.to_s
 		
 		items_not_available_for_any_organization = []
 
@@ -182,6 +188,9 @@ class Inventory::Category
 			if !it.use_code.blank?
 				if it.code_matches?
 					## in this case, we don't do any of the barcode level validations.
+					organization_id_to_report_hash.keys.each do |org_id|
+						it.applicable_to_report_ids << organization_id_to_report_hash[org_id]
+					end
 				else
 					it.code_mismatch = true
 				end
@@ -194,17 +203,12 @@ class Inventory::Category
 					it.get_item_details_from_barcode(org_id,self.name,organization_id_to_report_hash[org_id],applicable)
 				end
 
-				it.applicable_to_report_ids.flatten!
 
 				it.not_applicable_to_any_reports = true if applicable == false
 			end
 
-		end
+			it.applicable_to_report_ids.flatten!
 
-		self.items.each do |iti|
-			puts "the item is: #{iti.id.to_s}"
-			puts "errors are:"
-			puts iti.errors.full_messages
 		end
 
 	end

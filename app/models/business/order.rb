@@ -24,7 +24,9 @@ class Business::Order
 	include Concerns::FormConcern
 	include Concerns::Schedule::QueryBuilderConcern
 	include Concerns::PdfConcern
+	include Concerns::EsBulkIndexConcern
 	include Concerns::OrderConcern
+
 	
 
 	before_validation do |document|
@@ -141,7 +143,4 @@ class Business::Order
 			end
 		end
 	end
-
-
-
 end

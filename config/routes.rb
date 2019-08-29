@@ -14,7 +14,7 @@ Rails.application.routes.draw do
     resources :statuses
   end
 
-
+  resources :interfaces
 
   namespace :geo do 
     resources :locations

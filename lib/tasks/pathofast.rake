@@ -77,13 +77,7 @@ namespace :pathofast do
     pathofast.save 
     puts "ERRORS CREATING PATHOFAST: #{pathofast.errors.full_messages}"
 
-    ## okay so the report is being generated
-    ## time to look at payments ?
-    ## do we work on that ?
-    ## or what is most critical ?
-    ## i can do payments, and rates visibitilty
-    ## this is one module, that pends. 
-    ## or tube accession.
+    
 
     Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 

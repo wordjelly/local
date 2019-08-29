@@ -365,12 +365,25 @@ class Diagnostics::Report
 
 	## item has a remaining quantity.
 	def add_item(category,item)
+		puts "came to add item to report: #{self.name}"
+		puts "incoming category is: #{category.name}"
+		puts "item is: #{item}"
+		puts "iterating requirements."
 		self.requirements.each do |req|
+			puts "requirement name is : #{req.name}"
 			req.categories.each do |cat|
+				puts "category name is: #{cat.name}"
 				if cat.name == category.name
+					puts "category names match."
+					puts "checking has space."
+					puts "category quantity is: "
+					puts cat.quantity
 					if item.has_space?(cat.quantity)
+						puts "it has space."
 						item.deduct_space(cat.quantity)
 						cat.items << item
+					else
+						puts "it does not have space."
 					end
 				end
 			end

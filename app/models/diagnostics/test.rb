@@ -5,6 +5,7 @@ class Diagnostics::Test
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	#include Concerns::OwnersConcern
+	include Concerns::EsBulkIndexConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
@@ -185,7 +186,6 @@ class Diagnostics::Test
 	def is_verification_done?
 		self.verification_done == -1 ? "Pending Verification"  : "Verified"
 	end
-
 
 	def self.permitted_params
 		[

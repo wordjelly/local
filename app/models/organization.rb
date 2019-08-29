@@ -47,6 +47,11 @@ class Organization
 	## it is never accepted as an external parameter.	
 	attribute :lis_security_key, String, mapping: {type: 'keyword'}, default: Devise.friendly_token.first(25)
 
+	## whether the lis is enabled
+	## allows to switch off lis in case of any issues.
+	## defaults to YES.
+	attribute :lis_enabled, Integer, mapping: {type: 'integer'}, default: YES
+
 	## the primary phone number.
 	attribute :phone_number, String, mapping: {type: 'keyword'}
 

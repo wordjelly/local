@@ -200,6 +200,13 @@ class Inventory::Item
 		base
 	end
 
+	## the code is checked against barcode and code both.
+	def self.interface_permitted_params
+		[
+			:code
+		]	
+	end
+
 	def self.index_properties
 		{
 			type: 'nested',
@@ -296,7 +303,7 @@ class Inventory::Item
 
 	## @return[Boolean] : if the remaining space is 
 	def has_space?(quantity)
-		self.space > quantity
+		self.space >= quantity
 	end
 
 	## @return[Float] : remaining space
@@ -328,6 +335,24 @@ class Inventory::Item
 				self.id = self.name = self.barcode
 			end
 		end
+	end
+
+
+	def self.bulk_search(items)
+		## what about the barcode how does it get generated.
+		## so basically there are items
+		## like you send a list of items
+		## a,b,c,d,e,f.
+		## and you get the list of tests for that.
+		## or you send reports
+		## tests -> [lis_code, x,y,z]
+		tests.each do |test|
+			## tests dont have any barcode.
+		end
+	end
+
+	def self.bulk_update(tests)
+		
 	end
 
 	#######################################################

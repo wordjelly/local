@@ -4,6 +4,8 @@ module Concerns::EsBulkIndexConcern
   included do
   	cattr_accessor :bulk_items
   	cattr_accessor :total_items_bulked
+  	## in case some multi search items were there.
+  	cattr_accessor :search_results
 
   	self.bulk_items = []
   	self.total_items_bulked = 0
@@ -22,7 +24,7 @@ module Concerns::EsBulkIndexConcern
 	def self.add_total
 		self.total_items_bulked += self.bulk_items.size
 	end
-	
+
 	def self.do_bulk
 		add_total
 	  	#puts "building bulk items"
@@ -30,6 +32,16 @@ module Concerns::EsBulkIndexConcern
 	  		#puts "nothing to bulk"
 	  		return
 	  	end
+
+	  	## so we have to gather the multisearch requests.
+	  	search_requests = []
+	  	bulk_items.delete_if { |e|
+	  		unless e[:search].blank?
+				search_requests << e
+				true	  			
+	  		end
+	  	}
+	  	
 	  	bulk_request = bulk_items.map{|c|
 
 	  		unless c.is_a? Hash
@@ -40,8 +52,11 @@ module Concerns::EsBulkIndexConcern
 
 	  		c
 	  	}
+
 	  	#puts "making bulk call"
-	  	resp = gateway.client.bulk body: bulk_request
+	  	resp = gateway.client.bulk body: bulk_request unless bulk_items.blank?
+		multi_response = gateway.client.msearch body: search_requests unless search_requests.blank?
+		self.search_results = multi_response["responses"]
 		if total_items_bulked.size > 0
 			puts "completed bulk of #{bulk_size} items."
 			puts "total bulked : #{total_items_bulked}"

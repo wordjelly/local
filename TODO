@@ -141,7 +141,6 @@ upto me.
 ## thereafter app in 1 month more.
 
 ##  i would like to do signatures and payments, and report inference generation.
-## then we add emails, and configure mailgun.
 ## after that, we move to checking why the tubes are getting fucked.
 
 ##-------------------------------------------------------------------
@@ -154,12 +153,19 @@ upto me.
 ## ONLY REPORT IF ABNORMAL, AND MUST HAVE VALUE MAY CLASH.
 ## KNOCK OF PDF URLS, FROM ALL FORMS.
 ## MODIFY MONGOID-ELASTICSEARCH GEM TO CHANGE THE index.rb file to remove blanked mapping type as document.
+## TODAY'S TARGETS ----------------->
+## LIS integration.
+## ENDS -------------------->
+## PAYMENTS MODULE/RECEIPTS/INVOICES/PAYUMONEY INTEGRATION.
+## then we add emails, and configure mailgun.
+## lis_code has to be unique across tests.
 ## payments - module is remaining, make option for prepaid payments.
 ## time incorporation for fasting and pp.
 ## rates with packages, and lab rates -> easy to directly add discount for a particular lab on all rates.
 ## payment invoice generation, live tracking.
-## when to send the email.
-## LIS integration.
+## range based on weeks since gestation (different criteria)
+## lmp option for patient.
+## testing category and tube generation for multiple reports.
 ##-------------------------------------------------------------------
 
 ## TODAY BASIC TESTING OF REPORT GENERATION.
