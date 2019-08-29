@@ -111,10 +111,10 @@ module Concerns::OrderConcern
 			document.verify
 			document.set_accessors
 			document.generate_report_impressions
-			document.group_reports_by_organization
 		end
 
 		after_validation do |document|
+			document.group_reports_by_organization
 			document.generate_pdf
 		end
 		
@@ -500,11 +500,7 @@ module Concerns::OrderConcern
 	def group_reports_by_organization
 		self.reports_by_organization = {}
 		self.users_hash = {}
-		## all the user ids that may need to be signatories.
-		## your final signatories are now fixed.
-		## now all you have to decide is whether to render them 
-		## who all have verified the report ?
-		## that is the thing here.
+	
 		self.reports.each do |report|
 			
 			user_ids = []
@@ -518,30 +514,49 @@ module Concerns::OrderConcern
 				user_ids << report.gather_signatories				
 			end
 
-			user_ids.map{|c| self.users_hash[c] = User.find(c) if self.users_hash[c].blank? }
+			puts "the user ids are:"
+			puts user_ids.to_s
 
-			if self.organization.outsourced_reports_have_original_format == Organization::YES
 
-				report.final_signatories = report.gather_signatories
+
+
+			user_ids.flatten.map{|c| self.users_hash[c] = User.find(c) if self.users_hash[c].blank? }
+
+			puts "users hash contains"
+			puts self.users_hash
+
+
+
+
+			if report.is_outsourced?
+
+				if self.organization.outsourced_reports_have_original_format == Organization::YES
+
+					
+					report.final_signatories.reject! { |c|  !report.can_sign?(users_hash[c])}
+
+					report.final_signatories += self.organization.additional_employee_signatures
+					
+
+				else
+					report.final_signatories = self.organization.which_of_our_employees_will_resign_outsourced_reports
+
+					report.final_signatories.reject! { |c|  !report.can_sign?(users_hash[c])}
+
+					report.final_signatories += report.organization.additional_employee_signatures
+
+				end
+
+			else
 
 				report.final_signatories.reject! { |c|  !report.can_sign?(users_hash[c])}
 
 				report.final_signatories += self.organization.additional_employee_signatures
-				
-
-
-			else
-
-				## all the people who are supposed to sign.
-				report.final_signatories = self.organization.which_of_our_employees_will_resign_outsourced_reports
-
-				report.final_signatories.reject! { |c|  !report.can_sign?(users_hash[c])}
-
-				report.final_signatories += report.organization.additional_employee_signatures
-
-				## so now we have all this.
 
 			end
+
+			
+
 		end
 		
 	end
@@ -636,9 +651,13 @@ module Concerns::OrderConcern
 	## @param[Array] report_ids : the array of report ids.
 	## @param[String] organization_id : the id of the organization on whose letter head the reports have to be generated.
 	## @param[Organization] signing_organzation : the organization whose representatives will sign on the report.
+	## so its making the pdf.
+	## now the next step is to move to what ?
 	def build_pdf(report_ids,organization_id,signing_organization)
 		
-		file_name = self.id.to_s + "_" + self.patient.full_name
+		time_stamp = Time.now.strftime("%b %-d_%Y")
+
+		file_name = time_stamp + "_" + self.id.to_s + "_" + self.patient.full_name
 	   
 	    ac = ActionController::Base.new
 

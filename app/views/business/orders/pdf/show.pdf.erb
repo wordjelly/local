@@ -4,8 +4,7 @@
 <!-- if the format is the same or not, and if the organization is the same or not -->
 <% reports.each do |report| %>
 	<%= render :partial => "/diagnostics/reports/pdf/show", locals: {order: order, organization: organization, report: report} %>
-	<% puts "the signing organization is:" %>
-	<% puts signing_organization %>
+	
 	<% if signing_organization.signature_after_every_report == Organization::YES %>
 		<% report.final_signatories.each_slice(3) do |slice| %>
 			<div class="signatures row">

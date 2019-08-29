@@ -2,7 +2,9 @@
   <div class="card-panel">
     <div>
     	<% unless user.credential.blank? %>
-    		<img src="<%= user.credential.images.first.get_url %>">
+    		<% unless user.credential.images.blank? %>
+                <img src="<%= user.credential.images.first.get_url %>">
+            <% end %>
     	<% end %>
     </div>
     <div>

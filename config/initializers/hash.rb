@@ -62,7 +62,7 @@ class ::Hash
 					
 					self[k].each_with_index{|val,key|
 						if val.is_a? Hash
-							puts "val is: #{val}"
+							#puts "val is: #{val}"
 							val.assign_attributes(object.send(k)[key])
 							object.changed_attributes << k unless object.send(k)[key].changed_attributes.blank?
 						else

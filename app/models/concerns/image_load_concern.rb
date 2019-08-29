@@ -32,13 +32,8 @@ module Concerns::ImageLoadConcern
 					self.images << Image.find(hit["_id"])
 				end
 			else
-				#puts "no images detected for this resource ------ "
+				
 			end
-
-			#self.images.each do |ig|
-			#	puts " -------- Image --------- "
-			#	puts ig.attributes.to_s
-			#end
 
 		end
 

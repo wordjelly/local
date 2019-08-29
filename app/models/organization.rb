@@ -281,6 +281,15 @@ class Organization
 		document.load_locations
 	end
 
+	before_validation do |document|
+		document.assign_defaults
+	end
+
+	def assign_defaults
+		## WHICH OF OUR EMPLOYEES CAN RESIGN, BECOMES THE SAME AS WHO CAN VERIFY.
+		self.which_of_our_employees_will_resign_outsourced_reports = self.who_can_verify_reports if self.which_of_our_employees_will_resign_outsourced_reports.blank?
+	end
+
 	## so these are the permitted params.
 	def self.permitted_params
 

@@ -2,7 +2,7 @@ namespace :pathofast do
   desc "TODO"
   task recreate_indices: :environment do
   	["Employee","Inventory::Item","Inventory::ItemGroup","Inventory::ItemType","Inventory::ItemTransfer","Inventory::Transaction","Inventory::Comment","Geo::Location","Geo::Spot","Business::Order","Patient","Diagnostics::Report","Image","Schedule::Minute","Organization","Tag","Inventory::Equipment::Machine","Inventory::Equipment::MachineCertificate",
-      "Inventory::Equipment::MachineComplaint"].each do |cls|
+      "Inventory::Equipment::MachineComplaint","Credential"].each do |cls|
   		puts "creating index for :#{cls}"
   		cls.constantize.send("create_index!",{force: true})
   	end
@@ -10,7 +10,7 @@ namespace :pathofast do
   end
   task recreate_inventory_indices: :environment do 
   	["Inventory::Equipment::Machine","Inventory::Equipment::MachineCertificate",
-  		"Inventory::Equipment::MachineComplaint"].each do |cls|
+  		"Inventory::Equipment::MachineComplaint","Credential"].each do |cls|
   		puts "creating index for :#{cls}"
   		cls.constantize.send("create_index!",{force: true})
   	end
@@ -19,7 +19,7 @@ namespace :pathofast do
   task website_setup: :environment do 
 
     ["Employee","Inventory::Item","Inventory::ItemGroup","Inventory::ItemType","Inventory::ItemTransfer","Inventory::Transaction","Inventory::Comment","Geo::Location","Geo::Spot","Business::Order","Patient","Diagnostics::Report","Image","Schedule::Minute", "Organization","Tag","Inventory::Equipment::Machine","Inventory::Equipment::MachineCertificate",
-      "Inventory::Equipment::MachineComplaint"].each do |cls|
+      "Inventory::Equipment::MachineComplaint","Credential"].each do |cls|
       puts "creating index for :#{cls}"
       cls.constantize.send("create_index!",{force: true})
     end
@@ -46,20 +46,9 @@ namespace :pathofast do
     ## so this is a pretty major problem.
     ## refresh the fucking index, i have no idea what is happening here.
     
-    u1 = User.find(u1.id.to_s)
-    ## GENERATE A CREDENTIAL FOR DR.BHARGAV/PATHOFAST
-    bhargav_credential = Credential.new
-    bhargav_credential.user_id = u1.id.to_s
-    bhargav_credential.qualifications = ["MBBS","DCP(Pathology)"]
-    bhargav_credential.registration_number = "2015052372"
-    bhargav_credential.created_by_user_id = u1.id.to_s
-    bhargav_credential.created_by_user = u1
-    bhargav_credential.save
+    
 
-    ## NOW IF WE MAKE AN ORDER WE CAN EXPERIMENT A BIT.
-
-    puts "ERRORS SAVING CREDENTIAL : #{bhargav_credential.errors.full_messages}"
-
+   
     ## this is a supplier
     u2 = User.new(email: "anand_chem@gmail.com", password: "cocostan", confirmed_at: Time.now)
     u2.save
@@ -88,7 +77,31 @@ namespace :pathofast do
     pathofast.save 
     puts "ERRORS CREATING PATHOFAST: #{pathofast.errors.full_messages}"
 
+    ## okay so the report is being generated
+    ## time to look at payments ?
+    ## do we work on that ?
+    ## or what is most critical ?
+    ## i can do payments, and rates visibitilty
+    ## this is one module, that pends. 
+    ## or tube accession.
+
     Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+
+    u1 = User.find(u1.id.to_s)
+    ## GENERATE A CREDENTIAL FOR DR.BHARGAV/PATHOFAST
+    bhargav_credential = Credential.new
+    bhargav_credential.user_id = u1.id.to_s
+    bhargav_credential.qualifications = ["MBBS","DCP(Pathology)"]
+    bhargav_credential.registration_number = "2015052372"
+    bhargav_credential.created_by_user_id = u1.id.to_s
+    bhargav_credential.created_by_user = u1
+    bhargav_credential.save
+
+     ## NOW IF WE MAKE AN ORDER WE CAN EXPERIMENT A BIT.
+
+    puts "ERRORS SAVING CREDENTIAL : #{bhargav_credential.errors.full_messages}"
+    #exit(1)
 
     ## now we make the supplier .
     ## first sort out lab view paths.
@@ -130,6 +143,9 @@ namespace :pathofast do
     puts "ERRORS CREATING Aditya Raut Patient: #{patient.errors.full_messages}"
 
     Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+    ## can we create an order ?
+    ## automatically or not ?
 
   end
 

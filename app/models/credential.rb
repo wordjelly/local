@@ -21,6 +21,9 @@ class Credential
 
 	attribute :name, String, mapping: {type: 'keyword'}, default: BSON::ObjectId.new.to_s
 
+	index_name "pathofast-credentials"
+	document_type "credential"
+
 	def self.permitted_params
 		base = 
 		[
