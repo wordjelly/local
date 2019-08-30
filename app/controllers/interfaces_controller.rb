@@ -25,27 +25,10 @@ class InterfacesController < ApplicationController
 	end
 
 	def update
-		search_request = Business::Order.search({
-			sort: {
-				"_id".to_sym => {
-					order: "desc"
-				}
-			},	
-			query: {
-				ids: {
-					values: params[:orders].map{|c| c[:id]}
-				}
-			}
-		})
-		orders = search_request.response.hits.hits.each do |hit|
+		orders = Business::Order.find_orders(params[:orders].map{|c| Business::Order.new(c)})
+		orders.each_with_index{|order,key|
 
-		end
-		params[:orders].each do |order|
-			o = Order.new(order)
-			## now iterate the orders in the same index.
-			## and update all test values from the reprots.
-			## end of story.
-		end
+		}
 	end
 
 	def authorize_interface

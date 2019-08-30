@@ -748,36 +748,60 @@ module Concerns::OrderConcern
 		##
 		###########################################################
 		## @Called_from : interfaces_controller.rb
-		## @Return[Array:Business::Orders] 
-		def self.find_orders(items)
-			## adds bulk search items.
-			## { index: 'myindex', type: 'mytype', search: { query: { query_string: { query: '"Test 1"' } } } }
-			items.each do |item|
+		## @Return[Array:Business::Orders]
+		## @param[Hash] : args => can consist of the following keys
+		## :items => array of Inventory::Item objects
+		## :orders => array of Business::Order obbjects  
+		def self.find_orders(args)
+			if !args[:items].blank?
+				## adds bulk search items.
+				## { index: 'myindex', type: 'mytype', search: { query: { query_string: { query: '"Test 1"' } } } }
+				items.each do |item|
+					add_bulk_item({
+						index: Business::Order.index_name,
+						search: {
+							query: {
+								bool: {
+									should: [
+										{
+											term: {
+												barcode: item.code
+											}
+										},
+										{
+											term: {
+												code: item.code
+											}
+										}
+									]
+								}
+							}
+						}
+					})
+				end
+			elsif !args[:orders].blank?
 				add_bulk_item({
 					index: Business::Order.index_name,
 					search: {
-						query: {
-							bool: {
-								should: [
-									{
-										term: {
-											barcode: item.code
-										}
-									},
-									{
-										term: {
-											code: item.code
-										}
-									}
-								]
+						sort: {
+							"_id".to_sym => {
+								order: "desc"
 							}
+						},
+						query: {
+							ids: 
+								{
+									values: params[:orders].map{|c| c[:id]}
+								}
 						}
 					}
 				})
 			end
+
 			flush_bulk
-			## get the search_results.
+			
 			orders = []
+			
 			self.search_results.each do |response|
 				response.hits.hits.each do |hit|
 					order = Business::Order.new(hit["_source"])
@@ -786,9 +810,14 @@ module Concerns::OrderConcern
 				end
 			end
 
-			
-
 			orders
+
+		end
+
+
+		def self.update_results_from_lis
+
+
 
 		end
 

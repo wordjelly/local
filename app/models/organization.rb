@@ -693,4 +693,16 @@ class Organization
 		true
 	end
 	
+	###########################################################
+	##
+	## override with methods to include all the attr_accessors.
+	##
+	## if you call to_json on order, then and only then these additional methods are included, calling, as_json on order, does not include these methods.
+	###########################################################
+	def as_json(options={})
+		super(:methods => [:users_pending_approval, :employee_roles])
+	end
+	##########################################################
+
+
 end
