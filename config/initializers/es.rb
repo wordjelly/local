@@ -14,7 +14,7 @@ end
 
 
 ["Employee","Inventory::Item","Inventory::ItemGroup","Inventory::ItemType","Inventory::ItemTransfer","Inventory::Transaction","Inventory::Comment","Geo::Location","Geo::Spot","Business::Order","Patient","Diagnostics::Report","Image","Schedule::Minute","Organization","Tag","Inventory::Equipment::Machine","Inventory::Equipment::MachineCertificate",
-      "Inventory::Equipment::MachineComplaint"].each do |cls|
+      "Inventory::Equipment::MachineComplaint","Credential"].each do |cls|
 	unless Elasticsearch::Persistence.client.indices.exists? index: cls.constantize.index_name
 		cls.constantize.send("create_index!",{force: true})
 	end
