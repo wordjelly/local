@@ -25,10 +25,20 @@
 					"test_must_have_value" : 1,
 					"ranges" : [
 						{
-							"max_age_years" : 100,
-							"gender" : "Male",
-							"min_value" : 12.0,
-							"max_value" : 15.0,
+							"max_age_years" : 120,
+							"min_age_years" : 0,
+							"sex" : "Male",
+							"min_value" : 0,
+							"max_value" : 20,
+							"is_abnormal" : -1,
+							"inference" : "Within Normal Limits"
+						},
+						{
+							"max_age_years" : 120,
+							"min_age_years" : 0,
+							"sex" : "Female",
+							"min_value" : 0,
+							"max_value" : 20,
 							"is_abnormal" : -1,
 							"inference" : "Within Normal Limits"
 						}
@@ -44,10 +54,20 @@
 					"test_must_have_value" : 1,
 					"ranges" : [
 						{
-							"max_age_years" : 100,
-							"gender" : "Male",
-							"min_value" : 76,
-							"max_value" : 92,
+							"max_age_years" : 120,
+							"min_age_years" : 0,
+							"sex" : "Male",
+							"min_value" : 0,
+							"max_value" : 20,
+							"is_abnormal" : -1,
+							"inference" : "Within Normal Limits"
+						},
+						{
+							"max_age_years" : 120,
+							"min_age_years" : 0,
+							"sex" : "Female",
+							"min_value" : 0,
+							"max_value" : 20,
 							"is_abnormal" : -1,
 							"inference" : "Within Normal Limits"
 						},

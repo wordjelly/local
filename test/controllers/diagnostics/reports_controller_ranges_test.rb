@@ -168,6 +168,11 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
                 report.created_by_user = user
                 report.created_by_user_id = user.id.to_s
                 report.save
+                unless report.errors.full_messages.blank?
+                   # puts "Report name is: #{report.name.to_s}"
+                    puts report.errors.full_messages.to_s
+                    exit(1)
+                end
             end
 
             Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
@@ -177,14 +182,25 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
     end
 
     test " error if no range accounts for an age category, while  adding a test " do 
-        
-        
-        
+            
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        report = load_error_report("age_range_missing")
+
+        post diagnostics_report_path report, params: {report: report.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens.plus_lab_employees)
+
+        puts response.body.to_s
+
     end
+
+    ## let me finish this.
+    ## and i want to see why the scoring is so shitty.
 
 =begin
     test " error if no range accounts for a particular gender, while adding a test " do
-        ## coding done.
+        
+        ## you want to create a report.
+
     end
 
     test " error if range overlaps for a particular gender " do 
@@ -199,4 +215,12 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
     end
 =end
 
+    ## what all should be done today ?
+    ## history and range interpretation and showing them as a dropdown
+    ## are required
+    ## and order finalization.
+    ## then accessibility, balance, top up and payments.
+    ## if i went to run now -> minimum 9 till i come back.
+    ## 
+    
 end

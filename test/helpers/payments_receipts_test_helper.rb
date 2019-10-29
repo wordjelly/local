@@ -1,5 +1,10 @@
 module PaymentsReceiptsTestHelper
 
+
+    def load_error_report(file_name_without_path_or_extension)
+        report = Diagnostics::Report.new(JSON.parse(IO.read(Rails.root.join('test','test_json_models','diagnostics','reports',file_name_without_path_or_extension,'.json')))["reports"][0])
+        report
+    end
     
 
 	## @return[Business::Order] the order created for the patient from plus path lab.

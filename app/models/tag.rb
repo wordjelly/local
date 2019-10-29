@@ -27,28 +27,6 @@ class Tag
 	attribute :tag_type, String
 	validates_presence_of :tag_type
 
-	## what about order accessibility.
-	## so how would this work exactly ?
-	## we load it from remote
-	## or copy paste ?
-	## so we load template internally,
-	## just like reports.
-	## okay so that is doable.
-	## and the validation.
-	## so lets put that in the order validations.
-	## suppose you added a test
-	## if you want to add a value to that test
-	## then the option has to be selected , but when.
-	## before adding a value, there the validation error 
-	## will be given.
-	## We put that in order.
-	## these history options are there.
-	## but now which tag do you want to add
-	## and how to accumulate them ?
-	## as history tags ?
-	## we put an array in the reports.
-	## give autocomplete on the tag
-	## should it be global ?
 	attribute :history_options, Array, mapping: {type: 'keyword', copy_to: "search_all"}
 
 	attribute :selected_option, String, mapping: {type: 'keyword'}
@@ -67,7 +45,6 @@ class Tag
 	end
 
 	
-
 	before_validation do |document|
 		document.assign_id_from_name(nil)
 	end
@@ -89,14 +66,40 @@ class Tag
 	end
 
 	def self.index_properties
-		
+		{
+	    	name: {
+	    		type: 'keyword',
+	    		fields: {
+		    			:raw => {
+		    				:type => "text",
+				      		:analyzer => "nGram_analyzer",
+				      		:search_analyzer => "whitespace_analyzer"
+		    			}
+		    		}
+	    	},
+	    	tag_type: {
+	    		type: 'keyword'
+	    	},
+	    	history_options: {
+	    		type: 'keyword'
+	    	},
+	    	selected_option: {
+	    		type: 'keyword'
+	    	},
+	    	selected_option_must_match_history_options: {
+	    		type: 'integer'
+	    	},
+	    	option_must_be_chosen: {
+	    		type: 'integer'
+	    	}
+	    }
 	end
 
 	## here it is called a tag.
 	## there you are calling it a history.
 
 	def self.permitted_params
-		[:id , {:tag => [:name, :tag_type, {:history_options => []}]}]
+		[:id , {:tag => [:name, :tag_type, :selected_option, :selected_option_must_match_history_options, :option_must_be_chosen, {:history_options => []}]}]
 	end	
 
 

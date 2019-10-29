@@ -193,9 +193,14 @@ class Diagnostics::Test
 				female_ranges_hash[range.min_age] = range.max_age
 			end
 		end
-
+		#puts "test name is:"
+		#puts self.name
 		male_ranges_hash = male_ranges_hash.sort.to_h
+		#puts "male ranges hash is:"
+		#puts male_ranges_hash.to_s
 		female_ranges_hash = female_ranges_hash.sort.to_h
+		#puts "female ranges hash"
+		#puts female_ranges_hash.to_s
 
 		if male_ranges_hash.keys[0] != Diagnostics::Range::MINIMUM_POSSIBLE_AGE_IN_HOURS
 			self.errors.add(:ranges, "the first range for males must start with 0 hours")
@@ -208,16 +213,6 @@ class Diagnostics::Test
 		elsif female_ranges_hash.values[-1] != Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS
 			self.errors.add(:ranges, "the last range must end with 120 years")
 		end
-
-		## now we go range to range.
-		## and also check overlaps.
-		## first comes the history object
-		## then comes the range determination
-		## first we solve those things on the patient 
-		## 
-		## then comes a setting called display all Ranges/don't interpret ranges
-		## which can be explicitly set on an individual report.
-		## 
 
 		prev_max_age = nil
 		male_ranges_hash.keys.each do |min_age|
