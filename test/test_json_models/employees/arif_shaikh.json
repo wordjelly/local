@@ -1,0 +1,11 @@
+{
+	"users" : [
+		{
+			"first_name" : "Zubair",
+			"last_name" : "Khan",
+			"email" : "zubair.khan@gmail.com",
+			"password" : "cocostan",
+			"confirmed_at" : "2019-09-16 14:03:07 +0530"
+		}
+	]
+}

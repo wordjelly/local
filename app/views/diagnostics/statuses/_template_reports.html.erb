@@ -1,0 +1,31 @@
+<%= form_for status, method: :put, remote: true do |f| %>
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Choose Reports Applicable to this status
+			</div>
+			<div class="select_all_reports">Select All</div>
+			<div class="deselect_all_repoorts">Deselect All</div>
+
+			
+			<% status.parents.each do |report| %>
+				<p>
+			      <label>
+			        <input name="status[parent_ids][]" type="checkbox" checked="checked" value="<%= report.id.to_s %>" />
+			        <span><%= report.name %></span>
+			      </label>
+			    </p>
+			<% end %>
+			<% status.template_reports_not_added_to_status.each do |report| %>
+				<p>
+			      <label>
+			        <input type="checkbox" name="status[parent_ids][]" value="<%= report.id.to_s %>" />
+			        <span><%= report.name %></span>
+			      </label>
+			    </p> 
+			<% end %>
+		</div>
+	</div>
+	<%= f.submit "Update Changes", :class => "waves-effect waves-light btn" %>
+<% end %>
+<!-- on clicking edit, this has to be rendered inside the modal -->

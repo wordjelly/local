@@ -1,0 +1,124 @@
+<h4>New Patient Form</h4>
+<div class="divider"></div>
+<div class="section">
+  <%= form_for @patient do |f| %>
+    
+    <div class="section">
+    	
+      <h6>Personal Details</h6>
+
+      <%= f.text_field :first_name %>
+    	<%= f.label :first_name %>
+
+    	<%= f.text_field :last_name %>
+    	<%= f.label :last_name %>
+
+    	<%= f.text_field :email %>
+    	<%= f.label :email %>
+
+    	<%= f.text_field :mobile_number %>
+    	<%= f.label :mobile_number %>
+
+    	<%= f.text_field :address %>
+    	<%= f.label :address %>
+
+      <%= f.text_field :date_of_birth , :class => "datepicker" %>
+      <%= f.label :date_of_birth %>
+
+      <div class="input-field" style="margin-top: 50px;">
+        <%= f.select :sex, options_for_select([["Choose Your Option",""],["Male","Male"],["Female","Female"]]) %>
+        <%= f.label :sex %>
+      </div>
+
+    
+    </div>
+
+  	<!-- allergies -->
+    <div class="section">
+  	  <h6>Do you have any allergies?</h6>
+  	  <p>
+        <label>
+          <input name="patient[allergies]" type="radio" checked />
+          <span>No</span>
+        </label>
+      </p>
+      <p>
+        <label>
+          <input name="patient[allergies]" type="radio" />
+          <span>Yes</span>
+        </label>
+      </p>
+    </div>
+
+    <!-- anticoagulatns -->
+    <div class="section">
+      <h6>Are you on any blood thinners?</h6>
+  	  <p>
+        <label>
+          <input name="patient[anticoagulants]" type="radio" checked />
+          <span>No</span>
+        </label>
+      </p>
+      <p>
+        <label>
+          <input name="patient[anticoagulants]" type="radio" />
+          <span>Yes</span>
+        </label>
+      </p>
+    </div>
+
+    <div class="section">
+      <!-- Diabetic -->
+      <h6>Are you on a diabetic?</h6>
+      <p>
+        <label>
+          <input name="patient[diabetic]" type="radio" checked />
+          <span>No</span>
+        </label>
+      </p>
+      <p>
+        <label>
+          <input name="patient[diabetic]" type="radio" />
+          <span>Yes</span>
+        </label>
+      </p>
+    </div>
+
+      <!-- Asthmatic -->
+    <div class="section">
+      <h6>Are you asthmatic?</h6>
+    	<p>
+          <label>
+            <input name="patient[asthmatic]" type="radio" checked />
+            <span>No</span>
+          </label>
+        </p>
+        <p>
+          <label>
+            <input name="patient[asthmatic]" type="radio" />
+            <span>Yes</span>
+          </label>
+      </p>
+    </div>
+
+    <div class="section">
+      <!-- Asthmatic -->
+      <h6>Do you have any heart problems?</h6>
+  	  <p>
+        <label>
+          <input name="patient[heart_problems]" type="radio" checked />
+          <span>No</span>
+        </label>
+      </p>
+      <p>
+        <label>
+          <input name="patient[heart_problems]" type="radio" />
+          <span>Yes</span>
+        </label>
+      </p>
+    </div>
+
+  	<%= f.submit "Submit", :class => "waves-effect waves-light btn" %>
+
+  <% end %>
+</div>

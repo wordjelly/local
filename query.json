@@ -1,0 +1,34 @@
+{
+  "bool": {
+    "should": [
+      {
+        "bool": {
+          "must": [
+            {
+              "range": {
+                "number": {
+                  "gte": 420,
+                  "lte": 540
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "bool": {
+          "must": [
+            {
+              "range": {
+                "number": {
+                  "gte": 70,
+                  "lte": 190
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

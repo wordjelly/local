@@ -1,0 +1,25 @@
+<%= form_for @package do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+	
+	<%= f.text_field :name %>
+	<%= f.label :name %>
+
+	<%= f.text_field :report_name , :data => {:autocomplete_type => "reports", :multiple => true, :multiple_element_name => "package[report_ids][]"}, :autocomplete => "off" %>
+
+	<%= f.label :report_name %>
+
+	<%= render :partial => "/shared/display_array", locals: {model: @order, multiple_el: "report_ids", multiple_objects: "reports"} %>
+
+	<%= f.number_field :base_price, :step => :any %>
+	<%= f.label :base_price %>
+
+	<%= f.number_field :discounted_price, :step => :any %>
+	<%= f.label :discounted_price %>
+
+	<%= f.text_field :valid_till %>
+	<%= f.label :valid_till %>
+
+	<%= f.submit "Submit" %>
+
+<% end %>

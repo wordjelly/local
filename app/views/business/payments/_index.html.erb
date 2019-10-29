@@ -1,0 +1,26 @@
+<% payments_array = [] %>
+<% if local_assigns[:payments] %>
+  <%= puts "payments are defined" %>
+  <% payments_array = payments %>
+<% else %>
+  <%= puts "payments are not defined" %>
+  <% payments_array = @payments %>
+<% end %>
+<table>
+  <thead>
+    <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>For Report Id</th>
+        <th>For Report Name</th>
+        <th>Payment Type</th>
+        <th>Payment Mode</th>
+    </tr>
+  </thead>
+  <tbody>
+  	<% payments_array.each do |payment| %>
+  	<% @payment = payment %>
+  	<%= render :partial => "/business/payments/show" %>
+  	<% end %>
+  </tbody>
+</table>

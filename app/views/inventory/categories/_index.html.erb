@@ -1,0 +1,24 @@
+<% categories_array = [] %>
+<% if local_assigns[:categories] %>
+  <%= puts "categories are defined" %>
+  <% categories_array = categories %>
+<% else %>
+  <%= puts "categories are not defined" %>
+  <% categories_array = @categories %>
+<% end %>
+<table>
+  <thead>
+    <tr>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Total Items</th>
+        <th>Options</th>
+    </tr>
+  </thead>
+  <tbody>
+  	<% categories_array.each do |category| %>
+  	<% @category = category %>
+  	<%= render :partial => "/inventory/categories/show" %>
+  	<% end %>
+  </tbody>
+</table>

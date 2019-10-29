@@ -1,0 +1,7 @@
+<tr>
+	<td><%= @order.created_at %></td>
+	<td><%= link_to @order.patient.full_name + "'s Tests", business_order_path(@order.id.to_s) %></td>
+	<td><%= @order.reports.size %></td>
+	<td><%= @order.categories.size %></td>
+	<td><%= render :partial => "/business/orders/options" %></td>
+</tr>

@@ -1,0 +1,12 @@
+<tr id="status_row_<%= status.id.to_s %>">
+	<td><%= link_to status.name, diagnostics_status_path(status.id.to_s) %></td>
+	<td><%= status.from %></td>
+	<td><%= status.to %></td>
+	<td><%= status.duration %></td>
+	<td><%= status.lot_size %></td>
+	<td><%= status.result %></td>
+	<% @requirements = status.requirements %>
+	<td><%= render :partial => "/inventory/requirements/summary" %></td> 
+	<td><%= status.can_report %></td>
+	<td><%= render :partial => "/statuses/options", locals: {status: status} %></td>   	
+</tr>

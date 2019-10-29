@@ -1,0 +1,61 @@
+
+
+<div class="section">
+
+	<%= form_for @report, :html => {:class => "report_form"} do |f| %>
+
+		<%= render :partial => "/shared/visibility", locals: {f: f} %>
+
+
+		<!-- so for eg: esat-6 becomes a value -->
+		<!-- may have to be calculated from another test -->
+		<!-- so we have to be able to define expressions -->
+		<!-- how to not enforce that clause if it is an update action ? -->
+
+		<!-- where did we use this nested shit ? -->
+
+		<%= f.text_field :name %>
+		<%= f.label :name %>
+
+		<%= f.number_field :price %>
+		<%= f.label :price %>
+
+		<!-- today's target -->
+		
+		<!-- who can create reports -->
+		<!-- the lab can create reports -->
+		<!-- we have to use some kind of dropdown -->
+		<!-- the autocomplete is done on this -->
+		<!-- the hit id is taken from this and set as the test_id in the fields below -->
+		<!-- for this will have to give the item requirement a name -->
+		<%= f.text_field :test_name , :data => {:autocomplete_type => "tests"} %>
+		<%= f.label :test_name %>
+		<%= render :partial => "/shared/display_array", locals: {model: @report, multiple_el: "test_ids", multiple_objects: "tests"} %>
+		<%= f.hidden_field :test_id %>
+		<%= f.hidden_field :test_id_action, :value => "add" %>
+
+
+		<%= f.text_field :item_requirement_name, :data => {:autocomplete_type => "item-requirements"} %>
+		<%= f.label :item_requirement_name %>
+		<%= render :partial => "/shared/display_array", locals: {model: @report, multiple_el: "item_requirement_ids", multiple_objects: "item_requirements"} %>
+		<%= f.hidden_field :item_requirement_id %>
+		<%= f.hidden_field :item_requirement_id_action, :value => "add" %>
+
+		<!-- these can only be removed from the edit action -->
+
+		
+		<%= f.text_field :tag_name , :data => {:autocomplete_type => "tags", :multiple => true, :multiple_element_name => "report[tag_ids][]"}, :autocomplete => "off" %>
+		<%= f.label :tag_name %>
+
+		<%= render :partial => "/shared/display_array", locals: {model: @report, multiple_el: "tag_ids", multiple_objects: "tag_ids"} %>
+		
+
+		<div>
+
+			<%= f.submit "Submit", :class => "waves-effect waves-light btn" %>
+		</div>
+		<!-- first we have to be able to add or remove them -->
+
+	<% end %>
+	
+</div>

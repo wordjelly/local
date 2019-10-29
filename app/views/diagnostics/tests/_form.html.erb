@@ -1,0 +1,28 @@
+<%= form_for @test do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+
+	
+	<%= f.text_field :name %>
+	<%= f.label :name %>
+
+	<%= f.text_field :lis_code %>
+	<%= f.label :lis_code %>
+
+	<%= f.text_field :price %>
+	<%= f.label :price %>
+
+	<%= f.text_field :description %>
+	<%= f.label :description %>
+
+	<!-- the name of the normal range -->
+	<!-- so this will do the work -->
+	<%= f.text_field :normal_range_name , :data => {:autocomplete_type => "normal_ranges", :multiple => true, :multiple_element_name => "test[normal_range_ids][]"}, :autocomplete => "off" %>
+
+	<%= f.label :normal_range_name %>
+
+	<%= render :partial => "/shared/display_array", locals: {model: @test, multiple_el: "normal_range_ids", multiple_objects: "normal_ranges"} %>
+
+	<%= f.submit "Submit" %>
+
+<% end %>

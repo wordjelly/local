@@ -1,0 +1,14 @@
+<!-- so solve for new record or old record -->
+<%= form_for @machine, as: :machine, method: @machine.new_record? ? :post : :put do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+		
+	<% unless @machine.new_record? %>
+		<%= render :partial => "images/image", locals: {model: @machine} %>
+	<% end %>
+	
+	<%= build_nested_form(@machine).html_safe %>	
+
+	<%= f.submit "Submit" %>
+
+<% end %>

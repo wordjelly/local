@@ -1,0 +1,10 @@
+<!-- remove range -->
+<span>
+	<%= link_to "Delete", inventory_comment_path(@comment.id.to_s), :method => :delete %>
+</span>
+
+<!-- edit range -->
+<!-- when we go to comments index, we want it filtered by transaction id -->
+<span style="margin-left: 10px;">
+	<%= link_to "Edit", edit_inventory_comment_path(@comment.id.to_s) %>
+</span>

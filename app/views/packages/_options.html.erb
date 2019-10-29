@@ -1,0 +1,8 @@
+<span>
+	<%= link_to "Delete", package_path(@package.id.to_s), :method => :delete %>
+</span>
+
+
+<span style="margin-left: 10px;">
+	<%= link_to "Edit", edit_package_path(@package.id.to_s) %>
+</span>

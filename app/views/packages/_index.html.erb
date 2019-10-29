@@ -1,0 +1,14 @@
+<table>
+        <thead>
+          <tr>
+              <th>Name</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @packages.each do |nr| %>
+        	 <% @package = nr %>
+           <%= render :partial => "show" %>
+          <% end %>
+        </tbody>
+</table>

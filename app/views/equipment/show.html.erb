@@ -1,0 +1,28 @@
+<table>
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Options</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        	<%= render :partial => "/equipment/show" %>
+        </tbody>
+</table>
+
+<table>
+    <thead>
+      <tr>
+        <th>Report Name</th>
+        <th>Priority(Higher Number is lower priority)</th>
+      </tr>
+    </thead>
+    <tbody>
+    <!-- render the definitions -->
+    <% @equipment.definitions.each do |definition| %>
+      <%= render :partial => "/equipment/definitions_form.html.erb", locals: {definition: definition} %>
+    <% end %>
+
+    </tbody>
+</table>

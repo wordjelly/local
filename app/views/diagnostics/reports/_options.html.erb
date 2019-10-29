@@ -1,0 +1,7 @@
+<span>
+	<%= link_to "Edit", edit_diagnostics_report_path(:id => @report.id.to_s) %>
+</span>
+
+<span>
+	<%= link_to "Delete",diagnostics_report_path(:id => @report.id.to_s, :method => "delete") %>
+</span>

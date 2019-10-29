@@ -1,0 +1,55 @@
+<%= form_for @item_transfer do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Transfer to Location
+			</div>
+			<%= f.text_field :to_location_id, :data => {:autocomplete_type => "locations"} %>
+			<%= f.label :to_location_id %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Transfer to User
+			</div>
+			<%= f.text_field :to_user_id %>
+			<%= f.label :to_user_id %>
+		</div>
+	</div>
+
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Item Details
+			</div>
+			<%= f.number_field :quantity %>
+			<%= f.label :quantity %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Model Id
+			</div>
+			<%= f.number_field :model_id, :readonly => true %>
+			<%= f.label :model_id %>
+		</div>
+		<div class="card-content">
+			<div class="card-title">
+				Model Class
+			</div>
+			<%= f.number_field :model_class, :readonly => true %>
+			<%= f.label :model_class %>
+		</div>
+	</div>
+
+	<%= f.submit "Submit" %>
+
+<% end %>

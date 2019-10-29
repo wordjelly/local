@@ -1,0 +1,115 @@
+Inventory Architecture:
+
+1. Item type -> for eg: Serum Seperator Tube 5 ml.
+
+Nest orders and responses inside the Item type.
+We can see last 500 orders of Serum Seperator Tubes.
+When the order is placed -> it has to be for a particular supplier.
+When the order is received -> the count of the item_type goes up by the received amount.
+There we can also see how many of them have been barcoded, and how many are to be barcoded
+That option has to be set in the item_type specification.
+After the barcoding.
+Suppose we want the current number which are usable ?
+When a particular item is assigned to a report, by means of barcode scanning -> that item is automatically subtracted from the item type.
+Or rather, it is never subtracted, that is shown 
+Secondly comes the case of handing over items -> who received it -> who was it handed over to -> who is incharge of it -> where is it now -> all this shoudl be answerable.
+So we need tracability of items.
+what about kits -> 
+so we should have a tracability concern.
+when an item is to be transferred to a user -> we should get that list.
+suppose they want to transfer the item over to a user of another organization -> they can search for that organization -> and in that organization -> they can transfer to them.
+so the trace is also a set of embedded objects
+on an order 
+
+attributes_on_item_type:
+
+bd tube : physical item.
+units : 100
+units_to_be_barcoded: yes
+we can order a 100 units.
+units barcoded ?
+in order create an item, also you have to go to an order -> and from there you have to say add barcode.
+that's how items are created.
+
+or we can order 1 kit.
+total virtual elements/unit => 
+
+item type -> [
+	{
+		ordered_amount : 5 
+		ordered_date :
+		supplied_date :
+		received_by: 
+		received_location_id : 
+		total units/tests received per ordered item:
+	}
+]
+
+10 kits.
+just minus it.
+when done, which item_type is going to be utilized and by how much. 
+that way we get running stock.
+
+supplier
+item_type
+order (nested inside item types)
+transfers -> from -> to -> amount -> , /barcode.
+ok this is good enough.
+suppose i want to get pending items -> 
+let us say 10 -> then we 
+
+
+suppose i want to make packets. 
+how do i do it ?
+first i transfer -> those items onto my name, from the earlier person, at the lab.
+then i make ten bags
+that bag has a barcode -
+so then if i want the current location of 
+you give the location fo the packets
+suppose i want to transfer that packet -> from apurva -> pankaj -> pankaj's bag.
+he then transfer's a bag -> it will ask for barcode -> 
+
+30 tubes are given.
+if non-barcoded tubes are being given, it is not allowed
+we give it a location.
+
+Suppose 30 tubes were given to pankaj.
+where is the location?
+amount -> 30, 
+given to -> pankaj(user_id)
+given_by -> user_id
+location -> 
+
+so she makes a packet out of it.
+now where does she keep that packet
+lets say somewhere x.
+now where does it go?
+
+lets assume you want to give some of these tubes to someone, 
+like apurva is giving them to afreen who is going to make packets out of them.
+
+
+we have item_transfers
+item transfer has to have an order number.
+then there is an amount
+then there is from -> to 
+user ids, and organization ids.
+location -> id.
+a single tube can have a location.
+a bunch of tubes can 
+so if an order has come 
+----
+lets assume some of these tubes are barcoded, and grouped.
+into item groups
+
+Incoming are 500 tubes.
+We haven't yet assigned them barcode numbers
+So we cannot have individual records.
+Sometimes we can 
+
+2. Item -> Usually Individual
+3. Incoming package -> consists of items bundled together.
+4. Item Order -> 
+5. Kits/Reagents
+6. Suppliers
+7. Item Requirement, and statuses -> which have their own item requirement definitions, and how exactly is this currently working out.

@@ -1,0 +1,28 @@
+<%= form_for @equipment, :class => "equipment_form" do |f| %>
+  
+  <%= f.text_field :name %>
+  <%= f.label :name %>
+
+  <div>Add New Equipment Definition</div>
+  
+    
+  <table>
+    <thead>
+      <tr>
+        <th>Report Name</th>
+        <th>Priority(Higher Number is lower priority)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- this entry is added to add a new item -->
+      <%= render :partial => "/equipment/definitions_form.html.erb", locals: {definition: {report_id: nil}} %>
+      <!-- this entry ends -->
+      <% @equipment.definitions.each do |definition| %>
+        <%= render :partial => "/equipment/definitions_form.html.erb", locals: {definition: definition} %>
+      <% end %>
+    </tbody>
+  </table>
+
+	<%= f.submit "Submit" %>
+
+<% end %>

@@ -1,0 +1,13 @@
+{
+	"patients" : [
+		{
+			"first_name" : "Aditya",
+			"last_name" : "Raut",
+			"email" : "rotastrain@gmail.com",
+			"mobile_number" : 9637438856,
+			"address" : "2nd Floor, Manisha Terrace, Pune, Camp",
+			"date_of_birth" : "1991-06-01",
+			"sex" : "Male"
+		}
+	]
+}

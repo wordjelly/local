@@ -1,0 +1,76 @@
+<div class="row" style="margin-bottom:1.4rem; margin-top:1.4rem">
+	<!-- show or create the organization -->
+	<a class='dropdown-trigger btn' href='#' data-target='organization'>Organization</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='patients'>Patients</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='report_templates'>Report Templates</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='roles_and_tags'>Roles and Tags</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='packages'>Packages</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='inventory'>Inventory</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='machines'>Machines</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='geo'>Geo</a>
+
+	<ul id='organization' class='dropdown-content'>
+		<% if current_user.has_organization? %>
+			<li><i class="material-icons">view_module</i><%= link_to current_user.organization.name, organization_path(current_user.organization.id.to_s) %></li>
+		<% else %>
+			<li><i class="material-icons">view_module</i><%= link_to "Create Your Lab", new_organization_path %></li>
+		<% end %>
+	</ul>
+
+	<ul id='patients' class='dropdown-content'>
+		<% if current_user.owns_or_belongs_to_organization? %>
+			<li><i class="material-icons">view_module</i><%= link_to "Create Patient", new_patient_path %></li>
+
+			<li><i class="material-icons">view_module</i><%= link_to "View All Patients", patients_path %></li>
+		<% end %>
+	</ul>	
+
+	
+	<ul id='report_templates' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Templates", diagnostics_reports_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Report Template", new_diagnostics_report_path %></li>
+	</ul>
+
+	
+
+	<ul id='roles_and_tags' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Roles/Tags", tags_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Role/Tag", new_tag_path %></li>
+	</ul>
+
+	<ul id='packages' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Roles/Tags", business_packages_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Role/Tag", new_business_package_path %></li>
+	</ul>
+	<!-- do i need an inventories controller -->
+	<!-- what should it show -->
+	<!-- three tabs -->
+	<!-- so you choose an item type, or you want to scan a barcode -->
+	<!-- that has to be done also.-->
+	<!-- so see the item type, there see its orders, see related items, see transfers of those items -->
+	<ul id='inventory' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "View Inventory", inventory_item_types_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Item-Type To Inventory", new_inventory_item_type_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Create New Item-Group To Inventory", new_inventory_item_group_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Item-Groups", inventory_item_groups_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Orders", inventory_transactions_path %></li>
+	</ul>
+
+	<ul id='machines' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Machines", inventory_equipment_machines_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Machine", new_inventory_equipment_machine_path %></li>
+	</ul>
+
+	<ul id='geo' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "See All Locations", geo_locations_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "Add New Location", new_geo_location_path %></li>
+	</ul>
+	
+</div>

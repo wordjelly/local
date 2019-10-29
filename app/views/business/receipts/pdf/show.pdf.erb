@@ -1,0 +1,40 @@
+<!-- expect a local called :receipt -->
+<table class="striped">
+	<thead>
+		<tr>
+			<th>Sr No</th>
+			<th>Timestamp</th>
+			<th>Report</th>
+			<th>Amount</th>
+		</tr>
+	</thead>
+	<!-- gotta still sort this out -->
+	<tbody>
+		<% receipt.payments.each_with_index {|payment,key| %>
+			<tr>
+				<td><%= key + 1 %></td>
+				<td><%= payment.created_at %></td>
+				<td><%= payment.for_report_name %></td>
+				<td><%= payment.amount %></td>
+			</tr>
+		<% } %>
+		<tr>
+			<td> - </td>
+			<td> - </td>
+			<td> Total </td>
+			<td> <%= receipt.total %></td>
+		</tr>
+		<tr>
+			<td> - </td>
+			<td> - </td>
+			<td> Paid </td>
+			<td> <%= receipt.paid %></td>
+		</tr>
+		<tr>
+			<td> - </td>
+			<td> - </td>
+			<td> Pending </td>
+			<td> <%= receipt.pending %></td>
+		</tr>
+	</tbody>
+</table>

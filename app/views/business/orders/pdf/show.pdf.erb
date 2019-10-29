@@ -1,0 +1,37 @@
+<% if order.organization.generate_report_summary == Organization::YES %>
+	<%= render :partial => "/business/orders/report_summary", locals: {order: order, organization: organization} %>
+<% end %>
+<!-- if the format is the same or not, and if the organization is the same or not -->
+<% reports.each do |report| %>
+	<%= render :partial => "/diagnostics/reports/pdf/show", locals: {order: order, organization: organization, report: report} %>
+	
+	<% if signing_organization.signature_after_every_report == Organization::YES %>
+		<% report.final_signatories.each_slice(3) do |slice| %>
+			<div class="signatures row">
+				<% slice.each do |user_id| %>
+					<%= render :partial => "/diagnostics/reports/pdf/signatures", locals: {user: order.users_hash[user_id]} %>
+				<% end %>
+			</div>
+		<% end %>
+		<!-- ignore last tag -->
+		<!-- mod the query ? -->
+		<!-- and then move to the final shortening -->
+		<!-- and the simple results -->
+		<!-- rollover -->
+	<% end %>	
+	<% if signing_organization.each_report_on_new_page == Organization::YES %>
+		<%= render :partial => "/layouts/pdf/page_break" %>
+	<% end %>
+<% end %>
+<!-- first i have to give organization selecting the users option -->
+<% if signing_organization.signature_after_every_report == Organization::NO %>
+		<% reports.map{|c| c.final_signatories}.uniq.flatten.each_slice(3) do |slice| %>
+			<div class="signatures row">
+				<% puts "the final signatories are" %>
+				<% puts slice.to_s %>
+				<% slice.each do |user_id| %>
+					<%= render :partial => "/diagnostics/reports/pdf/signatures", locals: {user: order.users_hash[user_id]} %>
+				<% end %>
+			</div>
+		<% end %>
+<% end %>

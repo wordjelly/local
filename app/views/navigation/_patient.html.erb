@@ -1,0 +1,31 @@
+<div class="row" style="margin-bottom:1.4rem; margin-top:1.4rem">
+	
+	<a class="dropdown-trigger btn" href="#" data-target='orders'>Orders</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='patients'>Patients</a>
+
+	<a class="dropdown-trigger btn" href="#" data-target='bills'>Billing</a>
+
+	<ul id='orders' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to " Pending Orders", business_orders_path %></li>
+		<li><i class="material-icons">view_module</i><%= link_to "New Order", new_business_order_path %></li>
+	</ul>
+
+	<ul id='patients' class='dropdown-content'>
+		<% if current_user.owns_or_belongs_to_organization? %>
+			<li><i class="material-icons">view_module</i><%= link_to "Create Patient", new_patient_path %></li>
+			<li><i class="material-icons">view_module</i><%= link_to "View All Patients", patients_path %></li>
+		<% end %>
+	</ul>	
+
+	<ul id='bills' class='dropdown-content'>
+		<li><i class="material-icons">view_module</i><%= link_to "Pending Bills", new_business_statement_path %></li>
+	</ul>
+
+	<!-- adding payemnt -->
+	<!-- how to add the payment ? -->
+	<!-- so we make an order, now we want to make a payment, and generate a receipt -->
+	<!-- the receipt contains many payments -->
+
+
+</div>

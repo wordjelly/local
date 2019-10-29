@@ -1,0 +1,6 @@
+<% @images ||= [] %>
+<% @images.each do |image| %>
+	<% @image = image %>
+	<%= render :partial => "images/show" %>
+<% end %>
+

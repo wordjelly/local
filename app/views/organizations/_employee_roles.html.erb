@@ -1,0 +1,5 @@
+<%= f.text_field :role_name , :data => {:autocomplete_type => "tags", :multiple => true, :multiple_element_name => "organization[role_ids][]"}, :autocomplete => "off" %>
+
+<%= f.label :role_name %>
+
+<%= render :partial => "/shared/display_array", locals: {model: @organization, multiple_el: "role_ids", multiple_objects: "employee_roles"} %> 	

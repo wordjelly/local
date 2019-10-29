@@ -1,0 +1,24 @@
+<!-- expects a local called "model", the actual object instance of the form, another one called "multiple_el", which is a string, this is the actual array attribute, "multiple_object", this is the name of the attribute, which holds the object, to which the multiple el refers, for eg: imagine: multiple_el => test_ids, and multiple_object: tests --->
+<% unless model.send(multiple_el).blank? %>
+	<ul class="collection">
+		<% model.send(multiple_el).each_with_index {|item,key| %>
+			<li class='collection-item'>
+				<% if local_assigns[:multiple_objects].blank? %>
+					<%= item %>
+				<% else %> 
+					<% if model.send(multiple_objects)[key].respond_to? :name %>
+						<%= model.send(multiple_objects)[key].name %>
+					<% else %>
+						<%= item %>
+					<% end %>
+				<% end %>
+				<input type='hidden' value="<%= item.to_s %>" name="<%= model.class.name.downcase.singularize %>[<%= multiple_el %>][]" />
+				<i class='material-icons delete_multiple_item' style='cursor:pointer;'>close
+				</i>
+			</li>
+		<% } %>
+		<!-- add a blank element in case all the elements are deleted -->
+
+	</ul>
+<% end %>
+<input type='hidden' name="<%= model.class.name.downcase.singularize %>[<%= multiple_el %>][]" />

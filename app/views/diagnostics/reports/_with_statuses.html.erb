@@ -1,0 +1,53 @@
+<!-- so each status is a card -->
+<!-- we take each report, and find the applicable status, and add it there. -->
+
+<table class="striped">
+	<thead>
+		<!-- these are going to be vertical -->
+		<!-- this has to be shown say with item -->
+		<th>Reports</th>
+		<!-- ill have to fire one agg, just on all the statuses -->
+		<!-- and here we have the statuses -->
+		<% statuses.each do |status| %>
+			<th data-id="<%= status[:id].to_s %>"><%= status[:name] %></th>
+		<% end %>
+	</thead>
+	<tbody>
+		<% reports.each do |report| %>
+			<tr>
+				<td>
+					<div><%= link_to report[:name], report_path(report[:id]) %></div>
+					<% patient_name = report[:patient_id] %>
+					<% 
+					   begin
+					   	patient_name = Patient.find(report:patient_id)
+					   rescue
+
+					   end
+					%>
+					<div><%= link_to patient_name, patient_path(report[:patient_id]) %></div>
+					<% unless report[:order_id].blank? %>
+					<div><%= link_to report[:order_id], order_path(report[:order_id]) %></div>
+					<% end %>
+				</td>
+				<% statuses.each do |status| %>
+					<% applicable_status = report[:statuses].select{|c| c[:template_status_id] == status[:id]}
+					%>
+					<td class="<%= is_delayed?(applicable_status) %>">
+						<% if applicable_status.size == 1 %>
+						
+							<div>
+								<%= Time.at(applicable_status[0][:expected_time]/1000).strftime("%b %d %Y, %I:%M %P") %>
+							</div>
+							<div>
+								<%= applicable_status[0][:assigned_to_employee_id] %>
+							</div>
+						<% else %>
+							NA
+						<% end %>
+					</td>
+				<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Local</title>
+  
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+
+  <!-- Citrus Pay/ Payumoney bolt script -->
+  <% if (Rails.env.test? || Rails.env.development?) %>
+    <script id="bolt" src="https://sboxcheckout-static.citruspay.com/bolt/run/bolt.min.js" bolt-color="<color-code>" bolt-logo="<image path>"></script>
+  <% else %>
+    <script id="bolt" src="https://checkout-static.citruspay.com/bolt/run/bolt.min.js" bolt-color="<color-code>" bolt-logo="<image path>"></script>
+  <% end %>
+  
+
+
+  <!-- strftime -->
+  <script src="https://cdn.jsdelivr.net/npm/strftime@0.10.0/strftime.min.js"></script>
+
+   <!--Import Google Icon Font-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js"></script>
+  
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+  
+  <!-- underscore js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+
+
+  <!-- timeago -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.3/jquery.timeago.min.js"></script>
+
+
+  <!-- pluralize -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pluralize/7.0.0/pluralize.min.js"></script>
+
+
+  <!-- tooltipster/js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.3.0/js/jquery.tooltipster.min.js" integrity="sha256-lenj6loHcdfu6tFQPUHN6S2O7G2gv7yX/P9OnRc8lno=" crossorigin="anonymous"></script>
+
+  <!-- tooltipster/css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.3.0/css/tooltipster.min.css" integrity="sha256-pH1rXnKT93pKrqWn3yDTgwsQrK/M4sVMFL774/pfaas=" crossorigin="anonymous" />
+
+  <!--- fontawesome icons -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+  <%= csrf_meta_tags %>
+
+  <%= javascript_include_tag  "https://widget.cloudinary.com/global/all.js" %>
+
+  <%= cloudinary_js_config %>
+
+</head>
+
+<body>
+
+
+<% content_for :nav_links do %>
+    
+<% end %>
+
+<!-- from creation to adding users, to etc etc -->
+<!-- protection of search -->
+
+<%= render :partial => "layouts/auth/navbar/navbar.html.erb" %>
+
+<div class="container">
+  <!-- uses a helper method to determine the name of the partial to be shown -->
+  <!-- does it use the -->
+  
+  <%= render :partial => "/navigation/#{get_navigation_partial_name(current_user)}" %>
+  <%= render :partial => "search/search" %>
+  <!-- expects an instance variable called @errors[OPTIONAL] -->
+  <%= render :partial => "/shared/errors" %>
+  <!-- expects an instance variable called @alert[OPTIONAL] -->
+  <%= render :partial => "/shared/alert" %>
+  <!-- expects an instance variable called @images[OPTIONAL] -->
+  <!-- earlier had rendered a partial called /images/index -->
+  <!-- this can be shown on edit only, inside the relevant thing -->
+  <!-- so i will add it there -->
+  <!-- we can have doctors, that can be done in profile -->
+  <%= yield %>
+</div>
+
+<%= render :partial => "layouts/footer" %>
+
+<!-- for the sign in modals -->
+<%= render :partial => "layouts/auth/modals.html.erb" %>
+
+</body>
+</html>
+
+

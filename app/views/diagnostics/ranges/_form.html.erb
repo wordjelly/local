@@ -1,0 +1,130 @@
+<%= form_for @normal_range do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Basic Details of this Range
+			</div>
+
+			<%= f.text_field :name %>
+			<%= f.label :name %>
+
+			<%= f.text_field :test_id, readonly: true %>
+			<%= f.label :test_id %>
+
+			<%= f.text_field :test_name, readonly: true %>
+			<%= f.label :test_name %>
+
+			<div class="input-field" style="margin-top: 50px;">
+				<%= f.select :role , Patient::SEX.map{|pk| [pk,pk]}, {include_blank: "Applicable to Genders", disabled: '', selected: ''} %>
+		    </div>
+
+		    <%= f.number_field :min_value, :step => :any %>
+		    <%= f.label :min_value %>
+
+		    <%= f.number_field :max_value, :step => :any %>
+		    <%= f.label :max_value %> 
+
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Set the Minimum Age Parameters.
+			</div>
+			<%= f.number_field :min_age_years %>
+			<%= f.label :min_age_years %>
+
+			<%= f.number_field :min_age_months %>
+			<%= f.label :min_age_months %>
+
+			<%= f.number_field :min_age_days %>
+			<%= f.label :min_age_days %>
+
+			<%= f.number_field :min_age_hours %>
+			<%= f.label :min_age_hours %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Set the Maximum Age Parameters.
+			</div>
+			<%= f.number_field :max_age_years %>
+			<%= f.label :max_age_years %>
+
+			<%= f.number_field :max_age_months %>
+			<%= f.label :max_age_months %>
+
+			<%= f.number_field :max_age_days %>
+			<%= f.label :max_age_days %>
+
+			<%= f.number_field :max_age_hours %>
+			<%= f.label :max_age_hours %>
+		</div>
+	</div>
+
+	
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Grade and Count Details
+			</div>
+		    <%= f.text_field :count %>
+		    <%= f.label :count %>
+
+		    <%= f.text_field :grade %>
+		    <%= f.label :grade %>
+		</div>
+	</div>
+
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Machine / Kit Details (<span class="red-text">REQUIRED</span>)
+			</div>
+		    <%= f.text_field :machine %>
+		    <%= f.label :machine %>
+
+		    <%= f.text_field :kit %>
+		    <%= f.label :kit %>
+
+		    <%= f.text_field :reference %>
+		    <%= f.label :reference %>
+		</div>
+	</div>
+
+	<!-- we have to move very fast with all this shit -->
+	<!-- and we will have to incorporate some kind of versioning -->
+
+
+    <!-- what if min and max values are both zero -->
+    <!-- in that case, we have to give a count or a grade to it -->
+    <!-- so that is an additional two text fields -->
+    <!-- so it searches in the either the count or the grade -->
+	<!-- now the dropdown for sex -->
+	<!-- suppose it is applicable to both sexes -->
+	<!-- so we have three options, male, female, both, transgender -->
+	<!-- so now what after this -->
+	<!-- so we got normal ranges, test, and report -->
+	<!-- next we go to public, and customization driven cloning of this (this + above : 1 day)-->
+	<!-- then inventory for item types, item groups, statuses, item_requirements : 2 days -->
+	<!-- then we go to, order, billing, and receipt : 2 days -->
+	<!-- then report entry, verification challenges, dispatch and printing : 2 days -->
+	<!-- then order scheduling with statuses : 1 day -->
+	<!-- this week all this has to happen -->
+	<!-- im sitting here on the 11th saying, the only thing that is left now is the controls, and lis integration for the controls -->
+	<!-- then on the 11th 90% of it is done, by 15th : videos, offers, and survey questionnaires, search engine upgrade should be done -->
+	<!-- assume it takes a month -->
+	<!-- and then another month for the app to actually work. -->
+	<!-- so basically june 15 -->
+	<!-- this has to be a selection box, like from profile -->
+
+	<%= f.submit "Submit" %>
+
+<% end %>

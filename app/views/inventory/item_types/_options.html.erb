@@ -1,0 +1,20 @@
+<span>
+	<%= link_to "Delete", inventory_item_type_path(@item_type.id.to_s), :method => :delete %>
+</span>
+
+<!-- edit range -->
+<span style="margin-left: 10px;">
+	<%= link_to "Edit", edit_inventory_item_type_path(@item_type.id.to_s) %>
+</span>
+
+<span style="margin-left: 10px;">
+	<%= link_to "Order This Item", new_inventory_transaction_path(:transaction => {:item_type_id => @item_type.id.to_s}) %>
+</span>
+
+<span style="margin-left: 10px;">
+	<%= link_to "See All Orders", inventory_transactions_path({transaction: {:item_type_id => @item_type.id.to_s}}) %>
+</span>
+
+<span style="margin-left: 10px;">
+	<%= link_to "See All Items", inventory_items_path({item: {:item_type_id => @item_type.id.to_s}}) %>
+</span>

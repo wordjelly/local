@@ -1,0 +1,5 @@
+<ul class="collection blue-grey white-text" id="autocomplete_dropdown">
+	<% search_results.each do |hit| %>
+		<li class="blue-grey white-text collection-item autocomplete_dropdown_element" data-hit-id="<%= hit.id.to_s %>"><%= hit.name %></li>
+	<% end %>
+</ul>

@@ -1,0 +1,45 @@
+<%= form_for @profile_resource, as: :user, url: profile_path(:id => @profile_resource.id.to_s, resource: "users") do |f| %>
+	
+	<%= f.text_field :first_name %>
+	<%= f.label :first_name %>
+
+	<%= f.text_field :last_name %>
+	<%= f.label :last_name %>
+
+	<%= f.text_field :date_of_birth, :class => "datepicker" %>
+	<%= f.label :date_of_birth, :class => "datepicker" %>
+
+	<%= f.text_field :address %>
+	<%= f.label :address %>
+
+	<%= f.text_field :sex %>
+	<%= f.label :sex %>
+
+	<br>
+
+	<% f.object.organization_members.each do |om| %>
+		<%= render :partial => "/organization_members/form", locals: {om: om, f: f} %>
+	<% end %>
+
+	
+	<!-- if you click on "Join Organization" on any organization page, then it will redirect to this form, with this field filled in -->
+	<% if @profile_resource.show_join_organization_form? %>
+		<h5>Join Organization : Click submit to join this organization in the specified role</h5>
+		<input type="text" name="user[organization_members][][organization_id]" value="<%= @profile_resource.organization_member_organization_id %>" />
+		<label for="user[organization_members][][organization_id]">Organization Id</label>
+
+		<input type="text" name="user[organization_members][][employee_role_id]" value="<%= @profile_resource.organization_member_employee_role_id %>"/>
+		<label for="user[organization_members][][employee_role_id]">Employee Role Id</label>
+	<% end %>	
+
+	<% if f.object.credential.blank? %>
+		<%= link_to "Add Qualifications and Signature", new_credential_path(:credential => {:user_id => f.object.id.to_s}) %>
+	<% else %>
+		<%= link_to "Edit your qualifications/Signature", edit_credential_path(f.object.credential.id.to_s) %>
+	<% end %>
+
+	<%= render :partial => "/profiles/patients_pending_approval_form_partial" %>
+
+	<%= f.submit "Submit" %>
+
+<% end %>

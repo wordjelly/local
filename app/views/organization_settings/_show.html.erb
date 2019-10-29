@@ -1,0 +1,8 @@
+<tr>
+	<td><%= link_to @organization_setting.name, organization_setting_path(@organization_setting.id.to_s) %></td>
+	<td><%= @organization_setting.for_organization_id %></td>
+	<td><%= @organization_setting.for_patient_id %></td>
+	<td><%= @organization_setting.payment_policy %></td>
+	<td><%= @organization_setting.accept_orders %></td>
+	<td><%= render :partial => "/organization_settings/options" %></td>
+</tr>

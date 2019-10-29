@@ -1,0 +1,20 @@
+<table>
+        <thead>
+          <tr>
+              <th>Id</th>
+              <th>Name</th>
+              <th>Virtual Units</th>
+              <th>Barcode Required</th>
+              <th>Suppliers</th>
+              <th>Manufacturer Name</th>
+              <th>Options</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @item_types.each do |cm| %>
+           <% @item_type = cm %>
+           <%= render :partial => "show" %>
+          <% end %>
+        </tbody>
+</table>

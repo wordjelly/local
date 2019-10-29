@@ -1,0 +1,24 @@
+<div></div>
+<span class="add-location">Add Location<i class="material-icons">add_circle_outline</i></span>
+<div class="section add-location-fields" style="display:none;">
+	<%= f.hidden_field :latitude %>
+	
+
+	<%= f.hidden_field :longitude %>
+	
+
+	<%= f.text_field :address %>
+	<%= f.label :address %>
+	
+	<% unless f.object.class.name == "Organization" %>	
+		<%= f.text_field :organization_location_id, :data => {location_id: get_current_user_organization_location} %>
+		<%= f.label :organization_location_id %>
+
+		<%= f.text_field :spot_tag %>
+		<%= f.label :spot_tag %>
+	<% end %>
+</div>
+<div></div>
+
+<!-- go one step at a time -->
+<!-- write the parser -->

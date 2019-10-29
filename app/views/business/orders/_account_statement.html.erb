@@ -1,0 +1,61 @@
+<div class="card">
+	<div class="card-content">
+		<div class="card-title">
+			<%= Time.now.strftime("%b %-d %Y, %I:%M %P") %> | Pending Amount
+		</div>
+		<div>
+			<h5><%= @order.account_statement[:pending] %></h5>
+      <%= link_to "Make Pending Payment", new_status_path({:status => {name: "payment", numeric_value: @order.account_statement[:pending], order_id: @order.id.to_s}}) %>
+		</div>
+	</div>
+</div>
+
+<h4 class="header">Bills</h4>
+<table class="striped bill">
+    <thead>
+      	<tr>
+          <th>Serial No</th>
+      		<th>Report Date</th>
+          <th>Report Name</th>
+          <th>Bill Amount</th>
+      	</tr>
+    </thead>
+    <tbody>
+    	<% @order.account_statement[:bill].each_with_index{|bill,key| %>
+    		<tr>
+    			<td><%= key + 1 %></td>
+          <td><%= bill[:date] %></td>
+    			<td><%= bill[:text_value] %></td>
+    			<td><%= bill[:amount] %></td>
+    		</tr>
+    	<% } %>
+    </tbody>
+</table>
+
+<h4 class="header">Payments</h4>
+<table class="striped payment">
+    <thead>
+      	<tr>
+            <th>Serial No</th>
+            <th>Payment Date</th>
+          	<th>Payment Id</th>
+          	<th>Amount</th>
+      	</tr>
+    </thead>
+    <tbody>
+    	<% @order.account_statement[:payment].each_with_index{|payment,key| %>
+    		<tr>
+    			<td><%= key + 1 %></td>
+          <td><%= payment[:date] %></td>
+    			<td><%= link_to payment[:id], status_path(payment[:id]) %></td>
+    			<td><%= payment[:amount] %></td>
+    		</tr>
+    	<% } %>
+    </tbody>
+</table>
+
+
+<!-- let it go to a generate pdf receipt path -->
+<% if @order.latest_version %>
+  <%= link_to "Download Receipt(Pdf)", Cloudinary::Utils.cloudinary_url(@order.get_file_name,{sign_url: true, secure: true}) %>
+<% end %>

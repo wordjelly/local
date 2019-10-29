@@ -1,0 +1,10 @@
+<tr>
+	<td><%= @receipt.created_at.strftime("%b %-d_%Y") %></td>
+	<td><%= @receipt.payable_to_organization_id %></td>
+	<td><%= @receipt.payable_from_organization_id %></td>
+	<td><%= @receipt.payable_from_patient_id %></td>
+	<td><%= @receipt.total %></td>
+	<td><%= @receipt.paid %></td>
+	<td><%= @receipt.pending %></td>
+	<td>Nothing</td>
+</tr>

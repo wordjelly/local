@@ -1,0 +1,1 @@
+$c = Aws::CognitoIdentityProvider::Client.new

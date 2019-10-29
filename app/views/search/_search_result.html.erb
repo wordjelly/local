@@ -1,0 +1,41 @@
+<li class="collection-item search_result teal-text">
+<% link_text = (result.respond_to? "name") ? result.send("name") : result.id.to_s %>
+<!-- there's no such thing as a users path -->
+
+<% link_address = (result.class.name.underscore.downcase.gsub(/\//,'_') + "_path") %>
+<!-- if it responds to a method called resource_path, otherwise it is determined by the class name -->
+
+<% link_description = (result.respond_to? "description") ? result.send("description") : "" %>
+
+<% organization_name = "" %>
+<% if result.class.name =~ /Organization/ %>
+	<% organization_name = result.name %>
+<% else %>
+	<% organization_name = (result.respond_to? "organization") ? result.send("organization").name : "" %>
+<% end %>
+
+<% created_at = result.created_at.strftime("%b %d %Y %I:%M %P") %>
+
+<% object_class = result.class.name.to_s %>
+
+	<div>
+		<div class="chip"><%= object_class %></div>
+		<div class="chip"><%= organization_name %></div>
+		<div class="chip"><%= created_at %></div>
+		<% if result.class.name == "User" %>
+			<%= link_to link_text, profile_path({:id => result.id, :resource => result.class.name.downcase.pluralize}) %>
+		<% else %>
+			<%= link_to link_text, main_app.send(link_address,result.id.to_s) %>
+		<% end %>
+	</div>
+	<div>
+		<%= link_description %>
+	</div>
+	<% if result.respond_to? "search_options" %>
+		<div>
+			<% result.search_options.each do |sopt| %>
+				<span style="margin-left: 10px;" data-id="<%= sopt[:data_id] %>" style="cursor:pointer;" class="<%= sopt[:classes].join(' ') %>"><%= sopt[:text] %></span>
+			<% end %>
+		</div>
+	<% end %>
+</li>

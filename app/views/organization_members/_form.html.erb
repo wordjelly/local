@@ -1,0 +1,17 @@
+<div class="card">
+	<div class="card-content">
+		<div class="card-title">
+			<%= om.organization_id.to_s %>
+		</div>
+		<%= text_field_tag :organization_id, om.organization_id, name: "user[organization_members][][organization_id]", readonly: true %>
+		<%= label_tag :organization_id %>
+
+
+		<%= text_field_tag :employee_role_id, om.employee_role_id, name: "user[organization_members][][employee_role_id]", readonly: true %>
+		<%= label_tag :employee_role_id %>
+
+
+		<%= text_field_tag :created_by_this_user, om.created_by_this_user, name: "user[organization_members][][created_by_this_user]", readonly: true %>
+		<%= label_tag :created_by_this_user %>
+	</div>
+</div>

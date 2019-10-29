@@ -1,0 +1,22 @@
+<!-- expects a local called 'f', the form object of the model -->
+<% f.fields_for :versions.each_with_index {|version,key| %>
+	<%= version.text_field :attributes_string, readonly: true %>
+	<%= version.label :attributes_string %>
+	<ul class="collection">
+		<% version.verified_by_user_ids.each do |a_uid| %>
+			<li class="collection-item"><%= User.find(a_uid).full_name %></li>	
+		<% end %>
+	</ul>
+	<ul class="collection">
+		<% version.rejected_by_user_ids.each do |r_uid| %>
+			<li class="collection-item"><%= User.find(r_uid).full_name %></li>	
+		<% end %>
+	</ul>
+	<!-- if either accepted or rejected have changed, nothing else can change, compared to previous version -->
+	<!-- only they can change, and they too, only the current user's id -->
+	<!-- else, anything else can change -->
+	<% if key == (f.versions.size - 1) %>
+		<%= link_to "Accept Version", "#", :class => "accept_latest_version" %>
+		<%= link_to "Reject Version", "#", :class => "reject_latest_version" %>
+	<% end %>
+<% end %>

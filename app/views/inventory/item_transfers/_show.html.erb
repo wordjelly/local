@@ -1,0 +1,20 @@
+<tr>
+	<!-- the to user and to location have to be set correctly -->
+	<td><%= link_to @item_transfer.id.to_s, inventory_path(@comment.id.to_s) %></td>
+	<td>
+		<% @item_transfer.transaction_ids.each do |tid| %>
+			<%= link_to tid, inventory_transaction_path(tid) %>		
+		<% end %>
+	</td>
+	<td><%= @item_transfer.to_user.full_name %></td>
+	<td>
+		<% unless @item_transfer.to_location_id.blank? %>
+			<%= link_to @item_transfer.to_location_id, location_path(@item_transfer.to_location_id) %>		
+		<% end %>
+	</td>
+	<td><%= render :partial => "/inventory/item_transfers/options" %></td>
+</tr>
+
+<!-- this can easily be shown as a table -->
+<!-- we want the transaaction ids -->
+<!-- the to user, and also the to location -->

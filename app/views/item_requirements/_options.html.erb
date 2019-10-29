@@ -1,0 +1,13 @@
+<!-- remove range -->
+<span>
+	<%= link_to "Delete", item_requirement_path(@item_requirement.id.to_s), :method => :delete %>
+</span>
+
+<!-- edit range -->
+<span style="margin-left: 10px;">
+	<%= link_to "Edit", edit_item_requirement_path(@item_requirement.id.to_s) %>
+</span>
+
+<% if @item_requirement.report_id %>
+	<%= link_to "Remove Item Requirement From Report", report_path({id: @item_requirement.report_id, report: {item_requirement_id_action: "remove", item_requirement_id: @item_requirement.id.to_s}}), :method => :put%>
+<% end %>

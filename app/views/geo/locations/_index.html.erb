@@ -1,0 +1,12 @@
+<table>
+        <thead>
+          <%= render :partial => "/locations/table_header_row" %>
+        </thead>
+
+        <tbody>
+          <% @locations.each do |nr| %>
+        	 <% @location = nr %>
+           <%= render :partial => "show" %>
+          <% end %>
+        </tbody>
+</table>

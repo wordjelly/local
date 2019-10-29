@@ -1,0 +1,14 @@
+<!-- so solve for new record or old record -->
+<%= form_for @machine_certificate, as: :machine_certificate, method: @machine_certificate.new_record? ? :post : :put do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+		
+	<% unless @machine_certificate.new_record? %>
+		<%= render :partial => "images/image", locals: {model: @machine_certificate} %>
+	<% end %>
+	
+	<%= build_nested_form(@machine_certificate).html_safe %>	
+
+	<%= f.submit "Submit" %>
+
+<% end %>

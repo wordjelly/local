@@ -1,0 +1,5 @@
+<tr>
+	<td><%= link_to @item_requirement.name.to_s, item_requirement_path(@item_requirement.id.to_s) %></td>
+	<td><%= @item_requirement.item_type %></td>
+	<td><%= render :partial => "/item_requirements/options" %></td>
+</tr>

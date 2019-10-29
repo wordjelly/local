@@ -1,0 +1,11 @@
+<div class="row center" style="margin-bottom:1.4rem; margin-top:1.4rem">
+	<% if defined? @organization %>
+	<% else %>
+		<%= link_to "I am a Lab!", new_organization_path(:organization => {:role => Organization::LAB}), :class => "waves-effect waves-light btn-large" %>
+		<%= link_to "I am a private doctor!", new_organization_path(:organization => {:role => Organization::DOCTOR}), :class => "waves-effect waves-light btn-large" %>
+		<%= link_to "I am a hospital!", new_organization_path(:organization => {:role => Organization::HOSPITAL}), :class => "waves-effect waves-light btn-large" %>
+		<%= link_to "I am a Patient!", new_organization_path(:organization => current_user.attributes_for_patient_organization), :class => "waves-effect waves-light btn-large" %>
+	<% end %>
+	<!-- so here we say create your lab -->
+	<!-- so let's get on with this -->
+</div>

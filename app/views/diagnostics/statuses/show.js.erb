@@ -1,0 +1,12 @@
+var show_reports_modal = "<%= @status.show_reports_modal.to_s %>";
+if(show_reports_modal == "true"){
+	console.log("was true");
+	$("#template_reports").html("<%= escape_javascript(render :partial => 'statuses/template_reports', locals: {status: @status}) %>");
+	$("#template_reports_modal").modal("open");
+}
+else{
+	console.log("was false");
+	$("#status_row_<%= @status.id.to_s %>").html("<%= escape_javascript(render :partial => 'statuses/show', locals: {status: @status}) %>");
+	$("#status_details_<%= @status.id.to_s %>").html("<%= escape_javascript(render :partial => 'statuses/details', locals: {status: @status}) %>");
+}
+// that button will call show, but it will have another variable which will be interpreted here.	

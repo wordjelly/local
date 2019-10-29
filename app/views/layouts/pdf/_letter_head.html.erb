@@ -1,0 +1,59 @@
+<h3 class="teal-text text-darken-1"><%= organization.name %></h3>
+<!-- show the slogan if it is included -->
+<% if organization.parameters_to_include_in_header.include? "slogan" %>
+	<% unless organization.slogan.blank? %>
+		<h5 class="teal-text text-darken-1"><%= organiztion.slogan %></h5>
+	<% end %>
+<% end %>
+
+<!-- phone numbers -->
+<h6 class="grey-text">
+	<% if organization.parameters_to_include_in_header.include? "phone_number" %>
+		<% unless organization.phone_number.blank? %>
+			Tel : <span><%= organization.phone_number %></span>	
+		<% end %>
+		<% organization.alternative_phone_numbers.each do |alt_ph| %>
+			<span>|<%= alt_ph %></span>
+		<% end %>
+	<% end %>
+	<% if organization.parameters_to_include_in_header.include? "fax_number" %>
+		<% unless organization.fax_number.blank? %>
+			<span>|<%= organization.fax_number %></span>
+		<% end %>
+	<% end %>
+</h6>
+
+<!-- Address/Centers/Facilities -->
+<h6 class="grey-text">
+	<% if organization.parameters_to_include_in_header.include? "address" %>
+		<span> | Address</span>
+		<% unless organization.address.blank? %>
+			<span><%= organization.address %></span>	
+		<% end %>
+	<% end %>
+	<% if organization.parameters_to_include_in_header.include? "centers" %>
+		<span> | Centers :</span>
+		<% unless organization.centers.blank? %>
+			<% organization.centers.each do |center| %>
+				<span><%= center %>|</span>
+			<% end %>
+		<% end %>
+	<% end %>
+	<% if organization.parameters_to_include_in_header.include? "facilities" %>
+		<span> | Facilities :</span>
+		<% unless organization.facilities.blank? %>
+			<% organization.facilities.each do |facility| %>
+				<span><%= facility %>|</span>
+			<% end %>
+		<% end %>
+	<% end %>
+	<% if organization.parameters_to_include_in_header.include? "accreditations" %>
+		<span> | Accreditations :</span>
+		<% unless organization.accreditations.blank? %>
+			<% organization.accreditations.each do |accreditation| %>
+				<span><%= organization.accreditation %>|</span>
+			<% end %>
+		<% end %>
+	<% end %>
+</h6>
+

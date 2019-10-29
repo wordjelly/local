@@ -1,0 +1,11 @@
+{
+	"organizations" : [
+		{
+			"name" : "Pathofast",
+			"description" : "Laboratory",
+			"role" : "LAB",
+			"phone_number" : "02049304930",
+			"lis_security_key" : "pathofast"
+		}
+	]
+}

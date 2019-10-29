@@ -1,0 +1,15 @@
+<table>
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Item Type</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @item_requirements.each do |nr| %>
+        	 <% @item_requirement = nr %>
+           <%= render :partial => "/item_requirements/show" %>
+          <% end %>
+        </tbody>
+</table>

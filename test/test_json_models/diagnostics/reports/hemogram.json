@@ -1,0 +1,78 @@
+{
+	"reports" : [
+		{
+			"name" : "hemogram",
+			"description" : "The Complete Blood Count",
+			"rates" : [
+				{
+					"for_organization_id" : "*",
+					"rate" : 100
+				},
+				{
+					"for_organization_id" : "*",
+					"rate" : 250,
+					"patient_rate" : 1
+				}
+			],
+			"tests" : [
+				{
+					"name" : "Hemoglobin",
+					"description" : "Hemoglobin estimation of blood",
+					"lis_code" : "HB",
+					"result_type" : "numeric",
+					"units" : "mg/dl",
+					"only_include_in_report_if_abnormal" : -1,
+					"test_must_have_value" : 1,
+					"ranges" : [
+						{
+							"max_age_years" : 100,
+							"gender" : "Male",
+							"min_value" : 12.0,
+							"max_value" : 15.0,
+							"is_abnormal" : -1,
+							"inference" : "Within Normal Limits"
+						}
+					]
+				},
+				{
+					"name" : "MCV",
+					"description" : "Mean Corpuscular Volume",
+					"lis_code" : "MCV",
+					"result_type" : "numeric",
+					"units" : "fl/L",
+					"only_include_in_report_if_abnormal" : -1,
+					"test_must_have_value" : 1,
+					"ranges" : [
+						{
+							"max_age_years" : 100,
+							"gender" : "Male",
+							"min_value" : 76,
+							"max_value" : 92,
+							"is_abnormal" : -1,
+							"inference" : "Within Normal Limits"
+						},
+						{
+							"max_age_years" : 100,
+							"gender" : "Male",
+							"min_value" : 92,
+							"max_value" : 120,
+							"is_abnormal" : 1,
+							"inference" : "Megaloblastic Cells Noted"
+						}
+					]
+				}
+			],
+			"requirements" : [
+				{
+					"name" : "EDTA Container",
+					"categories" : [
+						{
+							"name" : "EDTA Tube",
+							"quantity" : 100.0
+						}
+					]	
+				}
+			]
+		}
+	]
+}

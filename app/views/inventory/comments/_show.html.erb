@@ -1,0 +1,7 @@
+<tr>
+	<td><%= link_to @comment.id.to_s, test_path(@comment.id.to_s) %></td>
+	<td><%= @comment.transaction_id %></td>
+	<td><%= @comment.comment_text %></td>
+	<td><%= @comment.created_by_user_id %></td>
+	<td><%= render :partial => "/inventory/comments/options" %></td>
+</tr>

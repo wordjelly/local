@@ -1,0 +1,22 @@
+<div class="col s3 m3 l3">
+  <div class="card-panel">
+    <div>
+    	<% unless user.credential.blank? %>
+    		<% unless user.credential.images.blank? %>
+                <!-- img src="<%= user.credential.images.first.get_url %>" -->
+            <% end %>
+    	<% end %>
+    </div>
+    <div>
+    	<%= user.name %>
+    </div>
+    <div>
+    	<% unless user.credential.blank? %>
+    		<%= user.credential.qualifications.join(",") %>
+    		<% unless user.credential.registration_number.blank? %>
+    			<%= user.credential.registration_number %>
+    		<% end %>
+    	<% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,70 @@
+<div class="card">
+	<div class="card-content">
+		<div class="card-title blue-grey-text">
+			Complaint Description
+		</div>
+		<%= @machine_complaint.complaint_description %>
+	</div>
+</div>
+
+
+<div class="row" style="padding-left: 2rem;">
+	
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Call Logged
+			</div>
+			<%= @machine_complaint.call_logged %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Call Log Number
+			</div>
+			<%= @machine_complaint.call_log_number %>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Engineer Assigned To
+			</div>
+			<%= @machine_complaint.engineer_assigned_to %>
+		</div>
+	</div>
+
+	<div class="row" style="padding-left: 2rem">
+		<div class="card">
+			<div class="card-content">
+				<div class="card-title">
+					Solutions
+				</div>
+			</div>
+		</div>
+		<% @machine_complaint.solutions.each do |solution| %>
+			<% @solution = solution %>
+			<%= render :partial => "inventory/equipment/solutions/show" %>
+		<% end %>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Options
+			</div>
+		</div>
+		<div class="card-action">
+			<%= render :partial => "/inventory/equipment/machine_complaints/options" %>
+		</div>
+	</div>
+</div>
+
+<!-- we need some links to check the following -->
+<!-- transactions -->
+<!-- item_groups -->
+<!-- that are ours -->
+<!-- items -->

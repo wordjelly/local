@@ -1,0 +1,10 @@
+<tr>
+	<td><%= link_to @patient.full_name, patient_path(@patient.id.to_s) %></td>
+	<td><%= @patient.date_of_birth %></td>
+	<td><%= @patient.age %></td>
+	<td><%= @patient.sex %></td>
+	<td><%= @patient.mobile_number %></td>
+	<td><%= @patient.email %></td>
+	<td><%= @patient.alert_information %></td>
+	<td><%= render :partial => "options" %></td>
+</tr>

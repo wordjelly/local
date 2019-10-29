@@ -1,0 +1,11 @@
+{
+	"organizations" : [
+		{
+			"name" : "Kondhwa Diagnostics",
+			"description" : "Laboratory",
+			"role" : "Lab",
+			"phone_number" : "0206135003",
+			"lis_security_key" : "kdc"
+		}
+	]
+}

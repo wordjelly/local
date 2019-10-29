@@ -1,0 +1,4 @@
+<tr>
+	<td><%= link_to @equipment.name.to_s, equipment_path(@equipment.id.to_s) %></td>
+	<td><%= render :partial => "/equipment/options" %></td>
+</tr>

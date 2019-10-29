@@ -1,0 +1,8 @@
+<!-- depends on whether a patient id was provided or not -->
+<!-- if no patient has been provided, then it gives a screen saying please choose a patient, by searching, or click here to create a new patient, in the search drop down,  -->
+<% unless @order.errors[:patient_id].blank? %>
+	<%= render :partial => "/business/orders/choose_patient_warning" %>
+<% else %>
+	<%= render :partial => "form" %>
+<% end %>
+

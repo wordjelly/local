@@ -1,0 +1,74 @@
+<%= form_for @status do |f| %>
+	
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">Status Details</div>
+			<%= f.text_field :name, :data => {:autocomplete_type => "statuses"}, :autocomplete => "off" %>
+			<%= f.label :name %>
+
+			<%= f.number_field :priority %>
+			<%= f.label :priority %>
+
+			<%= f.number_field :numeric_value %>
+			<%= f.label :numeric_value %>
+
+			<%= f.text_field :text_value %>
+			<%= f.label :text_value %>
+
+
+			<%= f.text_field :tag_name , :data => {:autocomplete_type => "tags", :multiple => true, :multiple_element_name => "status[tag_ids][]"}, :autocomplete => "off" %>
+			<%= f.label :tag_name %>
+
+			<%= render :partial => "/shared/display_array", locals: {model: @report, multiple_el: "tag_ids", multiple_objects: "tag_ids"} %>
+			
+
+			<div class="section">
+				<p>
+			      <label>
+			        <input type="checkbox" name="status[requires_image]"/>
+			        <span>Image must be uploaded with this status</span>
+			      </label>
+			    </p>
+			</div>
+
+			<% @status.information_keys.each do |ikey| %>
+
+				<input type="text" name="status[info][<%= ikey %>]" val="<%= @status.information_keys[ikey] %>" />
+
+			<% end %>
+		</div>
+	</div>
+
+	<!-- this is similar to adding tests inside reports -->
+
+	<% unless @status.new_record? %>
+	    <%= render :partial => "images/image", locals: {model: @status} %>
+	<% end %>
+
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Related Object details
+			</div>
+		
+			<%= f.text_field :report_id, readonly: true %>
+			<%= f.label :report_id %>
+
+			<%= f.text_field :item_id, readonly: true %>
+			<%= f.label :item_id %>
+
+			<%= f.text_field :item_group_id, readonly: true %>
+			<%= f.label :item_group_id %>
+
+			<%= f.text_field :order_id, readonly: true %>
+			<%= f.label :order_id %>
+
+			<%= f.text_field :patient_id, readonly: true %>
+			<%= f.label :patient_id %>
+		</div>
+	</div>
+	
+	<%= f.submit "Submit", :class => "waves-effect waves-light btn" %>
+
+<% end %>

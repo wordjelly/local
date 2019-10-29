@@ -1,0 +1,37 @@
+<div class="card">
+	<div class="card-content">
+		<div class="card-title">
+			Item Details
+		</div>
+		<!-- we can see all the items of a particular transaction -->
+		<!-- we can see all the items of a particular item type -->
+		<!-- so those are the filters -->
+		<!-- that way it should also prsent some kind of a count -->
+		<div>Id: <%= @item.id.to_s %></div>
+		<div>Transaction Id: <%= link_to @item.transaction_id.to_s, inventory_transaction_path(@item.transaction_id) %></div>
+		<div>Item Type Id: <%= link_to @item.item_type_id.to_s, inventory_item_type_path(@item.item_type_id) %></div>
+
+		<% unless @item.location_id.blank? %>
+			<div>Location Id: <%= link_to @item.location_id.to_s, location_path(@item.location_id) %></div>
+		<% end %>
+
+		<div>Item Expiry Date: <%= @item.expiry_date %></div>
+
+		<div>Filled Amount: <%= @item.filled_amount %></div>
+		<div>Contents Expiry Date: <%= @item.contents_expiry_date %></div>
+		
+		<% if @item.local_item_group_id %>
+			<div>Item Group Id: <%= link_to @item.local_item_group_id, inventory_item_group_path(@item.local_item_group_id) %></div>
+		<% end %>
+	</div>
+	<div class="card-action">
+		<%= render :partial => "/inventory/items/options" %>
+	</div>
+	<!-- now move to item_transfer -->
+</div>
+
+<!-- we need some links to check the following -->
+<!-- transactions -->
+<!-- item_groups -->
+<!-- that are ours -->
+<!-- items -->

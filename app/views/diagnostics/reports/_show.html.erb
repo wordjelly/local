@@ -1,0 +1,23 @@
+<!--
+<th>Name</th>
+<th>Patient</th>
+<th>Current Step</th>
+<th>Remaining Steps</th>
+<th>Result</th>
+<th>Normal Range</th>
+<th>Total Tests</th>
+<th>Price</th>
+<th>Total Requirements</th>
+<th>Options</th>
+-->
+<!-- this was currently being set inside item_requirements -->
+<!-- those items had to preexist, but we had -->
+<!-- so when i'm showing a report, i will be rendering show itself -->
+<!-- the show partial -->
+<tr>
+	<td><%= link_to @report.name, diagnostics_report_path(@report.id.to_s) %></td>
+	<td><%= @report.tests.size %></td>
+	<td><%= @report.statuses.size %></td>
+	<td><%= @report.requirements.size %></td>
+	<td><%= render :partial => "/diagnostics/reports/options" %></td>
+</tr>

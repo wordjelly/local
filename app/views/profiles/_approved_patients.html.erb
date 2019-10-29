@@ -1,0 +1,10 @@
+<h5>Approved Patient Records</h5>
+<ul class="collection">
+
+	<% @profile_resource.approved_patient_ids.each do |user_id| %>
+			
+		<li class="collection-item"><%= link_to Patient.find(user_id).full_name, patient_path(user_id) %></li>
+
+	<% end %>
+
+</ul>

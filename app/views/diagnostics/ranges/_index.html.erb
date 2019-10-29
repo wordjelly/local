@@ -1,0 +1,27 @@
+<% ranges_array = [] %>
+<% if local_assigns[:ranges] %>
+  <%= puts "ranges are defined" %>
+  <% ranges_array = ranges %>
+<% else %>
+  <%= puts "ranges are not defined" %>
+  <% ranges_array = @ranges %>
+<% end %>
+<table>
+        <thead>
+          <tr>
+              <th>Test Id</th>
+              <th>Test Name</th>
+              <th>Min Age</th>
+              <th>Max Age</th>
+              <th>Sex</th>
+              <th>Options</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @ranges.each do |nr| %>
+           <% @range = nr %>
+           <%= render :partial => "show" %>
+          <% end %>
+        </tbody>
+</table>

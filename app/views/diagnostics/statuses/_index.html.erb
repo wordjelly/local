@@ -1,0 +1,36 @@
+<% statuses_array = [] %>
+<% if local_assigns[:statuses] %>
+  <% statuses_array = statuses %>
+<% else %>
+  <% statuses_array = @statuses %>
+<% end %>
+<div class="card">
+  <div class="card-content">
+    <div class="card-title">
+    </div>
+      <table>
+              <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Duration</th>
+                    <th>Lot Size</th>
+                    <th>Result</th>
+                    <th>Requirements</th>
+                    <th>Can Report</th>
+                    <th>Options</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% statuses_array.each_with_index {|nr,key| %>
+                   <% @status = nr %>
+                   <!-- how to display the priority -->
+                   <%= render :partial => "statuses/show", locals: {status: @status} %>
+                <% } %>
+              </tbody>
+      </table>
+  </div>
+</div>
+
+<!-- so today main is requirements, porting to statuses, and order creation etc -->

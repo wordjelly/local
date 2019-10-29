@@ -1,0 +1,30 @@
+<%= form_for @status do |f| %>
+	
+	<!-- so this is rendered from new action in status controller -->
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">Enter Payment Amount</div>
+
+			<%= f.hidden_field :name, :value => "Payment"%>
+			<input type="text" name="status[information_keys][amount]"/>
+			<%= f.label :amount %>
+			
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div class="card-title">
+				Related Object details
+			</div>
+			<%= f.text_field :order_id, disabled: true %>
+			<%= f.label :order_id %>
+
+			<%= f.text_field :patient_id, disabled: true %>
+			<%= f.label :patient_id %>
+		</div>
+	</div>
+	
+	<%= f.submit "Submit", :class => "waves-effect waves-light btn" %>
+
+<% end %>

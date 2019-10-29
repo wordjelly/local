@@ -1,0 +1,10 @@
+<tr>
+	<td><%= link_to @range.id, diagnostics_range_path(@range.id) %></td>
+	<td><%= @range.min_age %></td>
+	<td><%= @range.max_age %></td>
+	<td><%= @range.sex %></td>
+	<td><%= @range.min_value %></td>
+	<td><%= @range.max_value %></td>
+	<td><%= @range.text_value %></td>
+	<td><%= render :partial => "/diagnostics/ranges/options" %></td>
+</tr>

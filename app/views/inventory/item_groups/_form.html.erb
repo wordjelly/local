@@ -1,0 +1,56 @@
+<%= form_for @item_group, as: :item_group do |f| %>
+  
+  <div class="card">
+  	<div class="card-content">
+      <div class="card-title">
+        Basic Details Of Item Group
+      </div>
+      <div>REQUIRED</div>
+      <%= f.text_field :name %>
+      <%= f.label :name %>
+
+      <div>OPTIONAL</div>
+      <%= f.text_field :barcode %>
+    	<%= f.label :barcode %>
+
+      <div>OPTIONAL</div>
+    	<%= f.text_field :group_type, :data => {:autocomplete_type => "tags"} %>
+    	<%= f.label :group_type %>
+    </div> 
+  </div>
+  <!-- so if we clone it , we can add the actual items -->
+  <!-- you have to be able to permit it and also allow transfers and item creations on parts of it -->
+  <% @item_group.item_definitions.each do |i_def| %>
+    <div class="card item_definition">
+      <div class="card-content">
+        <div class="card-title">
+          <input type="text" name="item_group[item_definitions][][item_type_id]" data-autocomplete-type="inventory-item-types" data-use-id="yes" value="<%= i_def["item_type_id"] %>" />
+          <label for="item_group[item_definitions][][item_type_id]">Item Type Id</label>
+          <input type="text" name="item_group[item_definitions][][quantity]" value="<%= i_def["quantity"] %>" />
+          <label for="item_group[item_definitions][][quantity]">Quantity</label>
+          <input type="text" name="item_group[item_definitions][][expiry_date]" class="datepicker" />
+          <label for="item_group[item_definitions][][expiry_date]">Expiry Date</label>
+          <span><i class="material-icons remove_item_definition">clear</i>Remove Item Definition</span>
+        </div>
+      </div>
+    </div>  
+  <% end %>
+  <div class="card">
+    <div class="card-content">
+      <span><i class="material-icons add_item_definition">add</i>Add Item Definition</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-content">
+      <div class="card-title">
+        Location
+      </div>
+      <%= f.text_field :location_id, :data => {:autocomplete_type => "locations"} %>
+      <%= f.label :location_id %>
+    </div>
+  </div>
+  
+	<%= f.submit "Submit" %>
+
+<% end %>

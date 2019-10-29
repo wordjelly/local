@@ -1,0 +1,18 @@
+<span>
+	<%= link_to "Delete", inventory_equipment_machine_path(@machine.id.to_s), :method => :delete %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "Edit", edit_inventory_equipment_machine_path(@machine.id.to_s) %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "Add Complaint", new_inventory_equipment_machine_complaint_path(machine_complaint: {machine_id: @machine.id.to_s}) %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "See All Complaints", inventory_equipment_machine_complaints_path(machine_complaint: {machine_id: @machine.id.to_s}) %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "Add Certificate", new_inventory_equipment_machine_certificate_path(machine_certificate: {machine_id: @machine.id.to_s}) %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "See All Certificate", inventory_equipment_machine_certificates_path(machine_certificate: {machine_id: @machine.id.to_s}) %>
+</span>

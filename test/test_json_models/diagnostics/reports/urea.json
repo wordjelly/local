@@ -1,0 +1,51 @@
+{
+	"reports" : [
+		{
+			"name" : "Urea",
+			"description" : "Determination of Serum Urea",
+			"rates" : [
+				{
+					"for_organization_id" : "*",
+					"rate" : 400
+				},
+				{
+					"for_organization_id" : "*",
+					"rate" : 500,
+					"patient_rate" : 1
+				}
+			],
+			"tests" : [
+				{
+					"name" : "Urea",
+					"description" : "Serum Urea estimation",
+					"lis_code" : "UREA",
+					"result_type" : "numeric",
+					"units" : "mg/dl",
+					"only_include_in_report_if_abnormal" : -1,
+					"test_must_have_value" : 1,
+					"ranges" : [
+						{
+							"max_age_years" : 100,
+							"gender" : "Male",
+							"min_value" : 0,
+							"max_value" : 20,
+							"is_abnormal" : -1,
+							"inference" : "Within Normal Limits"
+						}
+					]
+				}
+			],
+			"requirements" : [
+				{
+					"name" : "Serum Container",
+					"categories" : [
+						{
+							"name" : "Serum Tube",
+							"quantity" : 100.0
+						}
+					]	
+				}
+			]
+		}
+	]
+}

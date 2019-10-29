@@ -1,0 +1,21 @@
+<% requirements_array = [] %>
+<% if local_assigns[:requirements] %>
+    <% requirements_array = requirements %>
+<% else %>
+    <% requirements_array = @requirements %>
+<% end %>
+<table>
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Categories</th>
+              <th>Options</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% requirements_array.each do |requirement| %>
+            <% @requirement = requirement %>
+            <%= render :partial => "inventory/requirements/show" %>
+          <% end %>
+        </tbody>
+</table>

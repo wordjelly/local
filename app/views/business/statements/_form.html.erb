@@ -1,0 +1,14 @@
+<%= form_for @statement, as: :statement, method: @statement.new_record? ? :post : :put do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+		
+	<%= build_nested_form(@statement).html_safe %>	
+
+	<%= f.submit "Submit" %>
+
+	<!-- give options to make a balance payment -->
+	<!-- prepaid top_up -->
+	<!-- or post_paid top_up -->
+	<!-- i have to be able to aggregate the total pending -->
+
+<% end %>

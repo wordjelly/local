@@ -1,0 +1,4 @@
+<% @order.reports.each do |report| %>
+	<%= link_to report.name, report_path(report.id.to_s) %>
+	<%= "," %>
+<% end %>

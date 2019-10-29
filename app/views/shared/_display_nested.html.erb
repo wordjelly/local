@@ -1,0 +1,103 @@
+<!-- expects a variable called "model" to be passed in -->
+<!-- select the array attributes, make tabs out of titles, and render index views for each into tabs -->
+<!-- then the rest of the things, we add into the card -->
+<% array_attributes = model.class.attribute_set.select{|c| 
+		next if model.display_customizations.keys.include? (c.name)
+		if c.primitive.to_s == "Array"
+			if c.respond_to? "member_type"
+				if c.member_type.primitive.to_s != "BasicObject"
+					true
+				else
+					false
+				end
+			else
+				false
+			end
+		else
+			false
+		end
+	}	 
+%>
+<!-- so we can have customizations being rendered at the end -->
+<!-- of everything -->
+
+<!-- so we have to make index views for all -->
+<% non_array_attributes = model.class.attribute_set.select{|c| 
+		next if model.display_customizations.keys.include? (c.name)
+
+		if c.primitive.to_s == "Array"
+			if c.respond_to? "member_type"
+				if c.member_type.primitive.to_s != "BasicObject"
+					false
+				else
+					true
+				end
+			else
+				true
+			end
+		else
+			true
+		end
+	}
+%>
+
+<div class="card">
+	<div class="card-content">
+		<div class="card-title">
+			<% if model.respond_to? :name %>
+				<%= model.name %>
+			<% else %>
+				<%= model.id %>
+			<% end %>
+		</div>
+		<table class="striped">
+			<thead>
+	          <tr>
+	              <th>Attribute</th>
+	              <th>Value</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+				<% non_array_attributes.each do |na_attr| %>
+					<tr>
+						<td><%= na_attr.name %></td>
+						<td><%= model.send("#{na_attr.name}")%></td>
+					</tr>	
+				<% end %>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- first the non arrays -->
+<div class="row">
+    <div class="col s12 m12 l12">
+      	<ul class="tabs tabs-fixed-width">
+      		<% array_attributes.each do |virtus_attribute| %>
+				<li class="tab col s3 m3 l3"><a href="#<%= virtus_attribute.name.to_s %>"><%= virtus_attribute.name.to_s %></a></li>	
+			<% end %>
+      	</ul>
+    </div>
+    <% array_attributes.each do |virtus_attribute| %>
+		<div id="<%= virtus_attribute.name.to_s %>" class="col s12 m12 l12">
+			<% class_name = virtus_attribute.member_type.primitive.to_s %>
+			<% instance_plural = class_name.classify.demodulize.underscore.downcase.pluralize %>
+			<%= render :partial => (class_name.classify.underscore.pluralize + "/index"), locals: {instance_plural.to_sym => model.send(virtus_attribute.name.to_s)} %>
+		</div>
+	<% end %>
+</div>
+
+<!-- the customized attributes -->
+<div class="row">
+	<div class="col l12 s12 m12">
+		<% model.display_customizations.keys.each do |attribute_name| %>
+			
+			<%= model.display_customizations[attribute_name].html_safe %>
+			<br>
+		<% end %>
+	</div>
+</div>
+
+<div class="row options">
+	<%= link_to "Edit", send("edit_" + model.class.name.parameterize.underscore + "_path",model.id.to_s) %>
+</div>

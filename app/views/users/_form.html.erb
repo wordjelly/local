@@ -1,0 +1,24 @@
+<%= form_for @user do |f| %>
+
+  <%= f.text_field :mobile_number %>
+  <%= f.label :mobile_number %>
+
+  <div class="sign_up">
+    <%= f.text_field :email %>
+    <%= f.label :email %>
+  </div>
+
+  <div class="sign_in">
+    <%= f.text_field :password %>
+    <%= f.label :password %>
+  </div>
+
+  <div class="sign_up">
+    <%= f.text_field :password_confirmation %>
+    <%= f.label :password_confirmation %>
+  </div>
+
+  <%= f.submit "Submit" %>
+  
+
+<% end %>

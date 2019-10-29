@@ -1,0 +1,11 @@
+{
+	"organizations" : [
+		{
+			"name" : "Plus Pathology Laboratory",
+			"description" : "Laboratory",
+			"role" : "Lab",
+			"phone_number" : "0206133331",
+			"lis_security_key" : "plus path lab"
+		}
+	]
+}

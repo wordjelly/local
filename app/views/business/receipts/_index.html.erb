@@ -1,0 +1,27 @@
+<% receipts_array = [] %>
+<% if local_assigns[:receipts] %>
+  <%= puts "receipts are defined" %>
+  <% receipts_array = receipts %>
+<% else %>
+  <%= puts "receipts are not defined" %>
+  <% receipts_array = @receipts %>
+<% end %>
+<table>
+  <thead>
+    <tr>
+        <th>Date</th>
+        <th>Pay To Organization</th>
+        <th>Pay From Organization</th>
+        <th>Pay From Patient</th>
+        <th>Total</th>
+        <th>Paid</th>
+        <th>Pending</th>
+    </tr>
+  </thead>
+  <tbody>
+  	<% receipts_array.each do |receipt| %>
+  	<% @receipt = receipt %>
+  	<%= render :partial => "/business/receipts/show" %>
+  	<% end %>
+  </tbody>
+</table>

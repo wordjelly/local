@@ -1,0 +1,11 @@
+{
+	"organizations" : [
+		{
+			"name" : "AG Diagnostics",
+			"description" : "Laboratory",
+			"role" : "Lab",
+			"phone_number" : "02063996399",
+			"lis_security_key" : "ag"
+		}
+	]
+}

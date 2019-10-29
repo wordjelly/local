@@ -1,0 +1,19 @@
+<% organization_settings_array = [] %>
+<% if local_assigns[:organization_settings] %>
+  <%= puts "organization_settings are defined" %>
+  <% organization_settings_array = organization_settings %>
+<% else %>
+  <%= puts "organization_settings are not defined" %>
+  <% organization_settings_array = @organization_settings %>
+<% end %>
+<table>
+  <% unless organization_settings_array.blank? %>
+    <%= organization_settings[0].summary_table_headers.html_safe %>
+    <tbody>
+    	<% organization_settings_array.each do |organization_setting| %>
+    	<% @organization_setting = organization_setting %>
+    	<%= render :partial => "/organization_settings/show" %>
+    	<% end %>
+    </tbody>
+  <% end %>
+</table>

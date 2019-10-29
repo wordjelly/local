@@ -1,0 +1,29 @@
+<table>
+  	<thead>
+        <tr>
+            <th>Barcode</th>
+            <th>Reports Assigned</th>
+            <th>Occupied Space</th>
+            <th>Item Group Id</th>
+        </tr>
+  	</thead>
+
+  	<tbody>
+      <% @order.tubes.each do |tube| %>
+        <tr class="tube">
+          <td class="tube_barcode"><input name="order[tubes][][barcode]" value="<%= tube['barcode'] %>" /></td>
+          <td class="tube_patient_reports"><% tube["patient_report_ids"].each do |pid| %>
+              <div><%= Report.find(pid).name.to_s %></div>
+            <% end %>
+          </td>
+          <td class="tube_occupied_space">
+            <%= tube["occupied_space"] %>
+          </td>
+          <td class="tube_item_group_id">
+            <%= tube["item_group_id"] %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+
+</table>

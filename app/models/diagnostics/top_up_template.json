@@ -1,0 +1,24 @@
+{
+	"reports" : [
+		{
+			"name" : "Pre-Paid Recharge Pack",
+			"description" : "Top Up Your Balance with This recharge Pack",
+			"rates" : [
+				{
+					"for_organization_id" : "*",
+					"rate" : 0
+				},
+				{
+					"for_organization_id" : "*",
+					"rate" : 0,
+					"patient_rate" : 1
+				}
+			],
+			"tests" : [
+			],
+			"requirements" : [
+			],
+			"top_up_template" : 1
+		}
+	]
+}

@@ -1,0 +1,20 @@
+ <table>
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Total Tests</th>
+              <th>Total Steps</th>
+              <th>Total Requirements</th>
+              <th>Options</th>
+          </tr>
+        </thead>
+        <tbody>
+        	<% @reports.each do |report| %>
+        	<% @report = report %>
+        	<%= render :partial => "/diagnostics/reports/show" %>
+        	<% end %>
+        </tbody>
+</table>
+
+<!-- we show only whatever is important out of the report -->
+<!-- like last performed status, next, etc -->

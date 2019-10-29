@@ -1,0 +1,20 @@
+<!-- remove range -->
+<span>
+	<%= link_to "Delete", inventory_item_path(@item.id.to_s), :method => :delete %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "Edit", edit_inventory_item_path(@item.id.to_s) %>
+</span>
+<!-- location we have to get certain things at that location -->
+<span style="margin-left: 10px;">
+	<%= link_to "Go To Transaction", inventory_transaction_path(@item.transaction_id.to_s) %>
+</span>
+<span style="margin-left: 10px;">
+	<%= link_to "Go To Item Type", inventory_item_type_path(@item.item_type_id.to_s) %>
+</span>
+
+<span style="margin-left: 10px;">
+	<%= link_to "Go To Item Group", inventory_item_group_path(@item.local_item_group_id.to_s) %>
+</span>
+
+<%= render :partial => "/inventory/item_transfers/item_transfer_verbs", locals: {model: @item} %>

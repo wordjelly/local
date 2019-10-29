@@ -1,0 +1,874 @@
+{
+	"controllers" : 
+		{
+			"spots" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"locations" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"credentials" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"machine_complaints" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"machine_certificates" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"machines" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"item_groups" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"items" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"item_transfers" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"comments" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"transactions" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"item_types" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}	
+				]
+			},
+			"packages" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}
+				]
+			},
+			"tags" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}
+				]
+			},
+			"normal_ranges" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}
+				]
+			},
+			"tests" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}
+				]
+			},
+			"reports" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}
+				]
+			},
+			"orders" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}
+				]
+			},
+			"statements" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}
+				]
+			},
+			"controls" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "no"
+
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes"
+					}
+				]
+			},
+			"organizations" : {
+				"actions" : [
+					{
+						"action_name" : "index",
+						"requires_authentication" : "optional",
+						"requires_authorization" : "no",
+						"groups" : []
+					},
+					{
+						"action_name" : "new",
+						"requires_authentication" : "no",
+						"requires_authorization" : "no",
+						"groups" : []
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "no",
+						"requires_authorization" : "no",
+						"groups" : []
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes",
+						"groups" : [
+							{
+								"group_name" : "lab",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "edit",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes",
+						"groups" : [
+							{
+								"group_name" : "lab",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes",
+						"groups" : [
+							{
+								"group_name" : "lab",
+								"unpermitted_parameters" : []
+							}
+						]
+					}
+				]		
+			},
+			"patients" : {
+				"actions" : [
+					{
+						"action_name" : "new",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes",
+						"groups" : [
+							{
+								"group_name" : "patient",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "doctor",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "lab",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "create",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes",
+						"groups" : [
+							{
+								"group_name" : "patient",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "doctor",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "lab",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "update",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes",
+						"groups" : [
+							{
+								"group_name" : "patient",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "doctor",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "lab",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "show",
+						"requires_authentication" : "yes",
+						"requires_authorization" : "yes",
+						"groups" : [
+							{
+								"group_name" : "patient",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "doctor",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "lab",
+								"unpermitted_parameters" : []
+							}
+						]
+					},
+					{
+						"action_name" : "index",
+						"requires_authentication" : "yes",
+						"groups" : [
+							{
+								"group_name" : "patient",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "doctor",
+								"unpermitted_parameters" : []
+							},
+							{
+								"group_name" : "lab",
+								"unpermitted_parameters" : []
+							}
+						]
+					}
+				]
+			},
+			"search" : {
+				"actions" : [
+					{
+						"action_name" : "search",
+						"requires_authentication" : "no",
+						"requires_authorization" : "no",
+						"groups" : []
+					},
+					{
+						"action_name" : "type_selector",
+						"requires_authentication" : "no",
+						"requires_authorization" : "no",
+						"groups" : []
+					}
+				]
+			}
+		}
+}

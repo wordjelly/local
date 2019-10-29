@@ -1,0 +1,15 @@
+<!-- name, barcode_required, virtual_units, manufacturer_name, categories -->
+<%= form_for @item_type, as: :item_type, method: @item_type.new_record? ? :post : :put do |f| %>
+	
+	<%= render :partial => "/shared/visibility", locals: {f: f} %>
+		
+	<% unless @item_type.new_record? %>
+		<%= render :partial => "images/image", locals: {model: 
+			@item_type} %>
+	<% end %>
+	
+	<%= build_nested_form(@item_type).html_safe %>	
+
+	<%= f.submit "Submit" %>
+
+<% end %>
