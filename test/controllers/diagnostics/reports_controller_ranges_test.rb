@@ -4,6 +4,8 @@ require 'helpers/payments_receipts_test_helper'
 
 class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
 
+    include PaymentsReceiptsTestHelper
+
     setup do
 
    		JSON.parse(IO.read(Rails.root.join("vendor","assets","others","es_index_classes.json")))["es_index_classes"].each do |cls|
@@ -186,28 +188,63 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
 
         report = load_error_report("age_range_missing")
+        
+        post diagnostics_reports_path, params: {report: report.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
 
-        post diagnostics_report_path report, params: {report: report.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens.plus_lab_employees)
-
-        puts response.body.to_s
+        assert_equal "404", response.code.to_s
 
     end
-
-    ## let me finish this.
-    ## and i want to see why the scoring is so shitty.
 
 =begin
     test " error if no range accounts for a particular gender, while adding a test " do
         
-        ## you want to create a report.
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        report = load_error_report("gender_range_missing")
+        
+        post diagnostics_reports_path, params: {report: report.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "404", response.code.to_s
 
     end
 
     test " error if range overlaps for a particular gender " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        report = load_error_report("range_overlap")
+        
+        post diagnostics_reports_path, params: {report: report.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "404", response.code.to_s
+
     end
+=end
+=begin
+    test " abnormal and normal ranges for the same age/gender criteria don't cause the overlap error " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        report = load_valid_report("creatinine")
+        
+        post diagnostics_reports_path, params: {report: report.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "201", response.code.to_s
+
+    end
+=end
+=begin
+    test " abnormal and normal ranges cannot overlap in min max value range" do 
+
+
+    end
+=end
+=begin
+    
 
     test " inference must be defined for abnormal ranges " do 
-      
+              
+
     end
 
     test " ignores range interpreation if the option is defined, and only prints all the ranges for that gender " do 
@@ -215,12 +252,5 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
     end
 =end
 
-    ## what all should be done today ?
-    ## history and range interpretation and showing them as a dropdown
-    ## are required
-    ## and order finalization.
-    ## then accessibility, balance, top up and payments.
-    ## if i went to run now -> minimum 9 till i come back.
-    ## 
-    
+  
 end

@@ -23,7 +23,9 @@ class Diagnostics::Range
 	GENDERS = [MALE,FEMALE]
 	DEFAULT_GENDER = "Not Selected"
 	DEFAULT_TEXT_VALUE = "Not Entered"
-	ABNORMAL = 1
+	YES = 1
+	NO = -1
+	ABNORMAL = YES
 	## THIS WILL GO WRONG ON MONTHS.
 	## COMPLETELY WRONG.
 	AGE_DAYS_MULTIPLIER = 24
@@ -348,7 +350,7 @@ class Diagnostics::Range
 	end
 
 	def is_abnormal_range?
-
+		self.is_abnormal == YES
 	end
 
 	def is_male?

@@ -1,7 +1,7 @@
 {
 	"reports" : [
 		{
-			"name" : "creatinine",
+			"name" : "Gender Missing",
 			"description" : "Determination of Serum Creatinine",
 			"rates" : [
 				{
@@ -27,6 +27,15 @@
 						{
 							"max_age_years" : 120,
 							"min_age_years" : 0,
+							"sex" : "Female",
+							"min_value" : 0,
+							"max_value" : 20,
+							"is_abnormal" : -1,
+							"inference" : "Within Normal Limits"
+						},
+						{
+							"max_age_years" : 120,
+							"min_age_years" : 0,
 							"sex" : "Male",
 							"min_value" : 0,
 							"max_value" : 20,
@@ -36,18 +45,9 @@
 						{
 							"max_age_years" : 120,
 							"min_age_years" : 0,
-							"sex" : "Female",
+							"sex" : "Male",
 							"min_value" : 0,
 							"max_value" : 20,
-							"is_abnormal" : -1,
-							"inference" : "Within Normal Limits"
-						},
-						{
-							"max_age_years" : 120,
-							"min_age_years" : 0,
-							"sex" : "Female",
-							"min_value" : 20.5,
-							"max_value" : 22,
 							"is_abnormal" : 1,
 							"inference" : "Within Normal Limits"
 						}

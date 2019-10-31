@@ -121,6 +121,20 @@ class Diagnostics::Test
 	attr_accessor :test_is_ready_for_reporting
 	attr_accessor :test_is_verified
 
+	## used and initialized in range_validation
+	## Self#validation#all_ages_and_genders_covered_in_ranges_and_no_overlaps
+	#attr_accessor :male_ranges_hash_normal
+	#attr_accessor :female_ranges_hash_normal
+	#attr_accessor :male_ranges_hash_abnormal
+	#attr_accessor :female_ranges_hash_abnormal
+	#attr_accessor :all_ranges_min_max_values
+
+	## structure
+	## key -> min_age_max_age_gender
+	## value -> {normal_range: Range, abnormal_range: Range}
+	## sorted by the min_age
+	attr_accessor :ranges_hash
+
 	## @set_from : models/concerns/order_concern#update_results_to_lis 	
 	attr_accessor :successfully_updated_by_lis
 
@@ -180,81 +194,59 @@ class Diagnostics::Test
 
 	validate :all_ages_and_genders_covered_in_ranges_and_no_overlaps
 
-	
-
 
 	def all_ages_and_genders_covered_in_ranges_and_no_overlaps
-		male_ranges_hash = {}
-		female_ranges_hash = {}
+
+		self.ranges_hash = {}
+		
 		self.ranges.each do |range|
-			if range.is_male?
-				male_ranges_hash[range.min_age] = range.max_age
-			elsif range.is_female?
-				female_ranges_hash[range.min_age] = range.max_age
-			end
+			range_key = range.min_age.to_s + "_" + range.max_age.to_s + "_" + range.sex
+			if self.ranges_hash[range_key].blank?
+				self.ranges_hash[range_key] = {}		
+			end 
+			self.ranges_hash[range_key][(range.is_abnormal_range? ? :abnormal : :normal)] = range
 		end
-		#puts "test name is:"
-		#puts self.name
-		male_ranges_hash = male_ranges_hash.sort.to_h
-		#puts "male ranges hash is:"
-		#puts male_ranges_hash.to_s
-		female_ranges_hash = female_ranges_hash.sort.to_h
-		#puts "female ranges hash"
-		#puts female_ranges_hash.to_s
-
-		if male_ranges_hash.keys[0] != Diagnostics::Range::MINIMUM_POSSIBLE_AGE_IN_HOURS
-			self.errors.add(:ranges, "the first range for males must start with 0 hours")
-		elsif female_ranges_hash.keys[0] != Diagnostics::Range::MINIMUM_POSSIBLE_AGE_IN_HOURS
-			self.errors.add(:ranges, "the first range for females must start with 0 hours")
+		
+		self.ranges_hash.keys.each do |rk|
+			self.errors.add(:ranges,"no normal range defined for this age group and gender, only an abnormal range") if self.ranges_hash[rk][:normal].blank?
 		end
 
-		if male_ranges_hash.values[-1] != Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS
-			self.errors.add(:ranges, "the last range must end with 120 years")
-		elsif female_ranges_hash.values[-1] != Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS
-			self.errors.add(:ranges, "the last range must end with 120 years")
-		end
+		return unless self.errors.blank?
 
-		prev_max_age = nil
-		male_ranges_hash.keys.each do |min_age|
-			if prev_max_age.blank?
-				prev_max_age = male_ranges_hash[min_age]
-				next
-			else
-				if ((min_age - prev_max_age) != 1)
-					self.errors.add(:min_age,"between the range whose max age is : #{prev_max_age} for gender MALE and the next range, there is a undefined gap, please add a range for that gap, or change the range age limits to be continuous, or there is an overlap")
+		self.ranges_hash = Hash[self.ranges_hash.sort_by { |k,v| v[:normal].min_age }]
+		
+		self.ranges_hash.keys.each do |range_key|
+			if self.ranges_hash[range_key].keys.size == 1 && self.ranges_hash[range_key].keys[0] == :abnormal
+				self.errors.add(:ranges,"no normal range was defined for this age category, #{range_key}, only an abnormal range has been defined, make sure you define a normal range as well.")
+			elsif self.ranges_hash[range_key].keys.size == 2
+				if self.ranges_hash[range_key][:normal].min_value.between?(self.ranges_hash[range_key][:abnormal].min_value,self.ranges_hash[range_key][:abnormal].max_value)
+					self.errors.add(:ranges,"there is an overlap between the min and max values of the normal and abnormal ranges")
+				elsif self.ranges_hash[range_key][:normal].max_value.between?(self.ranges_hash[range_key][:abnormal].min_value,self.ranges_hash[range_key][:abnormal].max_value)
+					self.errors.add(:ranges,"there is an overlap between the min and max values of the normal and abnormal ranges")
 				end
 			end
-		end
+			
+			next_range_start_age = self.ranges_hash[range_key][:normal].max_age
 
-		prev_max_age = nil
-		female_ranges_hash.keys.each do |min_age|
-			if prev_max_age.blank?
-				prev_max_age = female_ranges_hash[min_age]
-				next
-			else
-				if ((min_age - prev_max_age) != 1)
-					self.errors.add(:min_age,"between the range whose max age is : #{prev_max_age}, for gender : FEMALE and the next range, there is a undefined gap, please add a range for that gap, or change the range age limits to be continuous, or there is an overlap")
-				end
+			next_range_gender = self.ranges_hash[range_key][:normal].sex
+			
+			unless next_range_start_age == Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS
+
+				self.errors.add(:ranges,"contiguous ranges absent") if self.ranges_hash.keys.select{|c|
+					c =~ /#{next_range_start_age}_(\d+)_#{next_range_gender}/
+				}.size == 0
+
 			end
+
 		end
 
-		if self.test_only_applicable_to_genders.include? Diagnostics::Range::MALE
-			self.errors.add(:ranges, "no ranges defined for male gender") if male_ranges_hash.blank?
-		end
+		self.errors.add(:ranges,"the first range for either male or female does not start at 0 years") unless  self.ranges_hash.keys.select{|c|
+			c.to_s =~ /#{Diagnostics::Range::MINIMUM_POSSIBLE_AGE_IN_HOURS}_\d+_(male|female)/i
+		}.size == 2
 
-		if self.test_only_applicable_to_genders.include? Diagnostics::Range::FEMALE
-			self.errors.add(:ranges, "no ranges defined for female gender") if female_ranges_hash.blank?
-		end				
-
-		## now we are going to pass in the patients history as an object.
-		## this should be nested on the patient.
-		## and passed into the ranges.
-		## so for example that is a patient level validation
-		## that x/y/z is required, 
-		## for eg -> if a range needs a certain 
-		## history information 
-		## so formulate the history object.
-		## before that let me start on the order accessibility tests.
+		self.errors.add(:ranges,"the last range for either male or female does not start at 120 years") unless  self.ranges_hash.keys.select{|c|
+			c.to_s =~ /\d+_#{Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS}_(male|female)/i
+		}.size == 2
 
 
 	end
