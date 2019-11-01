@@ -72,8 +72,9 @@
 							"inference" : "Within Normal Limits"
 						},
 						{
-							"max_age_years" : 100,
-							"gender" : "Male",
+							"max_age_years" : 120,
+							"min_age_years" : 0,
+							"sex" : "Male",
 							"min_value" : 92,
 							"max_value" : 120,
 							"is_abnormal" : 1,

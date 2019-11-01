@@ -125,6 +125,8 @@ class Diagnostics::Range
 
 	attribute :inference, String, mapping: {type: 'text'}
 
+	validates_presence_of :inference, :if => Proc.new{|c| c.is_abnormal_range? }
+
 	## @set_from : Diagnostics::Test#assign_Range
 	## in that function, the range which suits the value and 
 	## age and sex, is first picked, as the "picked" range

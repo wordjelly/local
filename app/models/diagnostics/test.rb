@@ -190,7 +190,6 @@ class Diagnostics::Test
 	## do we add anything special about the patient.
 	## a report that contains any test that has special ranges.
 	## will not be added, unless that information is defined on the patient.
-	## i.e history
 
 	validate :all_ages_and_genders_covered_in_ranges_and_no_overlaps
 
@@ -208,7 +207,7 @@ class Diagnostics::Test
 		end
 		
 		self.ranges_hash.keys.each do |rk|
-			self.errors.add(:ranges,"no normal range defined for this age group and gender, only an abnormal range") if self.ranges_hash[rk][:normal].blank?
+			self.errors.add(:ranges,"no normal range defined for this age group and gender, only an abnormal range, test: #{self.name}, range key: #{rk}") if self.ranges_hash[rk][:normal].blank?
 		end
 
 		return unless self.errors.blank?
@@ -240,14 +239,45 @@ class Diagnostics::Test
 
 		end
 
-		self.errors.add(:ranges,"the first range for either male or female does not start at 0 years") unless  self.ranges_hash.keys.select{|c|
+	
+		## first select both
+		## if its size is equal, to required, then it should be for the same range.
+		minimum_selected = self.ranges_hash.keys.select{|c|
 			c.to_s =~ /#{Diagnostics::Range::MINIMUM_POSSIBLE_AGE_IN_HOURS}_\d+_(male|female)/i
-		}.size == 2
+		}
 
-		self.errors.add(:ranges,"the last range for either male or female does not start at 120 years") unless  self.ranges_hash.keys.select{|c|
+		maximum_selected = self.ranges_hash.keys.select{|c|
 			c.to_s =~ /\d+_#{Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS}_(male|female)/i
-		}.size == 2
+		}
 
+		#puts "minimum selected size is: #{minimum_selected.size}"
+		#puts "maximum selected size is: #{maximum_selected.size}"
+		#puts "test applicable only to : #{self.test_only_applicable_to_genders}"
+
+		## applicable to male
+		## so should have male
+
+		
+		## applicable to both
+		## should have both
+
+
+
+		self.errors.add(:ranges,"the first range for either male or female does not start at 0 years") unless  minimum_selected.size == self.test_only_applicable_to_genders.size
+
+		self.errors.add(:ranges,"the last range for either male or female does not start at 120 years") unless  maximum_selected.size == self.test_only_applicable_to_genders.size
+
+		self.test_only_applicable_to_genders.each do |gd|
+		
+			self.errors.add(:ranges, "selected gender minimum age missing") if minimum_selected.select{|c|
+				c =~ /#{gd}/i
+			}.size == 0
+
+			self.errors.add(:ranges, "selected gender maximum age missing") if maximum_selected.select{|c|
+				c =~ /#{gd}/i
+			}.size == 0
+		
+		end
 
 	end
 
@@ -367,7 +397,9 @@ class Diagnostics::Test
 			:units,
 			:only_include_in_report_if_abnormal,
 			:test_must_have_value,
-			:test_only_applicable_to_genders,
+			{ 
+				:test_only_applicable_to_genders => []
+			},
 			:interpret_ranges,
 			:print_all_ranges_in_report
 		]

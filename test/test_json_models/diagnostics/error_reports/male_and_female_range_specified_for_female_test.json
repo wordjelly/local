@@ -1,8 +1,8 @@
 {
 	"reports" : [
 		{
-			"name" : "creatinine",
-			"description" : "Determination of Serum Creatinine",
+			"name" : "ALPHA LAMBDA",
+			"description" : "Determination of serum alpha lambda",
 			"rates" : [
 				{
 					"for_organization_id" : "*",
@@ -16,13 +16,14 @@
 			],
 			"tests" : [
 				{
-					"name" : "Creatinine",
+					"name" : "Alpha lambda",
 					"description" : "Serum Creatinine estimation",
 					"lis_code" : "CREAT",
 					"result_type" : "numeric",
 					"units" : "mg/dl",
 					"only_include_in_report_if_abnormal" : -1,
 					"test_must_have_value" : 1,
+					"test_only_applicable_to_genders" : ["Female"],
 					"ranges" : [
 						{
 							"max_age_years" : 120,
@@ -40,15 +41,6 @@
 							"min_value" : 0,
 							"max_value" : 20,
 							"is_abnormal" : -1,
-							"inference" : "Within Normal Limits"
-						},
-						{
-							"max_age_years" : 120,
-							"min_age_years" : 0,
-							"sex" : "Female",
-							"min_value" : 10.5,
-							"max_value" : 22,
-							"is_abnormal" : 1,
 							"inference" : "Within Normal Limits"
 						}
 					]

@@ -48,8 +48,7 @@
 							"sex" : "Male",
 							"min_value" : 0,
 							"max_value" : 20,
-							"is_abnormal" : 1,
-							"inference" : "Within Normal Limits"
+							"is_abnormal" : 1
 						}
 					]
 				}
