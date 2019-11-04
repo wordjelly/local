@@ -201,20 +201,25 @@ class Diagnostics::Test
 		self.ranges.each do |range|
 			range_key = range.min_age.to_s + "_" + range.max_age.to_s + "_" + range.sex
 			if self.ranges_hash[range_key].blank?
-				self.ranges_hash[range_key] = {}		
+				self.ranges_hash[range_key] = range		
 			end 
-			self.ranges_hash[range_key][(range.is_abnormal_range? ? :abnormal : :normal)] = range
 		end
 		
 		self.ranges_hash.keys.each do |rk|
-			self.errors.add(:ranges,"no normal range defined for this age group and gender, only an abnormal range, test: #{self.name}, range key: #{rk}") if self.ranges_hash[rk][:normal].blank?
+			self.errors.add(:ranges,"no normal range defined for this age group and gender test: #{self.name}, range key: #{rk}") unless self.ranges_hash[rk].has_normal_range?
 		end
 
 		return unless self.errors.blank?
 
-		self.ranges_hash = Hash[self.ranges_hash.sort_by { |k,v| v[:normal].min_age }]
+		self.ranges_hash = Hash[self.ranges_hash.sort_by { |k,v| v.min_age }]
+
+		## min max overlap.
+		## is normal
+		## is abnormal
+		## 
 		
 		self.ranges_hash.keys.each do |range_key|
+=begin
 			if self.ranges_hash[range_key].keys.size == 1 && self.ranges_hash[range_key].keys[0] == :abnormal
 				self.errors.add(:ranges,"no normal range was defined for this age category, #{range_key}, only an abnormal range has been defined, make sure you define a normal range as well.")
 			elsif self.ranges_hash[range_key].keys.size == 2
@@ -224,10 +229,11 @@ class Diagnostics::Test
 					self.errors.add(:ranges,"there is an overlap between the min and max values of the normal and abnormal ranges")
 				end
 			end
+=end
 			
-			next_range_start_age = self.ranges_hash[range_key][:normal].max_age
+			next_range_start_age = self.ranges_hash[range_key].max_age
 
-			next_range_gender = self.ranges_hash[range_key][:normal].sex
+			next_range_gender = self.ranges_hash[range_key].sex
 			
 			unless next_range_start_age == Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS
 
@@ -239,7 +245,6 @@ class Diagnostics::Test
 
 		end
 
-	
 		## first select both
 		## if its size is equal, to required, then it should be for the same range.
 		minimum_selected = self.ranges_hash.keys.select{|c|
@@ -250,19 +255,7 @@ class Diagnostics::Test
 			c.to_s =~ /\d+_#{Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS}_(male|female)/i
 		}
 
-		#puts "minimum selected size is: #{minimum_selected.size}"
-		#puts "maximum selected size is: #{maximum_selected.size}"
-		#puts "test applicable only to : #{self.test_only_applicable_to_genders}"
-
-		## applicable to male
-		## so should have male
-
 		
-		## applicable to both
-		## should have both
-
-
-
 		self.errors.add(:ranges,"the first range for either male or female does not start at 0 years") unless  minimum_selected.size == self.test_only_applicable_to_genders.size
 
 		self.errors.add(:ranges,"the last range for either male or female does not start at 120 years") unless  maximum_selected.size == self.test_only_applicable_to_genders.size

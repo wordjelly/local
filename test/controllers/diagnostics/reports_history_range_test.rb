@@ -175,6 +175,10 @@ class ReportsHistoryRangeTest < ActionDispatch::IntegrationTest
 
     end
 
+    ## so now we come to the tough part
+    ## also the range selection tests go here.
+    
+
     test " selects range for woman if her menstrual cycle phase is provided " do 
 
     end
@@ -183,7 +187,6 @@ class ReportsHistoryRangeTest < ActionDispatch::IntegrationTest
 
 
     end
-
 
     test " allows to add tags to test, and also remove tags " do 
 

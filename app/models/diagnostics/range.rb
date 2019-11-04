@@ -64,6 +64,16 @@ class Diagnostics::Range
 	#########################################################
 	##
 	##
+	## TAGS.
+	##
+	##
+	#########################################################
+	attribute :tags, Array[Tag], mapping: {type: 'nested', properties: Tag.index_properties}
+
+
+	#########################################################
+	##
+	##
 	## MIN AGE -> DEFINED BY FOUR UNITS, EACH OF WHICH WILL DEFAULT TO ZERO.
 	##
 	##
@@ -123,9 +133,9 @@ class Diagnostics::Range
 
 	attribute :is_default_range, Integer, mapping: {type: 'integer'}, default: -1
 
-	attribute :inference, String, mapping: {type: 'text'}
+	#attribute :inference, String, mapping: {type: 'text'}
 
-	validates_presence_of :inference, :if => Proc.new{|c| c.is_abnormal_range? }
+	#validates_presence_of :inference, :if => Proc.new{|c| c.is_abnormal_range? }
 
 	## @set_from : Diagnostics::Test#assign_Range
 	## in that function, the range which suits the value and 
@@ -136,28 +146,68 @@ class Diagnostics::Range
 	## is required to show as the normal biological reference range.
 	attribute :normal_picked, Integer, mapping: {type: 'integer'}, default: -1
 
+	## you cannot directly add the tag
+	## you can however add them and edit them later
+	## so that is the flow.
+	attribute :template_tag_ids, Array, mapping: {type: 'keyword'}
+		
 	##########################################################
 	##
 	##
-	## history based ranges
+	## MIN MAX OVERLAP
 	##
 	##
-	##########################################################
-	# so one range for one history.
-	# like if that is satisfied, then it goes forwards.
-	# will have to test all this.
-	# otherwise fucked.
-	# can it be done today ?
-	# so the tag is defined in the test
-	# and a range has to be defined for that tag, and validations to fill that in the order
-	# how to give option for custom element ?
-	# so basically the options are permitted inputs
-	# or any input is okay.
-	# so basically the range can be applicable if that tag is having a particular input.
-	# so range has a tag id, and optionally an option.
-	# 
+	#########################################################
+	validate :min_max_overlap
 
-	attribute :tag_id, String, mapping: {type: 'integer'}	
+	def min_val_overlap(min_val,h)
+		h.keys.each do |min_v|
+			max_v = h[min_v]
+			if (min_val >= min_v)
+				if(min_val < max_v)
+					self.errors.add(:tags,"min max overlap")
+				end
+			end
+		end
+	end
+
+	def max_val_overlap(max_val,h)
+		h.keys.each do |min_v|
+			max_v = h[min_v]
+			if (max_val <= max_v)
+				if(max_val > min_v)
+					self.errors.add(:tags,"min max overlap")
+				end
+			end
+		end
+	end
+
+	def min_max_overlap
+
+		min_max_values_hash = {}
+		
+		text_hash = {}
+
+		self.tags.each do |tag|
+			unless tag.min_range_val.blank?
+				self.errors.add(:tags,"there is a clash between min and max of normal and abnormal") unless min_max_values_hash[tag.min_range_val].blank?
+				
+				if (tag.is_normal? || tag.is_abnormal?)
+					min_val_overlap(tag.min_range_val,min_max_values_hash)
+					max_val_overlap(tag.max_range_val,min_max_values_hash)
+					min_max_values_hash[tag.min_range_val] = tag.max_range_val
+				end
+			else
+				unless tag.text_range_val.blank?
+					if text_hash[tag.text_range_val].blank?
+						text_hash[tag.text_range_val] = tag.text_range_val
+					else
+						self.errors.add(:tags,"the text value is overlapping between normal and abnormal values")
+					end
+				end
+			end
+		end
+	end
 
 	##########################################################
 	##
@@ -200,21 +250,11 @@ class Diagnostics::Range
 			:max_age_days,
 			:max_age_hours,
 			:sex,
-			:grade,
-			:count,
-			:inference,
-			:comment,
 			:is_abnormal,
-			:text_value,
 			:picked,
-			:is_default_range,
-			:inference,
-			:min_value, 
-			:max_value, 
 			:name, 
 			:machine, 
 			:kit, 
-			:reference,
 			:min_age,
 			:max_age,
 			:normal_picked,
@@ -224,10 +264,26 @@ class Diagnostics::Range
 	    	:public,
 	    	:currently_held_by_organization,
 	    	:created_by_user_id,
-	    	:owner_ids
+	    	:owner_ids,
+	    	{
+	    		:tags => Tag.permitted_params
+	    	},
+	    	{
+	    		:template_tag_ids => []
+	    	}
 		]
 	end
 
+	## so we have normal, 
+	## abnormal may be multiple 
+	## but cannot share the same min and max values
+	## and the validation is carried out on range
+	## we can have normal -> with tag -> 
+	## the min and max cannot be the same for an abnormal value
+	## if the option of the tag is the same
+	## so there are fewer validations.
+	## and you have to check if order breaks after this.
+	## but today finish this with UI.
 	def self.index_properties
 		{
 			min_age_years: {
@@ -263,9 +319,6 @@ class Diagnostics::Range
 			count: {
 				type: "float"
 			},
-			inference: {
-				type: 'text'
-			},
 			comment: {
 				type: 'text'
 			},
@@ -289,8 +342,16 @@ class Diagnostics::Range
 			},
 			max_age: {
 				type: 'integer'
+			},
+			tags: {
+				type: 'nested',
+				properties: Tag.index_properties
+			},
+			template_tag_ids: {
+				type: 'keyword'
 			}
     	}
+
     	
 	end
 
@@ -347,12 +408,20 @@ class Diagnostics::Range
 		""
 	end
 
+=begin
 	def is_normal_range?
 
 	end
 
 	def is_abnormal_range?
 		self.is_abnormal == YES
+	end
+=end
+	
+	def has_normal_range?
+		self.tags.select{|c|
+			c.is_normal?
+		}.size == 1
 	end
 
 	def is_male?
