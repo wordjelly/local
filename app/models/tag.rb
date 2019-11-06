@@ -40,9 +40,9 @@ class Tag
 
 	attribute :numerical_history_response, Float, mapping: {type: 'float'}
 
-	attribute :selected_option_must_match_history_options, Integer, mapping: {type: 'integer'}, default: YES
+	attribute :selected_option_must_match_history_options, Integer, mapping: {type: 'integer'}, default: NO
 
-	attribute :option_must_be_chosen, Integer, mapping: {type: 'integer'}, default: YES
+	attribute :option_must_be_chosen, Integer, mapping: {type: 'integer'}, default: NO
 
 	####################################################
 	##
@@ -227,7 +227,8 @@ class Tag
 					:min_range_val, 
 					:max_range_val, 
 					:text_range_val, 
-					{:combined_with_history_tag_ids => []},:range_type, 
+					{:combined_with_history_tag_ids => []},
+					:range_type, 
 					:inference,
 					:comment, 
 					:reference, 
@@ -265,5 +266,8 @@ class Tag
 		self.range_type == ABNORMAL
 	end
 
+	def is_history?
+		self.range_type == HISTORY
+	end
 
 end

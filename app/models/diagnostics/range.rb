@@ -151,7 +151,7 @@ class Diagnostics::Range
 	## so that is the flow.
 	attribute :template_tag_ids, Array, mapping: {type: 'keyword'}
 		
-	##########################################################
+	#######################################################
 	##
 	##
 	## MIN MAX OVERLAP
@@ -165,7 +165,7 @@ class Diagnostics::Range
 			max_v = h[min_v]
 			if (min_val >= min_v)
 				if(min_val < max_v)
-					self.errors.add(:tags,"min max overlap")
+					self.errors.add(:tags,I18n.t("min_max_overlap_error"))
 				end
 			end
 		end
@@ -176,7 +176,7 @@ class Diagnostics::Range
 			max_v = h[min_v]
 			if (max_val <= max_v)
 				if(max_val > min_v)
-					self.errors.add(:tags,"min max overlap")
+					self.errors.add(:tags,I18n.t("min_max_overlap_error"))
 				end
 			end
 		end
@@ -190,7 +190,7 @@ class Diagnostics::Range
 
 		self.tags.each do |tag|
 			unless tag.min_range_val.blank?
-				self.errors.add(:tags,"there is a clash between min and max of normal and abnormal") unless min_max_values_hash[tag.min_range_val].blank?
+				self.errors.add(:tags,I18n.t("min_max_overlap_error")) unless min_max_values_hash[tag.min_range_val].blank?
 				
 				if (tag.is_normal? || tag.is_abnormal?)
 					min_val_overlap(tag.min_range_val,min_max_values_hash)
@@ -202,7 +202,7 @@ class Diagnostics::Range
 					if text_hash[tag.text_range_val].blank?
 						text_hash[tag.text_range_val] = tag.text_range_val
 					else
-						self.errors.add(:tags,"the text value is overlapping between normal and abnormal values")
+						self.errors.add(:tags,I18n.t("text_overlap_error"))
 					end
 				end
 			end
@@ -219,9 +219,48 @@ class Diagnostics::Range
 
 	before_validation do |document|
 		document.set_min_and_max_age
+		document.update_tags
 	end
 
+	def remove_tags 
+		#puts "came to remove tags.---------------->"
+		
+		self.tags.reject!{|c|
+			
+			#puts "tag range type is: #{c.range_type}"
 
+			if c.is_history?
+				#puts "it is a history tag"
+				unless self.template_tag_ids.include? c.id.to_s
+					#puts "the template tag ids don't include it"
+					true
+				else
+					false
+				end
+			else
+				false
+			end
+
+		}
+
+	end
+
+	def add_tags
+		self.template_tag_ids.map{|t_id|
+			if self.tags.select{|c|
+				c.id.to_s == t_id
+			}.size == 0
+				tag = Tag.find(t_id)
+				self.tags << tag
+			end
+		}
+	end
+
+	def update_tags
+		#puts "came to update tags ------------------>"
+		remove_tags
+		add_tags
+	end
 
 	###########################################################
 	##
@@ -266,7 +305,7 @@ class Diagnostics::Range
 	    	:created_by_user_id,
 	    	:owner_ids,
 	    	{
-	    		:tags => Tag.permitted_params
+	    		:tags => Tag.permitted_params[1][:tag]
 	    	},
 	    	{
 	    		:template_tag_ids => []

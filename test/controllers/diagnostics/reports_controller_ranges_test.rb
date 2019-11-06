@@ -1,12 +1,18 @@
 require "test_helper"
-require 'helpers/payments_receipts_test_helper'
+require 'helpers/test_helper'
 	
 
 class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
 
-    include PaymentsReceiptsTestHelper
+    include TestHelper
 
     setup do
+
+        ## so first we have to start with pick range
+        ## then go forwards
+        ## dont correlate with self
+        ## and then all that remaining shitty stuff
+        ## today i want better sharable UI.
 
    		JSON.parse(IO.read(Rails.root.join("vendor","assets","others","es_index_classes.json")))["es_index_classes"].each do |cls|
           #puts "creating index for :#{cls}"
@@ -184,7 +190,6 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
 
     end
 
-
     test " error if no range accounts for an age category, while  adding a test " do 
             
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
@@ -200,7 +205,6 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
 
     end
 
-=begin
     test " error if no range accounts for a particular gender, while adding a test " do
         
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
@@ -230,7 +234,6 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
 
     end
 
-
     test " abnormal and normal ranges for the same age/gender criteria don't cause the overlap error " do 
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
@@ -243,7 +246,6 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
 
     end
 
-
     test " abnormal and normal ranges cannot overlap in min max value range" do 
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
@@ -254,11 +256,11 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
 
         assert_equal "404", response.code.to_s
         k = JSON.parse(response.body)
-        #puts k.to_s
-        assert_not_nil (k["errors"] =~ /there is an overlap between the min and max values/)
+        puts k.to_s
+        assert_not_nil (k["errors"] =~ /#{I18n.t("min_max_overlap_error")}/)
     end
 
-    test "does not raise error for male range, if the test is only applicable to females" do 
+    test "does not raise error for male range, if the test is only applicable to males" do 
         
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
 
@@ -287,6 +289,7 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
 
     end
 
+
     test "does not allow to add a male range if the range is only applicable to females" do 
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
@@ -302,7 +305,6 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
 
     end
 
-
     ## next will be history , range interpretation tests.
 
     test " inference must be defined for abnormal ranges " do 
@@ -317,13 +319,6 @@ class ReportsControllerRangesTest < ActionDispatch::IntegrationTest
         assert_not_nil (k["errors"] =~ /Inference can\'t be blank/i)
         #puts k.to_s
     end
-=end
-
-=begin
-    test " ignores range interpreation if the option is defined, and only prints all the ranges for that gender " do 
-
-    end
-=end
 
   
 end

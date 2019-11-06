@@ -156,16 +156,29 @@ class Diagnostics::Test
 	##
 	##
 	####################################################
-	def remove_tags
-		self.tags.delete_if{|c|
-			!self.template_tag_ids.include? c.id.to_s
+	def remove_tags 
+		self.tags.reject!{|c|
+			if c.is_history?
+				unless self.template_tag_ids.include? c.id.to_s
+					true
+				else
+					false
+				end
+			else
+				false
+			end
 		}
 	end
 
 	def add_tags
-		self.template_tag_ids.each do |ttid|
-			self.tags << Tag.find(ttid) unless self.tags.select{|c| c.id.to_s == ttid}.size == 1
-		end
+		self.template_tag_ids.map{|t_id|
+			if self.tags.select{|c|
+				c.id.to_s == t_id
+			}.size == 0
+				tag = Tag.find(t_id)
+				self.tags << tag
+			end
+		}
 	end
 
 	def update_tags
@@ -174,10 +187,9 @@ class Diagnostics::Test
 	end
 
 	before_validation do |document|
-		## okay so this is done.
-		## we only give the template tag ids as editable.
 		document.update_tags
 	end
+
 	##########################################################
 	##
 	##
@@ -230,7 +242,6 @@ class Diagnostics::Test
 				end
 			end
 =end
-			
 			next_range_start_age = self.ranges_hash[range_key].max_age
 
 			next_range_gender = self.ranges_hash[range_key].sex
@@ -376,7 +387,7 @@ class Diagnostics::Test
 				:ranges => Diagnostics::Range.permitted_params
 			},
 			{
-				:tags => Tag.permitted_params
+				:tags => Tag.permitted_params[1][:tag]
 			},
 			{
 				:template_tag_ids => []
@@ -408,7 +419,7 @@ class Diagnostics::Test
 			      		:analyzer => "nGram_analyzer",
 			      		:search_analyzer => "whitespace_analyzer"
 	    			}
-		    		}
+		    	}
 	    	},
 	    	lis_code: {
 	    		type: 'keyword'

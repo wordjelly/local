@@ -1,8 +1,14 @@
 require "test_helper"
+require "helpers/test_helper"
 
 class OrdersControllerTest < ActionDispatch::IntegrationTest
 
+    include TestHelper
+    
     setup do
+
+        _setup
+=begin
         ## lets start with this ?
         ## or seperate for bills. 
         Organization.create_index! force: true
@@ -125,10 +131,14 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         @pathan_headers = {
             "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json", "X-User-Token" => @pathan.authentication_token, "X-User-Es" => @pathan.client_authentication["testappid"], "X-User-Aid" => "testappid"
         }
-
+=end
     end
 
-=begin
+    ## first let me get these tests to pass
+    ## and then we can move forwards
+    ## to range interpretation and order accessibility
+    ## 
+
     test " -- creates an order with multiple reports -- " do 
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
@@ -201,6 +211,9 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         assert_equal "201", response.code.to_s
 
     end
+
+
+=begin
 
     test " -- collates individual report requirements into order requirements -- " do 
 
@@ -583,7 +596,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
             
 
     end
-=end
+
 
     test " -- generates queries and blocks hash -- " do 
 
@@ -705,5 +718,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         order_one = Business::Order.find(JSON.parse(response.body)["order"]["id"])
 
     end
+=end
+
 
 end

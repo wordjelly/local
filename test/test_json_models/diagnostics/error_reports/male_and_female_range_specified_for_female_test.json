@@ -1,8 +1,8 @@
 {
 	"reports" : [
 		{
-			"name" : "ALPHA LAMBDA",
-			"description" : "Determination of serum alpha lambda",
+			"name" : "creatinine",
+			"description" : "Determination of Serum Creatinine",
 			"rates" : [
 				{
 					"for_organization_id" : "*",
@@ -16,7 +16,7 @@
 			],
 			"tests" : [
 				{
-					"name" : "Alpha lambda",
+					"name" : "Creatinine",
 					"description" : "Serum Creatinine estimation",
 					"lis_code" : "CREAT",
 					"result_type" : "numeric",
@@ -29,19 +29,41 @@
 							"max_age_years" : 120,
 							"min_age_years" : 0,
 							"sex" : "Male",
-							"min_value" : 0,
-							"max_value" : 20,
-							"is_abnormal" : -1,
-							"inference" : "Within Normal Limits"
+							"tags" : [
+								{
+									"range_type" : "normal",
+									"min_range_val" : 10,
+									"max_range_val" : 20
+								},
+								{
+									"range_type" : "abnormal",
+									"min_range_val" : 20,
+									"max_range_val" : 25,
+									"grade" : "1",
+									"count" : 2,
+									"inference" : "Check kidney function tests"
+								}
+							]
 						},
 						{
 							"max_age_years" : 120,
 							"min_age_years" : 0,
 							"sex" : "Female",
-							"min_value" : 0,
-							"max_value" : 20,
-							"is_abnormal" : -1,
-							"inference" : "Within Normal Limits"
+							"tags" : [
+								{
+									"range_type" : "normal",
+									"min_range_val" : 10,
+									"max_range_val" : 20
+								},
+								{
+									"range_type" : "abnormal",
+									"min_range_val" : 20,
+									"max_range_val" : 25,
+									"grade" : "1",
+									"count" : 2,
+									"inference" : "Check kidney function tests"
+								}
+							]
 						}
 					]
 				}

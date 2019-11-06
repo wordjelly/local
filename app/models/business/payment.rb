@@ -19,6 +19,7 @@ class Business::Payment
 	PAYMENT_TYPES = [DISCOUNT,BILL,PAYMENT]
 	STATUSES = [APPROVED,PENDING,CANCELLED]
 	STATUSES_OPTIONS = [["Approved",APPROVED],["pending",PENDING],["cancelled",CANCELLED]]
+	DEFAULT_PAYMENT_MODE = CASH
 
 	include Elasticsearch::Persistence::Model
 	include Concerns::AllFieldsConcern
@@ -131,10 +132,11 @@ class Business::Payment
 
 	def no_parameter_other_than_status_changed
 		return if self.changed_attributes.blank?
-		return if self.payment_mode.blank?
-		return if self.is_a_bill?
+		#return if self.payment_mode.blank?
+		mode = self.payment_mode || DEFAULT_PAYMENT_MODE
 		self.changed_attributes.each do |attr|
-			unless payment_changeable_attributes[self.payment_mode.to_s].include? attr.to_sym
+			
+			unless payment_changeable_attributes[mode].include? attr.to_sym
 				self.errors.add(:status,"you cannot change #{attr.to_s} for this mode of payment: #{self.payment_mode.to_s}")
 			end
 		end

@@ -634,9 +634,6 @@ class Diagnostics::Report
 			}
 		})
 
-		#puts "search request hits ------------------>"
-		#puts search_request.response.hits.hits.to_s
-
 		organization_id = search_request.response.hits.hits.first._id
 
 		search_request = search({

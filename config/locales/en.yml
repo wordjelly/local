@@ -20,4 +20,5 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  min_max_overlap_error: "Min max overlap error"
+  text_overlap_error: "text overlap error"

@@ -1,7 +1,9 @@
 require "test_helper"
-require 'helpers/payments_receipts_test_helper'
+require 'helpers/test_helper'
 	
 class TagsControllerTest < ActionDispatch::IntegrationTest
+
+    include TestHelper
 
     setup do
 
@@ -176,14 +178,17 @@ class TagsControllerTest < ActionDispatch::IntegrationTest
 
     end
 
-    test " creates a history tag " do 
-      
-      ## first check the range validations.
+    test " creates a tag to ask if smoker or non smoker " do 
 
+      t = Tag.new
+      t.description = "Is the Patient a smoker"
+      t.tag_type = Tag::HISTORY_TAG
+      t.history_options = [Tag::YES.to_s,Tag::NO.to_s]
+      plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+      post tags_path, params: {tag: t.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+      assert_equal "201", response.code.to_s
+      #puts response.body.to_s
     end
 
-    #test " history tags are public " do 
-
-    #end
 
 end
