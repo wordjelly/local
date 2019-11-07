@@ -270,4 +270,16 @@ class Tag
 		self.range_type == HISTORY
 	end
 
+	def text_history_answered?
+		!self.text_history_response.blank?
+	end
+
+	def numerical_history_answered?
+		!self.numerical_history_response.blank?
+	end
+
+	def history_answered?
+		self.text_history_answered? || self.numerical_history_answered?
+	end
+
 end

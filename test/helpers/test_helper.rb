@@ -1,5 +1,43 @@
 module TestHelper
 
+    def build_inventory(organization_user)
+        Dir.glob(Rails.root.join('test','test_json_models','inventory','item_types','*.json')).each do |file_name|
+            JSON.parse(IO.read(file_name))["item_types"].each do |item_type_definition|
+                item_type = Inventory::ItemType.new(item_type_definition)
+                item_type.created_by_user = organization_user
+                item_type.created_by_user_id = organization_user.id.to_s
+                item_type.save(op_type: 'create')
+                if item_type.errors.full_messages.
+                    blank?
+                    Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+                    #puts "path is:"
+                    #puts Rails.root.join('test','test_json_models','inventory','items',"#{File.basename(file_name)}")
+                    #puts JSON.parse(IO.read(Rails.root.join('test','test_json_models','inventory','items',"#{file_name}")))
+                    #exit(1) 
+                    JSON.parse(IO.read(Rails.root.join('test','test_json_models','inventory','items',"#{File.basename(file_name)}")))["items"].each do |item_definition|
+
+                        item = Inventory::Item.new(item_definition)
+                        item.barcode = BSON::ObjectId.new.to_s
+                        item.created_by_user = organization_user
+                        item.created_by_user_id = organization_user.id.to_s
+                        item.item_type_id = item_type.id.to_s
+                        item.save(op_type: 'create')
+                        unless item.errors.full_messages.blank?
+                            puts item.errors.full_messages
+                            puts "error trying to create item : #{file_name}"
+                            exit(1)
+                        end
+                    end
+                else
+                    puts "error trying to create item: #{file_name}"
+                    exit(1)
+                end
+            end
+        end
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+        #exit(1)
+    end
+
     def _setup
         
         JSON.parse(IO.read(Rails.root.join("vendor","assets","others","es_index_classes.json")))["es_index_classes"].each do |cls|
@@ -158,6 +196,8 @@ module TestHelper
             Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
             user = User.find(user.id.to_s)
+            build_inventory(user)
+            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
             Dir.glob(Rails.root.join('test','test_json_models','diagnostics','reports','*.json')).each do |report_file_name|
                 report = Diagnostics::Report.new(JSON.parse(IO.read(report_file_name))["reports"][0])
                 report.created_by_user = user
@@ -167,9 +207,6 @@ module TestHelper
 
             Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
         end
-        ## it should either return the security tokens
-        ## or we pray that it gets converted into a test
-        ## wide class variable.
     end
 
     def load_error_report(file_name_without_path_or_extension)
@@ -181,18 +218,20 @@ module TestHelper
         report = Diagnostics::Report.new(JSON.parse(IO.read(Rails.root.join('test','test_json_models','diagnostics','reports',"#{file_name_without_path_or_extension}.json")))["reports"][0])
         report
     end
-    
-	## @return[Business::Order] the order created for the patient from plus path lab.
-	def create_plus_path_lab_patient_order
-		latika_sawant = User.where(:email => "latika.sawant@gmail.com").first
-    	######################################################
-    	##
-    	##
-    	## CREATE PATIENT
-    	##
-    	##
-    	######################################################
-    	patients_file_path = Rails.root.join('test','test_json_models','patients','aditya_raut.json')
+
+
+    ## @return[Business::Order] o 
+    ## just assembles the order.
+    def build_plus_path_lab_patient_order
+        latika_sawant = User.where(:email => "latika.sawant@gmail.com").first
+        ######################################################
+        ##
+        ##
+        ## CREATE PATIENT
+        ##
+        ##
+        ######################################################
+        patients_file_path = Rails.root.join('test','test_json_models','patients','aditya_raut.json')
         patients = JSON.parse(IO.read(patients_file_path))
         patient = Patient.new(patients["patients"][0])
         patient.first_name += "plus".to_s
@@ -211,6 +250,12 @@ module TestHelper
         o.created_by_user_id = latika_sawant.id.to_s
         o.patient_id = patient.id.to_s
         o.skip_pdf_generation = true
+        o
+    end
+    
+	## @return[Business::Order] the order created for the patient from plus path lab.
+	def create_plus_path_lab_patient_order
+		o = build_plus_path_lab_patient_order
         o.save
 
         unless o.errors.blank?

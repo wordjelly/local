@@ -5,7 +5,6 @@ class Diagnostics::Report
 	include ActiveModel::Serialization
 	include ActiveModel::Validations
   	include ActiveModel::Validations::Callbacks
-
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
 	include Concerns::OwnersConcern
@@ -418,6 +417,11 @@ class Diagnostics::Report
 						cat.items << item
 					else
 						puts "it does not have space."
+						## so we can reduce the requirement.
+						## so as it does not have space, it
+						## is not being added
+						## that's the problem here
+						## there is no error.
 					end
 				end
 			end

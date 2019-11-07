@@ -13,10 +13,8 @@ class Inventory::Item
 	include Concerns::AlertConcern
 	include Concerns::TransferConcern
 	include Concerns::FormConcern
-		include Concerns::CallbacksConcern
+	include Concerns::CallbacksConcern
 
-
-	
 	index_name "pathofast-inventory-items"
 
 	document_type "inventory/item"	
@@ -229,12 +227,13 @@ class Inventory::Item
 	## CALLED FROM CATEGORY#set_item_report_applicability(reports)
 	## 
 	##
-	###########################################################
+	##########################################################
+	## from where am i going to get this organization_id_report_hash.
 
 	## @param[String] org_id : the organization id of the reports, to which this item is attempted to being added, these are
 	## @param[String] category_name : the name of the category to which the user has attempted to add this item, inside the order.
 	## @working : Loads the item from the inventory that corresponds to this barcode, and assigns its expiry, transaction id and other details to the item that has been created inside the category in the order.
-	def get_item_details_from_barcode(org_id,category_name,report_ids,applicable)
+	def get_item_details_from_barcode(org_id,category_name,report_ids,applicable,organization_id_to_report_hash)
 		
 		unless self.barcode.blank?
 
@@ -252,7 +251,8 @@ class Inventory::Item
 					#puts "the item category is: #{i.category}"
 					#puts "the current category is: #{self.name}"
 					#exit(1)
-					if i.is_of_category?(self.name)
+					if i.is_of_category?(category_name)
+						puts "it is of the category:#{category_name}"
 						self.applicable_to_report_ids << organization_id_to_report_hash[org_id]
 						applicable = true
 						#puts "found item attributes are:"
@@ -272,18 +272,23 @@ class Inventory::Item
 						#so we make a custom field.
 						#and render it as switch.
 						#which if clicked will show that.
+						return true
 					else
 						## not of the same category error.
+						puts "got different category error"
 						self.different_category = true
 					end
 				else
 					## expired error
+					puts "expired error."
 					self.expired_or_already_used = true
 				end
 		
 			end
 
 		end
+
+		return false
 
 	end
 
@@ -411,10 +416,57 @@ class Inventory::Item
 		return false
 	end
 
+
+	def self.find_organization_items(organization_id,item_type_id=nil,size=10)
+
+		query = {
+			bool: {
+				must: [
+					{
+						term: {
+							owner_ids: organization_id
+						}
+					}
+				]
+			}
+		}
+
+		unless item_type_id.blank?
+			query[:bool][:must] << {
+				term: {
+					item_type_id: item_type_id
+				}
+			}
+		end
+
+		search_request = Inventory::Item.search(
+			{
+				size: size,
+				query: query
+			}
+		)
+			
+		items = []
+
+	 	search_request.response.hits.hits.each do |hit|
+	 		item = Inventory::Item.new(hit["_source"])
+	 		item.id = hit["_id"]
+	 		item.run_callbacks(:find)
+	 		items << item
+	 	end
+
+
+	 	items
+
+	end
+
 	## @called_from : Inventory::Category#set_item_report_applicability(reports)
 	## @param[String] barcode : the item barcode
 	## @param[String] organization_id : the id of the organization to which it is being checked, this is checked in the owner ids.
 	def self.find_with_organization(barcode,organization_id)
+		
+		puts "barcode is: #{barcode}, organization id is: #{organization_id}"
+
 		query = {
 			bool: {
 				must: [
@@ -465,12 +517,13 @@ class Inventory::Item
 	## @param[String] category : the name fo the category
 	## @return[Boolean] true/false : gets the item_type_id, and finds the itemType, and checks whether the provided category is mentioned in this item_type
 	def is_of_category?(category)
-		#puts "the item type id is: #{self.item_type_id}"
+		puts "the item type id is: #{self.item_type_id}"
+		puts "checking category: #{category}"
 		begin
-			item_group = Inventory::ItemType.find(self.item_type_id)
-			#puts "item group is:"
-			#puts item_group.attributes.to_s
-			item_group.categories.include? category
+			item_type = Inventory::ItemType.find(self.item_type_id)
+			puts "item type is:"
+			puts item_type.attributes.to_s
+			item_type.categories.include? category
 		rescue => e
 			false
 		end

@@ -1,0 +1,19 @@
+{
+	"item_type" : {
+		"id" : "abcd",
+		"name" : "BD SST Tube",
+		"comment" : "company_specific name",
+		"categories" : ["SST Tube"]
+	},
+	"item" : {
+		"item_type_id" : "abcd"
+	},
+	"category" : {
+		"name" : "SST Tube",
+		"comment" : "generic name, this category would be listed under serum tube requirement"
+	},
+	"requirement" : {
+		"name" : "Serum Tube",
+		"comment" : "Type of Container"
+	}
+}

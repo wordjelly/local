@@ -10,7 +10,7 @@ class Inventory::ItemType
 	include Concerns::AlertConcern
 	include Concerns::FormConcern
 	include Concerns::VersionedConcern
-		include Concerns::CallbacksConcern
+	include Concerns::CallbacksConcern
 
 
 	index_name "pathofast-inventory-item-types"
@@ -38,6 +38,12 @@ class Inventory::ItemType
 
 	attribute :manufacturer_name, String, mapping: {type: 'keyword'}
 
+	## these are like 
+	## serum tube(requirement)
+	## and item type name is -> BD Gel seperator.
+	## gel seperator tube -> can be from bd or anywhere
+	## these are going to be used 
+	## 
 	attribute :categories, Array, mapping: {type: 'keyword'}
 
 	mapping do 

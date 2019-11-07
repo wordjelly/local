@@ -53,8 +53,8 @@
 					"name" : "Serum Container",
 					"categories" : [
 						{
-							"name" : "Serum Tube",
-							"quantity" : 100.0
+							"name" : "SST Tube",
+							"quantity" : 1.0
 						}
 					]	
 				}

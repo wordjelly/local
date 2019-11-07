@@ -120,11 +120,11 @@
 			],
 			"requirements" : [
 				{
-					"name" : "EDTA Container",
+					"name" : "Serum Container",
 					"categories" : [
 						{
-							"name" : "EDTA Tube",
-							"quantity" : 100.0
+							"name" : "SST Tube",
+							"quantity" : 1.0
 						}
 					]	
 				}

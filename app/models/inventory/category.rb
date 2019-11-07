@@ -12,7 +12,7 @@ class Inventory::Category
 	include Concerns::TransferConcern
 	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
-		include Concerns::CallbacksConcern
+	include Concerns::CallbacksConcern
 
 
 	attribute :name, String, mapping: {type: 'keyword'}
@@ -175,7 +175,6 @@ class Inventory::Category
 		selected_reports = reports.select{|c| 
 			
 
-
 			if report_ids.include? c.id.to_s
 				if organization_id_to_report_hash[c.currently_held_by_organization].blank?
 					
@@ -214,9 +213,14 @@ class Inventory::Category
 
 				organization_id_to_report_hash.keys.each do |org_id|
 
-					it.get_item_details_from_barcode(org_id,self.name,organization_id_to_report_hash[org_id],applicable)
+					#puts "doing org id: #{org_id}"
+					res = it.get_item_details_from_barcode(org_id,self.name,organization_id_to_report_hash[org_id],applicable,organization_id_to_report_hash)
+					#puts "applicable becomes:"
+					#puts applicable.to_s
+					unless res.blank?
+						applicable = res if applicable.blank?
+					end
 				end
-
 
 				it.not_applicable_to_any_reports = true if applicable == false
 			end

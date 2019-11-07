@@ -302,13 +302,18 @@ module Concerns::OrderConcern
 		## otherwise none of this is of any use.
 		## so will have to set this.
 		self.categories.each do |category|
-			#puts "category changed attributes ---------->"
-			#puts category.changed_attributes.to_s
-			#puts category.changed_array_attribute_sizes.to_s
-			if category.changed_array_attribute_sizes.include? "items".to_sym
+
+			puts "is the category newly added?"
+			puts category.newly_added
+			puts "category changed attributes ---------->"
+			puts category.changed_attributes.to_s
+			puts category.changed_array_attribute_sizes.to_s
+			puts category.changed_array_attribute_sizes
+			if category.changed_array_attribute_sizes.include? "items"
 				self.changed_for_lis = Time.now.to_i
 			else
 				category.items.each do |item|
+
 					if item.changed_attributes.include? "use_code".to_sym
 						self.changed_for_lis = Time.now.to_i
 					end
@@ -722,6 +727,9 @@ module Concerns::OrderConcern
 			category.set_item_report_applicability(self.reports)
 			
 			category.items.each do |item|
+				#puts "item applicable to reports are:"
+				#puts item.applicable_to_report_ids.to_s
+				#exit(1)
 				## can this item be created at all?
 				## that's the first thing.f
 				self.reports.each do |report|
@@ -737,10 +745,27 @@ module Concerns::OrderConcern
 		end
 	end
 
+	## @return[Array[Tag]] array of history tags
+	## whose questions were answered
+	## @called_From : self#add_report_values
+	def gather_history
+		history_tags = []
+		self.tests.each do |test|
+			## these are always history tags.
+			## but still better to check
+			test.tags.each do |tag|
+				if tag.is_history_tag?
+					
+				end
+			end
+		end
+	end
+
 	## next step is to display the created report
 	## for now just let me make something simple.
 	## called before save, to add the patient values
 	def add_report_values
+		history_tags = gather_history
 		unless self.patient.blank?
 			self.reports.map{|report|
 				report.tests.map{|test|
