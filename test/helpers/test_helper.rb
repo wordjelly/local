@@ -38,6 +38,8 @@ module TestHelper
         #exit(1)
     end
 
+    
+
     def _setup
         
         JSON.parse(IO.read(Rails.root.join("vendor","assets","others","es_index_classes.json")))["es_index_classes"].each do |cls|
@@ -220,9 +222,11 @@ module TestHelper
     end
 
 
+
     ## @return[Business::Order] o 
     ## just assembles the order.
-    def build_plus_path_lab_patient_order
+    ## @param[Array] template_report_ids
+    def build_plus_path_lab_patient_order(template_report_ids=nil)
         latika_sawant = User.where(:email => "latika.sawant@gmail.com").first
         ######################################################
         ##
@@ -245,17 +249,19 @@ module TestHelper
 
         o = Business::Order.new
 
-        o.template_report_ids = Diagnostics::Report.find_reports_by_organization_name("Plus Pathology Laboratory").map{|c| c.id.to_s}
+        o.template_report_ids = (template_report_ids || Diagnostics::Report.find_reports_by_organization_name("Plus Pathology Laboratory").map{|c| c.id.to_s})
+
         o.created_by_user = latika_sawant
         o.created_by_user_id = latika_sawant.id.to_s
         o.patient_id = patient.id.to_s
         o.skip_pdf_generation = true
         o
     end
-    
+        
+    ## @param[Array] template_report_ids : 
 	## @return[Business::Order] the order created for the patient from plus path lab.
-	def create_plus_path_lab_patient_order
-		o = build_plus_path_lab_patient_order
+	def create_plus_path_lab_patient_order(template_report_ids=nil)
+		o = build_plus_path_lab_patient_order(template_report_ids)
         o.save
 
         unless o.errors.blank?

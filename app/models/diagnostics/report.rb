@@ -398,25 +398,25 @@ class Diagnostics::Report
 
 	## item has a remaining quantity.
 	def add_item(category,item)
-		puts "came to add item to report: #{self.name}"
-		puts "incoming category is: #{category.name}"
-		puts "item is: #{item}"
-		puts "iterating requirements."
+		#puts "came to add item to report: #{self.name}"
+		#puts "incoming category is: #{category.name}"
+		#puts "item is: #{item}"
+		#puts "iterating requirements."
 		self.requirements.each do |req|
-			puts "requirement name is : #{req.name}"
+			#puts "requirement name is : #{req.name}"
 			req.categories.each do |cat|
-				puts "category name is: #{cat.name}"
+				#puts "category name is: #{cat.name}"
 				if cat.name == category.name
-					puts "category names match."
-					puts "checking has space."
-					puts "category quantity is: "
-					puts cat.quantity
+					#puts "category names match."
+					#puts "checking has space."
+					#puts "category quantity is: "
+					#puts cat.quantity
 					if item.has_space?(cat.quantity)
-						puts "it has space."
+						#puts "it has space."
 						item.deduct_space(cat.quantity)
 						cat.items << item
 					else
-						puts "it does not have space."
+						#puts "it does not have space."
 						## so we can reduce the requirement.
 						## so as it does not have space, it
 						## is not being added
@@ -621,13 +621,69 @@ class Diagnostics::Report
 		true
 	end
 
+	## whether each of the requirements in has at least one
+	## of its categories containing an item.
+	def requirements_satisfied?
+		result = true
+		self.requirements.map{|c|
+			result = false unless c.satisfied?
+		}
+		result
+	end
 	########################################################
 	##
 	##
 	## USED IN SOME TESTS eg: statement_test.rb
 	##
 	##
-	########################################################
+	#####################################################
+	def self.find_reports(args)
+		organization_id = args[:organization_id]
+		if !args[:organization_name].blank?
+			search_request = Organization.search({
+				query: {
+					term: {
+						name: organization_name
+					}
+				}
+			})
+			organization_id = search_request.response.hits.hits.first._id
+		end
+
+		query = {
+			query: {
+				bool: {
+					must: [
+						{
+							term: {
+								currently_held_by_organization: organization_id
+							}
+						}
+					]
+				}
+			}
+		}
+
+	
+		unless args[:report_name].blank?
+			query[:query][:bool][:must] << {
+				term: {
+					name: args[:report_name]
+				}
+			}
+		end
+
+		search_request = search(query)
+
+		search_request.response.hits.hits.map{|hit|
+			report = Diagnostics::Report.new(hit["_source"])
+			report.id = hit["_id"]
+			report
+		}
+
+
+	end
+
 	def self.find_reports_by_organization_name(organization_name)
 		#puts "searching for organization name: #{organization_name}"
 		search_request = Organization.search({

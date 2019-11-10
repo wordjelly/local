@@ -231,5 +231,10 @@ class Inventory::Category
 
 	end
 
+	def satisfied?
+		required_item_quantity = (self.quantity/100).to_i
+		self.items.size == required_item_quantity
+	end
+
 
 end

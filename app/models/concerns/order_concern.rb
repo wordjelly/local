@@ -116,6 +116,20 @@ module Concerns::OrderConcern
 		## reports by organization
 		attr_accessor :bills_by_organization
 
+		#####################################################
+		##
+		##
+		## HISTORY TAGS
+		##
+		##
+		#####################################################
+		## structure
+		## key -> tag_id
+		## value -> Tag
+		## 
+		## built_in : self#build_history_tags
+		attr_accessor :history_tags
+
 		##########################################################
 		##
 		##
@@ -236,6 +250,7 @@ module Concerns::OrderConcern
 			document.load_patient
 			document.update_requirements
 			document.update_report_items
+			document.gather_history
 			document.add_report_values
 			document.verify
 			document.set_accessors
@@ -371,8 +386,9 @@ module Concerns::OrderConcern
 	## how does the range interpretation take place with these tags.
 	def order_can_be_finalized
 		self.reports.each do |report|
-
-			## histories provided?
+			self.requirements.each do |req|
+				self.errors.add(:requirements, "the requirement: #{req.name} was not satisfied") unless req.satisfied?
+			end
 			self.tests.each do |test|
 				self.errors.add(:reports, "the test #{test.name}, in the report: #{report.name}, has not been provided with the relevant history, please answer questions to finalize the order") unless test.history_provided?
 			end
@@ -745,17 +761,17 @@ module Concerns::OrderConcern
 		end
 	end
 
-	## @return[Array[Tag]] array of history tags
+	## @return[Hash[Tag]] hash of history tags, keyed by the id of the tag
 	## whose questions were answered
-	## @called_From : self#add_report_values
+	## @called_From : self#before_validation
 	def gather_history
-		history_tags = []
-		self.tests.each do |test|
-			## these are always history tags.
-			## but still better to check
-			test.tags.each do |tag|
-				if tag.is_history_tag?
-					
+		self.history_tags = {}
+		self.reports.each do |report|
+			report.tests.each do |test|
+				test.tags.each do |tag|
+					if tag.is_history_tag?
+						self.history_tags[tag.id.to_s] = tag if tag.history_answered?
+					end
 				end
 			end
 		end
@@ -765,11 +781,10 @@ module Concerns::OrderConcern
 	## for now just let me make something simple.
 	## called before save, to add the patient values
 	def add_report_values
-		history_tags = gather_history
 		unless self.patient.blank?
 			self.reports.map{|report|
 				report.tests.map{|test|
-					test.add_result(self.patient) 
+					test.add_result(self.patient,self.history_tags) 
 				}
 			}
 		end

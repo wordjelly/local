@@ -67,5 +67,14 @@ class Inventory::Requirement
 		'''
 	end
 
+	## at least one category should be satisfied, with an item.
+	def satisfied?
+		result = false
+		self.categories.map{|c|
+			result = true if c.satisfied?
+		}
+		result
+	end
+
 
 end

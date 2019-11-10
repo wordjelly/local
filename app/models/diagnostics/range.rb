@@ -13,9 +13,6 @@ class Diagnostics::Range
 	include Concerns::FormConcern
 	include Concerns::CallbacksConcern
 
-	# what if abnormal is not defined ?
-	# 
-
 	## select this, in a select form.
 	MALE = "Male"
 	FEMALE = "Female"
@@ -129,7 +126,7 @@ class Diagnostics::Range
 
 	## abnormal -> 1
 	## normal -> -1
-	attribute :is_abnormal, Integer, mapping: {type: 'integer'}, default: 1	
+	#attribute :is_abnormal, Integer, mapping: {type: 'integer'}, default: 1	
 
 	attribute :is_default_range, Integer, mapping: {type: 'integer'}, default: -1
 
@@ -251,6 +248,7 @@ class Diagnostics::Range
 				c.id.to_s == t_id
 			}.size == 0
 				tag = Tag.find(t_id)
+				tag.nested_id = BSON::ObjectId.new.to_s
 				self.tags << tag
 			end
 		}
@@ -289,7 +287,6 @@ class Diagnostics::Range
 			:max_age_days,
 			:max_age_hours,
 			:sex,
-			:is_abnormal,
 			:picked,
 			:name, 
 			:machine, 
@@ -352,17 +349,8 @@ class Diagnostics::Range
 			sex: {
 				type: "keyword"
 			},
-			grade: {
-				type: "keyword"
-			},
-			count: {
-				type: "float"
-			},
 			comment: {
 				type: 'text'
-			},
-			is_abnormal: {
-				type: 'integer'
 			},
 			text_value: {
 				type: 'text'
@@ -372,9 +360,6 @@ class Diagnostics::Range
 			},
 			is_default_range: {
 				type: 'integer'
-			},
-			inference: {
-				type: 'text'
 			},
 			min_age: {
 				type: 'integer'
@@ -391,17 +376,85 @@ class Diagnostics::Range
 			}
     	}
 
-    	
 	end
 
-	def pick_range
+	def get_matching_history_tags
+		matching_history_tags = {}
+		history_tags.keys.each do |tag_id|
+			self.tags.select{|c|
+				((c.id.to_s == tag_id) && (c.history_satisfied?(history_tags[tag_id])) && (c.test_value_satisfied?(test_result_numeric,test_result_text)))
+			}.each do |tag|
+				matching_history_tags[tag.nested_tag_id] = tag
+			end
+		end
+		matching_history_tags
+	end
+
+	def get_combination_tags(matching_history_tags)
+		matching_history_tags.keys.select{|c|
+			matching_history_tags[c].combinations_satisfied?(matching_history_tags)
+		}
+	end
+
+	def get_non_combination_tags(matching_history_tags)
+		matching_history_tags.select{|c|
+			c.no_combinations_defined?
+		}
+	end
+
+	def pick_tag(tag)
+		self.tags.map{|c|
+			if c.nested_tag_id == tag.nested_tag_id
+				c.pick
+			end
+		}
+	end
+
+	def pick_normal_tag
+		self.tags.map{|c|
+			c.pick if c.is_normal?
+		}
+	end
+
+	def pick_abnormal_tag
+		self.tags.map{|c|
+			c.pick if c.is_abnormal?
+		}
+	end
+
+
+	## what about picking a normal and abnormal tags
+	## in case of 
+
+	def pick_range(history_tags,test_result_numeric,test_result_text)
+		
 		self.picked = 1
-	end
+			
+		matching_history_tags = get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
+		
+		unless matching_history_tags.blank?
+			combination_tags = get_combination_tags(matching_history_tags)
+			if combination_tags.size > 1
+				self.errors.add(:tags,"more than one combination tag got selected")
+			elsif combination_tags.size == 1
+				pick_tag(combination_tags[0])
+			else
+				non_combination_tags = get_non_combination_tags(matching_history_tags)
 
-	def pick_normal_range
-		self.normal_picked = 1
+				if non_combination_tags.size > 1
+					self.errors.add(:tags,"more than one history has caused multiple history ranges to get selected")
+				elsif non_combination_tags.size == 1
+					pick_tag(non_combination_tags[0])
+				else
+					pick_normal_tag
+					pick_abnormal_tag
+				end
+			end
+		else
+			pick_normal_tag
+			pick_abnormal_tag
+		end
 	end
-
 	###########################################################
 	##
 	## OVERRIDDEN FROM FORM CONCERN
@@ -447,16 +500,6 @@ class Diagnostics::Range
 		""
 	end
 
-=begin
-	def is_normal_range?
-
-	end
-
-	def is_abnormal_range?
-		self.is_abnormal == YES
-	end
-=end
-	
 	def has_normal_range?
 		self.tags.select{|c|
 			c.is_normal?
@@ -469,6 +512,61 @@ class Diagnostics::Range
 
 	def is_female?
 		self.sex == FEMALE
+	end
+
+	def is_abnormal?
+		self.tags.select{|c|
+			(c.is_abnormal? && c.is_picked?)
+		}.size == 1
+	end
+
+	def get_inference
+		if tag = get_picked_tag
+			return tag.inference
+		end
+		return ""
+	end
+
+	def get_picked_tag
+		t = self.tags.select{|c|
+			c.is_picked?
+		}
+		if t.size == 1
+			return t
+		end
+		return nil
+	end
+
+	def get_normal_tag
+		t = self.tags.select{|c|
+			c.is_normal?
+		}
+		if t.size == 1
+			t
+		else
+			nil
+		end
+	end
+
+	def get_normal_biological_interval
+		if normal = get_normal_tag
+			normal.biological_interval
+		else
+			raise("no normal range defined")
+		end
+	end
+
+	def get_biological_interval
+		## otherwise we have to give the normal range.
+		if t = get_picked_tag
+			if t.is_history?
+				t.biological_interval
+			else
+				get_normal_biological_interval
+			end
+		else
+			get_normal_biological_interval
+		end
 	end
 
 end 

@@ -292,7 +292,16 @@ class Diagnostics::Test
 	##
 	##
 	##########################################################
-	
+	def set_display_range_details
+		if r = get_applicable_range
+			self.display_normal_biological_interval = r.get_normal_biological_interval
+			if k = r.get_picked_tag
+				self.display_count_or_grade = k.count.to_s || k.grade.to_s
+				self.display_comments_or_inference = k.inference
+			end
+		end
+	end
+
 	## @called_from : after_find in Concerns::OrderConcern#after_find
 	## sets all the accessors, and these are included in the json
 	## representation of this element.
@@ -304,33 +313,7 @@ class Diagnostics::Test
 			self.display_result = self.result_numeric
 		end
 
-		# normal interval
-		if normal_range = get_applicable_normal_range
-			if normal_range.text_value == Diagnostics::Range::DEFAULT_TEXT_VALUE
-				## show the min to max values.
-				self.display_normal_biological_interval = normal_range.min_value.to_s + "-" + normal_range.max_value.to_s
-			else
-				## show the text value.
-				self.display_normal_biological_interval = normal_range.text_value
-			end		 
-		end
-
-		## okay now check that it gets abnormal correctly.
-		## and why the tube is not being registered on the report
-		## what options does the organization have to have.
-		## so who should sign?
-		## do we have each
-		## report on new page
-
-
-
-		# count/grade
-		# comments
-		if applicable_range = get_applicable_range
-			self.display_count_or_grade = (applicable_range.grade || applicable_range.count || "-")
-			self.display_comments_or_inference = applicable_range.inference
-		end
-
+		set_display_range_details
 		# is abnormal
 		self.test_is_abnormal = self.is_abnormal?
 
@@ -353,7 +336,7 @@ class Diagnostics::Test
 	## the idea is to check if any of the tests are abnormal, so that we can show them in the summary.
 	def is_abnormal?
 		if range = self.get_applicable_range
-			range.is_abnormal == Diagnostics::Range::ABNORMAL
+			range.is_abnormal?
 		else
 			return false
 		end
@@ -513,7 +496,9 @@ class Diagnostics::Test
 	end
 
 	## call from order.
-	def add_result(patient)
+	## so here we add_result.
+	## 
+	def add_result(patient,history_tags)
 		#puts "Called add result with patient data"
 		#puts "the result raw is:"
 		#puts self.result_raw.to_s
@@ -547,13 +532,13 @@ class Diagnostics::Test
 					#begin
 						self.result_numeric = self.result_raw.gsub(/[a-zA-Z[[:punct]]]/,'').to_f
 						self.result_text = self.result_raw
-						self.assign_range(patient)
+						self.assign_range(patient,history_tags)
 					#rescue => e
 
 					#end
 				else
 					self.result_text = self.result_raw
-					self.assign_range(patient)
+					self.assign_range(patient,history_tags)
 				end
 			end
 
@@ -569,29 +554,35 @@ class Diagnostics::Test
 		self.result_type == TEXTUAL_RESULT
 	end
 
+	def assign_range(patient,history_tags)
+		self.ranges.each do |r|
+			r.pick_range(history_tags,self.result_numeric, self.result_text) if patient.meets_range_requirements(r)
+		end
+	end
 	
+=begin
 	## so this way it picks both the normal and abnormal range
 	## while both may be the same.
-	def assign_range(patient)
+	def assign_range(patient,history_tags)
 		normal_range_index = nil
-		puts "came to assign range"
+		#puts "came to assign range"
 		self.ranges.each_with_index.map{|c,i|
 			if patient.meets_range_requirements?(c)
-				puts "the patient meets the requirements."
+				#puts "the patient meets the requirements."
 				if c.is_normal_range?
-					puts "it is a normal range"
+					#puts "it is a normal range"
 					normal_range_index = i if normal_range_index.blank?
 				end
 				if self.requires_numeric_result?
-					puts "it requires a numeric result"
+					#puts "it requires a numeric result"
 					if ((self.result_numeric >= c.min_value) && (self.result_numeric <= c.max_value))
 						puts "picks the range for the numeric result"
 						c.pick_range	
 					end
 				elsif self.requires_text_result?
-					puts "it requires a text result"
+					#puts "it requires a text result"
 					if self.result_text == c.text_value
-						puts "picks the text range"
+						#puts "picks the text range"
 						c.pick_range
 					end
 				end
@@ -601,7 +592,7 @@ class Diagnostics::Test
 		self.ranges[normal_range_index].pick_normal_range unless normal_range_index.blank?
 		
 	end
-
+=end
 	
 	## @return[Diagnostics::Range] applicable range, or nil , if none has been picked yet.
 	## convenience method, used in summary_row, to get the applicable range and show its sex, and age.
@@ -622,7 +613,11 @@ class Diagnostics::Test
 	def get_applicable_normal_range
 		
 		res = self.ranges.select{|c|
-			c.normal_picked = 1
+			if k = c.get_picked_tag
+				k.is_normal?
+			else
+				false
+			end
 		}
 
 		if res.blank?
@@ -664,9 +659,9 @@ class Diagnostics::Test
 			abnormal = "-"
 
 			if applicable_range = get_applicable_range
-				inference = applicable_range.inference
-				range_name = applicable_range.get_display_name 
-				abnormal = applicable_range.is_abnormal
+				inference = applicable_range.get_inference
+				range_name = applicable_range.get_display_name
+				abnormal = applicable_range.is_abnormal?
 			end
 
 			'
@@ -716,18 +711,7 @@ class Diagnostics::Test
 	## should return the table, and th part.
 	## will return some headers.
 	def summary_table_headers(args={})
-=begin
- <th>' + self.name + '</th>
- <th>' + self.result_raw + '</th>
- <th>' + self.units + '</th>
- <th>' + range_name + '</th>
- <th>' + inference + '</th>
- <th>' + self.ready_for_reporting + '</th>
- <th>' + self.verification_done + '</th>
- <th><div class="add_result_manually edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Add Result Manually</div>
-  	  <div class="verify edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Verify</div>
- </th>
-=end
+
 		if args["root"] =~ /order/
 			'
 				<thead>
@@ -765,9 +749,8 @@ class Diagnostics::Test
 	## will verify the test only if the picked_range is not abnormal.
 	def verify_if_normal(created_by_user)
 		unless get_applicable_range.blank?
-			if get_applicable_range.is_abnormal == -1
+			if get_applicable_range.is_abnormal?
 				self.verification_done = 1 if self.is_ready_for_reporting?
-				
 			end
 		end 	
 	end	
@@ -810,7 +793,9 @@ class Diagnostics::Test
 	def history_provided?
 		history_provided = true
 		self.tags.each do |tag|
-			history_provided = false unless tag.history_provided?
+			if tag.is_required?
+				history_provided = false unless tag.history_provided?
+			end
 		end
 		history_provided
 	end

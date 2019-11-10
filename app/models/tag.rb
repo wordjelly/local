@@ -32,6 +32,13 @@ class Tag
 	attribute :tag_type, String
 	#validates_presence_of :tag_type
 
+	## required inside range
+	## just a bson object id, that is set on the tag
+	## as more than one tag of the same primary tag can 
+	## be added inside the range.
+	## @set_in : range#add_tags
+	attribute :nested_id, String, mapping: {type: 'keyword'}
+
 	attribute :history_options, Array, mapping: {type: 'keyword', copy_to: "search_all"}
 
 	attribute :selected_option, String, mapping: {type: 'keyword'}
@@ -72,6 +79,7 @@ class Tag
 	attribute :text_range_val , String, mapping: {type: 'keyword'}
 
 	## if this range is selected in the presence of multiple tags.
+	## uses the self#nested_id attribute defined above.
 	attribute :combined_with_history_tag_ids, Array, mapping: {type: 'keyword'}
 
 	## this can be normal/abnormal/history
@@ -79,8 +87,6 @@ class Tag
 	
 	attribute :inference, String, mapping: {type: 'text'}
 	validates_presence_of :inference, :if => Proc.new{|c| c.range_type == ABNORMAL }
-
-
 
 	attribute :comment, String, mapping: {type: 'text'}
 
@@ -90,6 +96,13 @@ class Tag
 
 	attribute :count, Integer, mapping: {type: 'integer'}
 
+	## so more than one can be picked
+	## we have to see
+	## this will be picked by the range.
+	## it has the age and all in it.
+	## this is the just the range value
+	## the range picking will proceed anyways. unabated.
+	attribute :picked, Integer, mapping: {type: 'integer'}
 
     mapping do
 	    indexes :name, type: 'keyword', fields: {
@@ -201,6 +214,9 @@ class Tag
 	    	},
 	    	count: {
 	    		type: 'integer'
+	    	},
+	    	picked: {
+	    		type: 'integer'
 	    	}
 
 	    }
@@ -240,6 +256,10 @@ class Tag
 
 	end	
 
+	def pick
+		self.picked = YES
+	end
+
 
 	######################################################3
 	##
@@ -248,8 +268,20 @@ class Tag
 	##
 	##
 	######################################################
+	def get_biological_interval
+		if is_numerical_range?
+			self.min_range_val.to_s + "-" + self.max_range_val.to_s
+		elsif is_text_range?
+			self.text_range_val.to_s		
+		end
+	end
+
 	def is_history_tag?
 		self.tag_type == HISTORY_TAG
+	end
+
+	def is_required?
+		is_history_tag? && self.option_must_be_chosen == YES
 	end
 
 	## @Called_from : test#history_provided?
@@ -281,5 +313,43 @@ class Tag
 	def history_answered?
 		self.text_history_answered? || self.numerical_history_answered?
 	end
+
+	def no_combinations_defined?
+		self.combined_with_history_tag_ids.blank?
+	end
+
+	def is_numerical_range?
+		!self.min_range_val.blank? && !self.max_range_val.blank?
+	end
+
+	def is_text_range?
+		!self.text_range_val.blank?
+	end
+
+	## @called_from : range#pick_range
+	def combination_satisfied?(matching_tags)
+		self.combined_with_history_tag_ids.map{|c|
+			matching_tags.include? c.id.to_s
+		}.uniq == "[true]"
+	end
+
+	## @called_from : range#pick_range
+	def history_satisfied?(history_tag)
+		if !history_tag.numerical_history_response.blank?
+			history_tag.numerical_history_response.between?(self.min_history_val,self.max_history_val)
+		elsif !history_tag.text_history_response.blank?
+			history_tag.text_history_response == (self.text_history_val)
+		end
+		false
+	end
+
+	## @called_from : range#pick_range
+	def test_value_satisfied?(test_value_numeric, test_value_text)
+		if !test_value_numeric.blank?
+			
+		elsif !test_value_text.blank?
+		end
+	end
+
 
 end
