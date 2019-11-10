@@ -231,17 +231,7 @@ class Diagnostics::Test
 		## 
 		
 		self.ranges_hash.keys.each do |range_key|
-=begin
-			if self.ranges_hash[range_key].keys.size == 1 && self.ranges_hash[range_key].keys[0] == :abnormal
-				self.errors.add(:ranges,"no normal range was defined for this age category, #{range_key}, only an abnormal range has been defined, make sure you define a normal range as well.")
-			elsif self.ranges_hash[range_key].keys.size == 2
-				if self.ranges_hash[range_key][:normal].min_value.between?(self.ranges_hash[range_key][:abnormal].min_value,self.ranges_hash[range_key][:abnormal].max_value)
-					self.errors.add(:ranges,"there is an overlap between the min and max values of the normal and abnormal ranges")
-				elsif self.ranges_hash[range_key][:normal].max_value.between?(self.ranges_hash[range_key][:abnormal].min_value,self.ranges_hash[range_key][:abnormal].max_value)
-					self.errors.add(:ranges,"there is an overlap between the min and max values of the normal and abnormal ranges")
-				end
-			end
-=end
+
 			next_range_start_age = self.ranges_hash[range_key].max_age
 
 			next_range_gender = self.ranges_hash[range_key].sex
@@ -556,43 +546,10 @@ class Diagnostics::Test
 
 	def assign_range(patient,history_tags)
 		self.ranges.each do |r|
-			r.pick_range(history_tags,self.result_numeric, self.result_text) if patient.meets_range_requirements(r)
+			r.pick_range(history_tags,self.result_numeric, self.result_text) if patient.meets_range_requirements?(r)
 		end
 	end
 	
-=begin
-	## so this way it picks both the normal and abnormal range
-	## while both may be the same.
-	def assign_range(patient,history_tags)
-		normal_range_index = nil
-		#puts "came to assign range"
-		self.ranges.each_with_index.map{|c,i|
-			if patient.meets_range_requirements?(c)
-				#puts "the patient meets the requirements."
-				if c.is_normal_range?
-					#puts "it is a normal range"
-					normal_range_index = i if normal_range_index.blank?
-				end
-				if self.requires_numeric_result?
-					#puts "it requires a numeric result"
-					if ((self.result_numeric >= c.min_value) && (self.result_numeric <= c.max_value))
-						puts "picks the range for the numeric result"
-						c.pick_range	
-					end
-				elsif self.requires_text_result?
-					#puts "it requires a text result"
-					if self.result_text == c.text_value
-						#puts "picks the text range"
-						c.pick_range
-					end
-				end
-			end
-		}
-		
-		self.ranges[normal_range_index].pick_normal_range unless normal_range_index.blank?
-		
-	end
-=end
 	
 	## @return[Diagnostics::Range] applicable range, or nil , if none has been picked yet.
 	## convenience method, used in summary_row, to get the applicable range and show its sex, and age.

@@ -257,8 +257,11 @@ class Tag
 	end	
 
 	def pick
+		puts "setting tag as picked: #{self.nested_id}"
 		self.picked = YES
 	end
+
+
 
 
 	######################################################3
@@ -349,6 +352,10 @@ class Tag
 			
 		elsif !test_value_text.blank?
 		end
+	end
+
+	def is_picked?
+		self.picked == YES
 	end
 
 

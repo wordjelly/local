@@ -378,7 +378,7 @@ class Diagnostics::Range
 
 	end
 
-	def get_matching_history_tags
+	def get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
 		matching_history_tags = {}
 		history_tags.keys.each do |tag_id|
 			self.tags.select{|c|
@@ -412,13 +412,13 @@ class Diagnostics::Range
 
 	def pick_normal_tag
 		self.tags.map{|c|
-			c.pick if c.is_normal?
+			c.pick if (c.is_normal? && c.test_value_satisfied?(test_result_numeric,test_result_text))
 		}
 	end
 
 	def pick_abnormal_tag
 		self.tags.map{|c|
-			c.pick if c.is_abnormal?
+			c.pick if (c.is_abnormal? && c.test_value_satisfied?(test_result_numeric,test_result_text))
 		}
 	end
 
@@ -428,7 +428,7 @@ class Diagnostics::Range
 
 	def pick_range(history_tags,test_result_numeric,test_result_text)
 		
-		self.picked = 1
+		self.picked = YES
 			
 		matching_history_tags = get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
 		
@@ -451,6 +451,7 @@ class Diagnostics::Range
 				end
 			end
 		else
+			puts "matching history tags are blank"
 			pick_normal_tag
 			pick_abnormal_tag
 		end
@@ -542,7 +543,7 @@ class Diagnostics::Range
 			c.is_normal?
 		}
 		if t.size == 1
-			t
+			t[0]
 		else
 			nil
 		end
@@ -550,7 +551,7 @@ class Diagnostics::Range
 
 	def get_normal_biological_interval
 		if normal = get_normal_tag
-			normal.biological_interval
+			normal.get_biological_interval
 		else
 			raise("no normal range defined")
 		end

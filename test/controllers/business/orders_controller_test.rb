@@ -93,17 +93,17 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
     test " - creatinine value is normal, so picks the normal range from the tags - " do 
         
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+        
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
 
-        creatinine_report = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
 
         #puts "the creatinine report we found is:"
         #puts creatinine_report.to_s
         #exit(1)
 
-        order = create_plus_path_lab_patient_order([creatinine_report.id.to_s])
+        order = create_plus_path_lab_patient_order([reports[0].id.to_s])
 
         order = Business::Order.find(order.id.to_s)
 
@@ -111,16 +111,28 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         ## of the creatinine.
         order.reports[0].tests[0].result_raw = 15
 
-
         put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
 
         assert_equal "204", response.code.to_s
 
-        order = Business::Order.new(JSON.parse(response.body)["order"])
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
-        #assert_equal true, !order.categories.blank?
-           
+        order = Business::Order.find(order.id.to_s)
 
+        picked_range = order.reports[0].tests[0].ranges.select{|c|
+            c.picked == Diagnostics::Range::YES
+        }
+
+        assert_equal 1, picked_range.size
+        
+        range = picked_range[0]
+
+        if tag = range.get_picked_tag
+            assert_equal 10, tag.min_range_val
+            assert_equal 20, tag.max_range_val
+        else
+            assert_equal true,false
+        end        
 
     end
 
