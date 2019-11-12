@@ -102,6 +102,8 @@ class Business::Order
 			}
 		end
 		self.procedure_versions_hash = procedure_versions_hash
+		puts "the procedure versions hash is:"
+		puts self.procedure_versions_hash.to_s
 		Schedule::Minute.schedule_order(self)		
 	end
 

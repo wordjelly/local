@@ -38,7 +38,66 @@ module TestHelper
         #exit(1)
     end
 
-    
+    def add_normal_value_to_creatinine_order(order,plus_lab_employee)
+
+        order.reports[0].tests[0].result_raw = 15
+
+        order = merge_changes_and_save(Business::Order.find(order.id.to_s),order,plus_lab_employee)             
+        unless order.errors.full_messages.blank?
+            puts "Errors adding normal value to order"
+            exit(1)
+        end
+
+        order
+
+    end
+
+    def create_creatinine_order_and_add_tube(creat_report,plus_lab_employee)
+
+        order = create_plus_path_lab_patient_order(creat_report.id.to_s)
+
+        order = Business::Order.find(order.id.to_s)
+
+        organization_items = Inventory::Item.find_organization_items(plus_lab_employee.organization_members[0].organization_id)
+
+        order.categories[0].items.push(organization_items.first)
+
+        order = merge_changes_and_save(Business::Order.find(order.id.to_s),order,plus_lab_employee)  
+
+        unless order.errors.full_messages.blank?
+            puts "error creating order"
+            exit(1)
+        end 
+
+        order
+
+    end
+
+    def create_required_history_tag(user)
+        t = build_required_history_tag(user)
+        t.save
+        unless t.errors.full_messages.blank?
+            puts "TestHelper:there were errors saving the required history tag"
+            exit(1)
+        end
+        t
+    end
+
+    def build_required_history_tag(user)
+        # what if more than one test needs a the same 
+        # history
+        # we need to collate across tests, to make sure there are
+        # no repeats.
+        t = Tag.new
+        t.name = "one"
+        t.range_type = Tag::HISTORY
+        t.description = "Are you a smoker"
+        t.history_options = [Tag::YES.to_s,Tag::NO.to_s]
+        t.option_must_be_chosen = Tag::YES
+        t.created_by_user = user
+        t.created_by_user_id = user.id.to_s
+        t
+    end
 
     def _setup
         
@@ -292,6 +351,7 @@ module TestHelper
         changed_order.deep_attributes(true).assign_attributes(existing_order)
         existing_order.created_by_user_id = created_by_user.id.to_s
         existing_order.created_by_user = created_by_user
+        
         existing_order.save
         existing_order
     end

@@ -541,6 +541,10 @@ module Concerns::Schedmodule::Order::OrderConcern
 				## and we need to aggregate it.
 				## and then sort out the geo.
 
+				puts "the update script is:"
+				puts c.update_script
+			
+
 				Schedule::Minute.add_bulk_item(update_request)
 				c.employees.first.bookings.first.blocks.each do |block|
 					b.blocks << block

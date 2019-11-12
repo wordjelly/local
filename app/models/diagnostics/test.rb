@@ -521,7 +521,7 @@ class Diagnostics::Test
 				if self.requires_numeric_result?
 					#begin
 						self.result_numeric = self.result_raw.gsub(/[a-zA-Z[[:punct]]]/,'').to_f
-						self.result_text = self.result_raw
+						#self.result_text = self.result_raw
 						self.assign_range(patient,history_tags)
 					#rescue => e
 
@@ -544,7 +544,14 @@ class Diagnostics::Test
 		self.result_type == TEXTUAL_RESULT
 	end
 
+	def reset_picked_ranges
+		self.ranges.each do |r|
+			r.unpick
+		end
+	end
+
 	def assign_range(patient,history_tags)
+		puts "------- CAME TO ASSIGN RANGE ------------ "
 		self.ranges.each do |r|
 			r.pick_range(history_tags,self.result_numeric, self.result_text) if patient.meets_range_requirements?(r)
 		end
@@ -746,12 +753,17 @@ class Diagnostics::Test
 		end
 	end
 
+
+	#9823900650 - Patil
 	## @called_from : order_concern#validation#order_can_be_finalized
 	def history_provided?
 		history_provided = true
 		self.tags.each do |tag|
 			if tag.is_required?
+				#puts "tag is required"
 				history_provided = false unless tag.history_provided?
+			else
+				#puts "tag is not required"
 			end
 		end
 		history_provided

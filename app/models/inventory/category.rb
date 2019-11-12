@@ -232,7 +232,9 @@ class Inventory::Category
 	end
 
 	def satisfied?
+		mod = self.quantity % 100
 		required_item_quantity = (self.quantity/100).to_i
+		required_item_quantity += 1 if (mod > 0)
 		self.items.size == required_item_quantity
 	end
 

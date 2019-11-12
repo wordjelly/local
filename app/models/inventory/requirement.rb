@@ -12,7 +12,6 @@ class Inventory::Requirement
 	include Concerns::FormConcern
 	include Concerns::CallbacksConcern
 
-	
 	index_name "pathofast-inventory-requirements"
 	document_type "inventory/requirement"
 

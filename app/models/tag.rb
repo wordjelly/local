@@ -24,6 +24,7 @@ class Tag
 	TAG_TYPES = [EMPLOYEE_TAG,COLLECTION_TAG,HISTORY_TAG]
 	YES = 1
 	NO = -1
+	SMOKER = "smoker"
 	NORMAL = "normal"
 	ABNORMAL = "abnormal"
 	HISTORY = "history"
@@ -40,8 +41,6 @@ class Tag
 	attribute :nested_id, String, mapping: {type: 'keyword'}
 
 	attribute :history_options, Array, mapping: {type: 'keyword', copy_to: "search_all"}
-
-	attribute :selected_option, String, mapping: {type: 'keyword'}
 
 	attribute :text_history_response, String, mapping: {type: 'keyword'}
 
@@ -120,6 +119,7 @@ class Tag
 		document.assign_id_from_name(nil)
 	end
 
+
 	## do you want to first embed it in test
 	## and write the test and range validations next.
 	## then the order range assessment.
@@ -159,9 +159,6 @@ class Tag
 	    		type: 'keyword'
 	    	},
 	    	history_options: {
-	    		type: 'keyword'
-	    	},
-	    	selected_option: {
 	    		type: 'keyword'
 	    	},
 	    	selected_option_must_match_history_options: {
@@ -231,7 +228,6 @@ class Tag
 					:description,
 					:name, 
 					:tag_type, 
-					:selected_option, 
 					:selected_option_must_match_history_options, 
 					:option_must_be_chosen, 
 					{:history_options => []}, 
@@ -257,10 +253,14 @@ class Tag
 	end	
 
 	def pick
-		puts "setting tag as picked: #{self.nested_id}"
+		#puts "setting tag as picked: #{self.nested_id}"
 		self.picked = YES
 	end
 
+
+	def unpick
+		self.picked = NO
+	end
 
 
 
@@ -280,21 +280,35 @@ class Tag
 	end
 
 	def is_history_tag?
-		self.tag_type == HISTORY_TAG
+		self.range_type == HISTORY_TAG
 	end
 
+
+
 	def is_required?
+		puts "is the tag required"
+		puts "is it a history tag: #{is_history_tag?}"
+		puts "option must be selected: #{self.option_must_be_chosen}"
 		is_history_tag? && self.option_must_be_chosen == YES
 	end
 
+
+
 	## @Called_from : test#history_provided?
 	def history_provided?
+		#puts "came to check history provided?"
+		puts "is history tag: #{is_history_tag?}"
+		#puts "selected option: #{self.selected_option}"
+		puts "text history response is: #{self.text_history_response}" 
 		return true unless is_history_tag?
-		!self.selected_option.blank?
+		self.history_answered?
 	end
 
 	def is_normal?
-		self.range_type == NORMAL
+		#puts "came to check if tag is normal: #{self.range_type}"
+		k = self.range_type == NORMAL
+		#puts "Returninig k : #{k}"
+		k
 	end
 
 	def is_abnormal?
@@ -314,6 +328,10 @@ class Tag
 	end
 
 	def history_answered?
+		puts "Came to check text history answered"
+		puts self.text_history_answered?.to_s
+		puts "Came to check numerical history answered"
+		puts self.numerical_history_answered?.to_s
 		self.text_history_answered? || self.numerical_history_answered?
 	end
 
@@ -338,10 +356,14 @@ class Tag
 
 	## @called_from : range#pick_range
 	def history_satisfied?(history_tag)
+		puts "history tag is &&&&&&&&&&&& "
+		puts history_tag.to_s
 		if !history_tag.numerical_history_response.blank?
-			history_tag.numerical_history_response.between?(self.min_history_val,self.max_history_val)
+			puts "numerical history response not blank"
+			return history_tag.numerical_history_response.to_f.between?(self.min_history_val.to_f,self.max_history_val.to_f)
 		elsif !history_tag.text_history_response.blank?
-			history_tag.text_history_response == (self.text_history_val)
+			puts "text history response not blank."
+			return history_tag.text_history_response.to_s == (self.text_history_val.to_s)
 		end
 		false
 	end
@@ -349,8 +371,12 @@ class Tag
 	## @called_from : range#pick_range
 	def test_value_satisfied?(test_value_numeric, test_value_text)
 		if !test_value_numeric.blank?
-			
+			puts "test value numeric is not blank: #{test_value_numeric}"
+			puts "self min range val is: #{self.min_range_val}"
+			puts "Self max range val is: #{self.max_range_val}"
+			test_value_numeric.between?(self.min_range_val,self.max_range_val)
 		elsif !test_value_text.blank?
+			test_value_text == self.text_range_val
 		end
 	end
 

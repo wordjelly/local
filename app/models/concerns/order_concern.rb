@@ -384,12 +384,22 @@ module Concerns::OrderConcern
 
 	## validation, called if finalize_order has changed.
 	## how does the range interpretation take place with these tags.
+	## ya i can deliver it on the pathofast portal
 	def order_can_be_finalized
 		self.reports.each do |report|
-			self.requirements.each do |req|
+
+			puts "checking report: #{report.id.to_s}"
+				
+			report.requirements.each do |req|
+
+				puts "checking requirement: #{req.id.to_s}, is it satisfied: #{req.satisfied?}"
+					
 				self.errors.add(:requirements, "the requirement: #{req.name} was not satisfied") unless req.satisfied?
+
 			end
-			self.tests.each do |test|
+
+			report.tests.each do |test|
+				puts "checking test: #{test.name.to_s}"
 				self.errors.add(:reports, "the test #{test.name}, in the report: #{report.name}, has not been provided with the relevant history, please answer questions to finalize the order") unless test.history_provided?
 			end
 		end
@@ -781,6 +791,9 @@ module Concerns::OrderConcern
 	## for now just let me make something simple.
 	## called before save, to add the patient values
 	def add_report_values
+		## so this can only happen if the order is finalized.
+		## that is the main thing.
+
 		unless self.patient.blank?
 			self.reports.map{|report|
 				report.tests.map{|test|
@@ -1363,7 +1376,7 @@ module Concerns::OrderConcern
 			end
 			flush_bulk	
 			orders = {}
-			puts self.search_results.to_s
+			#puts self.search_results.to_s
 			## so we make it a hashie mash.
 			self.search_results.each do |response|
 				response["hits"]["hits"].each do |hit|

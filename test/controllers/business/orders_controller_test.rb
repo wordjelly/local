@@ -88,8 +88,6 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         assert_equal true, found_item
 
     end
-=end
-
 
     test " - creatinine value is normal, so picks the normal range from the tags - " do 
         
@@ -136,18 +134,219 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
     end
 
-=begin
+
     test " - if a test has a required history question, then does not go forward till that is answered -- " do 
 
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
+        creat_report = reports[0]
+        required_history_tag = create_required_history_tag(plus_lab_employee)
+        creat_report.tests[0].template_tag_ids << required_history_tag.id.to_s
+
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        #puts creat_report.tests[0].tags.to_s
+        #exit(1)
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+
+        ################################################
+        ##
+        ##
+        ## CREATE AND FINALIZE ORDER.
+        ##
+        ##
+        ###############################################
+
+        order = create_creatinine_order_and_add_tube(creat_report,plus_lab_employee)
+
+        #############################################
+        ##
+        ##
+        ## 
+        ##
+        ##
+        #############################################
+        order.finalize_order = Business::Order::YES
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "404", response.code.to_s
+
+        k = JSON.parse(response.body)
+
+        puts k["errors"]
+
     end
+=end
 
-
+=begin
     test " - picks the range as per the history answer(Textual) - " do 
 
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
+        creat_report = reports[0]
+        required_history_tag = create_required_history_tag(plus_lab_employee)
+        creat_report.tests[0].template_tag_ids << required_history_tag.id.to_s
+        creat_report.tests[0].ranges[0].template_tag_ids << required_history_tag.id.to_s
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+
+        creat_report = Diagnostics::Report.find(creat_report.id.to_s)
+
+        ## we want to give it a textual history val.
+        creat_report.tests[0].ranges[0].tags[-1].text_history_val = Tag::YES.to_s
+        ## i think here, the min and max range vals don't 
+        ## need to be checked
+
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+        ################################################
+        ##
+        ##
+        ## CREATE AND FINALIZE ORDER.
+        ##
+        ##
+        ###############################################
+
+        order = create_creatinine_order_and_add_tube(creat_report,plus_lab_employee)
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        order = Business::Order.find(order.id.to_s)
+        
+        order = add_normal_value_to_creatinine_order(order,plus_lab_employee)
+
+        #############################################
+        ##
+        ##
+        ## 
+        ##
+        ##
+        #############################################
+        ## answer the question in the first test
+        ## so the range interpretation will happen anwwyas.
+        ## so when the value is added to the test
+        order.reports[0].tests[0].tags[0].text_history_response = Tag::YES.to_s
+
+
+        order.finalize_order = Business::Order::YES
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+
+        assert_equal "204", response.code.to_s
+
+        o = Business::Order.find(order.id.to_s)
+
+        assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
+
+    end
+=end
+    
+    ## okay can do this quick.    
+    test " - picks the range as per the history answer(numeric) - " do 
+        
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
+        creat_report = reports[0]
+        required_history_tag = create_required_history_tag(plus_lab_employee)
+        creat_report.tests[0].template_tag_ids << required_history_tag.id.to_s
+        creat_report.tests[0].ranges[0].template_tag_ids << required_history_tag.id.to_s
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+
+        creat_report = Diagnostics::Report.find(creat_report.id.to_s)
+
+        ## we want to give it a textual history val.
+        creat_report.tests[0].ranges[0].tags[-1].text_history_val = Tag::YES.to_s
+        ## i think here, the min and max range vals don't 
+        ## need to be checked
+
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+        ################################################
+        ##
+        ##
+        ## CREATE AND FINALIZE ORDER.
+        ##
+        ##
+        ###############################################
+
+        order = create_creatinine_order_and_add_tube(creat_report,plus_lab_employee)
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        order = Business::Order.find(order.id.to_s)
+        
+        order = add_normal_value_to_creatinine_order(order,plus_lab_employee)
+
+        #############################################
+        ##
+        ##
+        ## 
+        ##
+        ##
+        #############################################
+        ## answer the question in the first test
+        ## so the range interpretation will happen anwwyas.
+        ## so when the value is added to the test
+        order.reports[0].tests[0].tags[0].text_history_response = Tag::YES.to_s
+
+
+        order.finalize_order = Business::Order::YES
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+
+        assert_equal "204", response.code.to_s
+
+        o = Business::Order.find(order.id.to_s)
+
+        assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
+
+
     end
 
+=begin
+    test " - cannot edit the history question inside the test, only the answers - " do 
 
-    test " - picks the range as per the history answer(numeric) - " do 
+    end
+
+    test " - if multiple tests require an answer to the same tag, then it ignores errors if any one test has answered that question - " do 
 
     end
 
@@ -159,9 +358,14 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
     end
 
-    test " - no range satisfies the value - " do 
+    test " - no history range satisfies the value provided - " do 
 
     end
+
+    test " - no abnormal range satisfies the value provided - " do 
+
+    end
+    
 
     test " - more than one history range satisfies the value - " do 
         
@@ -169,8 +373,10 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
     test " - more than one combination history range satisfies the value - " do 
 
-
     end
+
+    # that still comes to about 4.5 hours.
+    # excercise today has to be about 
 
 =end
 

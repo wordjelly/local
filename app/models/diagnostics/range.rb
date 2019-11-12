@@ -122,13 +122,13 @@ class Diagnostics::Range
 
 	## picked -> 1 (means this range satisfied the test value.)
 	## picked -> -1 (default, does not satisfy.)
-	attribute :picked, Integer, mapping: {type: 'integer'}, default: -1	
+	attribute :picked, Integer, mapping: {type: 'integer'}, default: NO
 
 	## abnormal -> 1
 	## normal -> -1
 	#attribute :is_abnormal, Integer, mapping: {type: 'integer'}, default: 1	
 
-	attribute :is_default_range, Integer, mapping: {type: 'integer'}, default: -1
+	attribute :is_default_range, Integer, mapping: {type: 'integer'}, default: NO
 
 	#attribute :inference, String, mapping: {type: 'text'}
 
@@ -381,10 +381,14 @@ class Diagnostics::Range
 	def get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
 		matching_history_tags = {}
 		history_tags.keys.each do |tag_id|
+			puts "checking tag id: #{tag_id}"
 			self.tags.select{|c|
-				((c.id.to_s == tag_id) && (c.history_satisfied?(history_tags[tag_id])) && (c.test_value_satisfied?(test_result_numeric,test_result_text)))
+				puts "checking self tag id: #{c.id.to_s}"
+
+				((c.id.to_s == tag_id) && (c.history_satisfied?(history_tags[tag_id])) )
+				## (c.test_value_satisfied?(test_result_numeric,test_result_text))
 			}.each do |tag|
-				matching_history_tags[tag.nested_tag_id] = tag
+				matching_history_tags[tag.nested_id] = tag
 			end
 		end
 		matching_history_tags
@@ -392,42 +396,59 @@ class Diagnostics::Range
 
 	def get_combination_tags(matching_history_tags)
 		matching_history_tags.keys.select{|c|
-			matching_history_tags[c].combinations_satisfied?(matching_history_tags)
+			matching_history_tags[c].combination_satisfied?(matching_history_tags)
+		}.map{|c|
+			matching_history_tags[c]
 		}
 	end
 
 	def get_non_combination_tags(matching_history_tags)
-		matching_history_tags.select{|c|
-			c.no_combinations_defined?
+		matching_history_tags.keys.select{|c|
+			matching_history_tags[c].no_combinations_defined?
+		}.map{|c|
+			matching_history_tags[c]
 		}
 	end
 
 	def pick_tag(tag)
 		self.tags.map{|c|
-			if c.nested_tag_id == tag.nested_tag_id
+			if c.nested_id == tag.nested_id
 				c.pick
 			end
 		}
 	end
 
-	def pick_normal_tag
+	def pick_normal_tag(test_result_numeric,test_result_text)
+		#puts "came to pick normal tag"
 		self.tags.map{|c|
 			c.pick if (c.is_normal? && c.test_value_satisfied?(test_result_numeric,test_result_text))
 		}
 	end
 
-	def pick_abnormal_tag
+
+	def pick_abnormal_tag(test_result_numeric,test_result_text)
 		self.tags.map{|c|
 			c.pick if (c.is_abnormal? && c.test_value_satisfied?(test_result_numeric,test_result_text))
 		}
 	end
 
+	def unpick
+		self.picked = NO
+		self.tags.each do |tag|
+			tag.unpick
+		end
+	end
 
-	## what about picking a normal and abnormal tags
-	## in case of 
 
 	def pick_range(history_tags,test_result_numeric,test_result_text)
 		
+		puts "incoming history tags are:"
+		puts history_tags.to_s
+
+		puts "test result numeric: #{test_result_numeric}"
+
+		puts "test result text: #{test_result_text}"
+
 		self.picked = YES
 			
 		matching_history_tags = get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
@@ -446,14 +467,14 @@ class Diagnostics::Range
 				elsif non_combination_tags.size == 1
 					pick_tag(non_combination_tags[0])
 				else
-					pick_normal_tag
-					pick_abnormal_tag
+					pick_normal_tag(test_result_numeric,test_result_text)
+					pick_abnormal_tag(test_result_numeric,test_result_text)
 				end
 			end
 		else
 			puts "matching history tags are blank"
-			pick_normal_tag
-			pick_abnormal_tag
+			pick_normal_tag(test_result_numeric,test_result_text)
+			pick_abnormal_tag(test_result_numeric,test_result_text)
 		end
 	end
 	###########################################################
@@ -533,7 +554,7 @@ class Diagnostics::Range
 			c.is_picked?
 		}
 		if t.size == 1
-			return t
+			return t[0]
 		end
 		return nil
 	end
