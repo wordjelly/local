@@ -95,6 +95,8 @@ class Tag
 
 	attribute :count, Integer, mapping: {type: 'integer'}
 
+
+
 	## so more than one can be picked
 	## we have to see
 	## this will be picked by the range.
@@ -102,6 +104,25 @@ class Tag
 	## this is the just the range value
 	## the range picking will proceed anyways. unabated.
 	attribute :picked, Integer, mapping: {type: 'integer'}
+
+	###################################################
+	##
+	##
+	## date related parameters.
+	##
+	##
+	###################################################
+	#yyyy-MM-dd'T'HH:mm:ss
+	attribute :_date, DateTime, mapping: {type: 'date', format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"}
+		
+	attribute :completed_years_since_date, Integer, mapping: {type: 'integer'}
+
+	attribute :completed_months_since_date, Integer, mapping: {type: 'integer'}
+
+	attribute :completed_days_since_date, Integer, mapping: {type: 'integer'}
+
+	attribute :completed_weeks_since_date, Integer, mapping: {type: 'integer'}
+
 
     mapping do
 	    indexes :name, type: 'keyword', fields: {
@@ -117,8 +138,20 @@ class Tag
 	
 	before_validation do |document|
 		document.assign_id_from_name(nil)
+		puts "self _date is: #{self._date.to_s}"
+		document.assign_time_since_date unless document._date.blank?
 	end
 
+
+	def assign_time_since_date
+		puts "came to assing time since date."
+		t = DateTime.now
+		self.completed_weeks_since_date = TimeDifference.between(_date, t).in_weeks.to_i
+		self.completed_months_since_date = TimeDifference.between(_date, t).in_months.to_i
+		self.completed_years_since_date = TimeDifference.between(_date, t).in_years.to_i
+		self.completed_days_since_date = TimeDifference.between(_date, t).in_days.to_i
+		puts "completed are; #{self.completed_weeks_since_date}"
+	end
 
 	## do you want to first embed it in test
 	## and write the test and range validations next.
@@ -214,6 +247,10 @@ class Tag
 	    	},
 	    	picked: {
 	    		type: 'integer'
+	    	},
+	    	_date: {
+	    		type: 'date',
+	    		format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 	    	}
 
 	    }
@@ -245,7 +282,8 @@ class Tag
 					:comment, 
 					:reference, 
 					:grade, 
-					:count 
+					:count,
+					:_date
 				]
 			}
 		]
@@ -253,7 +291,6 @@ class Tag
 	end	
 
 	def pick
-		#puts "setting tag as picked: #{self.nested_id}"
 		self.picked = YES
 	end
 
@@ -261,9 +298,6 @@ class Tag
 	def unpick
 		self.picked = NO
 	end
-
-
-
 	######################################################3
 	##
 	##
@@ -286,9 +320,9 @@ class Tag
 
 
 	def is_required?
-		puts "is the tag required"
-		puts "is it a history tag: #{is_history_tag?}"
-		puts "option must be selected: #{self.option_must_be_chosen}"
+		#puts "is the tag required"
+		#puts "is it a history tag: #{is_history_tag?}"
+		#puts "option must be selected: #{self.option_must_be_chosen}"
 		is_history_tag? && self.option_must_be_chosen == YES
 	end
 
@@ -328,10 +362,10 @@ class Tag
 	end
 
 	def history_answered?
-		puts "Came to check text history answered"
-		puts self.text_history_answered?.to_s
-		puts "Came to check numerical history answered"
-		puts self.numerical_history_answered?.to_s
+		#puts "Came to check text history answered"
+		#puts self.text_history_answered?.to_s
+		#puts "Came to check numerical history answered"
+		#puts self.numerical_history_answered?.to_s
 		self.text_history_answered? || self.numerical_history_answered?
 	end
 
@@ -356,13 +390,15 @@ class Tag
 
 	## @called_from : range#pick_range
 	def history_satisfied?(history_tag)
-		puts "history tag is &&&&&&&&&&&& "
-		puts history_tag.to_s
+		#puts "history tag is &&&&&&&&&&&& "
+		#puts history_tag.to_s
 		if !history_tag.numerical_history_response.blank?
-			puts "numerical history response not blank"
+			puts "numerical history response not blank and is: #{history_tag.numerical_history_response}"
+			puts "min history val is: #{self.min_history_val}, and max history val: #{self.max_history_val}"
 			return history_tag.numerical_history_response.to_f.between?(self.min_history_val.to_f,self.max_history_val.to_f)
 		elsif !history_tag.text_history_response.blank?
-			puts "text history response not blank."
+			puts "text history response not blank and is: #{history_tag.text_history_response}"
+			puts "self text history val is: #{self.text_history_val}"
 			return history_tag.text_history_response.to_s == (self.text_history_val.to_s)
 		end
 		false

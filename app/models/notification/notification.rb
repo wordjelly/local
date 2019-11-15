@@ -1,0 +1,5 @@
+class Notification::Notification
+
+	
+
+end

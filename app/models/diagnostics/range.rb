@@ -243,15 +243,37 @@ class Diagnostics::Range
 	end
 
 	def add_tags
-		self.template_tag_ids.map{|t_id|
-			if self.tags.select{|c|
-				c.id.to_s == t_id
-			}.size == 0
-				tag = Tag.find(t_id)
-				tag.nested_id = BSON::ObjectId.new.to_s
-				self.tags << tag
+		tids = {}
+
+		self.template_tag_ids.each_with_index{|val,key|
+
+			if tids[val].blank?
+				tids[val] = 1
+			else
+				tids[val]+=1
 			end
 		}
+
+		tids.keys.each do |tid|
+			to_add = tids[tid] - (self.tags.select{|c|
+				c.id.to_s == tid
+			}).size
+			to_add.times do |n|
+				self.tags << Tag.find(tid)
+			end
+		end
+
+		## 
+=begin
+		self.template_tag_ids.map{|t_id|
+			## we can have them again.
+			## it has to be one to one.
+			## so this works differently.
+			tag = Tag.find(t_id)
+			tag.nested_id = BSON::ObjectId.new.to_s
+			self.tags << tag
+		}
+=end
 	end
 
 	def update_tags
@@ -384,9 +406,7 @@ class Diagnostics::Range
 			puts "checking tag id: #{tag_id}"
 			self.tags.select{|c|
 				puts "checking self tag id: #{c.id.to_s}"
-
 				((c.id.to_s == tag_id) && (c.history_satisfied?(history_tags[tag_id])) )
-				## (c.test_value_satisfied?(test_result_numeric,test_result_text))
 			}.each do |tag|
 				matching_history_tags[tag.nested_id] = tag
 			end
@@ -442,17 +462,20 @@ class Diagnostics::Range
 
 	def pick_range(history_tags,test_result_numeric,test_result_text)
 		
-		puts "incoming history tags are:"
-		puts history_tags.to_s
+		#puts "incoming history tags are:"
+		#puts history_tags.to_s
 
-		puts "test result numeric: #{test_result_numeric}"
+		#puts "test result numeric: #{test_result_numeric}"
 
-		puts "test result text: #{test_result_text}"
+		#puts "test result text: #{test_result_text}"
 
 		self.picked = YES
 			
 		matching_history_tags = get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
 		
+		puts "matching history tags are:"
+		puts matching_history_tags.to_s
+
 		unless matching_history_tags.blank?
 			combination_tags = get_combination_tags(matching_history_tags)
 			if combination_tags.size > 1
@@ -461,6 +484,9 @@ class Diagnostics::Range
 				pick_tag(combination_tags[0])
 			else
 				non_combination_tags = get_non_combination_tags(matching_history_tags)
+
+				puts "total non combination tags are:"
+				puts non_combination_tags.size.to_s
 
 				if non_combination_tags.size > 1
 					self.errors.add(:tags,"more than one history has caused multiple history ranges to get selected")
@@ -472,7 +498,7 @@ class Diagnostics::Range
 				end
 			end
 		else
-			puts "matching history tags are blank"
+			puts "matching history tags are blank-------->"
 			pick_normal_tag(test_result_numeric,test_result_text)
 			pick_abnormal_tag(test_result_numeric,test_result_text)
 		end

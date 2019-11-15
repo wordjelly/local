@@ -206,6 +206,35 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
     end
 
+    ## should this have the sign ?
+    test "consent to perform test" do 
+
+    end
+
+    test "patient can create order, does not need to add tubes, can finalize" do 
+
+    end
+
+    test "doctor can create order, delegate to organization, does not need to finalize" do 
+
+
+    end
+
+
+    test "order can override organization level settings for reports, billing etc" do 
+
+    end
+
+
+    test " patient on signing up, gets his own organization automatically " do 
+
+
+    end
+
+    test " organization on being created gets a patient " do 
+
+    end
+
     test " plus path lab creates an order, outsources a report to pathofast , plus cannot edit the values in that report" do 
 
     end
@@ -242,6 +271,160 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
    	end
 
+    ########################################################
+    ##
+    ##
+    ## AVAILABILITY API ---> hooks into the status api.
+    ## 
+    ##
+    ##
+    ########################################################
+    ## TODO 15th
+    test " order returns nearest available slots to desired time, for requested reports " do 
+
+    end
+
+    ## TODO 15th
+    test " order has option for home visit -> tags on the order " do 
 
 
+    end
+
+    ## TODO 15th
+    ## so order also has tags
+    ## like phlebotomy-visit/collection-visit
+    test " order has option for techinician visit to doctor -> tags on the order" do 
+
+    end
+
+    ######################################################
+
+    test " order has option for delivery boy visit to doctor/another lab " do 
+
+    end
+
+    test " organization can define daily preferred round time " do 
+
+
+    end
+
+    test " organization on giving its location shows the transport options " do 
+
+    end
+
+    test " terms and conditions automatically established on organization sign up " do 
+
+
+    end
+
+    test "organization can request inventory from another organization, and this gets approved depending on how many tests they have consumed or sent" do 
+
+
+    end
+    ## how to monitor organization inventory, and request for more tubes, and how does that work out exactly ?
+    ## i want all that handled by software as well.
+    ########################################################
+    ##
+    ##
+    ## NOTIFICATION TO PATIENTS/DOCTORS -> QUEUED BY TIME.
+    ##
+    ##
+    ########################################################
+    test " each test can have information to be sent to (patient), (doctor), lab at a certain time before or after the test" do 
+
+
+    end
+    
+    test " the information can include a url / video link " do 
+    end
+
+    test " patient review/ doctor review / on the order can be accepted " do 
+
+    end
+
+    test " review can be specific to certain statuses, and cannot be edited by the lab staff " do 
+
+
+    end
+
+    test " patient gets the google review notification after the order is completed " do 
+
+
+    end
+
+    test " alert value notifications are sent to the doctor " do 
+
+    end
+
+    test " user can see pending worklist " do 
+
+
+    end
+
+    test " user can see entire schedule " do 
+
+
+    end
+    ########################################################
+    ##
+    ##
+    ## SENDING THE REPORTS/ maybe this comes in the notifications
+    ## so you can choose users from your organization
+    ## so these are basically user ids.
+    ## to send the reports to
+    ## to send the report to a different doctor/user
+    ## you can choose them by name.
+    ## or add bare numbers or emails
+    ## so that setting should be there on the order level
+    ## or on the 
+    ## it should also send the copy to the email of the creating users organizations.
+    ## so we define these as organization level settings.
+    ## get on with this shit instantly.
+    ## we add an array called recipients
+    ## user_id / mobile / email
+    ## if user id is defined, then no mobile or email needs to be given.
+    ## otherwise either or both can be given.
+    ## should accept a resend_to this user button.
+    ## so that will also work.
+    ## we can nest these objects under notification
+    ## as a module.
+    ## i can manage these 
+    ##
+    ########################################################,
+    test " can define at the organization / patient level, to always send reports to certain people " do 
+
+
+    end
+
+    test " patient can add doctors emails to send the report " do 
+
+    end
+
+    test " other lab can also add these emails " do 
+
+    end
+
+    test " can choose users from existing organization to send the report to " do 
+
+    end
+
+    test " can resend the report by means of an attr_accessor, to some parties, for eg mark some parties to resend the report to setting " do 
+
+    end
+
+    ## so there are 40 tests
+    ## in 5 days -> 8 tests per day
+    ## worst case scenario this takes 10 days.
+    ## somewhere or the other, we will hit a block
+    ## and there will be some spillover
+    ## but if i can get this out of the way
+    ## and then the last thing of all is status.
+    ## what about redaction?
+    ## this is a status level thing.
+    ## that should be the end of it.
+    ## this week we have made a dent in LIS
+    ## 22 -> 30 : i need to give a format to these people to make the report templates somehow.
+    ## the problem will be the ranges
+    ## if i make them, then it will be error free
+    ## otherwise im screwed
 end

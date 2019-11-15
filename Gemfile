@@ -15,7 +15,7 @@ gem 'aws-sdk'
 gem 'virtus'
 gem 'premailer-rails'
 gem 'youtube_rails'
-
+gem 'time_difference'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails','5.2.3'

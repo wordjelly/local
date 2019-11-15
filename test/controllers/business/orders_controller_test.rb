@@ -143,7 +143,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
         ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
         creat_report = reports[0]
-        required_history_tag = create_required_history_tag(plus_lab_employee)
+        required_history_tag = create_required_text_history_tag(plus_lab_employee)
         creat_report.tests[0].template_tag_ids << required_history_tag.id.to_s
 
 
@@ -165,7 +165,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         ##
         ###############################################
 
-        order = create_creatinine_order_and_add_tube(creat_report,plus_lab_employee)
+        order = create_order_and_add_tube(creat_report,plus_lab_employee)
 
         #############################################
         ##
@@ -185,9 +185,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         puts k["errors"]
 
     end
-=end
 
-=begin
     test " - picks the range as per the history answer(Textual) - " do 
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
@@ -196,7 +194,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
         ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
         creat_report = reports[0]
-        required_history_tag = create_required_history_tag(plus_lab_employee)
+        required_history_tag = create_required_text_history_tag(plus_lab_employee)
         creat_report.tests[0].template_tag_ids << required_history_tag.id.to_s
         creat_report.tests[0].ranges[0].template_tag_ids << required_history_tag.id.to_s
 
@@ -229,13 +227,13 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         ##
         ###############################################
 
-        order = create_creatinine_order_and_add_tube(creat_report,plus_lab_employee)
+        order = create_order_and_add_tube(creat_report,plus_lab_employee)
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
         order = Business::Order.find(order.id.to_s)
         
-        order = add_normal_value_to_creatinine_order(order,plus_lab_employee)
+        order = add_value_to_order(order,plus_lab_employee)
 
         #############################################
         ##
@@ -262,8 +260,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
 
     end
-=end
-    
+
     ## okay can do this quick.    
     test " - picks the range as per the history answer(numeric) - " do 
         
@@ -273,7 +270,291 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
         ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
         creat_report = reports[0]
-        required_history_tag = create_required_history_tag(plus_lab_employee)
+
+        required_number_history_tag = create_required_number_history_tag(plus_lab_employee)
+
+        creat_report.tests[0].template_tag_ids << required_number_history_tag.id.to_s
+        
+        creat_report.tests[0].ranges[0].template_tag_ids << required_number_history_tag.id.to_s
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+
+        creat_report = Diagnostics::Report.find(creat_report.id.to_s)
+
+        ## we want to give it a textual history val.
+        ## so it can be something like how many days since you last smoked.
+        creat_report.tests[0].ranges[0].tags[-1].min_history_val = 4
+        creat_report.tests[0].ranges[0].tags[-1].max_history_val = 14
+        
+
+        ## i think here, the min and max range vals don't 
+        ## need to be checked
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+        ################################################
+        ##
+        ##
+        ## CREATE AND FINALIZE ORDER.
+        ##
+        ##
+        ###############################################
+
+        order = create_order_and_add_tube(creat_report,plus_lab_employee)
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        order = Business::Order.find(order.id.to_s)
+        
+        order = add_value_to_order(order,plus_lab_employee)
+
+        #############################################
+        ##
+        ##
+        ## 
+        ##
+        ##
+        #############################################
+        ## answer the question in the first test
+        ## so the range interpretation will happen anwwyas.
+        ## so when the value is added to the test
+        order.reports[0].tests[0].tags[0].numerical_history_response = 6
+
+
+        order.finalize_order = Business::Order::YES
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+
+        assert_equal "204", response.code.to_s
+
+        o = Business::Order.find(order.id.to_s)
+
+        assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
+
+
+    end
+
+   
+
+    test " - if multiple tests require an answer to the same tag, then it ignores errors if any one test has answered that question - " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "hemogram"})
+
+        ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
+        hemogram_report = reports[0]
+        required_history_tag = create_required_text_history_tag(plus_lab_employee)
+        hemogram_report.tests[0].template_tag_ids << required_history_tag.id.to_s
+        hemogram_report.tests[0].ranges[0].template_tag_ids << required_history_tag.id.to_s
+
+        hemogram_report.tests[1].template_tag_ids << required_history_tag.id.to_s
+        hemogram_report.tests[1].ranges[0].template_tag_ids << required_history_tag.id.to_s
+
+        hemogram_report = merge_changes_and_save(Diagnostics::Report.find(hemogram_report.id.to_s),hemogram_report,plus_lab_employee)  
+
+        unless hemogram_report.errors.full_messages.blank?
+            puts "error hemograming merged report"
+            exit(1)
+        end 
+
+        hemogram_report = Diagnostics::Report.find(hemogram_report.id.to_s)
+
+        ## we want to give it a textual history val.
+        hemogram_report.tests[0].ranges[0].tags[-1].text_history_val = Tag::YES.to_s
+        ## i think here, the min and max range vals don't 
+        ## need to be checked
+
+
+        hemogram_report = merge_changes_and_save(Diagnostics::Report.find(hemogram_report.id.to_s),hemogram_report,plus_lab_employee)  
+
+        unless hemogram_report.errors.full_messages.blank?
+            puts "error hemograming merged report"
+            exit(1)
+        end 
+        ################################################
+        ##
+        ##
+        ## CREATE AND FINALIZE ORDER.
+        ##
+        ##
+        ###############################################
+
+        order = create_order_and_add_tube(hemogram_report,plus_lab_employee)
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        order = Business::Order.find(order.id.to_s)
+        
+        order = add_value_to_order(order,plus_lab_employee,0,12)
+
+        order = Business::Order.find(order.id.to_s)
+
+        order = add_value_to_order(order,plus_lab_employee,1,15)        
+
+        #############################################
+        ##
+        ##
+        ## 
+        ##
+        ##
+        #############################################
+        ## answer the question in the first test
+        ## dont answer it in the second test, as it is the same tag.
+        order.reports[0].tests[0].tags[0].text_history_response = Tag::YES.to_s
+
+
+        order.finalize_order = Business::Order::YES
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+
+        #k = JSON.parse(response.body)
+        #puts k["errors"]
+
+        assert_equal "204", response.code.to_s
+
+
+        #o = Business::Order.find(order.id.to_s)
+
+        #assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
+
+    end
+=end
+
+=begin
+    test " - if multiple histories are there, picks the combined range -- " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
+        creat_report = reports[0]
+
+        ## i cannot believe i gave myself one more day for this.
+        ## but today we can deliver.
+        ## ADD NUMBER TAG.
+        required_number_history_tag = create_required_number_history_tag(plus_lab_employee)
+
+        creat_report.tests[0].template_tag_ids << required_number_history_tag.id.to_s
+        
+        creat_report.tests[0].ranges[0].template_tag_ids << required_number_history_tag.id.to_s
+
+
+        ## ADD TEXT TAG
+        required_text_history_tag = 
+            create_required_text_history_tag(plus_lab_employee)
+
+        creat_report.tests[0].template_tag_ids << required_text_history_tag.id.to_s
+        
+        creat_report.tests[0].ranges[0].template_tag_ids << required_text_history_tag.id.to_s
+
+        ## add this twice as the second one is going to be in combination.
+        creat_report.tests[0].ranges[0].template_tag_ids << required_text_history_tag.id.to_s
+
+
+
+
+        ## i want to add this in combination also.
+        ## into the range -> using the combination id.
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+
+        creat_report = Diagnostics::Report.find(creat_report.id.to_s)
+
+        ## we want to give it a textual history val.
+        ## so it can be something like how many days since you last smoked.
+        ## so this tag is -2
+        ## the combination tag is the numeric + the nested tag id of the text tag.
+        creat_report.tests[0].ranges[0].tags[-1].text_history_val = Tag::YES
+        creat_report.tests[0].ranges[0].tags[-1].combined_with_history_tag_ids = creat_report.tests[0].ranges[0].tags[-3].nested_id
+        creat_report.tests[0].ranges[0].tags[-2].text_history_val = Tag::YES
+        creat_report.tests[0].ranges[0].tags[-3].min_history_val = 4
+        creat_report.tests[0].ranges[0].tags[-3].max_history_val = 14
+        ## add one more tag the numerical in combination.
+        
+
+
+        ## i think here, the min and max range vals don't 
+        ## need to be checked
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+        ################################################
+        ##
+        ##
+        ## CREATE AND FINALIZE ORDER.
+        ##
+        ##
+        ###############################################
+
+        order = create_order_and_add_tube(creat_report,plus_lab_employee)
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        order = Business::Order.find(order.id.to_s)
+        
+        order = add_value_to_order(order,plus_lab_employee)
+
+        #############################################
+        ##
+        ##
+        ## 
+        ##
+        ##
+        #############################################
+        ## answer the question in the first test
+        ## so the range interpretation will happen anwwyas.
+        ## so when the value is added to the test
+        order.reports[0].tests[0].tags[0].numerical_history_response = 6
+
+        order.reports[0].tests[0].tags[1].text_history_response = Tag::YES.to_s
+
+        ## so it should not be complaining about this actually.
+
+        order.finalize_order = Business::Order::YES
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        unless response.code.to_s == "204"
+            k = JSON.parse(response.body)
+            puts k["errors"].to_s
+        end
+
+        assert_equal "204", response.code.to_s
+
+        o = Business::Order.find(order.id.to_s)
+
+        assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
+
+    end
+=end
+=begin
+    test " - calculates time since given date - " do 
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
+        creat_report = reports[0]
+        required_history_tag = create_required_text_history_tag(plus_lab_employee)
         creat_report.tests[0].template_tag_ids << required_history_tag.id.to_s
         creat_report.tests[0].ranges[0].template_tag_ids << required_history_tag.id.to_s
 
@@ -306,13 +587,13 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         ##
         ###############################################
 
-        order = create_creatinine_order_and_add_tube(creat_report,plus_lab_employee)
+        order = create_order_and_add_tube(creat_report,plus_lab_employee)
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
         order = Business::Order.find(order.id.to_s)
         
-        order = add_normal_value_to_creatinine_order(order,plus_lab_employee)
+        order = add_value_to_order(order,plus_lab_employee)
 
         #############################################
         ##
@@ -325,60 +606,375 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         ## so the range interpretation will happen anwwyas.
         ## so when the value is added to the test
         order.reports[0].tests[0].tags[0].text_history_response = Tag::YES.to_s
-
-
+        order.reports[0].tests[0].ranges[0].tags[-1]._date = (DateTime.now - 10.days)
         order.finalize_order = Business::Order::YES
 
         put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
 
-
         assert_equal "204", response.code.to_s
+
+         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
         o = Business::Order.find(order.id.to_s)
 
         assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
+        assert_not_nil o.reports[0].tests[0].ranges[0].tags[-1].completed_years_since_date
+        assert_not_nil o.reports[0].tests[0].ranges[0].tags[-1].completed_months_since_date
+        assert_not_nil o.reports[0].tests[0].ranges[0].tags[-1].completed_weeks_since_date
+        assert_not_nil o.reports[0].tests[0].ranges[0].tags[-1].completed_days_since_date
 
+    end 
+
+    ## so order accssibility -> should this come first ?
+    ## i think so.
+    ## because that is the main stickler.
+    ## then payu and others.
+
+    test " - no history range satisfies the provided history answer, should fallback on the normal ranges - " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
+        creat_report = reports[0]
+        required_history_tag = create_required_text_history_tag(plus_lab_employee)
+        creat_report.tests[0].template_tag_ids << required_history_tag.id.to_s
+        creat_report.tests[0].ranges[0].template_tag_ids << required_history_tag.id.to_s
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+
+        creat_report = Diagnostics::Report.find(creat_report.id.to_s)
+
+        ## we want to give it a textual history val.
+        creat_report.tests[0].ranges[0].tags[-1].text_history_val = Tag::YES.to_s
+        ## i think here, the min and max range vals don't 
+        ## need to be checked
+
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+        ################################################
+        ##
+        ##
+        ## CREATE AND FINALIZE ORDER.
+        ##
+        ##
+        ###############################################
+
+        order = create_order_and_add_tube(creat_report,plus_lab_employee)
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        order = Business::Order.find(order.id.to_s)
+        
+        order = add_value_to_order(order,plus_lab_employee)
+
+        #############################################
+        ##
+        ##
+        ## 
+        ##
+        ##
+        #############################################
+        ## answer the question in the first test
+        ## so the range interpretation will happen anwwyas.
+        ## so when the value is added to the test
+        order.reports[0].tests[0].tags[-1].text_history_response = "allah-o-akbar"
+       
+        order.finalize_order = Business::Order::YES
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "204", response.code.to_s
+
+         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        o = Business::Order.find(order.id.to_s)
+
+        ## the last tag should not get picked.
+        ## we basically will just print the normal range.
+        ## 
+        assert_equal nil, creat_report.tests[0].ranges[0].tags[-1].picked
 
     end
+=end
 
 =begin
-    test " - cannot edit the history question inside the test, only the answers - " do 
+    test " -- value is abnormal, picks the abnormal range - " do 
 
-    end
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
 
-    test " - if multiple tests require an answer to the same tag, then it ignores errors if any one test has answered that question - " do 
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
 
-    end
+        ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
+        creat_report = reports[0]
+        required_history_tag = create_required_text_history_tag(plus_lab_employee)
+        creat_report.tests[0].template_tag_ids << required_history_tag.id.to_s
+        creat_report.tests[0].ranges[0].template_tag_ids << required_history_tag.id.to_s
 
-    test " - if multiple histories are there, picks the combined range -- " do 
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
 
-    end
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
 
-    test " - calculates the weeks of gestation based on the LMP - " do 
+        creat_report = Diagnostics::Report.find(creat_report.id.to_s)
 
-    end
+        ## we want to give it a textual history val.
+        creat_report.tests[0].ranges[0].tags[-1].text_history_val = Tag::YES.to_s
+        ## i think here, the min and max range vals don't 
+        ## need to be checked
 
-    test " - no history range satisfies the value provided - " do 
 
-    end
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
 
-    test " - no abnormal range satisfies the value provided - " do 
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+        ################################################
+        ##
+        ##
+        ## CREATE AND FINALIZE ORDER.
+        ##
+        ##
+        ###############################################
 
-    end
-    
+        order = create_order_and_add_tube(creat_report,plus_lab_employee)
 
-    test " - more than one history range satisfies the value - " do 
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        order = Business::Order.find(order.id.to_s)
         
+        order = add_value_to_order(order,plus_lab_employee,0,22)
+
+        #############################################
+        ##
+        ##
+        ## 
+        ##
+        ##
+        #############################################
+        ## answer the question in the first test
+        ## so the range interpretation will happen anwwyas.
+        ## so when the value is added to the test
+        order.reports[0].tests[0].tags[-1].text_history_response = "allah-o-akbar"
+       
+        order.finalize_order = Business::Order::YES
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "204", response.code.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        o = Business::Order.find(order.id.to_s)
+
+        
+        assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[1].picked
+        assert_equal nil, o.reports[0].tests[0].ranges[0].tags[0].picked
+
+    end 
+
+
+    test " - value is abnormal but no abnormal range satsifies it - " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
+        creat_report = reports[0]
+        required_history_tag = create_required_text_history_tag(plus_lab_employee)
+        creat_report.tests[0].template_tag_ids << required_history_tag.id.to_s
+        creat_report.tests[0].ranges[0].template_tag_ids << required_history_tag.id.to_s
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+
+        creat_report = Diagnostics::Report.find(creat_report.id.to_s)
+
+        ## we want to give it a textual history val.
+        creat_report.tests[0].ranges[0].tags[-1].text_history_val = Tag::YES.to_s
+        ## i think here, the min and max range vals don't 
+        ## need to be checked
+
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+        ################################################
+        ##
+        ##
+        ## CREATE AND FINALIZE ORDER.
+        ##
+        ##
+        ###############################################
+
+        order = create_order_and_add_tube(creat_report,plus_lab_employee)
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        order = Business::Order.find(order.id.to_s)
+        
+        order = add_value_to_order(order,plus_lab_employee,0,500)
+
+        #############################################
+        ##
+        ##
+        ## 
+        ##
+        ##
+        #############################################
+        ## answer the question in the first test
+        ## so the range interpretation will happen anwwyas.
+        ## so when the value is added to the test
+        order.reports[0].tests[0].tags[-1].text_history_response = "allah-o-akbar"
+       
+        order.finalize_order = Business::Order::YES
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "204", response.code.to_s
+
+         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        o = Business::Order.find(order.id.to_s)
+
+        ## the last tag should not get picked.
+        ## we basically will just print the normal range.
+        ## 
+        #assert_equal nil, creat_report.tests[0].ranges[0].tags[1].picked
+        assert_equal nil, o.reports[0].tests[0].ranges[0].tags[0].picked
+        assert_equal nil, o.reports[0].tests[0].ranges[0].tags[1].picked
+        assert_equal nil, o.reports[0].tests[0].ranges[0].tags[2].picked
+
     end
-
-    test " - more than one combination history range satisfies the value - " do 
-
-    end
-
-    # that still comes to about 4.5 hours.
-    # excercise today has to be about 
-
 =end
+
+    test " - more than one history range satisfies the value, should raise an error - " do 
+        
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
+        creat_report = reports[0]
+
+        required_number_history_tag = create_required_number_history_tag(plus_lab_employee)
+
+
+        required_text_history_tag = create_required_text_history_tag(plus_lab_employee)
+
+        creat_report.tests[0].template_tag_ids << required_text_history_tag.id.to_s
+        
+        creat_report.tests[0].ranges[0].template_tag_ids << required_text_history_tag.id.to_s
+
+        creat_report.tests[0].template_tag_ids << required_number_history_tag.id.to_s
+        
+        creat_report.tests[0].ranges[0].template_tag_ids << required_number_history_tag.id.to_s
+
+        
+
+
+        ## so lets say a required number and text history tag satisfy it seperately.
+
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+
+        creat_report = Diagnostics::Report.find(creat_report.id.to_s)
+
+        ## we want to give it a textual history val.
+        ## so it can be something like how many days since you last smoked.
+        creat_report.tests[0].ranges[0].tags[-1].min_history_val = 4
+        creat_report.tests[0].ranges[0].tags[-1].max_history_val = 14
+        creat_report.tests[0].ranges[0].tags[-2].max_history_val = Tag::YES
+        
+
+        ## i think here, the min and max range vals don't 
+        ## need to be checked
+        creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  
+
+        unless creat_report.errors.full_messages.blank?
+            puts "error creating merged report"
+            exit(1)
+        end 
+        ################################################
+        ##
+        ##
+        ## CREATE AND FINALIZE ORDER.
+        ##
+        ##
+        ###############################################
+
+        order = create_order_and_add_tube(creat_report,plus_lab_employee)
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        order = Business::Order.find(order.id.to_s)
+        
+        order = add_value_to_order(order,plus_lab_employee)
+
+        #############################################
+        ##
+        ##
+        ## 
+        ##
+        ##
+        #############################################
+        ## answer the question in the first test
+        ## so the range interpretation will happen anwwyas.
+        ## so when the value is added to the test
+        order.reports[0].tests[0].tags[0].numerical_history_response = 6
+        order.reports[0].tests[0].tags[1].text_history_response = Tag::YES
+
+
+        order.finalize_order = Business::Order::YES
+
+        puts " ----------------------- CHECK THIS CALL ---------------------- "
+        
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+
+        assert_equal "404", response.code.to_s
+
+        # okay so multi match is failing.
+        # o = Business::Order.find(order.id.to_s)
+
+        # assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
+
+    end
+
+
+
+=begin
+    test " - more than one combination history range satisfies the value,should raise an error - " do 
+
+    end
+=end
+
 
 
 

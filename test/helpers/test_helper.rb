@@ -38,9 +38,9 @@ module TestHelper
         #exit(1)
     end
 
-    def add_normal_value_to_creatinine_order(order,plus_lab_employee)
+    def add_value_to_order(order,plus_lab_employee,test_index=0,value=15)
 
-        order.reports[0].tests[0].result_raw = 15
+        order.reports[0].tests[test_index].result_raw = value
 
         order = merge_changes_and_save(Business::Order.find(order.id.to_s),order,plus_lab_employee)             
         unless order.errors.full_messages.blank?
@@ -52,12 +52,16 @@ module TestHelper
 
     end
 
-    def create_creatinine_order_and_add_tube(creat_report,plus_lab_employee)
 
-        order = create_plus_path_lab_patient_order(creat_report.id.to_s)
+
+    def create_order_and_add_tube(report,plus_lab_employee)
+
+        order = create_plus_path_lab_patient_order(report.id.to_s)
 
         order = Business::Order.find(order.id.to_s)
 
+        # we have to find an item that fits that report.
+        # so the report requirement.
         organization_items = Inventory::Item.find_organization_items(plus_lab_employee.organization_members[0].organization_id)
 
         order.categories[0].items.push(organization_items.first)
@@ -73,8 +77,8 @@ module TestHelper
 
     end
 
-    def create_required_history_tag(user)
-        t = build_required_history_tag(user)
+    def create_required_text_history_tag(user)
+        t = build_required_text_history_tag(user)
         t.save
         unless t.errors.full_messages.blank?
             puts "TestHelper:there were errors saving the required history tag"
@@ -83,16 +87,34 @@ module TestHelper
         t
     end
 
-    def build_required_history_tag(user)
-        # what if more than one test needs a the same 
-        # history
-        # we need to collate across tests, to make sure there are
-        # no repeats.
+    def build_required_text_history_tag(user)
         t = Tag.new
         t.name = "one"
         t.range_type = Tag::HISTORY
         t.description = "Are you a smoker"
         t.history_options = [Tag::YES.to_s,Tag::NO.to_s]
+        t.option_must_be_chosen = Tag::YES
+        t.created_by_user = user
+        t.created_by_user_id = user.id.to_s
+        t
+    end
+
+    def create_required_number_history_tag(user)
+        t = build_required_text_history_tag(user)
+        t.save
+        unless t.errors.full_messages.blank?
+            puts "TestHelper:there were errors saving the required history number tag"
+            exit(1)
+        end
+        t
+    end
+
+    def build_required_number_history_tag(user)
+        t = Tag.new
+        t.name = "one"
+        t.range_type = Tag::HISTORY
+        t.description = "How many days since you last smoked"
+        t.history_options = []
         t.option_must_be_chosen = Tag::YES
         t.created_by_user = user
         t.created_by_user_id = user.id.to_s

@@ -140,6 +140,15 @@ module Concerns::OrderConcern
 
 		attribute :finalize_order, Integer, mapping: {type: 'integer'}, DEFAULT: NO
 
+		###############################################
+		##
+		##
+		## RECIPIENT
+		##
+		##
+		##############################################
+
+		attribute :recipients, Array[Notification::Recipient]
 
 		settings index: { 
 		    number_of_shards: 1, 
@@ -191,8 +200,13 @@ module Concerns::OrderConcern
 			    }
 
 			   	indexes :categories, type: 'nested', properties: Inventory::Category.index_properties
+			   	
 			   	indexes :reports, type: 'nested', properties: Diagnostics::Report.index_properties
+			   	
 			   	indexes :receipts, type: 'nested', properties: Business::Receipt.index_properties
+			   	
+			   	indexes :recipients, type: 'nested', properties: Notification::Recipient.index_properties
+
 			end
 
 		end
@@ -248,6 +262,7 @@ module Concerns::OrderConcern
 			#################################################
 			document.update_reports
 			document.load_patient
+			document.update_recipients
 			document.update_requirements
 			document.update_report_items
 			document.gather_history
@@ -277,6 +292,44 @@ module Concerns::OrderConcern
 		## should you not cascade the callbacks ?
 		## 
 
+	end
+
+	#################################
+	def recipients_include_patient?
+		unless self.patient.blank?
+			self.recipients.select{|c|
+				c.patient_id == self.patient.id.to_s
+			}.size == 1
+		else
+			false
+		end
+	end
+
+	def recipients_include_creating_user?
+		self.recipients.select{|c|
+			c.user_id == self.created_by_user.id.to_s
+		}.size == 1
+	end
+
+	def recipients_include_creating_organization_default_recipients?
+		## get the created by user
+		## get its organization
+		## and then its default recipients.
+		self.created_by_user.organization.default_recipients.each do |r|
+			if self.recipients.select{|c|
+				r.matches?(c)
+			}.size > 0
+				## should return the ones which doesnt match.
+			end
+		end
+	end
+
+	def update_recipients	
+		self.recipients << Recipient.new(self.patient) unless recipients_include_patient?
+		self.recipients << Recipient.new(self.user) unless recipients_include_creating_user?
+		## so add the organizations defaults.
+		## and if everyone is there move forwards.
+		## and arn's
 	end
 
 	## @called_from : before_validation.
@@ -391,16 +444,13 @@ module Concerns::OrderConcern
 			puts "checking report: #{report.id.to_s}"
 				
 			report.requirements.each do |req|
-
-				puts "checking requirement: #{req.id.to_s}, is it satisfied: #{req.satisfied?}"
-					
+				puts "checking requirement: #{req.id.to_s}, is it satisfied: #{req.satisfied?}"					
 				self.errors.add(:requirements, "the requirement: #{req.name} was not satisfied") unless req.satisfied?
-
 			end
 
 			report.tests.each do |test|
 				puts "checking test: #{test.name.to_s}"
-				self.errors.add(:reports, "the test #{test.name}, in the report: #{report.name}, has not been provided with the relevant history, please answer questions to finalize the order") unless test.history_provided?
+				self.errors.add(:reports, "the test #{test.name}, in the report: #{report.name}, has not been provided with the relevant history #{test.get_history_questions}, please answer questions to finalize the order") unless test.history_provided?(self.history_tags)
 			end
 		end
 	end
@@ -1293,6 +1343,9 @@ module Concerns::OrderConcern
 					    	},
 					    	{
 					    		:reports => Diagnostics::Report.permitted_params[1][:report]
+					    	},
+					    	{
+					    		:recipients => Notification::Recipient.permitted_params[]
 					    	},
 					    	:procedure_versions_hash,
 					    	:created_at,

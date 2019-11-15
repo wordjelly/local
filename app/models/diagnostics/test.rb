@@ -756,17 +756,23 @@ class Diagnostics::Test
 
 	#9823900650 - Patil
 	## @called_from : order_concern#validation#order_can_be_finalized
-	def history_provided?
+	def history_provided?(history_tags={})
 		history_provided = true
 		self.tags.each do |tag|
 			if tag.is_required?
 				#puts "tag is required"
-				history_provided = false unless tag.history_provided?
+				if history_tags[tag.id.to_s].blank?
+					history_provided = false unless tag.history_provided?
+				end
 			else
 				#puts "tag is not required"
 			end
 		end
 		history_provided
+	end
+
+	def get_history_questions	
+		self.tags.map{|c| c.description}
 	end
 
 end

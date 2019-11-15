@@ -1157,6 +1157,8 @@ GEM
     thor (0.20.3)
     thread_safe (0.3.6)
     tilt (2.0.9)
+    time_difference (0.7.0)
+      activesupport (~> 5.1)
     turbolinks (5.2.0)
       turbolinks-source (~> 5.2)
     turbolinks-source (5.2.0)
@@ -1231,6 +1233,7 @@ DEPENDENCIES
   sass-rails
   sdoc
   spring
+  time_difference
   turbolinks
   uglifier
   uuid
