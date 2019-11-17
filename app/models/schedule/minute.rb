@@ -1288,7 +1288,7 @@ class Schedule::Minute
 
 	end
 
-	def self.build_minute_update_request_for_routine()
+	def self.build_minute_update_request_for_routine
 
 	end
 

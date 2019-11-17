@@ -1,1 +1,5 @@
-statements_controller_test.rb
+require "test_helper"
+require 'helpers/test_helper'
+class StatementsControllerTest < ActionDispatch::IntegrationTest
+
+end

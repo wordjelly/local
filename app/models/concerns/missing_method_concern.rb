@@ -128,8 +128,9 @@ module Concerns::MissingMethodConcern
 									#puts "arr is: #{arr}"
 									#puts "callback si: #{callback}"
 									unless arr.is_a? Hash
-										
-										arr.run_callbacks(callback)
+										unless arr.is_a? Array
+											arr.run_callbacks(callback)
+										end
 									end
 								end
 							end

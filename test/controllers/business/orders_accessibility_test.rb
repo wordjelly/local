@@ -1,38 +1,8 @@
-## go for accessibility => like outsourcee can pay
-## patient can pay
-## our lab can pay
-## who can make the cash payment
-## who can make online
-## mixture of balance payment etc.
-## patient should be able to access.
-## we should be able to add reports if doctor just puts tests
-## shit like that.
-
-## scenarios are -> who can do what, basically that's what we are looking at
-## who can add a value to a report ?
-## who can add a payment to an order ?
-## who can view the order
-## how to delegate control to a lab -> doctor just adds the 
-## who can collect the payments -> like pay to ag, who can do that and what type of payment.
-## so can we have something called delegate to ?
-## so we have an order image , and we have them to be able to enter
-## the reports directly.
-## how does a patient grant access to the report.
-## forget it.
-## none of that shit.
-## he gets the link to the report.
-## he gets a link to sign up?
-## 
-## patient phone is entered -> if such a user exists, then 
-## there should a url where the report can be downloaded.
-## even if they have not signed up.
-## patient user should be able to book an order , with their dummy organization.
-## these two things i have to manage today and tomorrow.
 require "test_helper"
-require 'helpers/payments_receipts_test_helper'
+require 'helpers/test_helper'
 class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
-    include PaymentsReceiptsTestHelper
+    include TestHelper
 
     setup do
 
@@ -206,6 +176,7 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
     end
 
+=begin
     ## should this have the sign ?
     test "consent to perform test" do 
 
@@ -270,7 +241,6 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
    	test " patient can access the report pdf url " do 
 
    	end
-
     ########################################################
     ##
     ##
@@ -412,19 +382,10 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
     end
 
-    ## so there are 40 tests
-    ## in 5 days -> 8 tests per day
-    ## worst case scenario this takes 10 days.
-    ## somewhere or the other, we will hit a block
-    ## and there will be some spillover
-    ## but if i can get this out of the way
-    ## and then the last thing of all is status.
-    ## what about redaction?
-    ## this is a status level thing.
-    ## that should be the end of it.
-    ## this week we have made a dent in LIS
-    ## 22 -> 30 : i need to give a format to these people to make the report templates somehow.
-    ## the problem will be the ranges
-    ## if i make them, then it will be error free
-    ## otherwise im screwed
+    test " can disable a certain additional recipient from being sent the notification " do 
+        
+    end
+
+=end
+
 end

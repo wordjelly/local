@@ -85,10 +85,10 @@ module Concerns::CallbacksConcern
 
 									arr.skip_owners_validations = true if arr.respond_to? :skip_owners_validations
 									unless arr.is_a? Hash
-										#arr.validate_nested
-										
-										unless arr.valid?
-											self.errors.add(virtus_attribute.name.to_sym,arr.errors.full_messages)
+										unless arr.is_a? Array
+											unless arr.valid?
+												self.errors.add(virtus_attribute.name.to_sym,arr.errors.full_messages)
+											end
 										end
 									end
 									

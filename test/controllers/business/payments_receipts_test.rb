@@ -11,22 +11,32 @@ class PaymentsReceiptsTest < ActionDispatch::IntegrationTest
    	    
     end
 
+
     test "plus lab creates a patient, with their own report, and makes a cash payment for him" do 
 
         o = create_plus_path_lab_patient_order
 
+        puts o.to_s
+        puts o.id.to_s
+
         o = Business::Order.find(o.id.to_s)
        	
+
         o.receipts[0].payments << Business::Payment.new(amount: 500, payment_type: Business::Payment::PAYMENT, payment_mode: Business::Payment::CASH, status: Business::Payment::APPROVED)
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
        	
         put business_order_path(o.id.to_s), params: {order: o.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
 
+        unless response.code.to_s == "204"
+            k = JSON.parse(response.body)
+            puts k["errors"]
+        end
     
         assert_equal "204", response.code.to_s
 
     end
+
 
     test " -- plus lab creates a patient and makes a cheque payment for him -- " do 
 
@@ -231,7 +241,7 @@ class PaymentsReceiptsTest < ActionDispatch::IntegrationTest
 
         o = Business::Order.find(o.id.to_s)
 
-        receipt_pdf_generated_at = o.receipts[0].pdf_generated_at
+        receipt_ready_for_pdf_generation = o.receipts[0].ready_for_pdf_generation
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
         
@@ -244,7 +254,7 @@ class PaymentsReceiptsTest < ActionDispatch::IntegrationTest
 
         o = Business::Order.find(o.id.to_s)
 
-        assert_equal receipt_pdf_generated_at, o.receipts[0].pdf_generated_at
+        assert_equal receipt_ready_for_pdf_generation, o.receipts[0].ready_for_pdf_generation
 
     end
 
@@ -255,13 +265,17 @@ class PaymentsReceiptsTest < ActionDispatch::IntegrationTest
 
         o = Business::Order.find(o.id.to_s)
 
-        receipt_pdf_generated_at = o.receipts[0].pdf_generated_at
+        receipt_ready_for_pdf_generation = o.receipts[0].ready_for_pdf_generation
 
         puts "template report ids before"
         puts o.template_report_ids.to_s
         o.template_report_ids = o.template_report_ids[0..-2]
         puts "template report ids after"
         puts o.template_report_ids.to_s
+
+        puts "the pdf generated at for the first receip tis:"
+        puts receipt_ready_for_pdf_generation.to_s
+       # exit(1)
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
         
@@ -274,9 +288,13 @@ class PaymentsReceiptsTest < ActionDispatch::IntegrationTest
 
         o = Business::Order.find(o.id.to_s)
 
-        assert_not_equal receipt_pdf_generated_at, o.receipts[0].pdf_generated_at
+        puts "the pdf generated at of the order later is:"
+        puts o.receipts[0].ready_for_pdf_generation.to_s
+
+        assert_not_equal receipt_ready_for_pdf_generation, o.receipts[0].ready_for_pdf_generation
 
     end
+
 
     test " receipt is generated when the user adds a payment. " do 
 
@@ -284,7 +302,7 @@ class PaymentsReceiptsTest < ActionDispatch::IntegrationTest
 
         o = Business::Order.find(o.id.to_s)
 
-        receipt_pdf_generated_at = o.receipts[0].pdf_generated_at
+        receipt_ready_for_pdf_generation = o.receipts[0].ready_for_pdf_generation
 
         o.receipts[0].add_payment(Business::Payment.new(payment_type: Business::Payment::PAYMENT, payment_mode: Business::Payment::CASH, amount: 400, status: Business::Payment::APPROVED))
 
@@ -299,7 +317,7 @@ class PaymentsReceiptsTest < ActionDispatch::IntegrationTest
 
         o = Business::Order.find(o.id.to_s)
 
-        assert_not_equal receipt_pdf_generated_at, o.receipts[0].pdf_generated_at
+        assert_not_equal receipt_ready_for_pdf_generation, o.receipts[0].ready_for_pdf_generation
 
 
     end
@@ -325,7 +343,7 @@ class PaymentsReceiptsTest < ActionDispatch::IntegrationTest
 
         o = Business::Order.find(o.id.to_s)
 
-        receipt_pdf_generated_at = o.receipts[0].pdf_generated_at
+        receipt_ready_for_pdf_generation = o.receipts[0].ready_for_pdf_generation
 
         ## We are cancelling the payment of the payment.
         ## for whatever reason.
@@ -339,7 +357,7 @@ class PaymentsReceiptsTest < ActionDispatch::IntegrationTest
 
         o = Business::Order.find(o.id.to_s)
 
-        assert_not_equal receipt_pdf_generated_at, o.receipts[0].pdf_generated_at
+        assert_not_equal receipt_ready_for_pdf_generation, o.receipts[0].ready_for_pdf_generation
 
     end
 

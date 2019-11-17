@@ -16,8 +16,6 @@ class Business::Receipt
 	include Concerns::PdfConcern
 	include Concerns::CallbacksConcern
 
-
-
 	attribute :name, String, mapping: {type: 'keyword'}, default: BSON::ObjectId.new.to_s
 
 	attribute :payable_to_organization_id, String, mapping: {type: 'keyword'}	
@@ -34,8 +32,6 @@ class Business::Receipt
 
 	attribute :pending, Float, mapping: {type: 'float'}, default: 0
 		
-
-
 	LOCKED = "locked"
 
 	UNLOCKED = "unlocked"
@@ -398,6 +394,23 @@ class Business::Receipt
 	##
 	##
 	##############################################################
+	def before_generate_pdf
+		if self.newly_added == true	
+			return true		
+		else
+			if self.prev_size["payments"] < self.current_size["payments"]
+				self.force_pdf_generation = true
+				#return true
+			end
+			if self.any_payment_status_changed?
+				#return true
+				self.force_pdf_generation = true 
+			end
+			return !self.force_pdf_generation.blank?
+		end
+	end
+
+
 	def get_pdf_file_name
 		
 		time_stamp = Time.now.strftime("%b %-d_%Y")

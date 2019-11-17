@@ -8,11 +8,23 @@ module Concerns::PdfConcern
 		## the cloudinary urls of files that were converted into pdfs
 		attribute :pdf_urls, Array, mapping: {type: "keyword"}, default: []
 			
-		attribute :pdf_generated_at, Date, mapping: {type: 'date', format: 'epoch_second'}
+		#attribute :pdf_generated_at, Date, mapping: {type: 'date', format: 'epoch_second'}
+		## so if set, then a background job will read this value 
+		## and generate and send the pdf.
+		attribute :ready_for_pdf_generation, Date, mapping: {type: 'date', format: 'epoch_second'}
 
 		attr_accessor :skip_pdf_generation
 		## if true will be used.
 		attr_accessor :force_pdf_generation
+
+		after_validation do |document|
+			document.process_pdf
+		end
+
+		after_save do |document|
+			document.queue_pdf_job unless document.ready_for_pdf_generation.blank?
+		end
+
 	end
 
 	CLOUDINARY_RESULT_OK = "ok"
@@ -21,25 +33,29 @@ module Concerns::PdfConcern
 	## this is the main method to call.
 	## internally will call the generate_pdf method inside the background job.
 	def queue_pdf_job
-		#puts " ---------- CAME TO QUEUE PDF JOB -------------"
-		PdfJob.perform_later([self.class.name, self.id.to_s])
+		## we queue this shit later.
+		## but we want to know if the tests pass or not.
+		## so right now just let it 
+		generate_pdf
+		## after generating we have to knock it off
+		## suppose it does not generate, and we want to 
+		## regenerate ?
+		## for whatever reason it fails ?
+		#PdfJob.perform_later([self.class.name, self.id.to_s])
 	end
 
-	## so we do this before_generate_pdf.
-
+	## this shoulkd be called
 	def process_pdf
-		unless before_generate_pdf.blank?
-			generate_pdf
-		end
-		after_generate_pdf
+		self.ready_for_pdf_generation = Time.now.to_i unless before_generate_pdf.blank?
 	end
 
+	## returns false by default.
+	## 
 	def before_generate_pdf
 		#puts "came to before generate pdf."
-		self.pdf_generated_at = Time.now.to_i
 		#puts "pdf generated at is: #{self.pdf_generated_at}"
 		return false unless self.skip_pdf_generation.blank?
-		return true
+		return false
 	end
 
 	def after_generate_pdf
@@ -96,6 +112,7 @@ module Concerns::PdfConcern
 		self.skip_pdf_generation = true
 		
 		#self.save		
+		after_generate_pdf
 
 	end
 

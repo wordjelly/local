@@ -60,19 +60,19 @@ class ::Hash
 				object.current_size[k] = self[k].size
 				
 				if object.send(k).blank?
+					#if(k.to_s == "recipients")
+					#	puts "got it as blank"
+					#end
 					object.send("#{k}=",self[k]) unless assign.blank?
-					object.changed_attributes << k
-					object.changed_array_attribute_sizes << k
+					unless self[k].blank?
+						object.changed_attributes << k
+						object.changed_array_attribute_sizes << k
+					end
 
 				elsif (object.send(k).size != self[k].size)
-					## compare each.
-					## but there are none.
-					## so this is not set.
-					## there are no receipts
-					## so it is not going to iterate.
-					## the size is different agreed -> but 
-					## there is nothing to iterate
-					## so deeper iteration is not executed.
+					#if(k.to_s == "recipients")
+					#	puts "size is different"
+					#end
 					self[k].each_with_index{|val,key|
 						
 						break if (key == object.send(k).size) 
@@ -108,12 +108,18 @@ class ::Hash
 					object.changed_array_attribute_sizes << k
 				
 				else
+					#if (k.to_s == "recipients")
+					#	puts "size is the same, it is something else."
+					#end
 					#puts "size is the same"
 					self[k].each_with_index{|val,key|
 						#puts "val is what #{val.class.name}"
 						if val.is_a? Hash
 							#puts "val is: #{val}"
 							val.assign_attributes(object.send(k)[key],assign)
+							
+							#puts object.send(k)[key].changed_attributes
+
 							object.changed_attributes << k unless object.send(k)[key].changed_attributes.blank?
 						else
 							#puts "val is something else"
@@ -122,6 +128,10 @@ class ::Hash
 						end
 					}
 				end
+
+				#if k.to_s == "recipients"
+				#	puts "------------------------------------------------------------"
+				#end
 				
 			else
 				#puts "scalar value current #{object.send(k)}, and incoming: #{self[k]}"

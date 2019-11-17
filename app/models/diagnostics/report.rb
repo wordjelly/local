@@ -521,9 +521,16 @@ class Diagnostics::Report
 
 	end
 
+	## has any test just been verified?
+	def a_test_was_verified?
+		self.tests.select{|c|
+			((c.changed_attributes.include? "verification_done") && (c.verification_done == Diagnostics::TEST::VERIFIED))
+		}.size > 0
+	end
+
 	## @return[Boolean] true/false : true if all the tests are verified.
 	## @called_from : views/business/orders/report_summary
-	def all_tests_verified?
+	def is_verified?
 		self.tests.select{|c|
 			c.verification_done == Diagnostics::Test::NOT_VERIFIED
 		}.size == 0

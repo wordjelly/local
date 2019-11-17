@@ -130,6 +130,29 @@ module Concerns::OrderConcern
 		## built_in : self#build_history_tags
 		attr_accessor :history_tags
 
+		#####################################################
+		##
+		##
+		## FOR THE PDF JOB TO BE GIVEN(IN THE AFTER SAVE CALLBACK)
+		##
+		## POPULATE IN AFTER_VALIDATION -> IN THE GENERATE_RECEIPT_PDFS, AND THE process_pdf.
+		## 
+		##
+		#####################################################
+		## step one -> get the job working.
+		## step two -> get the notification sending code working
+		## it should email the link to the pdf.
+		## that's the main target for the notifications.
+		## and step -> 3 -> the reminder notifications
+		## time based triggering.
+		## and make sure all the existing tests pass.
+		## give the tag options 
+		## so that entire part basically.
+		## today it should just send an sms and an email with a link to download the pdf. and all the other tests should be passing, so we basically have to rework this code and decomplicate it.
+		## put it on the pdf itself ->
+		## pdf_to_be_generated
+		## put that in the pdf concern.
+		
 		##########################################################
 		##
 		##
@@ -149,6 +172,17 @@ module Concerns::OrderConcern
 		##############################################
 
 		attribute :recipients, Array[Notification::Recipient]
+
+		attribute :additional_recipients, Array[Notification::Recipient]
+
+		## ids of the recipients which we want to disable receiveing the reports.
+		attribute :disable_recipient_ids, Array
+
+		## ids of the recipients which we want to resend the reports to.
+		attribute :resend_recipient_ids, Array
+
+		## skip resend notifications
+		attr_accessor :skip_resend_notifications
 
 		settings index: { 
 		    number_of_shards: 1, 
@@ -206,6 +240,8 @@ module Concerns::OrderConcern
 			   	indexes :receipts, type: 'nested', properties: Business::Receipt.index_properties
 			   	
 			   	indexes :recipients, type: 'nested', properties: Notification::Recipient.index_properties
+
+			   	indexes :additional_recipients, type: 'nested', properties: Notification::Recipient.index_properties
 
 			end
 
@@ -275,22 +311,17 @@ module Concerns::OrderConcern
 			document.cascade_id_generation(nil)
 		end
 
+
 		after_validation do |document|
-			#puts "doing order after_Validation"
 			document.group_reports_by_organization
-			document.process_pdf
-			document.generate_receipt_pdfs
-			#puts "doing order after validation"
+			document.set_force_pdf_generation_for_receipts
+			document.resend_notifications unless document.skip_resend_notifications.blank?
 		end
-		
+
 		after_find do |document|
 			document.load_patient
 			document.set_accessors
 		end
-
-		## so you are doing after find.
-		## should you not cascade the callbacks ?
-		## 
 
 	end
 
@@ -311,26 +342,39 @@ module Concerns::OrderConcern
 		}.size == 1
 	end
 
-	def recipients_include_creating_organization_default_recipients?
-		## get the created by user
-		## get its organization
-		## and then its default recipients.
+	def organization_default_recipients
+		recipients_to_add = []
 		self.created_by_user.organization.default_recipients.each do |r|
 			if self.recipients.select{|c|
 				r.matches?(c)
-			}.size > 0
-				## should return the ones which doesnt match.
+			}.size == 0
+				recipients_to_add << r
 			end
+		end
+		recipients_to_add
+	end
+
+	## if the size changes ?
+	## so we keep two different arrays
+	## and do that checking on it.
+	## and additional recipients is another array
+	## that can be edited only by the user who created the order ? or belonging to the same organization.
+	def update_recipients	
+		self.recipients << Notification::Recipient.new(patient: self.patient) unless recipients_include_patient?
+		self.recipients << Notification::Recipient.new(user: self.created_by_user) unless recipients_include_creating_user?
+		organization_default_recipients.each do |r|
+			self.recipients << r
 		end
 	end
 
-	def update_recipients	
-		self.recipients << Recipient.new(self.patient) unless recipients_include_patient?
-		self.recipients << Recipient.new(self.user) unless recipients_include_creating_user?
-		## so add the organizations defaults.
-		## and if everyone is there move forwards.
-		## and arn's
-	end
+	## so the next step is that we test this and add removal of different recipients.
+	## and who can add or remove these recipients ?
+	## the order creator only can do that.
+	## so accessibility control.
+	## if the recipients have changed, it should be by the 
+	## so if the size changes, it can be because a recipient was added internally
+	## so a new recipient was added.
+	## 
 
 	## @called_from : before_validation.
 	def check_for_top_up
@@ -371,12 +415,12 @@ module Concerns::OrderConcern
 		## so will have to set this.
 		self.categories.each do |category|
 
-			puts "is the category newly added?"
-			puts category.newly_added
-			puts "category changed attributes ---------->"
-			puts category.changed_attributes.to_s
-			puts category.changed_array_attribute_sizes.to_s
-			puts category.changed_array_attribute_sizes
+			#puts "is the category newly added?"
+			#puts category.newly_added
+			#puts "category changed attributes ---------->"
+			#puts category.changed_attributes.to_s
+			#puts category.changed_array_attribute_sizes.to_s
+			#puts category.changed_array_attribute_sizes
 			if category.changed_array_attribute_sizes.include? "items"
 				self.changed_for_lis = Time.now.to_i
 			else
@@ -470,18 +514,15 @@ module Concerns::OrderConcern
 		end
 	end
 
+	## so we have an array called resend_to_recipient_ids.
+
 	## @called from : self, it is a validation.
 	def can_modify
 		self.changed_attributes.each do |attr|
+
 			if attr.to_s == "reports"
-				## reports were edited.
-				## for each report, if it has changed attributes
-				## check and add.
-				## don't need to dive further in.
 				self.reports.each do |r|
 					unless r.changed_attributes.blank?
-						#puts "r owner ids are:"
-						#puts r.owner_ids.to_s
 						if r.owner_ids.include? self.created_by_user_id
 						elsif r.owner_ids.include? self.created_by_user.organization.id.to_s
 						else
@@ -489,31 +530,11 @@ module Concerns::OrderConcern
 						end
 					end
 				end
+			
+			elsif attr.to_s == "recipients"
+				recipients_changed
 			elsif attr.to_s == "payments"
-				
-					## if the size is the same, then what changes can be made in the payment?
-					old_payment_not_deleted
-					## fi the size is the smae.
-					## i finish that and the UI today.
-					## so what can change ?
-					## lets say i cancel a payment.
-					## i want to cancel a payment.
-					## we call can_be_cancelled ?
-					## so we call a method called 
-					## changes_allowed?
-					## we define this on missing_method.
-					## it takes each attribute
-					## checks if it has changed
-					## and then calls can_change_
-					## we take the payment -> see that the status has changed -> ask if permitted or not.
-					## otherwise add an error.
-					## now how to make this less complicated.
-					## first compare each payment.
-					## if the size is equal -> check for changes
-					## if the size is more -> only one new payment can be added at a time.
-					## and then check that payments attributes. 
-					## so let me make all these seperate def's with easy and descriptive names.
-				
+				old_payment_not_deleted
 			else
 				## only in case of 
 				if self.owner_ids.include? self.created_by_user.id.to_s
@@ -522,9 +543,30 @@ module Concerns::OrderConcern
 					self.errors.add(:owner_ids,"You cannot edit the field: #{attr.to_s}")
 				end
 			end
+
 		end
 	end
 
+	# i can segregate the code bits.
+	# but later
+	# today i want this out of the way.
+
+	#########################################################
+	##
+	##
+	## NOTIFICATION METHODS.
+	##
+	##
+	#########################################################
+	## triggered after_validation
+	def send_notifications
+		## if there are people in the resend
+		## then those.
+		## if the report_pdf was regenerated ?
+		## then that
+		## if the receipt was regenerated then that
+
+	end
 	##############################################################
 	##
 	##
@@ -538,6 +580,10 @@ module Concerns::OrderConcern
 		self.errors.add(:payments,"a payment has been deleted, this operation is not allowed") if self.current_size("payments") < self.prev_size("payments")
 	end
 
+
+	def recipients_changed
+		self.errors.add(:recipients, "you cannot change the default recipients of this orders reports")
+	end
 
 
 
@@ -1069,46 +1115,84 @@ module Concerns::OrderConcern
 	##
 	##
 	#############################################################
+	def any_report_just_verified?
+		self.reports.select{|c|
+			c.a_test_was_verified? && c.is_verified?
+		}.size > 0
+	end
+
+	def all_reports_verified?
+		self.reports.select{|c|
+			c.is_verified?
+		}.size == self.reports.size
+	end
+
+	def proceed_for_pdf_generation?
+		(any_report_just_verified? && (self.organization.generate_partial_order_reports == YES) || (all_reports_verified? && any_report_just_verified?) || (!self.force_pdf_generation.blank?))
+	end
+	####################################################
+	##
+	##
+	## OVERRIDEN FROM PDF CONCERN.
+	##
+	##
+	####################################################
+	## queueing of the job happens in after save
+	## if this parameter is not blank.
+	## and this parameter is set from within the job anywyas.
+	def before_generate_pdf
+		return false unless self.skip_pdf_generation.blank?
+		return proceed_for_pdf_generation?
+	end
+
+	def after_generate_pdf
+		send_notifications
+	end
+
 	def generate_pdf
 			
 		return if self.reports.blank?
-		return unless self.skip_pdf_generation.blank?
-
 
 		if self.organization.outsourced_reports_have_original_format == Organization::YES
 
-			## get the signing organization.
-			## and pass it in as a local.
-			## at this stage itself.
-
 			self.reports_by_organization.keys.each do |organization_id|
-
-				## so i want to generate these reports
-				## on their letter head
-				## seperately.
 				build_pdf(self.reports_by_organization[organization_id],organization_id,get_signing_organization(self.reports_by_organization[organization_id]))
-
 			end
-
 		else
 
 			build_pdf(self.reports.map{|c| c.id.to_s},self.organization.id.to_s,get_signing_organization(self.reports))
 
 		end
+		
+		after_generate_pdf
 
 	end
-
 	## and do the time based subindicator price change issue
 	## that is the first priority.
 	## then we sort out the UI to look better
 	## so if its pending.
 	## you want to validate that the receipt size has neither reduced nor increased.
-	def generate_receipt_pdfs
+	## this need not be called from here.
+	## it is unnecessarily confusing things.
+	## put the pdf issues in the pdf concern.
+	def set_force_pdf_generation_for_receipts
+		if self.new_record?
+			self.receipts.each do |r|
+				## the problem is that this will 
+				## be done in the before_validation.
+				## will the after_validation callback cascade.
+				r.force_pdf_generation = true
+			end
+		end
+=begin
 		if self.new_record?
 			self.receipts.each do |receipt|
+				## should'nt that make them all newly_added?
 				receipt.process_pdf
 			end
 		else
+			#that you override in the receipt level.
+			#not here.
 			#puts "order is not a new record."
 			self.receipts.each do |receipt|
 				if receipt.newly_added == true
@@ -1130,12 +1214,13 @@ module Concerns::OrderConcern
 					## then also we have to regenerate it.
 					if receipt.any_payment_status_changed?
 						receipt.force_pdf_generation = true 
-						puts "Set the force pdf generation to true."
+						#puts "Set the force pdf generation to true."
 					end
 				end
 				receipt.process_pdf unless receipt.force_pdf_generation.blank?
 			end
 		end
+=end
 	end
 	# get dropdown working
 	# solve bare search issue
@@ -1174,6 +1259,9 @@ module Concerns::OrderConcern
 		return results[:signing_organization]
 
 	end
+
+	## if a report has a verification done.
+	## unless all reports 
 
 	## @called_from : SELF#before_validation
 	def generate_report_impressions
@@ -1321,7 +1409,11 @@ module Concerns::OrderConcern
 		end
 	end
 
-	
+	## so if have a disable -> it will check that before sending
+	## if resend is set -> then that is an accessor.
+	## and if populated then will resend and clear.
+	## is that done before save or after save ?
+	## before_save
 	module ClassMethods
 
 		def permitted_params
@@ -1331,6 +1423,8 @@ module Concerns::OrderConcern
 						[
 							:id,
 							:name,
+							{:disable_recipient_ids => []},
+							{:resend_recipient_ids => []},
 							{:template_report_ids => []},
 							:patient_id,
 							:local_item_group_id,
@@ -1345,7 +1439,10 @@ module Concerns::OrderConcern
 					    		:reports => Diagnostics::Report.permitted_params[1][:report]
 					    	},
 					    	{
-					    		:recipients => Notification::Recipient.permitted_params[]
+					    		:recipients => Notification::Recipient.permitted_params
+					    	},
+					    	{
+					    		:additional_recipients => Notification::Recipient.permitted_params
 					    	},
 					    	:procedure_versions_hash,
 					    	:created_at,

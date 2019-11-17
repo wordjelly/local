@@ -120,6 +120,9 @@ class Organization
 
 	attribute :user_ids, Array, mapping: {type: 'keyword'}, default: []
 
+	attribute :default_recipients, Array[Notification::Recipient]
+
+
 	LAB = "lab"
 
   	DOCTOR = "doctor"
@@ -476,6 +479,9 @@ class Organization
 				 :add_processed_at_footnote_if_using_our_letter_head,
 				 {
 					:organization_settings => OrganizationSetting.permitted_params
+				 },
+				 {
+				 	:default_recipients => Notification::Recipient.permitted_params
 				 }
 				] 
 			}

@@ -15,12 +15,26 @@ class Notification::Recipient
 	YES = 1
 	NO = 0
 
+	attribute :name, String, mapping: {type: 'keyword'}
 	attribute :user_id, String, mapping: {type: 'keyword'}
 	attribute :patient_id, String, mapping: {type: 'keyword'}
 	attribute :phone_numbers, Array, mapping: {type: 'keyword'}
 	attribute :email_ids, Array, mapping: {type: 'keyword'}
-	attribute :disable, Integer, mapping: {type: 'integer'}
+	
+	## so these are the recipients.
+	## what next ?
 
+	before_validation do |document|
+		document.patient_id = self.patient.id.to_s unless self.patient.blank?
+		document.user_id = self.user.id.to_s unless self.user.blank?
+	end
+	
+
+	## this is read from the requisite arrays in the order itself.
+	attr_accessor :resend
+	attr_accessor :disabled
+	attr_accessor :patient
+	attr_accessor :user
 	## once we add them, and we can set accessors
 	## to these people
 	## so it should auto add who all to this internally inside the order ?
@@ -31,7 +45,6 @@ class Notification::Recipient
 			:name, 
 			:patient_id,
 			:user_id,
-			:disable,
 			{:phone_numbers => []},
 			{:email_ids => []}
 		]
@@ -60,9 +73,6 @@ class Notification::Recipient
 	    	},
 	    	patient_id: {
 	    		type: 'keyword'
-	    	},
-	    	disable: {
-	    		type: 'integer'
 	    	}
 	    }
 	end
