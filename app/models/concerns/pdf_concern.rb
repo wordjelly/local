@@ -3,7 +3,9 @@ module Concerns::PdfConcern
 	extend ActiveSupport::Concern
 
 	included do 
+
 		attribute :latest_version, String, mapping: {type: "keyword"}
+		
 		attribute :pdf_url, String, mapping: {type: "keyword"}
 		## the cloudinary urls of files that were converted into pdfs
 		attribute :pdf_urls, Array, mapping: {type: "keyword"}, default: []
@@ -16,6 +18,18 @@ module Concerns::PdfConcern
 		attr_accessor :skip_pdf_generation
 		## if true will be used.
 		attr_accessor :force_pdf_generation
+
+		if defined? @permitted_params
+  			if ((@permitted_params[1].is_a? Hash) && (self.class.name.to_s =~ /#{@permitted_params[1].keys[0]}/i))
+  				#puts "it is the first key hash---------->"
+				@permitted_params[1] = @permitted_params[1] + [:force_pdf_generation]	
+  			else
+  				#puts "it is not---------->"
+  				@permitted_params = @permitted_params + [:force_pdf_generation]
+  			end
+  		else
+  			@permitted_params = [:force_pdf_generation]
+  		end
 
 		after_validation do |document|
 			document.process_pdf
@@ -30,6 +44,27 @@ module Concerns::PdfConcern
 	CLOUDINARY_RESULT_OK = "ok"
 	CLOUDINARY_RESULT_NOT_FOUND = "not found"
 
+	######################################################
+	##
+	##
+	## FLOW FOR PDF GENERATION IS SIMPLE:
+	## AFTER_VALIDATION ---> CONCERN CALLS PROCESS_PDF --> PROCESS PDF CHECKS IF BEFORE_GENERATE_PDF RETURNS TRUE -> THEN IT SETS READY_FOR_PDF GENERATION TO THE CURRENT TIME, OTHERWISE SETS IT TO NULL.
+	##
+	## AFTER_SAVE -> READY_FOR_PDF_GENERATION IS CHECKED, FOR NOT BEING NULL -> AND THAT IS used to trigger queue_pdf_job
+	## the next time the record is saved, if the before_generate_pdf -> returns false, then after_save nothing will be triggered, so you can safely save it in the background job without worrying about endless repeats.
+	##
+	## now if you want to send notifications, then that is chained.
+	## for the notification also we can follow a similar architecture, or use the same architeture are now.
+	## notification ready_for_notification.
+	## is set -> and that can be sent.
+	## before set_notify
+	## we call process_notify ->
+	## which calls before_set_notify -> 
+	## in case of resend -> will return true
+	## in case of send -> nothing will be returned.
+	## ready_to_renotify -> can be set -> and that can be called in a background job.
+	## we just override that.
+	######################################################
 	## this is the main method to call.
 	## internally will call the generate_pdf method inside the background job.
 	def queue_pdf_job
@@ -46,14 +81,16 @@ module Concerns::PdfConcern
 
 	## this shoulkd be called
 	def process_pdf
-		self.ready_for_pdf_generation = Time.now.to_i unless before_generate_pdf.blank?
+		if before_generate_pdf.blank?
+			self.ready_for_pdf_generation = nil
+		else
+			self.ready_for_pdf_generation = Time.now.to_i 
+		end
 	end
 
 	## returns false by default.
 	## 
 	def before_generate_pdf
-		#puts "came to before generate pdf."
-		#puts "pdf generated at is: #{self.pdf_generated_at}"
 		return false unless self.skip_pdf_generation.blank?
 		return false
 	end

@@ -35,7 +35,10 @@ class Business::Order
 	include Concerns::Schedule::QueryBuilderConcern
 	include Concerns::PdfConcern
 	include Concerns::EsBulkIndexConcern
+	## ORDER OF THESE TWO IS IMPORTANT.
+	include Concerns::NotificationConcern
 	include Concerns::OrderConcern
+	## 
 	include Concerns::CallbacksConcern
 	## so the callbacks involve after find.
 	## these should be execute first.

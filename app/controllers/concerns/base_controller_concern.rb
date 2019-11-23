@@ -289,6 +289,7 @@ module Concerns::BaseControllerConcern
 		end
 
 		if current_user
+			puts "------------ THERE IS A CURRENT USER --------------- "
 			instance_variable_get("@#{get_resource_name}").send("created_by_user=",current_user) 
 		end
 		
@@ -300,7 +301,14 @@ module Concerns::BaseControllerConcern
 		set_alert_instance_variable(instance_variable_get("@#{get_resource_name}"))
 		instance_variable_get("@#{get_resource_name}").send("run_callbacks","find".to_sym)
 
-
+		#puts "instance variable get yields."
+		#puts @organization.users_pending_approval.to_s
+		#puts instance_variable_get("@#{get_resource_name}").to_json
+		## and this user does not have a current app id.
+		## so its hanging, internally on the to_json call for the user.
+		## that is failing internally from auth.
+		## not from here.
+		## its because you are calling to_json.
 
 		respond_to do |format|
 			format.html do 

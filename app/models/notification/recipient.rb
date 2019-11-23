@@ -21,14 +21,35 @@ class Notification::Recipient
 	attribute :phone_numbers, Array, mapping: {type: 'keyword'}
 	attribute :email_ids, Array, mapping: {type: 'keyword'}
 	
-	## so these are the recipients.
-	## what next ?
-
+=begin
 	before_validation do |document|
 		document.patient_id = self.patient.id.to_s unless self.patient.blank?
 		document.user_id = self.user.id.to_s unless self.user.blank?
 	end
-	
+=end	
+	validate :user_id_exists
+
+	validate :patient_id_exists
+
+	def user_id_exists
+		unless self.user_id.blank?
+			begin
+				User.find(self.user_id)
+			rescue
+				self.errors.add(:user_id, "this user #{self.user_id} does not exist")
+			end
+		end
+	end
+
+	def patient_id_exists
+		unless self.patient_id.blank?
+			begin
+				Patient.find(self.patient_id)
+			rescue
+				self.errors.add(:patient_id, "this patient #{self.patient_id} does not exist")
+			end
+		end
+	end
 
 	## this is read from the requisite arrays in the order itself.
 	attr_accessor :resend
@@ -77,64 +98,30 @@ class Notification::Recipient
 	    }
 	end
 
-	## first add all the relevant recipients.
-	## the organization who created the order -> will include all the people registered in the organization variable called :default_recipients
-	## the patient (if different)
-	## and any additional recipients provided externally.
-	## so these people will receive report notifications.
-	## also there are -> 
-	## so this is on the order
-	## and in the organization -> we can add only users from that organization.
-	## now how is the report sent ?
-	## a link to the report is sent
-	## and also to the android
-	## what about notifications -> through status?
-	## to whom should these be sent ?
-	## like pre-test notifications -> and when should it be sent.
-	## and to whom
-	## so those go into status -> 
-	## what about critical value notifications ?
-	## so they are embedded in tags
-	## and they will go to whom?
-	## send to creator of order ?
-	## all members of that organization ?
-	## referring clinician?
-	## either patient/creating_organization/reporting_organization/
-	## so it can choose certain tag ids -> 
-	## and in which organization ?
-	## those people have to be notified.
-	## in that organization.
-	## plus lab created the order 
-	## doctor's receptionist created the order
-	## if the creating org is different from the reporting org
-	## then 
-	## it depends on the setting -> 
-	## report will be sent to you be default
-	## boy has left -> so on triggering that action
-	## so build the recipients
-	## you can add/remove
-	## this action is done everytime on update/save
-	## and inside tags we can have notifications
-	## whether they should be sent to whom?
-	## 	
 	def user_id_matches?(recipient)
+		return false if (recipient.user_id.blank? || self.user_id.blank?)
 		self.user_id == recipient.user_id
 	end
 
 	def phone_numbers_match?(recipient)
+		return false if (self.phone_numbers.blank? || recipient.phone_numbers.blank?)
 		!(self.phone_numbers & recipient.phone_numbers).blank?
 	end
 
 	def email_ids_match?(recipient)
+		return false if (self.email_ids.blank? || recipient.email_ids.blank?)
 		!(self.email_ids & recipient.email_ids).blank?
 	end
 
 	def patient_id_matches?(recipient)
+		return false if (self.patient_id.blank? || recipient.patient_id.blank?)
 		self.patient_id == recipient.patient_id
 	end
 
 	def matches?(recipient)
-		self.user_id_matches?(recipient) || self.phone_numbers_match?(recipient) || self.email_ids_match?(recipient) || self.patient_id_matches?(recipient)
+		[self.user_id_matches?(recipient),self.phone_numbers_match?(recipient),self.email_ids_match?(recipient),self.patient_id_matches?(recipient)].select{|c|
+			!c.blank?
+		}.size > 0	
 	end
 
 end

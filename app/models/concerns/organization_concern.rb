@@ -144,7 +144,11 @@ module Concerns::OrganizationConcern
 
 	def get_organization_logo_url
 		return Organization::DEFAULT_LOGO_URL if self.organization.blank?
-		return self.organization.logo_url
+		unless self.organization.images.blank?
+			self.organization.images[0].get_url
+		else
+			Organization::DEFAULT_LOGO_URL
+		end
 	end
 
     ## if an organization attribute was found for it.

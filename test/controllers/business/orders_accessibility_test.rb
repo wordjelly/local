@@ -6,181 +6,21 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
     setup do
 
-   		JSON.parse(IO.read(Rails.root.join("vendor","assets","others","es_index_classes.json")))["es_index_classes"].each do |cls|
-          #puts "creating index for :#{cls}"
-          cls.constantize.send("create_index!",{force: true})
-        end
-        User.delete_all
-        User.es.index.delete
-        User.es.index.create
-        Auth::Client.delete_all
-
-        tags = Tag.create_default_employee_roles
-
-        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-
-        #########################################################
-        ##
-        ##
-        ## CREATING DEVELOPER ACCOUNT AND CLINET.
-        ##
-        ##
-        #########################################################
-        #########################################################
-        ##
-        ##
-        ## CREATING DEVELOPER ACCOUNT AND CLINET.
-        ##
-        ##
-        #########################################################
-        @u = User.new(email: "developer@gmail.com", password: "hello111", password_confirmation: "hello111", confirmed_at: Time.now.to_i)
-        @u.save
-        #puts @u.errors.full_messages.to_s
-     	#puts @u.authentication_token.to_s
-     	#exit(1)
-        @u = User.find(@u.id.to_s)
-        @u.confirm
-        @u.save
-        #puts @u.errors.full_messages.to_s
-        @u = User.find(@u.id.to_s)
-     	#puts @u.authentication_token.to_s
-        @c = Auth::Client.new(:resource_id => @u.id, :api_key => "test", :app_ids => ["testappid"])
-        @c.redirect_urls = ["http://www.google.com"]
-        @c.versioned_create
-        @u.client_authentication["testappid"] = "test_es_token"
-        @u.save
-        @ap_key = @c.api_key
-        @u = User.find(@u.id.to_s)
-
-        @u.confirm
-        @u.save
-        #puts @u.errors.full_messages.to_s
-     	#puts @u.authentication_token.to_s
-        @c = Auth::Client.new(:resource_id => @u.id, :api_key => "test", :app_ids => ["testappid"])
-        @c.redirect_urls = ["http://www.google.com"]
-        @c.versioned_create
-        @u.client_authentication["testappid"] = "test_es_token"
-        @u.save
-        @ap_key = @c.api_key
-
-        ## key => user id
-        ## value => {auth_token =>  "", client_authentication => ""}
-        @security_tokens = {}
-        #puts @u.authentication_token.to_s
-        #exit(1)
-        #########################################################
-        ##
-        ##
-        ## CREATING ALL OTHER USERS.
-        ##
-        ##
-        #########################################################
-        Dir.glob(Rails.root.join('test','test_json_models','users','*.json')).each do |user_file_name|
-            basename = File.basename(user_file_name,".json")
-            user = User.new(JSON.parse(IO.read(user_file_name))["users"][0])
-            user.save
-            user.confirm
-            user.save
-            user.client_authentication["testappid"] = BSON::ObjectId.new.to_s
-         	user.save
-         	@security_tokens[user.id.to_s] = {
-         		"authentication_token" => user.authentication_token,
-         		"es_token" => user.client_authentication["testappid"]
-         	}
-
-            unless user.errors.full_messages.blank?
-            	puts "error creating user"
-            	exit(1)
-            end
-            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-            user = User.find(user.id.to_s)
-           		
-           	
-           	Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-           	
-           	## we add it to the organization members,
-           	## and thereafter into the organization -> user_ids
-           	## that way it will be fine.
-
-
-            organization = Organization.new(JSON.parse(IO.read(Rails.root.join('test','test_json_models','organizations',"#{basename}.json")))["organizations"][0])
-            organization.created_by_user = user
-            organization.created_by_user_id = user.id.to_s
-            organization.who_can_verify_reports = [user.id.to_s]
-            organization.role = Organization::LAB
-            organization.save 
-            unless organization.errors.full_messages.blank?
-                puts "errors creating organizaiton--------->"
-                puts organization.errors.full_messages.to_s
-                exit(1)
-            end
-            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-
-            employee = User.new(JSON.parse(IO.read(Rails.root.join('test','test_json_models','employees',"#{basename}.json")))["users"][0])
-           	employee.save
-           	employee.confirm
-           	employee.save
-           	employee.client_authentication["testappid"] = BSON::ObjectId.new.to_s
-         	employee.save
-         	
-           	unless employee.errors.full_messages.blank?
-           		puts "errors creating employee"
-           		exit(1)
-           	end
-            employee.organization_members << OrganizationMember.new(organization_id: organization.id.to_s, employee_role_id: tags.keys[0])
-            employee.save
-            unless employee.errors.full_messages.blank?
-            	puts "errors saving employee with organization member"
-            	exit(1)
-            end
-            @security_tokens[employee.id.to_s] = {
-         		"authentication_token" => employee.authentication_token,
-         		"es_token" => employee.client_authentication["testappid"]
-         	}
-            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-
-            organization = Organization.find(organization.id.to_s)
-            organization.run_callbacks(:find)
-            user = User.find(user.id.to_s)
-            organization.created_by_user = user
-            organization.created_by_user_id = user.id.to_s
-            organization.user_ids << employee.id.to_s
-            organization.save
-            unless organization.errors.full_messages.blank?
-            	puts "errors saving organiztion with user ids -->"
-                puts organization.errors.full_messages.to_s
-                exit(1)
-            end
-
-            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-            user = User.find(user.id.to_s)
-            ## create the credential.
-            credential = Credential.new(JSON.parse(IO.read(Rails.root.join('test','test_json_models','credentials',"#{basename}.json")))["credentials"][0])
-            credential.created_by_user = user
-            credential.created_by_user_id = user.id.to_s
-            credential.user_id = user.id.to_s
-            credential.save 
-            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-
-            user = User.find(user.id.to_s)
-            Dir.glob(Rails.root.join('test','test_json_models','diagnostics','reports','*.json')).each do |report_file_name|
-                report = Diagnostics::Report.new(JSON.parse(IO.read(report_file_name))["reports"][0])
-                report.created_by_user = user
-                report.created_by_user_id = user.id.to_s
-                report.save
-            end
-
-            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-
-        end
+   		_setup
 
     end
 
 =begin
     ## should this have the sign ?
     test "consent to perform test" do 
+    
+        ## how does this work?
+        ## whoever creates the order -> gives the consent.
+        ## 
 
     end
+    #####################################
+
 
     test "patient can create order, does not need to add tubes, can finalize" do 
 
@@ -254,25 +94,28 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
     end
 
-    ## TODO 15th
+    #######################################################
+    ##
+    ##
+    ## ORDER TAGS
+    ##
+    ##
+    #######################################################
     test " order has option for home visit -> tags on the order " do 
 
 
     end
 
-    ## TODO 15th
-    ## so order also has tags
-    ## like phlebotomy-visit/collection-visit
     test " order has option for techinician visit to doctor -> tags on the order" do 
 
     end
 
-    ######################################################
-
+    
     test " order has option for delivery boy visit to doctor/another lab " do 
 
     end
-
+    
+    #######################################################
     test " organization can define daily preferred round time " do 
 
 
@@ -339,53 +182,253 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
     ##
     ##
     ## SENDING THE REPORTS/ maybe this comes in the notifications
-    ## so you can choose users from your organization
-    ## so these are basically user ids.
-    ## to send the reports to
-    ## to send the report to a different doctor/user
-    ## you can choose them by name.
-    ## or add bare numbers or emails
-    ## so that setting should be there on the order level
-    ## or on the 
-    ## it should also send the copy to the email of the creating users organizations.
-    ## so we define these as organization level settings.
-    ## get on with this shit instantly.
-    ## we add an array called recipients
-    ## user_id / mobile / email
-    ## if user id is defined, then no mobile or email needs to be given.
-    ## otherwise either or both can be given.
-    ## should accept a resend_to this user button.
-    ## so that will also work.
-    ## we can nest these objects under notification
-    ## as a module.
-    ## i can manage these 
-    ##
+    ## 
     ########################################################,
-    test " can define at the organization / patient level, to always send reports to certain people " do 
+=end
 
+=begin
+    test " order is populated with the patient and creating user of the order, as well as the organizations default recipients as default recipients " do 
+        
+        order = build_plus_path_lab_patient_order
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        post business_orders_path, params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        #puts response.body.to_s
+        order = Business::Order.new(JSON.parse(response.body)["order"])
+
+        #puts "the order id is: #{order.id.to_s}"
+
+        assert_equal "201", response.code.to_s   
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+
+        o = Business::Order.find(order.id.to_s)
+
+        #puts "THESE ARE THE EXISTING RECIPIENTS IN THE ORDER ------------------------>
+
+        assert_equal 3, o.recipients.size
 
     end
 
-    test " patient can add doctors emails to send the report " do 
+
+    test " orders can accept additional recipients " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        order = create_plus_path_lab_patient_order([reports[0].id.to_s])
+
+        order = Business::Order.find(order.id.to_s)
+
+        additional_recipient = Notification::Recipient.new(phone_numbers: ["9822028511"])
+
+        order.additional_recipients << additional_recipient
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "204", response.code.to_s
+
+        o = Business::Order.find(order.id.to_s)
+
+        ## so if a different user updates the order -> then it goes to all of them.
+
+        assert_equal 4, o.recipients.size
+
+        assert_equal 1, o.additional_recipients.size
 
     end
+=end
 
-    test " other lab can also add these emails " do 
-
-    end
-
-    test " can choose users from existing organization to send the report to " do 
-
-    end
-
+=begin
     test " can resend the report by means of an attr_accessor, to some parties, for eg mark some parties to resend the report to setting " do 
+
+        ## okay so how does this work.
 
     end
 
     test " can disable a certain additional recipient from being sent the notification " do 
-        
+            
+
+    end
+=end
+
+    test " pdf generated if all reports get verified " do 
+            
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        order = create_plus_path_lab_patient_order([reports[0].id.to_s])
+
+        order = Business::Order.find(order.id.to_s)
+
+        ## here the ready_to_generate_pdf should be nil
+        assert_nil order.ready_for_pdf_generation
+        ## add the values
+        ## of the creatinine.
+        order.reports[0].tests[0].result_raw = 15
+        ## verify the damn report.
+        order.reports[0].tests[0].verification_done = 1
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "204", response.code.to_s
+
+        order = Business::Order.find(order.id.to_s)
+
+        assert_equal false, order.ready_for_pdf_generation.blank?
+
     end
 
+=begin
+    test " pdf not generated if no reports are verified " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+
+        order = create_plus_path_lab_patient_order([reports[0].id.to_s])
+
+        order = Business::Order.find(order.id.to_s)
+
+        ## here the ready_to_generate_pdf should be nil
+        assert_nil order.ready_for_pdf_generation
+        ## add the values
+        ## of the creatinine.
+        order.reports[0].tests[0].result_raw = 15
+        ## verify the damn report.
+        ## order.reports[0].tests[0].verification_done = 1
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "204", response.code.to_s
+
+        order = Business::Order.find(order.id.to_s)
+
+        assert_equal true, order.ready_for_pdf_generation.blank?
+
+    end
+
+    test " pdf generated if only one report is verified and partial order reports are enabled " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        creat_reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+        puts "creat reports are:"
+        puts creat_reports.to_s
+
+        urea_reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "urea"})
+        puts "urea reports are:"
+        puts urea_reports.to_s
+
+        order = create_plus_path_lab_patient_order([creat_reports[0].id.to_s,urea_reports[0].id.to_s])
+
+        order = Business::Order.find(order.id.to_s)
+
+        ## here the ready_to_generate_pdf should be nil
+        assert_nil order.ready_for_pdf_generation
+        ## add the values
+        ## of the creatinine.
+        order.reports[0].tests[0].result_raw = 15
+        ## verify the damn report.
+        order.reports[0].tests[0].verification_done = 1
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "204", response.code.to_s
+
+        order = Business::Order.find(order.id.to_s)
+
+        assert_equal false, order.ready_for_pdf_generation.blank?
+
+    end
+
+    test " pdf not generated if force pdf generation is false, and at least one report is verified, but not in the present request " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        creat_reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+        #puts "creat reports are:"
+        #puts creat_reports.to_s
+
+        urea_reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "urea"})
+        #puts "urea reports are:"
+        #puts urea_reports.to_s
+
+        order = create_plus_path_lab_patient_order([creat_reports[0].id.to_s,urea_reports[0].id.to_s])
+
+        order = Business::Order.find(order.id.to_s)
+
+        ## here the ready_to_generate_pdf should be nil
+        assert_nil order.ready_for_pdf_generation
+        ## add the values
+        ## of the creatinine.
+        order.reports[0].tests[0].result_raw = 15
+        ## verify the damn report.
+        order.reports[0].tests[0].verification_done = 1
+
+        order = merge_changes_and_save(Business::Order.find(order.id.to_s),order,plus_lab_employee)  
+
+        order = Business::Order.find(order.id.to_s)
+
+        pdf_generation_time = order.ready_for_pdf_generation
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "204", response.code.to_s
+
+        order = Business::Order.find(order.id.to_s)
+
+        assert_nil order.ready_for_pdf_generation
+
+    end
+
+
+    test " pdf generated if force pdf generation is true, and at least one report is verified, but not in the present request " do 
+
+        plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+        creat_reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
+        puts "creat reports are:"
+        puts creat_reports.to_s
+
+        urea_reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "urea"})
+        puts "urea reports are:"
+        puts urea_reports.to_s
+
+        order = create_plus_path_lab_patient_order([creat_reports[0].id.to_s,urea_reports[0].id.to_s])
+
+        order = Business::Order.find(order.id.to_s)
+
+        ## here the ready_to_generate_pdf should be nil
+        assert_nil order.ready_for_pdf_generation
+        ## add the values
+        ## of the creatinine.
+        order.reports[0].tests[0].result_raw = 15
+        ## verify the damn report.
+        order.reports[0].tests[0].verification_done = 1
+
+        order = merge_changes_and_save(Business::Order.find(order.id.to_s),order,plus_lab_employee)  
+
+        order = Business::Order.find(order.id.to_s)
+
+        pdf_generation_time = order.ready_for_pdf_generation
+
+        #order.force_pdf_generation = true
+
+        put business_order_path(order.id.to_s), params: {order: order.attributes.merge({:force_pdf_generation => true}), :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
+
+        assert_equal "204", response.code.to_s
+
+        order = Business::Order.find(order.id.to_s)
+
+        assert_not_equal pdf_generation_time, order.ready_for_pdf_generation
+
+
+    end
 =end
 
 end

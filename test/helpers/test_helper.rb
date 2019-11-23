@@ -53,7 +53,6 @@ module TestHelper
     end
 
 
-
     def create_order_and_add_tube(report,plus_lab_employee)
 
         order = create_plus_path_lab_patient_order(report.id.to_s)
@@ -224,6 +223,9 @@ module TestHelper
             organization.created_by_user_id = user.id.to_s
             organization.who_can_verify_reports = [user.id.to_s]
             organization.role = Organization::LAB
+            ## so we add God as a default recipient on all organizations
+            ## for the purpose of testing.
+            organization.recipients << Notification::Recipient.new(email_ids: ["god@gmail.com"])
             organization.save 
             unless organization.errors.full_messages.blank?
                 puts "errors creating organizaiton--------->"
@@ -324,7 +326,7 @@ module TestHelper
         patient.created_by_user = latika_sawant
         patient.created_by_user_id = latika_sawant.id.to_s
         patient.save
-        #puts "ERRORS CREATING Aditya Raut Patient: #{patient.errors.full_messages}"
+        puts "ERRORS CREATING Aditya Raut Patient: #{patient.errors.full_messages}"
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
@@ -336,6 +338,9 @@ module TestHelper
         o.created_by_user_id = latika_sawant.id.to_s
         o.patient_id = patient.id.to_s
         o.skip_pdf_generation = true
+        o
+        puts "returning freshly built order"
+        puts "it is :#{o.id.to_s}"
         o
     end
         

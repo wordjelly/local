@@ -7,6 +7,18 @@ module Concerns::OrderConcern
 		YES = 1
 		NO = -1
 
+		#################################################
+		##
+		##
+		## ORDER-> REPORT NOTIFICATION TWO FACTOR CONSTANTS
+		##
+		##
+		##
+		#################################################
+		REPORT_UPDATED_TEMPLATE_NAME = "Report Updated"
+		REPORT_UPDATED_SENDER_ID = "LABTST"
+
+
 		## SHOULD BE MADE TO 1 when ->
 		## report is added or removed from an order
 		## a requirement priority change is effected
@@ -171,13 +183,19 @@ module Concerns::OrderConcern
 		##
 		##############################################
 
-		attribute :recipients, Array[Notification::Recipient]
+		#attribute :recipients, Array[Notification::Recipient]
 
-		attribute :additional_recipients, Array[Notification::Recipient]
+		#attribute :additional_recipients, Array[Notification::Recipient]
+
+		## so it has to have recipients
+		## 
 
 		## ids of the recipients which we want to disable receiveing the reports.
 		attribute :disable_recipient_ids, Array
 
+		## so now move to the actual code of
+		## sending the notifications and the background job.
+		## 2 tests an hour is also a hell of a lot.
 		## ids of the recipients which we want to resend the reports to.
 		attribute :resend_recipient_ids, Array
 
@@ -318,6 +336,7 @@ module Concerns::OrderConcern
 			document.resend_notifications unless document.skip_resend_notifications.blank?
 		end
 
+
 		after_find do |document|
 			document.load_patient
 			document.set_accessors
@@ -342,13 +361,27 @@ module Concerns::OrderConcern
 		}.size == 1
 	end
 
-	def organization_default_recipients
+	def organization_defined_recipients
 		recipients_to_add = []
-		self.created_by_user.organization.default_recipients.each do |r|
-			if self.recipients.select{|c|
+
+		#puts "organization defined recipients are:"
+		
+		#puts self.created_by_user.organization.gather_recipients.to_s
+
+		self.created_by_user.organization.gather_recipients.each do |r|
+			#puts "the default organization recipieint is:"
+			#puts r.to_s
+			k = self.recipients.select{|c|
 				r.matches?(c)
-			}.size == 0
+			}
+			#puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+			#puts "matching stuff is:"
+			#puts k.to_s
+			#puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+			if k.size == 0
 				recipients_to_add << r
+			else
+				
 			end
 		end
 		recipients_to_add
@@ -359,12 +392,32 @@ module Concerns::OrderConcern
 	## and do that checking on it.
 	## and additional recipients is another array
 	## that can be edited only by the user who created the order ? or belonging to the same organization.
-	def update_recipients	
-		self.recipients << Notification::Recipient.new(patient: self.patient) unless recipients_include_patient?
-		self.recipients << Notification::Recipient.new(user: self.created_by_user) unless recipients_include_creating_user?
-		organization_default_recipients.each do |r|
+	def update_recipients
+		#puts "starting now ------------------>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+		unless recipients_include_patient?	
+			#puts "recipients dont include the patient, so added it, size now is: #{self.recipients.size}"
+			self.recipients <<  Notification::Recipient.new(patient_id: self.patient.id.to_s) 
+		end
+		
+		unless recipients_include_creating_user?
+			#puts "recipients dont include the creating user so added it, and the size becomes:  #{self.recipients.size}"
+			self.recipients << Notification::Recipient.new(user_id: self.created_by_user.id.to_s) 
+		end
+		
+		k = organization_defined_recipients	
+		
+		#puts "organization defined recipients are:"
+		
+		#puts k
+
+		k.each do |r|
 			self.recipients << r
 		end
+
+		#puts "size at close is: "
+		#puts self.recipients.size
+		#puts "-----------------------------------------------------------------------(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((("
+
 	end
 
 	## so the next step is that we test this and add removal of different recipients.
@@ -485,15 +538,15 @@ module Concerns::OrderConcern
 	def order_can_be_finalized
 		self.reports.each do |report|
 
-			puts "checking report: #{report.id.to_s}"
+			#puts "checking report: #{report.id.to_s}"
 				
 			report.requirements.each do |req|
-				puts "checking requirement: #{req.id.to_s}, is it satisfied: #{req.satisfied?}"					
+				#puts "checking requirement: #{req.id.to_s}, is it satisfied: #{req.satisfied?}"					
 				self.errors.add(:requirements, "the requirement: #{req.name} was not satisfied") unless req.satisfied?
 			end
 
 			report.tests.each do |test|
-				puts "checking test: #{test.name.to_s}"
+				#puts "checking test: #{test.name.to_s}"
 				self.errors.add(:reports, "the test #{test.name}, in the report: #{report.name}, has not been provided with the relevant history #{test.get_history_questions}, please answer questions to finalize the order") unless test.history_provided?(self.history_tags)
 			end
 		end
@@ -551,21 +604,40 @@ module Concerns::OrderConcern
 	# but later
 	# today i want this out of the way.
 
-	#########################################################
+	########################################################
 	##
 	##
-	## NOTIFICATION METHODS.
+	## NOTIFICATION METHODS : OVERRIDDEN FROM THE 
 	##
 	##
-	#########################################################
-	## triggered after_validation
-	def send_notifications
-		## if there are people in the resend
-		## then those.
-		## if the report_pdf was regenerated ?
-		## then that
-		## if the receipt was regenerated then that
+	########################################################
+	def before_send_notifications
+		return true unless self.resend_recipient_ids.blank?
+		return true unless self.force_send_notifications.blank?
+		return false
+	end
 
+	## sends notification, sms, and email to all the recipients, of the order
+	## now we test -> force, resend, receipt notifications
+	## and what happens in stuff like things being added/removed etc.
+	## okay get it working for receipt.
+	## here send notifications is triggered after_pdf_generation.
+	## it should be same in the receipt.
+	def send_notifications
+		gather_recipients.each do |recipient|
+			recipient.phone_numbers.each do |phone_number|
+				response = Auth::TwoFactorOtp.send_transactional_sms_new({
+					:to_number => phone_number,
+					:template_name => REPORT_UPDATED_TEMPLATE_NAME,
+					:var_hash => {:VAR1 => self.patient.first_name, :VAR2 => self.patient.last_name, :VAR3 => self.pdf_url, :VAR4 => self.created_by_user.organization.name },
+					:template_sender_id => REPORT_UPDATED_SENDER_ID
+				})
+			end
+			unless recipient.email_ids.blank?
+				email = OrderMailer.report(recipient,self,self.created_by_user)
+	        	email.deliver_now
+        	end
+    	end
 	end
 	##############################################################
 	##
@@ -1108,6 +1180,30 @@ module Concerns::OrderConcern
 		end
 	end
 
+	########################################################
+	##
+	##
+	## REPORT IMPRESSIONS
+	##
+	##
+	########################################################
+	## if a report has a verification done.
+	## unless all reports 
+
+	## @called_from : SELF#before_validation
+	def generate_report_impressions
+		self.reports.each do |report|
+			if report.impression.blank?
+				report.impression = ""
+				report.tests.each do |test|
+					report.impression += (" " + (test.display_comments_or_inference || ""))
+				end
+			end
+		end
+	end
+
+
+	
 	#############################################################
 	##
 	##
@@ -1128,22 +1224,15 @@ module Concerns::OrderConcern
 	end
 
 	def proceed_for_pdf_generation?
-		(any_report_just_verified? && (self.organization.generate_partial_order_reports == YES) || (all_reports_verified? && any_report_just_verified?) || (!self.force_pdf_generation.blank?))
+		((any_report_just_verified? && (self.organization.generate_partial_order_reports == YES)) || (all_reports_verified? && any_report_just_verified?) || (!self.force_pdf_generation.blank?))
 	end
-	####################################################
-	##
-	##
-	## OVERRIDEN FROM PDF CONCERN.
-	##
-	##
-	####################################################
-	## queueing of the job happens in after save
-	## if this parameter is not blank.
-	## and this parameter is set from within the job anywyas.
+	
 	def before_generate_pdf
 		return false unless self.skip_pdf_generation.blank?
 		return proceed_for_pdf_generation?
 	end
+
+	## so let's check the mailer if its sending this or not.
 
 	def after_generate_pdf
 		send_notifications
@@ -1167,64 +1256,14 @@ module Concerns::OrderConcern
 		after_generate_pdf
 
 	end
-	## and do the time based subindicator price change issue
-	## that is the first priority.
-	## then we sort out the UI to look better
-	## so if its pending.
-	## you want to validate that the receipt size has neither reduced nor increased.
-	## this need not be called from here.
-	## it is unnecessarily confusing things.
-	## put the pdf issues in the pdf concern.
+	
 	def set_force_pdf_generation_for_receipts
 		if self.new_record?
 			self.receipts.each do |r|
-				## the problem is that this will 
-				## be done in the before_validation.
-				## will the after_validation callback cascade.
 				r.force_pdf_generation = true
 			end
 		end
-=begin
-		if self.new_record?
-			self.receipts.each do |receipt|
-				## should'nt that make them all newly_added?
-				receipt.process_pdf
-			end
-		else
-			#that you override in the receipt level.
-			#not here.
-			#puts "order is not a new record."
-			self.receipts.each do |receipt|
-				if receipt.newly_added == true
-					#puts "receipt is a new record"
-					#puts "its force pdf generation is : #{receipt.force_pdf_generation}"
-				else
-					#puts "receipt is an old record."
-					#puts "payments are: #{receipt.payments.size}"
-					## so in this case, do we regenerate ?
-					## or not 
-					#puts "receipt prev size contains"
-					#puts receipt.prev_size
-					#puts "Receipt current size contains"
-					#puts receipt.current_size
-					if receipt.prev_size["payments"] < receipt.current_size["payments"]
-						receipt.force_pdf_generation = true
-					end
-					## if the status of any of its payments has changed
-					## then also we have to regenerate it.
-					if receipt.any_payment_status_changed?
-						receipt.force_pdf_generation = true 
-						#puts "Set the force pdf generation to true."
-					end
-				end
-				receipt.process_pdf unless receipt.force_pdf_generation.blank?
-			end
-		end
-=end
 	end
-	# get dropdown working
-	# solve bare search issue
-	# and we are done.
 
 	## @Called_from : self#generate_pdf
 	def get_signing_organization(reports)
@@ -1260,20 +1299,7 @@ module Concerns::OrderConcern
 
 	end
 
-	## if a report has a verification done.
-	## unless all reports 
-
-	## @called_from : SELF#before_validation
-	def generate_report_impressions
-		self.reports.each do |report|
-			if report.impression.blank?
-				report.impression = ""
-				report.tests.each do |test|
-					report.impression += (" " + (test.display_comments_or_inference || ""))
-				end
-			end
-		end
-	end
+	
 
 	
 
@@ -1314,10 +1340,11 @@ module Concerns::OrderConcern
 		File.open(save_path, 'wb') do |file|
 		  file << pdf
 		  self.pdf_urls = [save_path]
+		  self.pdf_url = save_path
 		end
 
-		## now display the pdf urls.
-		
+		## and send the transactional sms.
+
 =begin
 	    Tempfile.open(file_name) do |f| 
 		  f.binmode

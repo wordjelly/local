@@ -16,7 +16,6 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
 
-
         order = build_plus_path_lab_patient_order
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first

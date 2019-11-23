@@ -16,9 +16,12 @@ class Organization
 	## AND ALSO THE CASCADE CALLBACK IS IMPORTANT
 	## IS IMPORTANT. THE BEFORE_SAVE CALLBACK IN THE LOCATION CONCERN
 	## NEEDS THE ORGANIZATIONS ID.
+	## after this make it send the email, and things should
+	## be ok.
 	include Concerns::MissingMethodConcern
 	include Concerns::CallbacksConcern
 	include Concerns::LocationConcern
+	include Concerns::NotificationConcern
 
 
 
@@ -63,13 +66,7 @@ class Organization
 	## 1 centimeter is 37.7952755906
 	CM_TO_PIXEL = 37.7952755906
 
-	# so one thing should be done on save, to create a default policy
-	# setting for the apyments.
-
-	## JUST A DUPLICATE OF THE ID FIELD TO ENABLE AGGREGATING ON IT, 
-	## AS ELASTICSEARCH GAVE SOME ISSUES WITH aggregating directly on 
-	## ID, WITH DIFFERENT VERSIONS.
-	## IT IS SET BEFORE SAVE.
+	
 	## @set_from : before_save in self.
 	## but after cascade_id_generation , as id generation has 
 	## to be done first.
@@ -120,8 +117,8 @@ class Organization
 
 	attribute :user_ids, Array, mapping: {type: 'keyword'}, default: []
 
-	attribute :default_recipients, Array[Notification::Recipient]
-
+	#attribute :default_recipients, Array[Notification::Recipient]
+	
 
 	LAB = "lab"
 
@@ -145,6 +142,8 @@ class Organization
 	attribute :role, String, mapping: {type: 'keyword'}
 	validates_presence_of :role
 
+
+	attribute :which_user_ids_should_receive_notifications, Array, mapping: {type: 'keyword'}
 	## so these are actually the roles we specify on the employee.
 	## but the employee is by default a patient.
 	## if he chooses patient, it creates an organization whose role is a patient.
@@ -433,6 +432,8 @@ class Organization
 	    },
 	    copy_to: "search_all"
 
+	    #indexes :default_recipients, type: 'nested', properties: Notification::Recipient.index_properties
+
 	end
 
 	## we add the parent child thing as a validation
@@ -465,6 +466,7 @@ class Organization
 				 :generate_partial_order_reports, 
 				 {:additional_employee_signatures => []},
 				 {:who_can_verify_reports => []},
+				 {:which_user_ids_should_receive_notifications => []},
 				 :we_have_pre_printed_letter_heads,
 				 :space_to_leave_for_pre_printed_letter_head_in_cm, 
 				 :we_have_pre_printed_footers, 
@@ -479,9 +481,6 @@ class Organization
 				 :add_processed_at_footnote_if_using_our_letter_head,
 				 {
 					:organization_settings => OrganizationSetting.permitted_params
-				 },
-				 {
-				 	:default_recipients => Notification::Recipient.permitted_params
 				 }
 				] 
 			}
@@ -887,6 +886,9 @@ class Organization
 	## if you call to_json on order, then and only then these additional methods are included, calling, as_json on order, does not include these methods.
 	###########################################################
 	def as_json(options={})
+		## what i can do is
+		## that each user who is pending verification
+		## 
 		super(:methods => [:users_pending_approval, :employee_roles])
 	end
 	##########################################################
@@ -947,5 +949,22 @@ class Organization
 		self.errors.add(:representative_patient,self.representative_patient.errors.full_messages) unless self.representative_patient.errors.full_messages.blank?
 	end
 
+	#########################################################
+	##
+	##
+	## NOMINEE USER
+	##
+	##
+	#########################################################
+	## limit the users to 5.
+	def users_to_notify
+		if self.which_user_ids_should_receive_notifications.blank?
+			[self.created_by_user]
+		else
+			self.which_user_ids_should_receive_notifications[0..5].map{|c|
+				User.find(c)
+			}
+		end
+	end
 
 end

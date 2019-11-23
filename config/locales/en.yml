@@ -22,3 +22,5 @@
 en:
   min_max_overlap_error: "Min max overlap error"
   text_overlap_error: "text overlap error"
+  pathofast_mailer_report_subject: "Lab Test Reports"
+  pathofast_mailer_receipt_subject: "Lab Test Receipt"

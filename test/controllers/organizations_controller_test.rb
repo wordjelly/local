@@ -111,7 +111,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
 
     end
 
-
+=begin
     test " -- creates an organization -- " do 
     	
     	post organizations_path, params: {organization: {name: "first item type", description: "a good lab", address: "a new place", role: "lab", verifiers: 2, phone_number: "9561137096"}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
@@ -150,7 +150,6 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
     	o.description = "dog"
     	o.created_by_user_id = @u.id.to_s
     	o.created_by_user = @u
-        
     	o.save
 
         ## forgot a refresh here.s
@@ -235,8 +234,9 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o.description = "dog"
         o.created_by_user_id = @u.id.to_s
         o.created_by_user = @u
-        
         o.save
+
+        ## is the user changing here ?
 
         assert_equal true, o.errors.full_messages.blank?
         
@@ -247,9 +247,11 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         pathan.save
         assert_equal true, pathan.errors.full_messages.blank?
 
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
         puts "the organization user ids are:"
         puts o.user_ids.to_s
-
+        o = Organization.find(o.id.to_s)
         o.user_ids.push(pathan.id.to_s)
 
         puts "-------- the organization attributes"
@@ -264,6 +266,7 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         pathan = User.find(pathan.id.to_s)
         assert_equal Organization::USER_VERIFIED, pathan.organization_members[0].membership_status        
     end
+
 
     test " -- adds a parent organization -- " do 
 
@@ -599,12 +602,12 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         assert_equal 1, search_request.response.hits.hits.size
 
     end    
+=end
 
-=begin
-    test " -- get all organizations -- " do 
 
+    test " -- adds default recipient with just phone number -- " do 
         o = Organization.new
-        o.name = "grandpa"
+        o.name = "hello"
         o.phone_number = "1234545"
         o.address = "jhome"
         o.role = "lab"
@@ -612,19 +615,124 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
         o.description = "dog"
         o.created_by_user_id = @u.id.to_s
         o.created_by_user = @u
-        
         o.save
-        assert_equal true, o.errors.full_messages.blank?
-
-        ## so what is the current users organizatio.
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-        ##get organizations_path, 
-        get organizations_path, params: {current_app_id: "testappid", api_key: @ap_key}, headers: @headers
 
-        puts response.body.to_s
+        o = Organization.find(o.id.to_s)
+
+        o.recipients << Notification::Recipient.new(:phone_numbers => ["9922022111","22991133939"])
+
+        put organization_path(o.id.to_s), params: {organization: o.attributes, :api_key => @ap_key, :current_app_id => "testappid"  }.to_json, headers: @headers
+
+        assert_equal "204", response.code.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        o = Organization.find(o.id.to_s)
+
+        assert_equal 1, o.recipients.size
 
     end
-=end
 
+
+    test " -- adds default recipient with just email address -- " do 
+
+        o = Organization.new
+        o.name = "hello"
+        o.phone_number = "1234545"
+        o.address = "jhome"
+        o.role = "lab"
+        o.verifiers = 2
+        o.description = "dog"
+        o.created_by_user_id = @u.id.to_s
+        o.created_by_user = @u
+        o.save
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        o = Organization.find(o.id.to_s)
+
+        o.recipients << Notification::Recipient.new(:phone_numbers => ["bhargav.r.raut@gmail.com","rotastrain@gmail.com"])
+
+        put organization_path(o.id.to_s), params: {organization: o.attributes, :api_key => @ap_key, :current_app_id => "testappid"  }.to_json, headers: @headers
+
+        assert_equal "204", response.code.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        o = Organization.find(o.id.to_s)
+
+        assert_equal 1, o.recipients.size
+
+    end
+
+    test " -- adds default recipient with user id -- " do 
+
+        o = Organization.new
+        o.name = "hello"
+        o.phone_number = "1234545"
+        o.address = "jhome"
+        o.role = "lab"
+        o.verifiers = 2
+        o.description = "dog"
+        o.created_by_user_id = @u.id.to_s
+        o.created_by_user = @u
+        o.save
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        o = Organization.find(o.id.to_s)
+
+        o.recipients << Notification::Recipient.new(:user_id => @u.id.to_s)
+
+        put organization_path(o.id.to_s), params: {organization: o.attributes, :api_key => @ap_key, :current_app_id => "testappid"  }.to_json, headers: @headers
+
+        assert_equal "204", response.code.to_s
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        o = Organization.find(o.id.to_s)
+
+        assert_equal 1, o.recipients.size
+
+    end
+
+
+    test " -- raises errors if the default recipient does not exist -- " do 
+
+        o = Organization.new
+        o.name = "hello"
+        o.phone_number = "1234545"
+        o.address = "jhome"
+        o.role = "lab"
+        o.verifiers = 2
+        o.description = "dog"
+        o.created_by_user_id = @u.id.to_s
+        o.created_by_user = @u
+        o.save
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        o = Organization.find(o.id.to_s)
+
+        o.recipients << Notification::Recipient.new(:user_id => "dog")
+
+        put organization_path(o.id.to_s), params: {organization: o.attributes, :api_key => @ap_key, :current_app_id => "testappid"  }.to_json, headers: @headers
+
+        assert_equal "404", response.code.to_s
+
+        #Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        #o = Organization.find(o.id.to_s)
+
+        #assert_equal 1, o.recipients.size
+
+    end
+
+=begin
+-> main thing is the charting, and getting those descriptions working properly
+-> recipients tests should be passing
+->
+=end
 end

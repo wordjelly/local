@@ -115,7 +115,7 @@ class Diagnostics::Report
 	## representation of this element.
 	## @param[Organization] organization:  the organization that has created the order in the first place
 	def set_accessors
-		self.report_all_tests_verified = self.all_tests_verified?
+		self.report_all_tests_verified = self.is_verified?
 		self.report_has_abnormal_tests = self.has_abnormal_tests?
 		self.report_is_outsourced = self.is_outsourced?
 		self.tests.each do |test|
@@ -524,7 +524,7 @@ class Diagnostics::Report
 	## has any test just been verified?
 	def a_test_was_verified?
 		self.tests.select{|c|
-			((c.changed_attributes.include? "verification_done") && (c.verification_done == Diagnostics::TEST::VERIFIED))
+			((c.changed_attributes.include? "verification_done") && (c.verification_done == Diagnostics::Test::VERIFIED))
 		}.size > 0
 	end
 

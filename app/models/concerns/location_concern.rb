@@ -13,8 +13,12 @@ module Concerns::LocationConcern
       attr_accessor :created_location_errors
 
   		if defined? @permitted_params
-  			@permitted_params = @permitted_params + [:latitude, :longitude, :address, :spot_tag, :organization_location_id]
-  		else
+        if ((@permitted_params[1].is_a? Hash) && (self.class.name.to_s =~ /#{@permitted_params[1].keys[0]}/i))
+  			  @permitted_params[1] = @permitted_params[1] + [:latitude, :longitude, :address, :spot_tag, :organization_location_id]
+  		  else
+          @permitted_params = @permitted_params + [:latitude, :longitude, :address, :spot_tag, :organization_location_id]
+        end
+      else
   			@permitted_params = [:latitude, :longitude, :address, :spot_tag, :organization_location_id]
   		end
   

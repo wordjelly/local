@@ -14,7 +14,12 @@ class Business::Receipt
 	include Concerns::VersionedConcern
 	include Concerns::FormConcern
 	include Concerns::PdfConcern
+	include Concerns::NotificationConcern
 	include Concerns::CallbacksConcern
+
+	## FOR TWO FACTOR OTP SMS.
+	RECEIPT_UPDATED_TEMPLATE_NAME = "Receipt Updated"
+	RECEIPT_UPDATED_SENDER_ID = "LABTST"
 
 	attribute :name, String, mapping: {type: 'keyword'}, default: BSON::ObjectId.new.to_s
 
@@ -49,6 +54,11 @@ class Business::Receipt
 	attr_accessor :payable_from_organization
 	attr_accessor :payable_from_patient
 	attr_accessor :payable_to_organization
+
+	## so the payable from/payable from organization.
+	## each should get it. 
+	## unless it is the same.
+	## those are the recipients.
 	#####################################################
 	##
 	## for standalone existing of receipt objects.
@@ -122,6 +132,59 @@ class Business::Receipt
 	#####################################################
 	##
 	##
+	## NOTIFICATION CONCERN METHODS
+	##
+	##
+	#####################################################
+	## will have to see if all this works.
+	## so more integration testing is necessary here.	
+	## but generate pdf, is done after_validation
+	## so this will work.
+	before_validation do |document|
+		document.set_accessors
+		document.update_recipients
+	end
+
+	def set_accessors
+		self.payable_from_organization = Organization.find(self.payable_from_organization_id) unless self.payable_from_organization_id.blank?
+
+		self.payable_from_patient = Patient.find(self.payable_from_patient_id) unless self.payable_from_patient_id.blank?
+
+		self.payable_to_organization = Organization.find(self.payable_to_organization_id) unless self.payable_to_organization_id.blank?
+	end
+
+
+	def update_recipients
+		
+		unless self.payable_from_organization.blank?
+			self.payable_from_organization.users_to_notify.each do |user|
+				r = Notification::Recipient.new(user_id: user.id.to_s)
+				unless self.has_matching_recipient?(r)
+					self.recipients.add(r)
+				end
+			end
+		end
+
+		unless self.payable_from_patient.blank?
+			r = Notification::Recipient.new(patient_id: self.payable_from_patient.id.to_s)
+			unless self.has_matching_recipient?(r)
+				self.recipients.add(r)
+			end
+		end
+
+		unless self.payable_to_organization.blank?
+			self.payable_to_organization.users_to_notify.each do |user|
+				r = Notification::Recipient.new(user_id: user.id.to_s)
+				unless self.has_matching_recipient?(r)
+					self.recipients.add(r)
+				end
+			end
+		end
+
+	end
+	#####################################################
+	##
+	##
 	## VALIDATIONS
 	##
 	##
@@ -129,6 +192,7 @@ class Business::Receipt
 	validate :mode_of_newly_added_payment
 
 	validate :type_of_newly_added_payment
+
 
 	def mode_of_newly_added_payment
 		self.payments.select{|c|
@@ -387,6 +451,41 @@ class Business::Receipt
 		#((statement.payable_from_organization_ids.first.pending < 0) && (statement.payable_from_organization_ids.first.pending.abs > amount))
 		return true
 	end
+
+	##############################################################
+	##
+	##
+	## NOTIFICATIONS
+	##
+	##
+	##############################################################
+	def before_send_notifications
+		return true unless self.resend_recipient_ids.blank?
+		return true unless self.force_send_notifications.blank?
+		return false
+	end	
+
+	## sends notification, sms, and email to all the recipients, of the order
+	## now we test -> force, resend, receipt notifications
+	## and what happens in stuff like things being added/removed etc.
+	## okay get it working for receipt.
+	def send_notifications
+		## we will have to override the gather recipients.
+		gather_recipients.each do |recipient|
+			recipient.phone_numbers.each do |phone_number|
+				response = Auth::TwoFactorOtp.send_transactional_sms_new({
+					:to_number => phone_number,
+					:template_name => RECEIPT_UPDATED_TEMPLATE_NAME,
+					:var_hash => {:VAR1 => self.patient.first_name, :VAR2 => self.patient.last_name, :VAR3 => self.pdf_url, :VAR4 => self.payable_to_organization.name },
+					:template_sender_id => RECEIPT_UPDATED_SENDER_ID
+				})
+			end
+			unless recipient.email_ids.blank?
+				email = OrderMailer.receipt(recipient,self,self.payable_to_organization.created_by_user)
+	        	email.deliver_now
+        	end
+    	end
+	end
 	##############################################################
 	##
 	##
@@ -430,13 +529,6 @@ class Business::Receipt
 	## We call process_pdf.
 	def generate_pdf
 		
-		#puts "came to generate pdf in receipt------------->"
-		self.payable_from_organization = Organization.find(self.payable_from_organization_id) unless self.payable_from_organization_id.blank?
-
-		self.payable_from_patient = Patient.find(self.payable_from_patient_id) unless self.payable_from_patient_id.blank?
-
-		self.payable_to_organization = Organization.find(self.payable_to_organization_id) unless self.payable_to_organization_id.blank?
- 	
 		file_name = get_pdf_file_name
 
 		ac = ActionController::Base.new
@@ -465,8 +557,14 @@ class Business::Receipt
 		File.open(save_path, 'wb') do |file|
 		  file << pdf
 		  self.pdf_urls = [save_path]
+		  self.pdf_url = save_path
 		end
 		self.skip_pdf_generation = true
+	end
+
+
+	def after_generate_pdf
+		send_notifications
 	end
 
 	## so let us make the templates
