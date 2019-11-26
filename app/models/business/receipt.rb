@@ -452,8 +452,18 @@ class Business::Receipt
 		return true
 	end
 
-	##############################################################
-	##
+	########################################################### main problem is the payments -> 
+	## if i can sort that out ->
+	## with statements, and accessibility by 1st 
+	## we are in the driving seat.
+	## if that can be done, it is all done
+	## as i get 15 days for status.
+	## at least i target esr and electrolyte this week
+	## and then exl and nephelometer, the next week
+	## so we have interfacing done, then just LIS 
+	## 
+	## i can sit and do that.
+	## but what about the excercise?
 	##
 	## NOTIFICATIONS
 	##
