@@ -94,6 +94,7 @@ module Concerns::OrganizationConcern
 		attr_accessor :employee_role
 
 		after_find do |document|
+			#puts "came to after find-----------------"
 			document.set_membership_statuses_for_organization_members
 			document.set_organization
 		end
@@ -202,7 +203,10 @@ module Concerns::OrganizationConcern
     		unless k.blank?
     			#puts "going to find organization ---------->"
     			if self.organization = Organization.find(k[0].organization_id)
+    				self.organization.skip_load_created_by_user = true
+
     				self.organization.run_callbacks(:find)
+
     				#puts "did organization after find."
     				#puts "is there a representative patient?"
     				#puts self.organization.representative_patient

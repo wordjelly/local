@@ -292,6 +292,7 @@ module TestHelper
 
             Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
         end
+        
     end
 
     def load_error_report(file_name_without_path_or_extension)
@@ -351,6 +352,7 @@ module TestHelper
         o.save
 
         unless o.errors.blank?
+            puts "error creating plus path lab patient order------------------>"
             puts o.errors.full_messages
             exit(1)
         end

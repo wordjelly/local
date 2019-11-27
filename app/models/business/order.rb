@@ -40,6 +40,7 @@ class Business::Order
 	include Concerns::OrderConcern
 	## 
 	include Concerns::CallbacksConcern
+	include Concerns::BackgroundJobConcern
 	## so the callbacks involve after find.
 	## these should be execute first.
 	## others can be done later.

@@ -29,6 +29,8 @@ module Concerns::OwnersConcern
  
 		attr_accessor :organization
 
+		attr_accessor :skip_load_created_by_user
+
 		attribute :created_by_user_id
 
 		attribute :currently_held_by_organization, String, mapping: {type: 'keyword'}
@@ -155,11 +157,26 @@ module Concerns::OwnersConcern
 					#puts "the organization becomes: #{document.organization.id.to_s}"
 				end
 			end
+
+			document.load_created_by_user
+
 		end
 
+		## so this is on set only
+		## and the created by user is a different one.
 		def created_by_user=(created_user)
 			self.current_user = created_user
 			@created_by_user = created_user
+		end
+
+		## it is called after find.
+		def load_created_by_user
+			#puts "skip load is: #{self.skip_load_created_by_user}"
+			if self.skip_load_created_by_user.blank?	
+				self.created_by_user = User.find(self.created_by_user_id) unless (self.created_by_user_id.blank?)
+			else
+				#puts "its not blank."
+			end
 		end
 
 	end

@@ -19,6 +19,9 @@ module Concerns::NameIdConcern
 	## and update that in the controller tests.
 	## @param[String] organization_id
 	def assign_id_from_name(organization_id)
+		if self.class.name.to_s =~ /receipt/i
+			puts "came to assign id with name: with receipt"
+		end
 		#puts "Came to assign id from name with class------------- #{self.class.name}"
 		#puts "the id is: #{self.id.to_s}"
 		if self.id.blank?
@@ -38,6 +41,9 @@ module Concerns::NameIdConcern
 				end
 			end
 			#puts "id becomes: #{self.id.to_s}"
+		end
+		if self.class.name.to_s =~ /receipt/i
+			puts "id becomes: #{self.id.to_s}"
 		end
 	end
 

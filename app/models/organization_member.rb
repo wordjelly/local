@@ -13,13 +13,19 @@ class OrganizationMember
 
 	CREATED_BY_THIS_USER = "yes"
 
+
 	def set_membership_status(user_id)
 		unless self.organization_id.blank?
-			#puts "there is an organization id: #{self.organization_id}"
+			
 			organization = Organization.find(self.organization_id)
+			
+
+			## so the secondary skip will be done here.
+			## we don't want to trigger it again.
+			organization.skip_load_created_by_user = true
 			organization.run_callbacks(:find)
+
 			self.organization = organization
-			#puts "got an organization"
 			unless self.created_by_this_user.blank?
 				## if the organization member was created by the same user in which it is housed
 				## otherwise we have a problem.

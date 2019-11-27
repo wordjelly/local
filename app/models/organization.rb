@@ -23,8 +23,7 @@ class Organization
 	include Concerns::LocationConcern
 	include Concerns::NotificationConcern
 
-
-
+	
 	after_find do |document|
 		document.load_users_pending_approval
 		document.load_employee_roles
@@ -959,8 +958,10 @@ class Organization
 	## limit the users to 5.
 	def users_to_notify
 		if self.which_user_ids_should_receive_notifications.blank?
+			puts "which user ids is blank"
 			[self.created_by_user]
 		else
+			puts "it is not blank"
 			self.which_user_ids_should_receive_notifications[0..5].map{|c|
 				User.find(c)
 			}

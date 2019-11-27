@@ -11,8 +11,7 @@ class Credential
 	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
 	include Concerns::SearchOptionsConcern
-	include Concerns::PdfConcern
-		include Concerns::CallbacksConcern
+	include Concerns::CallbacksConcern
 
 
 	attribute :qualifications, Array, mapping: {type: 'keyword'}

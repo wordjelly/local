@@ -138,7 +138,7 @@ class Tag
 	
 	before_validation do |document|
 		document.assign_id_from_name(nil)
-		puts "self _date is: #{self._date.to_s}"
+		#puts "self _date is: #{self._date.to_s}"
 		document.assign_time_since_date unless document._date.blank?
 	end
 

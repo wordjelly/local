@@ -16,6 +16,8 @@ class Business::Receipt
 	include Concerns::PdfConcern
 	include Concerns::NotificationConcern
 	include Concerns::CallbacksConcern
+	include Concerns::BackgroundJobConcern
+
 
 	## FOR TWO FACTOR OTP SMS.
 	RECEIPT_UPDATED_TEMPLATE_NAME = "Receipt Updated"
@@ -140,27 +142,64 @@ class Business::Receipt
 	## so more integration testing is necessary here.	
 	## but generate pdf, is done after_validation
 	## so this will work.
-	before_validation do |document|
-		document.set_accessors
-		document.update_recipients
-	end
+	## these before_validations are being called after cascade_id_generation.
+	## as a result.
+	## they don't exist when the name and id are assigned.
+	## that is the problem.
 
+=begin
 	def set_accessors
-		self.payable_from_organization = Organization.find(self.payable_from_organization_id) unless self.payable_from_organization_id.blank?
+		unless self.payable_from_organization_id.blank?
+			self.payable_from_organization = Organization.find(self.payable_from_organization_id) 
+			self.payable_from_organization.run_callbacks(:find)
+		end
 
-		self.payable_from_patient = Patient.find(self.payable_from_patient_id) unless self.payable_from_patient_id.blank?
+		unless self.payable_from_patient_id.blank?
+			self.payable_from_patient = Patient.find(self.payable_from_patient_id) 
+			self.payable_from_patient.run_callbacks(:find)
+		end
 
-		self.payable_to_organization = Organization.find(self.payable_to_organization_id) unless self.payable_to_organization_id.blank?
+		unless self.payable_to_organization_id.blank?
+			self.payable_to_organization = Organization.find(self.payable_to_organization_id) 
+			self.payable_to_organization.run_callbacks(:find)
+		end
+
+	end
+=end
+	def payable_from_organization_id=(payable_from_organization_id)
+		puts "came to payable from organization id."
+		unless payable_from_organization_id.blank?
+			self.payable_from_organization = Organization.find(payable_from_organization_id) 
+			self.payable_from_organization.run_callbacks(:find)
+		end
+		@payable_from_organization_id = payable_from_organization_id
 	end
 
+	def payable_to_organization_id=(payable_to_organization_id)
+		puts "came to payable to organization id."
+		unless payable_to_organization_id.blank?
+			self.payable_to_organization = Organization.find(payable_to_organization_id) 
+			self.payable_to_organization.run_callbacks(:find)
+		end
+		@payable_to_organization_id = payable_to_organization_id
+	end
 
+	def payable_from_patient_id=(payable_from_patient_id)
+		puts "came to payable from patient id."
+		unless payable_from_patient_id.blank?
+			self.payable_from_patient = Patient.find(payable_from_patient_id)
+			self.payable_from_patient.run_callbacks(:find)
+		end
+		@payable_from_patient_id = payable_from_patient_id
+	end
+
+	## @called_from : app/models/concerns/business/order_concern.rb#find_or_initialize_receipt
 	def update_recipients
-		
 		unless self.payable_from_organization.blank?
 			self.payable_from_organization.users_to_notify.each do |user|
 				r = Notification::Recipient.new(user_id: user.id.to_s)
 				unless self.has_matching_recipient?(r)
-					self.recipients.add(r)
+					self.recipients << r
 				end
 			end
 		end
@@ -168,7 +207,7 @@ class Business::Receipt
 		unless self.payable_from_patient.blank?
 			r = Notification::Recipient.new(patient_id: self.payable_from_patient.id.to_s)
 			unless self.has_matching_recipient?(r)
-				self.recipients.add(r)
+				self.recipients << r
 			end
 		end
 
@@ -176,7 +215,7 @@ class Business::Receipt
 			self.payable_to_organization.users_to_notify.each do |user|
 				r = Notification::Recipient.new(user_id: user.id.to_s)
 				unless self.has_matching_recipient?(r)
-					self.recipients.add(r)
+					self.recipients << r
 				end
 			end
 		end
@@ -331,26 +370,33 @@ class Business::Receipt
 	end
 
 	def requires_total_update?
+		result = [self.force_pdf_generation]
+		result << self.newly_added
 		if self.changed_array_attribute_sizes.include? :payments
-			return true
+			result << true
 		else
-			payment_status_changed = false
 			self.payments.each do |payment|
+				if payment.newly_added == true
+					result << true
+				end
 				if payment.changed_attributes.include? :status
-					payment_status_changed = true	
+					result << true
 				end
 			end
-			payment_status_changed
 		end
+		result.include? true
 	end
 
 	## @called_from : self#add_bill, self#add_payment, self#cancel_payments
 	def update_total
+		puts "came to update total --------------------->"
 		return true unless requires_total_update?
+		puts "Crossed update total --------------------->"
 		self.total = 0
 		self.pending = 0
 		self.paid = 0
 		self.payments.each do |payment|
+			puts "Checking payment id: #{payment.id.to_s}"
 			if payment.is_approved?
 				if payment.is_a_bill?
 					self.total += payment.amount
@@ -371,35 +417,46 @@ class Business::Receipt
 				end
 			end
 		end
+		puts "crossed looking at transaction successfully"
 		transaction_successfull = false
 		self.pending = (self.total - self.paid)
+		puts "pending is: #{self.pending}"
+		## so this was successfully done.
+		## so now the next issue is why the pdf url is not getting set.
+		## because we are not doing the job.
 		$redis.watch(get_race_condition_key_name)
 			unless locked?
 				result = $redis.multi do |multi|
 					multi.set(get_race_condition_key_name,LOCKED)
-					begin
+					#begin
 						## you call validate
 						if self.save(validate: false)
 							## even then the accessors will be washed off
 							## 
+							transaction_successfull = true
 						else
 							#self.errors.add(:payments, "failed to commit receipt")
 							transaction_successfull = false
 						end
-					rescue
-						transaction_successfull = false
-						#self.errors.add(:payments, "failed to commit receipt")
-					end
+					#rescue
+					#	transaction_successfull = false
+					
+					#end
 					multi.set(get_race_condition_key_name,UNLOCKED)
 				end
-				#puts "multi result is:"
+				puts "multi result is:"
 				## so if this is the result.
-				#puts result.to_s
+				puts result.to_s
 				if result.blank?
 					transaction_successfull = false
+				elsif result.uniq != ["OK"]
+					transaction_successfull = false
+				else
+					transaction_successfull = true
 					#self.errors.add(:payments, "another payment is being made from your organization, please wait for it to complete, and try again later")
 				end
 			else
+				puts "it was already locked---------"
 				transaction_successfull = false
 				#self.errors.add(:payments, "another payment is being made from your organization, please wait for it to complete, and try again later")
 			end
@@ -430,13 +487,13 @@ class Business::Receipt
 	##
 	##############################################################
 	def locked?
-		#puts "Came to check locked."
+		puts "Came to check locked."
 		if $redis.get(get_race_condition_key_name).blank?
-			#puts "the key is blank"
+			puts "the key is blank"
 			false
 		else
-		   #puts "key is not blank"
-		   #puts "key is: #{$redis.get(get_race_condition_key_name)}"
+		   puts "key is not blank"
+		   puts "key is: #{$redis.get(get_race_condition_key_name)}"
 		   $redis.get(get_race_condition_key_name) == LOCKED
 		end
 	end
@@ -545,21 +602,21 @@ class Business::Receipt
 
 		pdf = ac.render_to_string pdf: file_name,
 	            template: "#{ Auth::OmniAuth::Path.pathify(self.class.name).pluralize}/pdf/show.pdf.erb",
-	            locals: {:receipt => self},
+	            locals: {:receipt => self, :organization => self.payable_to_organization},
 	            layout: "pdf/application.html.erb",
             	quiet: true,
 	            header: {
 	            	html: {
 	            		template:'/layouts/pdf/receipt_header.pdf.erb',
 	            		layout: "pdf/application.html.erb",
-	            		locals:  {:receipt => self}
+	            		locals:  {:receipt => self, :organization => self.payable_to_organization}
 	            	}
 	            },
 	            footer: {
 	           		html: {   
 	           			template:'/layouts/pdf/receipt_footer.pdf.erb',
 	           			layout: "pdf/application.html.erb",
-	            		locals: {:receipt => self}
+	            		locals: {:receipt => self, :organization => self.payable_to_organization}
 	                }
 	            }       
 

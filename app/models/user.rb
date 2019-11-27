@@ -182,11 +182,10 @@ class User
             #puts "got a credential"
             credential = Credential.new(search_request.response.hits.hits[0]["_source"])
             credential.id = search_request.response.hits.hits[0]["_id"]
+            credential.skip_load_created_by_user = true   
             credential.run_callbacks(:find)
             self.credential = credential
       end
-      #puts "Self credential is:"
-      #puts self.credential.to_s
     end
 
     ## what next

@@ -35,10 +35,8 @@ module Concerns::NotificationConcern
 		end
 
 		after_save do |document|
-			document.queue_notification_job
+			#ScheduleJob.perform_later([document.id.to_s,document.class.name,"notification_job"])
 		end
-
-
 
 	end
 
@@ -61,7 +59,7 @@ module Concerns::NotificationConcern
 
 	## then we come to this, and setu 
 
-	def queue_notification_job
+	def notification_job
 		## you can add it to the job.
 		## any resend recipients are wiped at this stage.
 		self.send_notifications unless self.ready_to_send_notification.blank?

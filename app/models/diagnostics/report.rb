@@ -12,7 +12,6 @@ class Diagnostics::Report
 	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
 	include Concerns::SearchOptionsConcern
-	include Concerns::PdfConcern
 	include Concerns::Diagmodule::Report::OutsourceConcern
 	include Concerns::CallbacksConcern
 
@@ -185,6 +184,8 @@ class Diagnostics::Report
 	end
 		
 	## if it has a created by user.
+	## we are not cascading the before validation callbacks
+	## why ?
 	before_validation do |document|
 		document.set_procedure_version
 		document.generate_top_up_template if (document.top_up_template == YES)

@@ -36,7 +36,9 @@ module Concerns::PdfConcern
 		end
 
 		after_save do |document|
-			document.queue_pdf_job unless document.ready_for_pdf_generation.blank?
+			
+			ScheduleJob.perform_later([document.id.to_s,document.class.name,"pdf_job"])
+			
 		end
 
 	end
@@ -67,18 +69,18 @@ module Concerns::PdfConcern
 	######################################################
 	## this is the main method to call.
 	## internally will call the generate_pdf method inside the background job.
-	def queue_pdf_job
-		## we queue this shit later.
-		## but we want to know if the tests pass or not.
-		## so right now just let it 
-		generate_pdf
-		## after generating we have to knock it off
-		## suppose it does not generate, and we want to 
-		## regenerate ?
-		## for whatever reason it fails ?
-		#PdfJob.perform_later([self.class.name, self.id.to_s])
+	def pdf_job
+		unless self.ready_for_pdf_generation.blank?
+			generate_pdf
+			self.ready_for_pdf_generation = nil
+			self.save(validate: false) 
+		end
 	end
 
+	## now its firing the receipt issue.
+	## its firing it from the receipt.
+	## which is fine actually.
+	## let it be different.
 	## this shoulkd be called
 	def process_pdf
 		if before_generate_pdf.blank?

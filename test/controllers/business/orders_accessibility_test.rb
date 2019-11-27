@@ -255,7 +255,7 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
     end
 =end
 
-    test " pdf generated if all reports get verified " do 
+    test " pdf generated for receipt and reports if all reports get verified " do 
             
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
 
@@ -279,7 +279,18 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         order = Business::Order.find(order.id.to_s)
 
-        assert_equal false, order.ready_for_pdf_generation.blank?
+        assert_equal true, order.ready_for_pdf_generation.blank?
+
+        puts "the order pdf url is: #{order.pdf_url}"
+
+        assert_equal 1, order.receipts.size
+        order.receipts.each do |receipt|
+            puts "receipt pdf url is: #{receipt.pdf_url}"
+            assert_same true, !receipt.pdf_url.blank?
+        end
+        ## so the order pdf url did not make it.
+        ## it got overwritten.
+        assert_same true, !order.pdf_url.blank?
 
     end
 

@@ -10,11 +10,18 @@ module Concerns::CallbacksConcern
   		###############################################################
   		##
   		##
-  		##
+  		## validate nested -> before_validation
+  		## by then any before_validation on the order leve
+  		## will have passed.
+  		## that is why it doesn't work.
   		##
   		##
   		###############################################################
 		validate :validate_nested
+		## cascade_id valid -> triggering.
+		## that is the issue.
+		## 
+		## so i want cascade_id_generation to run after all the before_validations are done.
 		## this will be the final skip
 		## won't it.
 		## they are added later.
@@ -26,7 +33,6 @@ module Concerns::CallbacksConcern
 			document.assign_current_user
 		end
 		
-
 		before_save do |document|
 			document.nullify_nil_attributes
 			document.cascade_callbacks(:save){false}
@@ -38,6 +44,9 @@ module Concerns::CallbacksConcern
 		def assign_current_user
 			user_to_consider = nil
 			if self.respond_to? :created_by_user
+				## load the created by user after find ?
+				## why not.
+				## it can be overwritten.
 				user_to_consider = (self.current_user || self.created_by_user)
 			else
 				user_to_consider = self.current_user
@@ -69,7 +78,7 @@ module Concerns::CallbacksConcern
 		def validate_nested(vars={})
 			## we merge in the set_vars_for_cascade
 			## and call validate nested on 
-			#puts "doing validate nested ---------------"
+			#puts "doing validate nested with #{self.class.name}"
 			self.class.attribute_set.each do |virtus_attribute|
 				if virtus_attribute.primitive.to_s == "Array"
 					if virtus_attribute.respond_to? "member_type"
@@ -175,6 +184,10 @@ module Concerns::CallbacksConcern
 					end
 				end
 			else
+				if self.class.name =~ /receipt/i
+					#puts "class is: receipts"
+					#puts "organization id is: #{organization_id}"
+				end
 				org_id = nil
 				## if an organization id was already passed in .
 				## use it.
@@ -203,10 +216,19 @@ module Concerns::CallbacksConcern
 								if virtus_attribute.name =~ /item/i
 									#puts "org id while going for item is: #{org_id}"
 								end
+								
 								self.send("#{virtus_attribute.name}").each do |obj|
+									if self.class.name.to_s =~ /receipt/i
+										puts "recipients size is  :#{self.recipients.size}"
+										puts "came to cascade with attribute name------------->: #{virtus_attribute.name.to_s}"
+									end
 									unless obj.is_a? Hash
 										if obj.respond_to? :cascade_id_generation
 											obj.cascade_id_generation(org_id)
+										end
+									else
+										if self.class.name.to_s =~ /receipt/i
+											puts "its a hash"
 										end
 									end
 								end

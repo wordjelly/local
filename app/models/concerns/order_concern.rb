@@ -284,6 +284,7 @@ module Concerns::OrderConcern
 		## if you do it each time, it will be a problem.
 		before_save do |document|
 			document.receipts.each do |receipt|
+				puts "going to update the total."
 				throw(:abort) unless receipt.update_total
 			end
 		end
@@ -331,7 +332,6 @@ module Concerns::OrderConcern
 
 
 		after_validation do |document|
-			document.group_reports_by_organization
 			document.set_force_pdf_generation_for_receipts
 			document.resend_notifications unless document.skip_resend_notifications.blank?
 		end
@@ -1131,6 +1131,8 @@ module Concerns::OrderConcern
 			r
 		else
 			r = Business::Receipt.new(payable_to_organization_id: payable_to_organization_id, payable_from_organization_id: payable_from_organization_id, payable_from_patient_id: payable_from_patient_id, force_pdf_generation: true, current_user: self.current_user, newly_added: true)
+			r.update_recipients
+			#exit(1)
 			self.receipts << r
 			r
 		end
@@ -1239,8 +1241,11 @@ module Concerns::OrderConcern
 	end
 
 	def generate_pdf
-			
+
+		
 		return if self.reports.blank?
+
+		self.group_reports_by_organization
 
 		if self.organization.outsourced_reports_have_original_format == Organization::YES
 
@@ -1342,6 +1347,9 @@ module Concerns::OrderConcern
 		  self.pdf_urls = [save_path]
 		  self.pdf_url = save_path
 		end
+		#puts "the pdf url is==========>"
+		#puts self.pdf_url
+		#exit(1)
 
 		## and send the transactional sms.
 

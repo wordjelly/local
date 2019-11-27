@@ -24,14 +24,15 @@ class ScheduleJob < ActiveJob::Base
   ## that will be called on employee.
   ## 0 => object_id
   ## 1 => object_class
+  ## 2 => object_method_to_be_called_in_the_background_job/or some custom string argument.
   ## the object calls the schedule method on itself.
   def perform(args)
-    ## first refresh the index.
     Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
-
     obj = args[1].constantize.find(args[0])
-    obj.schedule
-    Minute.flush_bulk
+    obj.run_callbacks(:find)
+    obj.do_background_job(args[2]) if obj.respond_to? "do_background_job"
+    #obj.schedule
+    #Minute.flush_bulk
   end
 
 end

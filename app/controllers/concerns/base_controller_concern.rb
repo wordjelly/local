@@ -288,6 +288,8 @@ module Concerns::BaseControllerConcern
 
 		end
 
+		## so after find does not load the created_by_user
+		## what about a current_user ?
 		if current_user
 			puts "------------ THERE IS A CURRENT USER --------------- "
 			instance_variable_get("@#{get_resource_name}").send("created_by_user=",current_user) 
