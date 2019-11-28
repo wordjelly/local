@@ -7,7 +7,6 @@ class OrderMailer < Auth::Notifier
 	end
 
 	def receipt(recipient,receipt,current_user)
-		@order = order
 		@receipt = receipt
 		@resource = current_user
 		mail to: recipient.email_ids, subject:  I18n.t("pathofast_mailer_receipt_subject")

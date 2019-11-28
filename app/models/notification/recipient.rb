@@ -51,6 +51,26 @@ class Notification::Recipient
 		end
 	end
 
+	def patient_id=(patient_id)
+		begin
+			p = Patient.find(patient_id)
+			self.email_ids = [p.email] unless p.email.blank?
+			self.phone_numbers = [p.mobile_number] unless p.mobile_number.blank?
+		rescue
+		end
+		@patient_id = patient_id
+	end
+
+	def user_id=(user_id)
+		begin
+			u = User.find(user_id)
+			self.email_ids = [u.email] unless u.email.blank?
+			self.phone_numbers = [u.additional_login_param] unless u.additional_login_param.blank?
+		rescue
+		end
+		@user_id = user_id
+	end
+
 	## this is read from the requisite arrays in the order itself.
 	attr_accessor :resend
 	attr_accessor :disabled

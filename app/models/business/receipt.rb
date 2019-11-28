@@ -532,22 +532,45 @@ class Business::Receipt
 		return false
 	end	
 
+	def build_var_hash
+		if !self.payable_from_patient.blank?
+			{
+				:VAR1 => self.payable_from_patient.first_name,
+				:VAR2 => self.payable_from_patient.last_name,
+				:VAR3 => self.pdf_url,
+				:VAR4 => self.payable_to_organization.name
+			}
+		elsif !self.payable_from_organization.blank?
+			{
+				:VAR1 => self.payable_from_organization.name,
+				:VAR3 => self.pdf_url,
+				:VAR4 => self.payable_to_organization.name
+			}
+		end
+	end
+
 	## sends notification, sms, and email to all the recipients, of the order
 	## now we test -> force, resend, receipt notifications
 	## and what happens in stuff like things being added/removed etc.
 	## okay get it working for receipt.
 	def send_notifications
+		puts "------------- CAME TO SEND NOTIFICAITONS FOR RECEIPT ------------------"
 		## we will have to override the gather recipients.
+		## how to get the patient ?
+
 		gather_recipients.each do |recipient|
+			puts "recipient is: #{recipient}"
 			recipient.phone_numbers.each do |phone_number|
 				response = Auth::TwoFactorOtp.send_transactional_sms_new({
 					:to_number => phone_number,
 					:template_name => RECEIPT_UPDATED_TEMPLATE_NAME,
-					:var_hash => {:VAR1 => self.patient.first_name, :VAR2 => self.patient.last_name, :VAR3 => self.pdf_url, :VAR4 => self.payable_to_organization.name },
+					:var_hash => build_var_hash,
 					:template_sender_id => RECEIPT_UPDATED_SENDER_ID
 				})
 			end
 			unless recipient.email_ids.blank?
+				#puts "the recipient has email id"
+				#puts recipient.email_ids.to_s
 				email = OrderMailer.receipt(recipient,self,self.payable_to_organization.created_by_user)
 	        	email.deliver_now
         	end
@@ -590,8 +613,6 @@ class Business::Receipt
 	end
 
 	
-
-
 	## We never call this method directly
 	## We call process_pdf.
 	def generate_pdf
@@ -627,6 +648,10 @@ class Business::Receipt
 		  self.pdf_url = save_path
 		end
 		self.skip_pdf_generation = true
+		
+		after_generate_pdf
+
+
 	end
 
 

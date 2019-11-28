@@ -185,7 +185,6 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
     ## 
     ########################################################,
 =end
-
 =begin
     test " order is populated with the patient and creating user of the order, as well as the organizations default recipients as default recipients " do 
         
@@ -256,7 +255,9 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 =end
 
     test " pdf generated for receipt and reports if all reports get verified " do 
-            
+        
+        ActionMailer::Base.deliveries = []
+
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
 
         reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
@@ -264,6 +265,10 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
         order = create_plus_path_lab_patient_order([reports[0].id.to_s])
 
         order = Business::Order.find(order.id.to_s)
+
+        puts ActionMailer::Base.deliveries.to_s
+
+        exit(1)
 
         ## here the ready_to_generate_pdf should be nil
         assert_nil order.ready_for_pdf_generation
@@ -294,6 +299,12 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
         ## 
         assert_same true, !order.pdf_url.blank?
 
+        ## check if emails were sent
+        ## how many emails should have been sent ?
+        ## one for the receipt
+        ## one for the order
+        ##mail = ActionMailer::Base.deliveries.last
+        assert_equal 2, ActionMailer::Base.deliveries.size, "2 email notifications were sent"
     end
 
 =begin

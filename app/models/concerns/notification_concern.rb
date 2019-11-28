@@ -60,10 +60,12 @@ module Concerns::NotificationConcern
 	## then we come to this, and setu 
 
 	def notification_job
-		## you can add it to the job.
-		## any resend recipients are wiped at this stage.
-		self.send_notifications unless self.ready_to_send_notification.blank?
-		self.resend_recipient_ids = []
+		unless self.ready_to_send_notification.blank?
+			self.send_notifications
+			self.resend_recipient_ids = []
+			self.ready_to_send_notification = nil
+			self.save(validate: false) 
+		end
 	end
 
 
