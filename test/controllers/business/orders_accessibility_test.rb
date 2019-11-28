@@ -285,11 +285,13 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         assert_equal 1, order.receipts.size
         order.receipts.each do |receipt|
-            puts "receipt pdf url is: #{receipt.pdf_url}"
-            assert_same true, !receipt.pdf_url.blank?
+            actual_receipt = Business::Receipt.find(receipt.id.to_s)
+            puts "receipt pdf url is: #{actual_receipt.pdf_url}"
+            assert_same true, !actual_receipt.pdf_url.blank?
         end
-        ## so the order pdf url did not make it.
-        ## it got overwritten.
+        ## how to check if notifications were sent
+        ## we just write to a database
+        ## 
         assert_same true, !order.pdf_url.blank?
 
     end

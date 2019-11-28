@@ -35,7 +35,7 @@ module Concerns::NotificationConcern
 		end
 
 		after_save do |document|
-			#ScheduleJob.perform_later([document.id.to_s,document.class.name,"notification_job"])
+			ScheduleJob.perform_later([document.id.to_s,document.class.name,"notification_job"])
 		end
 
 	end

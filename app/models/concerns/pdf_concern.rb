@@ -76,7 +76,7 @@ module Concerns::PdfConcern
 			self.save(validate: false) 
 		end
 	end
-
+	
 	## now its firing the receipt issue.
 	## its firing it from the receipt.
 	## which is fine actually.
