@@ -172,6 +172,7 @@ module Concerns::OwnersConcern
 		## it is called after find.
 		def load_created_by_user
 			#puts "skip load is: #{self.skip_load_created_by_user}"
+			#so its at the most called on skip_load.
 			if self.skip_load_created_by_user.blank?	
 				self.created_by_user = User.find(self.created_by_user_id) unless (self.created_by_user_id.blank?)
 			else

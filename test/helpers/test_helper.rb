@@ -134,7 +134,10 @@ module TestHelper
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
-        #########################################################
+        #######################################################
+        ## essential -> make the thing to mark as pass fail
+        ## allocate work to someone
+        ## zacharias stream
         ##
         ##
         ## CREATING DEVELOPER ACCOUNT AND CLINET.
@@ -292,6 +295,9 @@ module TestHelper
 
             Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
         end
+
+        ActionMailer::Base.deliveries = []
+        Auth.configuration.stub_otp_api_calls
         
     end
 
@@ -349,6 +355,7 @@ module TestHelper
 	## @return[Business::Order] the order created for the patient from plus path lab.
 	def create_plus_path_lab_patient_order(template_report_ids=nil)
 		o = build_plus_path_lab_patient_order(template_report_ids)
+        puts "the created by user organization -> created by user is not getting loaded. "
         o.save
 
         unless o.errors.blank?

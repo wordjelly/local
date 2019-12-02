@@ -196,8 +196,7 @@ class Business::Receipt
 	## @called_from : app/models/concerns/business/order_concern.rb#find_or_initialize_receipt
 	def update_recipients
 		unless self.payable_from_organization.blank?
-			self.payable_from_organization.users_to_notify.each do |user|
-				r = Notification::Recipient.new(user_id: user.id.to_s)
+			self.payable_from_organization.gather_recipients.each do |r|
 				unless self.has_matching_recipient?(r)
 					self.recipients << r
 				end
@@ -212,8 +211,7 @@ class Business::Receipt
 		end
 
 		unless self.payable_to_organization.blank?
-			self.payable_to_organization.users_to_notify.each do |user|
-				r = Notification::Recipient.new(user_id: user.id.to_s)
+			self.payable_to_organization.gather_recipients.each do |r|
 				unless self.has_matching_recipient?(r)
 					self.recipients << r
 				end
@@ -554,13 +552,16 @@ class Business::Receipt
 	## and what happens in stuff like things being added/removed etc.
 	## okay get it working for receipt.
 	def send_notifications
-		puts "------------- CAME TO SEND NOTIFICAITONS FOR RECEIPT ------------------"
+		#puts "------------- CAME TO SEND NOTIFICAITONS FOR RECEIPT ------------------"
 		## we will have to override the gather recipients.
 		## how to get the patient ?
-
+		phones_sent_to = []
+		emails_sent_to = []
 		gather_recipients.each do |recipient|
-			puts "recipient is: #{recipient}"
+			#puts "recipient is: #{recipient}"
 			recipient.phone_numbers.each do |phone_number|
+				next if phones_sent_to.include? phone_number
+				phones_sent_to << phone_number
 				response = Auth::TwoFactorOtp.send_transactional_sms_new({
 					:to_number => phone_number,
 					:template_name => RECEIPT_UPDATED_TEMPLATE_NAME,
@@ -571,8 +572,10 @@ class Business::Receipt
 			unless recipient.email_ids.blank?
 				#puts "the recipient has email id"
 				#puts recipient.email_ids.to_s
-				email = OrderMailer.receipt(recipient,self,self.payable_to_organization.created_by_user)
+				email = OrderMailer.receipt(recipient,self,self.payable_to_organization.created_by_user,(recipient.email_ids - emails_sent_to))
 	        	email.deliver_now
+	        	emails_sent_to << recipient.email_ids
+	        	emails_sent_to.flatten!
         	end
     	end
 	end
@@ -602,7 +605,7 @@ class Business::Receipt
 
 	def get_pdf_file_name
 		
-		time_stamp = Time.now.strftime("%b %-d_%Y")
+		time_stamp = Time.now.to_i.to_s
 
 		if !self.payable_from_organization_id.blank?
 			return self.payable_to_organization_id + "_" + self.payable_from_organization_id + "_" + time_stamp 

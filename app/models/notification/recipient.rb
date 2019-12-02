@@ -15,6 +15,12 @@ class Notification::Recipient
 	YES = 1
 	NO = 0
 
+	## ----------------------------------------------
+	## THESE THREE THINGS ARE FINISHABLE TODAY.
+	## solve the hba1c problem(don't know what is happening here, but if solved its the end of the show for us) - try to solve this now.
+	## see if you can change the name for ACR -> for this we write a custom hl7 hack
+	## just check if you are getting the name of the machine and port it out.
+	## ---------------------------------------------
 	attribute :name, String, mapping: {type: 'keyword'}
 	attribute :user_id, String, mapping: {type: 'keyword'}
 	attribute :patient_id, String, mapping: {type: 'keyword'}

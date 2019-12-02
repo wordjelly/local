@@ -19,6 +19,8 @@ module Concerns::OrderConcern
 		REPORT_UPDATED_SENDER_ID = "LABTST"
 
 
+		attribute :tags, Array[Tag], mapping: {type: 'nested', properties: Tag.index_properties}
+
 		## SHOULD BE MADE TO 1 when ->
 		## report is added or removed from an order
 		## a requirement priority change is effected
@@ -261,6 +263,8 @@ module Concerns::OrderConcern
 
 			   	indexes :additional_recipients, type: 'nested', properties: Notification::Recipient.index_properties
 
+			   	indexes :tags, type: 'nested', properties: Tag.index_properties
+
 			end
 
 		end
@@ -398,12 +402,9 @@ module Concerns::OrderConcern
 			#puts "recipients dont include the patient, so added it, size now is: #{self.recipients.size}"
 			self.recipients <<  Notification::Recipient.new(patient_id: self.patient.id.to_s) 
 		end
-		
-		unless recipients_include_creating_user?
-			#puts "recipients dont include the creating user so added it, and the size becomes:  #{self.recipients.size}"
-			self.recipients << Notification::Recipient.new(user_id: self.created_by_user.id.to_s) 
-		end
-		
+			
+		## this should be integrated into the gather_recipients call.
+
 		k = organization_defined_recipients	
 		
 		#puts "organization defined recipients are:"
@@ -624,8 +625,12 @@ module Concerns::OrderConcern
 	## here send notifications is triggered after_pdf_generation.
 	## it should be same in the receipt.
 	def send_notifications
+		phones_sent_to = []
+		emails_sent_to = []
 		gather_recipients.each do |recipient|
 			recipient.phone_numbers.each do |phone_number|
+				next if phones_sent_to.include? phone_number
+				phones_sent_to << phone_number
 				response = Auth::TwoFactorOtp.send_transactional_sms_new({
 					:to_number => phone_number,
 					:template_name => REPORT_UPDATED_TEMPLATE_NAME,
@@ -634,8 +639,10 @@ module Concerns::OrderConcern
 				})
 			end
 			unless recipient.email_ids.blank?
-				email = OrderMailer.report(recipient,self,self.created_by_user)
+				email = OrderMailer.report(recipient,self,self.created_by_user,(recipient.email_ids - emails_sent_to))
 	        	email.deliver_now
+	        	emails_sent_to << recipient.email_ids
+	        	emails_sent_to.flatten!
         	end
     	end
 	end
@@ -1315,7 +1322,7 @@ module Concerns::OrderConcern
 	## now the next step is to move to what ?
 	def build_pdf(report_ids,organization_id,signing_organization)
 		
-		time_stamp = Time.now.strftime("%b %-d_%Y")
+		time_stamp = Time.now.to_i.to_s
 
 		file_name = time_stamp + "_" + self.id.to_s + "_" + self.patient.full_name
 	   
@@ -1479,6 +1486,9 @@ module Concerns::OrderConcern
 					    	{
 					    		:additional_recipients => Notification::Recipient.permitted_params
 					    	},
+					    	{
+					    		:tags => Tag.permitted_params
+ 					    	},
 					    	:procedure_versions_hash,
 					    	:created_at,
 					    	:updated_at,

@@ -12,6 +12,7 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
 =begin
     ## should this have the sign ?
+    ## => 1
     test "consent to perform test" do 
     
         ## how does this work?
@@ -102,7 +103,11 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
     ##
     #######################################################
     test " order has option for home visit -> tags on the order " do 
-
+    
+        ## tags can be option tags
+        ## courier
+        ## physical pick up
+        ## technician blood collection
 
     end
 
@@ -185,7 +190,9 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
     ## 
     ########################################################,
 =end
-=begin
+
+
+
     test " order is populated with the patient and creating user of the order, as well as the organizations default recipients as default recipients " do 
         
         order = build_plus_path_lab_patient_order
@@ -234,12 +241,11 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         ## so if a different user updates the order -> then it goes to all of them.
 
-        assert_equal 4, o.recipients.size
+        assert_equal 3, o.recipients.size
 
         assert_equal 1, o.additional_recipients.size
 
     end
-=end
 
 =begin
     test " can resend the report by means of an attr_accessor, to some parties, for eg mark some parties to resend the report to setting " do 
@@ -253,10 +259,8 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
     end
 =end
-
     test " pdf generated for receipt and reports if all reports get verified " do 
         
-        ActionMailer::Base.deliveries = []
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
 
@@ -266,9 +270,31 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         order = Business::Order.find(order.id.to_s)
 
-        puts ActionMailer::Base.deliveries.to_s
+        #puts ActionMailer::Base.deliveries.to_s
+        assert_equal 1, order.receipts.size
+        order.receipts.each do |receipt|
+            actual_receipt = Business::Receipt.find(receipt.id.to_s)
+            puts "receipt pdf url is: #{actual_receipt.pdf_url}"
+            assert_same true, !actual_receipt.pdf_url.blank?
+        end
+        #exit(1)
+        #one to the patient
+        #one to the creating user of the order
+        #one to the patient
+        #one payable to the organization -> whoever are its recipients.
+        #that will be the user to notify(creating user, and the )
+         
+        #assert_equal 3, ActionMailer::Base.deliveries.size, "3 email notifications were sent for the receipts"
 
-        exit(1)
+        
+        puts "these are the mail deliveries after clearing ------------------ >"
+        ActionMailer::Base.deliveries.each do |delivery|
+           puts "from: #{delivery.from}. to: #{delivery.to}, subject: #{delivery.subject}"
+        end
+
+        #exit(1)
+
+        ActionMailer::Base.deliveries = []
 
         ## here the ready_to_generate_pdf should be nil
         assert_nil order.ready_for_pdf_generation
@@ -287,13 +313,6 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
         assert_equal true, order.ready_for_pdf_generation.blank?
 
         puts "the order pdf url is: #{order.pdf_url}"
-
-        assert_equal 1, order.receipts.size
-        order.receipts.each do |receipt|
-            actual_receipt = Business::Receipt.find(receipt.id.to_s)
-            puts "receipt pdf url is: #{actual_receipt.pdf_url}"
-            assert_same true, !actual_receipt.pdf_url.blank?
-        end
         ## how to check if notifications were sent
         ## we just write to a database
         ## 
@@ -304,10 +323,14 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
         ## one for the receipt
         ## one for the order
         ##mail = ActionMailer::Base.deliveries.last
-        assert_equal 2, ActionMailer::Base.deliveries.size, "2 email notifications were sent"
+        puts "these are the mail deliveries."
+        ActionMailer::Base.deliveries.each do |delivery|
+            puts "from: #{delivery.from}, to: #{delivery.to}, subject: #{delivery.subject}"
+        end
+        assert_equal 3, ActionMailer::Base.deliveries.size, "3 email notifications were sent"
     end
 
-=begin
+
     test " pdf not generated if no reports are verified " do 
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
@@ -318,8 +341,11 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         order = Business::Order.find(order.id.to_s)
 
+        first_url = order.pdf_url
+        assert_equal false, !first_url.blank?
+
         ## here the ready_to_generate_pdf should be nil
-        assert_nil order.ready_for_pdf_generation
+        ##assert_nil order.ready_for_pdf_generation
         ## add the values
         ## of the creatinine.
         order.reports[0].tests[0].result_raw = 15
@@ -332,9 +358,12 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         order = Business::Order.find(order.id.to_s)
 
-        assert_equal true, order.ready_for_pdf_generation.blank?
+        #assert_equal true, order.ready_for_pdf_generation.blank?
+        second_url = order.pdf_url
+        assert_equal true, second_url.blank?
 
     end
+
 
     test " pdf generated if only one report is verified and partial order reports are enabled " do 
 
@@ -352,8 +381,10 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         order = Business::Order.find(order.id.to_s)
 
+        first_url = order.pdf_url
+        assert_equal true, first_url.blank?
         ## here the ready_to_generate_pdf should be nil
-        assert_nil order.ready_for_pdf_generation
+        #assert_nil order.ready_for_pdf_generation
         ## add the values
         ## of the creatinine.
         order.reports[0].tests[0].result_raw = 15
@@ -366,7 +397,8 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         order = Business::Order.find(order.id.to_s)
 
-        assert_equal false, order.ready_for_pdf_generation.blank?
+        second_url = order.pdf_url
+        assert_equal true, !second_url.blank?
 
     end
 
@@ -386,8 +418,11 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         order = Business::Order.find(order.id.to_s)
 
+        first_url = order.pdf_url
+        assert_equal true, first_url.blank?
+
         ## here the ready_to_generate_pdf should be nil
-        assert_nil order.ready_for_pdf_generation
+        #assert_nil order.ready_for_pdf_generation
         ## add the values
         ## of the creatinine.
         order.reports[0].tests[0].result_raw = 15
@@ -398,7 +433,10 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         order = Business::Order.find(order.id.to_s)
 
-        pdf_generation_time = order.ready_for_pdf_generation
+        second_url = order.pdf_url
+        assert_equal false, second_url.blank?
+
+        #pdf_generation_time = order.ready_for_pdf_generation
 
         put business_order_path(order.id.to_s), params: {order: order.attributes, :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
 
@@ -406,10 +444,11 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         order = Business::Order.find(order.id.to_s)
 
-        assert_nil order.ready_for_pdf_generation
+        #assert_nil order.ready_for_pdf_generation
+        third_url = order.pdf_url
+        assert_equal true,   third_url == second_url
 
     end
-
 
     test " pdf generated if force pdf generation is true, and at least one report is verified, but not in the present request " do 
 
@@ -428,20 +467,21 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
         order = Business::Order.find(order.id.to_s)
 
         ## here the ready_to_generate_pdf should be nil
-        assert_nil order.ready_for_pdf_generation
+        ##assert_nil order.ready_for_pdf_generation
         ## add the values
         ## of the creatinine.
         order.reports[0].tests[0].result_raw = 15
         ## verify the damn report.
         order.reports[0].tests[0].verification_done = 1
 
-        order = merge_changes_and_save(Business::Order.find(order.id.to_s),order,plus_lab_employee)  
+        order = merge_changes_and_save(Business::Order.find(order.id.to_s),order,plus_lab_employee) 
 
+        ## here the url will be something.
+        ##  
         order = Business::Order.find(order.id.to_s)
 
-        pdf_generation_time = order.ready_for_pdf_generation
-
-        #order.force_pdf_generation = true
+        first_url = order.pdf_url
+        assert_equal true, !first_url.blank?
 
         put business_order_path(order.id.to_s), params: {order: order.attributes.merge({:force_pdf_generation => true}), :api_key => @ap_key, :current_app_id => "testappid"}.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
 
@@ -449,10 +489,14 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         order = Business::Order.find(order.id.to_s)
 
-        assert_not_equal pdf_generation_time, order.ready_for_pdf_generation
+        # force pdf is not working.
+
+        second_url = order.pdf_url
+        assert_equal true, !second_url.blank?
+        assert_equal false, first_url == second_url
+     
 
 
     end
-=end
 
 end

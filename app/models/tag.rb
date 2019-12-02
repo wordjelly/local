@@ -28,7 +28,18 @@ class Tag
 	NORMAL = "normal"
 	ABNORMAL = "abnormal"
 	HISTORY = "history"
-	RANGE_TYPES = [NORMAL,ABNORMAL,HISTORY]
+	## CUSTOMIZATION TAGS ARE USED IN ORDERS.
+	CUSTOMIZATION = "customization"
+	
+	REQUEST_PHLEBOTOMIST = "REQUEST_PHLEBOTOMIST"
+	
+	REQUEST_RUNNER = "REQUEST_RUNNER"
+	
+	REQUEST_COURIER = "REQUEST_COURIER"
+
+	CUSTOMIZATIONS = [REQUEST_PHLEBOTOMIST,REQUEST_RUNNER,REQUEST_COURIER]
+
+	RANGE_TYPES = [NORMAL,ABNORMAL,HISTORY,CUSTOMIZATION]
 
 	attribute :tag_type, String
 	#validates_presence_of :tag_type
@@ -351,6 +362,10 @@ class Tag
 
 	def is_history?
 		self.range_type == HISTORY
+	end
+
+	def is_customization?
+		self.range_type == CUSTOMIZE
 	end
 
 	def text_history_answered?

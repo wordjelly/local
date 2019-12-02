@@ -103,7 +103,13 @@ module Concerns::NotificationConcern
 	## collate the recipients, and additional recipients
 	## automatically removes the disabled ids.
 	def gather_recipients
-		(self.recipients + self.additional_recipients).reject{|c| self.disable_recipient_ids.include? c.id.to_s}
+		arr = (self.recipients + self.additional_recipients).reject{|c| self.disable_recipient_ids.include? c.id.to_s}
+		if arr.select{|c|
+			c.user_id == self.created_by_user_id
+		}.size == 0
+			arr << Notification::Recipient.new(user_id: self.created_by_user_id)
+		end
+		arr
 	end
 
 	## @return[Boolean] true/false a matching recipient exists

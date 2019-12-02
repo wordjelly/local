@@ -290,7 +290,8 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         creat_report.tests[0].ranges[0].tags[-1].min_history_val = 4
         creat_report.tests[0].ranges[0].tags[-1].max_history_val = 14
         
-
+        
+        ## so its just a tag added to an existing age range.
         ## i think here, the min and max range vals don't 
         ## need to be checked
         creat_report = merge_changes_and_save(Diagnostics::Report.find(creat_report.id.to_s),creat_report,plus_lab_employee)  

@@ -956,16 +956,34 @@ class Organization
 	##
 	#########################################################
 	## limit the users to 5.
-	def users_to_notify
+	## @return[Array:Recipients] an array of recipient objects whose QC's 
+	def recipients_to_notify
 		if self.which_user_ids_should_receive_notifications.blank?
 			puts "which user ids is blank"
-			[self.created_by_user]
+			[Notification::Recipient.new(user_id: self.created_by_user_id.to_s)]
 		else
 			puts "it is not blank"
-			self.which_user_ids_should_receive_notifications[0..5].map{|c|
-				User.find(c)
+			self.which_user_ids_should_receive_notifications[0..5].map{|user_id|
+				Notification::Recipient.new(user_id: user_id)
 			}
 		end
+	end
+
+	#######################################################
+	##
+	##
+	## OVERRIDDEN FROM NOTIFICATION CONCERN
+	##
+	##
+	#######################################################
+	def gather_recipients
+		arr = (self.recipients_to_notify + self.recipients + self.additional_recipients).reject{|c| self.disable_recipient_ids.include? c.id.to_s}
+		if arr.select{|c|
+			c.user_id == self.created_by_user_id
+		}.size == 0
+			arr << Notification::Recipient.new(user_id: self.created_by_user_id)
+		end
+		arr
 	end
 
 end

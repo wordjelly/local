@@ -1,0 +1,349 @@
+{
+	"name" : "Thyroxine(T4)",
+	"description" : "Determination of Serum T4 level",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "T4",
+			"description" : "Serum T4 estimation",
+			"lis_code" : "T4",
+			"result_type" : "numeric",
+			"units" : "nmol/L",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 64.9,
+							"max_range_val" : 239
+						}
+					]
+				},
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 64.9,
+							"max_range_val" : 239
+						}
+					]
+				},
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 3,
+					"min_age_days" : 6,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 69.6,
+							"max_range_val" : 219
+						}
+					]
+				},
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 3,
+					"min_age_days" : 6,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 69.6,
+							"max_range_val" : 219
+						}
+					]
+				},
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 3,
+					"max_age_months" : 12,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 73,
+							"max_range_val" : 206
+						}
+					]
+				},
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 3,
+					"max_age_months" : 12,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 73,
+							"max_range_val" : 206
+						}
+					]
+				},
+				{
+					"max_age_years" : 6,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 76.6,
+							"max_range_val" : 189
+						}
+					]
+				},
+				{
+					"max_age_years" : 6,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 76.6,
+							"max_range_val" : 189
+						}
+					]
+				},
+				{
+					"max_age_years" : 11,
+					"min_age_years" : 6,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 77.1,
+							"max_range_val" : 178
+						}
+					]
+				},
+				{
+					"max_age_years" : 11,
+					"min_age_years" : 6,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 77.1,
+							"max_range_val" : 178
+						}
+					]
+				},
+				{
+					"max_age_years" : 20,
+					"min_age_years" : 11,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 76.1,
+							"max_range_val" : 170
+						}
+					]
+				},
+				{
+					"max_age_years" : 13,
+					"min_age_years" : 11,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 76.1,
+							"max_range_val" : 170
+						}
+					]
+				},
+				{
+					"max_age_years" : 60,
+					"min_age_years" : 20,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 59.2,
+							"max_range_val" : 135.15
+						}
+					]
+				},
+				{
+					"max_age_years" : 60,
+					"min_age_years" : 13,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 70.71,
+							"max_range_val" : 141.59
+						},
+						{
+							"name" : "1st Trimester Range",
+							"description" : "The range in the first trimester",
+							"range_type" : "history",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 94.4,
+							"max_range_val" : 191
+						},
+						{
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
+							"range_type" : "history",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 102,
+							"max_range_val" : 208
+						},
+						{
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
+							"range_type" : "history",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 89.5,
+							"max_range_val" : 202
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 60,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 64.3,
+							"max_range_val" : 137.7
+						}
+					]
+				},
+					{
+					"max_age_years" : 60,
+					"min_age_years" : 13,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 64.3,
+							"max_range_val" : 137.7
+						},
+						{
+							"name" : "1st Trimester Range",
+							"description" : "The range in the first trimester",
+							"range_type" : "history",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 94.4,
+							"max_range_val" : 191
+						},
+						{
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
+							"range_type" : "history",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 102,
+							"max_range_val" : 208
+						},
+						{
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
+							"range_type" : "history",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 89.5,
+							"max_range_val" : 202
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

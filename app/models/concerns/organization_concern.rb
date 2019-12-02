@@ -203,6 +203,14 @@ module Concerns::OrganizationConcern
     		unless k.blank?
     			#puts "going to find organization ---------->"
     			if self.organization = Organization.find(k[0].organization_id)
+    				## so the order -> created by user
+    				## that created by user -> 
+    				## organization -> 
+    				## which again we want the created by user
+    				## we had an order -> which was created by a user
+    				## that user -> had an organization which was set here
+    				## now we want to know which user created that organization.
+    				## so for organization -> we can load it from the created_by_user_id.
     				self.organization.skip_load_created_by_user = true
 
     				self.organization.run_callbacks(:find)
@@ -239,7 +247,6 @@ module Concerns::OrganizationConcern
     	end
     end
 
-   
     def show_join_organization_form?
 		## if the attributes are blank, dont show it.
 		return false if self.organization_member_organization_id.blank?
