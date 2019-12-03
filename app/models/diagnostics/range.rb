@@ -439,7 +439,6 @@ class Diagnostics::Range
 	end
 
 	def pick_normal_tag(test_result_numeric,test_result_text)
-		#puts "came to pick normal tag"
 		self.tags.map{|c|
 			c.pick if (c.is_normal? && c.test_value_satisfied?(test_result_numeric,test_result_text))
 		}

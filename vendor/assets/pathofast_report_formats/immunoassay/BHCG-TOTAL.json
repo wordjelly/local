@@ -38,16 +38,8 @@
 						}
 					]
 				},
-				// so the history tags are there
-				// weeks of gestation
-				// so we go with history answers
-				// post menopausal ON hrt
-				// post menopausal NO hrt
-				// pregnant
-				// how does the combined thing work?
-				// i don't remember exactly.
 				{
-					"max_age_years" : 0,
+					"max_age_years" : 120,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -56,330 +48,128 @@
 					"sex" : "Female",
 					"tags" : [
 						{
-							"range_type" : "normal",
-							"min_range_val" : 0.73,
-							"max_range_val" : 2.88
-						}
-					]
-				},
-				{
-					"max_age_years" : 0,
-					"min_age_years" : 0,
-					"min_age_months" : 0,
-					"max_age_months" : 3,
-					"min_age_days" : 6,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.80,
-							"max_range_val" : 2.75
-						}
-					]
-				},
-				{
-					"max_age_years" : 0,
-					"min_age_years" : 0,
-					"min_age_months" : 0,
-					"max_age_months" : 3,
-					"min_age_days" : 6,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.80,
-							"max_range_val" : 2.75
-						}
-					]
-				},
-				{
-					"max_age_years" : 0,
-					"min_age_years" : 0,
-					"min_age_months" : 3,
-					"max_age_months" : 12,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.86,
-							"max_range_val" : 2.65
-						}
-					]
-				},
-				{
-					"max_age_years" : 0,
-					"min_age_years" : 0,
-					"min_age_months" : 3,
-					"max_age_months" : 12,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.86,
-							"max_range_val" : 2.65
-						}
-					]
-				},
-				{
-					"max_age_years" : 6,
-					"min_age_years" : 1,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.92,
-							"max_range_val" : 2.48
-						}
-					]
-				},
-				{
-					"max_age_years" : 6,
-					"min_age_years" : 1,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.92,
-							"max_range_val" : 2.48
-						}
-					]
-				},
-				{
-					"max_age_years" : 11,
-					"min_age_years" : 6,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.93,
-							"max_range_val" : 2.31
-						}
-					]
-				},
-				{
-					"max_age_years" : 11,
-					"min_age_years" : 6,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.93,
-							"max_range_val" : 2.31
-						}
-					]
-				},
-				{
-					"max_age_years" : 20,
-					"min_age_years" : 11,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.91,
-							"max_range_val" : 2.18
-						}
-					]
-				},
-				{
-					"max_age_years" : 13,
-					"min_age_years" : 11,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.91,
-							"max_range_val" : 2.18
-						}
-					]
-				},
-				{
-					"max_age_years" : 20,
-					"min_age_years" : 13,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.91,
-							"max_range_val" : 2.18
+							"range_type" : "history",
+							"text_history_val" : "non-pregnant pre-menopausal",
+							"min_range_val" : 0,
+							"max_range_val" : 1
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
 							"range_type" : "history",
-							"min_history_val" : 0,
-							"max_history_val" : 90,
-							"min_range_val" : 1.05,
-							"max_range_val" : 2.30
+							"text_history_val" : "Postmenopause",
+							"min_range_val" : 0,
+							"max_range_val" : 7
 						},
 						{
-							"name" : "2nd Trimester Range",
-							"description" : "The range in the second trimester",
 							"range_type" : "history",
-							"min_history_val" : 90,
-							"max_history_val" : 180,
-							"min_range_val" : 1.29,
-							"max_range_val" : 2.62
+							"min_history_val" : 21,
+							"max_history_val" : 28,
+							"min_range_val" : 5.80,
+							"max_range_val" : 71.2
 						},
 						{
-							"name" : "3rd Trimester Range",
-							"description" : "The range in the third trimester",
 							"range_type" : "history",
-							"min_history_val" : 180,
-							"max_history_val" : 270,
-							"min_range_val" : 1.35,
-							"max_range_val" : 2.62
-						}
-					]
-				},
-				{
-					"max_age_years" : 50,
-					"min_age_years" : 20,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.7,
-							"max_range_val" : 2.4
-						}
-					]
-				},
-				{
-					"max_age_years" : 50,
-					"min_age_years" : 20,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.7,
-							"max_range_val" : 2.4
+							"min_history_val" : 28,
+							"max_history_val" : 35,
+							"min_range_val" : 9.50,
+							"max_range_val" : 750
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
 							"range_type" : "history",
-							"min_history_val" : 0,
-							"max_history_val" : 90,
-							"min_range_val" : 1.05,
-							"max_range_val" : 2.30
+							"min_history_val" : 35,
+							"max_history_val" : 42,
+							"min_range_val" : 217,
+							"max_range_val" : 7138
 						},
 						{
-							"name" : "2nd Trimester Range",
-							"description" : "The range in the second trimester",
 							"range_type" : "history",
-							"min_history_val" : 90,
-							"max_history_val" : 180,
-							"min_range_val" : 1.29,
-							"max_range_val" : 2.62
+							"min_history_val" : 42,
+							"max_history_val" : 49,
+							"min_range_val" : 158,
+							"max_range_val" : 31795
 						},
 						{
-							"name" : "3rd Trimester Range",
-							"description" : "The range in the third trimester",
 							"range_type" : "history",
-							"min_history_val" : 180,
-							"max_history_val" : 270,
-							"min_range_val" : 1.35,
-							"max_range_val" : 2.62
-						}
-					]
-				},
-				{
-					"max_age_years" : 50,
-					"min_age_years" : 120,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.4,
-							"max_range_val" : 1.81
-						}
-					]
-				},
-				{
-					"max_age_years" : 50,
-					"min_age_years" : 120,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.4,
-							"max_range_val" : 1.81
+							"min_history_val" : 49,
+							"max_history_val" : 56,
+							"min_range_val" : 3697,
+							"max_range_val" : 163563
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
 							"range_type" : "history",
-							"min_history_val" : 0,
-							"max_history_val" : 90,
-							"min_range_val" : 1.05,
-							"max_range_val" : 2.30
+							"min_history_val" : 56,
+							"max_history_val" : 63,
+							"min_range_val" : 32065,
+							"max_range_val" : 149571
 						},
 						{
-							"name" : "2nd Trimester Range",
-							"description" : "The range in the second trimester",
 							"range_type" : "history",
-							"min_history_val" : 90,
-							"max_history_val" : 180,
-							"min_range_val" : 1.29,
-							"max_range_val" : 2.62
+							"min_history_val" : 63,
+							"max_history_val" : 70,
+							"min_range_val" : 63803,
+							"max_range_val" : 151410
 						},
 						{
-							"name" : "3rd Trimester Range",
-							"description" : "The range in the third trimester",
 							"range_type" : "history",
-							"min_history_val" : 180,
-							"max_history_val" : 270,
-							"min_range_val" : 1.35,
-							"max_range_val" : 2.62
+							"min_history_val" : 70,
+							"max_history_val" : 84,
+							"min_range_val" : 46509,
+							"max_range_val" : 186977
+						},
+						{
+							"range_type" : "history",
+							"min_history_val" : 84,
+							"max_history_val" : 98,
+							"min_range_val" : 27832,
+							"max_range_val" : 210612
+						},
+						{
+							"range_type" : "history",
+							"min_history_val" : 98,
+							"max_history_val" : 105,
+							"min_range_val" : 13950,
+							"max_range_val" : 62530
+						},
+						{
+							"range_type" : "history",
+							"min_history_val" : 105,
+							"max_history_val" : 112,
+							"min_range_val" : 12039,
+							"max_range_val" : 70971
+						},
+						{
+							"range_type" : "history",
+							"min_history_val" : 112,
+							"max_history_val" : 119,
+							"min_range_val" : 9040,
+							"max_range_val" : 56451
+						},
+						{
+							"range_type" : "history",
+							"min_history_val" : 119,
+							"max_history_val" : 126,
+							"min_range_val" : 8175,
+							"max_range_val" : 55868
+						},
+						{
+							"range_type" : "history",
+							"min_history_val" : 126,
+							"max_history_val" : 133,
+							"min_range_val" : 8099,
+							"max_range_val" : 58176
+						},
+						{
+							"range_type" : "history",
+							"min_history_val" : 133,
+							"max_history_val" : 168,
+							"min_range_val" : 3245,
+							"max_range_val" : 90907
+						},
+						{
+							"range_type" : "history",
+							"min_history_val" : 168,
+							"max_history_val" : 252,
+							"min_range_val" : 2880,
+							"max_range_val" : 71767
 						}
 					]
 				}

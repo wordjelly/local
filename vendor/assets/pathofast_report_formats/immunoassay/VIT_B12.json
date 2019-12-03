@@ -1,0 +1,107 @@
+{
+	"name" : "Vitamin D",
+	"description" : "Determination of Serum Vitamin D level",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "VITAMIN_D",
+			"description" : "Serum Vitamin D estimation",
+			"lis_code" : "VITD",
+			"result_type" : "numeric",
+			"units" : "ng/mL",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 30,
+							"max_range_val" : 100
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 10,
+							"max_range_val" : 30,
+							"inference" : "insufficiency"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0,
+							"max_range_val" : 10,
+							"inference" : "severe deficiency"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 100,
+							"max_range_val" : 500,
+							"inference" : "toxicity"
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 30,
+							"max_range_val" : 100
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 10,
+							"max_range_val" : 30,
+							"inference" : "insufficiency"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0,
+							"max_range_val" : 10,
+							"inference" : "severe deficiency"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 100,
+							"max_range_val" : 500,
+							"inference" : "toxicity"
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

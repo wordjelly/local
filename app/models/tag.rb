@@ -31,13 +31,15 @@ class Tag
 	## CUSTOMIZATION TAGS ARE USED IN ORDERS.
 	CUSTOMIZATION = "customization"
 	
-	REQUEST_PHLEBOTOMIST = "REQUEST_PHLEBOTOMIST"
+	PHLEBOTOMIST_VISIT = "home_visit"
 	
-	REQUEST_RUNNER = "REQUEST_RUNNER"
+	COURIER_VISIT = "courier_visit"
 	
-	REQUEST_COURIER = "REQUEST_COURIER"
+	PATIENT_VISIT_LAB = "patient_will_visit_lab"
 
-	CUSTOMIZATIONS = [REQUEST_PHLEBOTOMIST,REQUEST_RUNNER,REQUEST_COURIER]
+	SAMPLE_WILL_BE_DELIVERED_TO_LAB = "sample_will_be_delivered_to_lab"
+
+
 
 	RANGE_TYPES = [NORMAL,ABNORMAL,HISTORY,CUSTOMIZATION]
 
@@ -365,7 +367,7 @@ class Tag
 	end
 
 	def is_customization?
-		self.range_type == CUSTOMIZE
+		self.range_type == CUSTOMIZATION
 	end
 
 	def text_history_answered?

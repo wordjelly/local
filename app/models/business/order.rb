@@ -35,6 +35,7 @@ class Business::Order
 	include Concerns::Schedule::QueryBuilderConcern
 	include Concerns::PdfConcern
 	include Concerns::EsBulkIndexConcern
+	include Concerns::LocationConcern
 	## ORDER OF THESE TWO IS IMPORTANT.
 	include Concerns::NotificationConcern
 	include Concerns::OrderConcern

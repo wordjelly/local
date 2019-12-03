@@ -654,8 +654,21 @@ class Business::Receipt
 		
 		after_generate_pdf
 
-
 	end
+
+	## next step is the determination of the location.
+	## order -> location.
+	## defaults to the location of the organization creating the order
+	## if there is no organization -> to create the order -> then what do we do ?
+	## a lot of the things need an organization
+	## just like the organization -> creates a dummy patient.
+	## the user -> dummy organization.
+	## that organization is used 
+	## when he creates any other organization -> it gets shifted as the primary organization.
+	## otherwise the minute he says i am a patient -> a patient organization is created.
+	## he cannot change it thereafter.
+	## dummy patient is a different thing also.
+	## 
 
 
 	def after_generate_pdf

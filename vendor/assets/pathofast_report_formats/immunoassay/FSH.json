@@ -1,1 +1,767 @@
-FSH.json
+{
+	"name" : "Follicle Stimulating Hormone(FSH)",
+	"description" : "Determination of Serum FSH level",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "FSH",
+			"description" : "Serum FSH estimation",
+			"lis_code" : "SFSH",
+			"result_type" : "numeric",
+			"units" : "IU/L",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"max_age_years" : 7,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0
+						}
+					]
+				},
+				{
+					"max_age_years" : 7,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0
+						}
+					]
+				},
+				{
+					"max_age_years" : 8,
+					"min_age_years" : 7,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.25,
+							"max_range_val" : 1.18
+						}
+					]
+				},
+				{
+					"max_age_years" : 8,
+					"min_age_years" : 7,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.51,
+							"max_range_val" : 2.82
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 9,
+					"min_age_years" : 8,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.28,
+							"max_range_val" : 1.68
+						}
+					]
+				},
+				{
+					"max_age_years" : 9,
+					"min_age_years" : 8,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.56,
+							"max_range_val" : 3.34
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 10,
+					"min_age_years" : 9,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.33,
+							"max_range_val" : 2.76
+						}
+					]
+				},
+				{
+					"max_age_years" : 10,
+					"min_age_years" : 9,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.71,
+							"max_range_val" : 4.77
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 11,
+					"min_age_years" : 10,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.36,
+							"max_range_val" : 3.28
+						}
+					]
+				},
+				{
+					"max_age_years" : 11,
+					"min_age_years" : 10,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.25,
+							"max_range_val" : 6.60
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 12,
+					"min_age_years" : 11,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.69,
+							"max_range_val" : 4.00
+						}
+					]
+				},
+				{
+					"max_age_years" : 12,
+					"min_age_years" : 11,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.29,
+							"max_range_val" : 7.56
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 13,
+					"min_age_years" : 12,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.85,
+							"max_range_val" : 6.73
+						}
+					]
+				},
+				{
+					"max_age_years" : 13,
+					"min_age_years" : 12,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.87,
+							"max_range_val" : 7.78
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 14,
+					"min_age_years" : 13,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.93,
+							"max_range_val" : 5.90
+						}
+					]
+				},
+				{
+					"max_age_years" : 14,
+					"min_age_years" : 13,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.80,
+							"max_range_val" : 8.19
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 15,
+					"min_age_years" : 14,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.64,
+							"max_range_val" : 8.48
+						}
+					]
+				},
+				{
+					"max_age_years" : 15,
+					"min_age_years" : 14,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.49,
+							"max_range_val" : 8.85
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 16,
+					"min_age_years" : 15,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.73,
+							"max_range_val" : 8.48
+						}
+					]
+				},
+				{
+					"max_age_years" : 16,
+					"min_age_years" : 15,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.33,
+							"max_range_val" : 9.36
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 17,
+					"min_age_years" : 16,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.05,
+							"max_range_val" : 11.2
+						}
+					]
+				},
+				{
+					"max_age_years" : 17,
+					"min_age_years" : 16,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.67,
+							"max_range_val" : 8.40
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 18,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.30,
+							"max_range_val" : 6.45
+						}
+					]
+				},
+				{
+					"max_age_years" : 18,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 2.76,
+							"max_range_val" : 5.69
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 18,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.50,
+							"max_range_val" : 12.40
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 18,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 6,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0
+						},
+						{
+							"range_type" : "history",
+							"text_history_val" : "Follicular Phase",
+							"min_range_val" : 3.50,
+							"max_range_val" : 12.5
+						},
+						{
+							"range_type" : "history",
+							"text_history_val" : "Ovulation Phase",
+							"min_range_val" : 4.70,
+							"max_range_val" : 21.5
+						},
+						{
+							"range_type" : "history",
+							"text_history_val" : "Luteal Phase",
+							"min_range_val" : 1.70,
+							"max_range_val" : 7.70
+						},
+						{
+							"range_type" : "history",
+							"text_history_val" : "Postmenopause",
+							"min_range_val" : 25.8,
+							"max_range_val" : 135
+						},
+						{
+							"range_type" : "history",
+							"name" : "1st Trimester",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "2nd Trimester",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "history",
+							"name" : "3rd Trimester",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

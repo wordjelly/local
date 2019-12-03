@@ -310,6 +310,34 @@ class User
       self.id.to_s + "-patient-organization" 
     end
 
+    ## so a patient organization is created
+    ## actually
+    ## and is used thereafter.
+    ## it has a role as well.
+    ## as a patient organization.
+    ## and it also creates a dummy patient for use.
+    ## we want to give the options how.
+    
+    ## order -> location 
+    ## order -> interaction
+    ## so let us store that on the organization
+    ## default collection
+    ## home visits
+    ## courier visits
+    ## create a patient
+    ## create an order
+    ## how does this work with subsidiary organizations ?
+    
+    ## choose a pickup type -> [home, courier, patient will go to the lab]
+    ## there are those three tags
+    ## whichever you choose (it will then ask for patient/sample location)
+    ## so the order has to have a pickup location.
+    ## options -> (patients location, creating organization location, other location -> this will be stored on the order, whichever one is chosen)
+    ## then comes the recommendation -> (nearest, and earliest, based on the above )
+    ## order -> time.
+
+
+
     def attributes_for_patient_organization
       {
         name: get_patient_organization_name,

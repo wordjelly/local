@@ -37,7 +37,8 @@ class Organization
 		document.id_duplicate = document.id
 		document.public = Concerns::OwnersConcern::IS_PUBLIC
 		document.assign_employee_roles
-		#puts "doing before validation on organization ===========>"
+		## so there is a representative patient.
+		## similar to this we want a representative organizaiton.
 		document.representative_patient = Patient.find_or_create_organization_patient(document.id.to_s,document.created_by_user)
 	end
 
@@ -985,5 +986,10 @@ class Organization
 		end
 		arr
 	end
+
+
+	## so the organization creates a patient for itself
+	## the user creates an organization for itself.
+	## that is the thing that does everything in the background.
 
 end

@@ -19,7 +19,33 @@ module Concerns::OrderConcern
 		REPORT_UPDATED_SENDER_ID = "LABTST"
 
 
-		attribute :tags, Array[Tag], mapping: {type: 'nested', properties: Tag.index_properties}
+		################################################
+		##
+		##
+		## VISIT TYPE TAGS
+		##
+		##
+		################################################
+		## visit_type_tags.
+		attribute :visit_type_tags, Array[Tag], mapping: {type: 'nested', properties: Tag.index_properties}
+
+		validates :visit_type_tags, length: {
+		    maximum: 1,
+		    message: 'Please choose only one visit type option'
+		}
+
+		## these are to be populated based on the visit type tag
+		attr_accessor :visit_location_options
+		###############################################
+		##
+		##
+		##
+		###############################################
+
+		## now we go for updating the 
+
+		## it should validate them for the name.
+		## the length should be less than or equal to one.
 
 		## SHOULD BE MADE TO 1 when ->
 		## report is added or removed from an order
@@ -98,7 +124,32 @@ module Concerns::OrderConcern
 		## {lis_code => {org_id => value_updated}}
 		attr_accessor :tests_changed_by_lis
 
-
+		## so the location is a must
+		## for any of this to work
+		## but we have to have a way to load the nearest location
+		## in case of that
+		## first what about the location options
+		## so it shows those locations.
+		## to be chosen from -> before giving one to the order
+		## depending on the other choice.
+		## that has to be dynamically done.
+		## so it will have to have something called location options 
+		## so like an address or a location id.
+		## so they are basically ?
+		## location objects.
+		## which are chosen once the tag is defined.
+		## so after_find ?
+		## ya after_find is a better idea.
+		## we load the location options
+		## they are basically ids ?
+		## or an array of objects ?
+		## only if a location is not already chosen.
+		## is that a better idea ?
+		## billing options should get merged.
+		## if the tag changes ?
+		## tags change -> then update the locations
+		## chosen location -> order 
+		## 
 		##########################################################
 		##
 		##
@@ -144,7 +195,9 @@ module Concerns::OrderConcern
 		## built_in : self#build_history_tags
 		attr_accessor :history_tags
 
-		#####################################################
+
+
+		####################################################
 		##
 		##
 		## FOR THE PDF JOB TO BE GIVEN(IN THE AFTER SAVE CALLBACK)
@@ -263,7 +316,7 @@ module Concerns::OrderConcern
 
 			   	indexes :additional_recipients, type: 'nested', properties: Notification::Recipient.index_properties
 
-			   	indexes :tags, type: 'nested', properties: Tag.index_properties
+			   	indexes :visit_type_tags, type: 'nested', properties: Tag.index_properties
 
 			end
 
@@ -669,10 +722,56 @@ module Concerns::OrderConcern
 	## sets the accessors of order, if any, and also those of the
 	## child elements.
 	def set_accessors
-		## can we not bubble down inside report.
+		## and the location.
 		self.reports.each do |report|
 			report.order_organization = self.organization
 			report.set_accessors
+		end
+	end
+
+
+	def sample_will_be_delivered_to_lab?
+		return false if self.visit_type_tags.blank?
+		return self.visit_type_tags[0].name == Tag::SAMPLE_WILL_BE_DELIVERED_TO_LAB
+	end
+
+	def is_phlebotomist_visit?
+		return false if self.visit_type_tags.blank?
+		return self.visit_type_tags[0].name == Tag::PHLEBOTOMIST_VISIT
+	end
+
+
+	def is_courier_visit?
+		return false if self.visit_type_tags.blank?
+		return self.visit_type_tags[0].name == Tag::COURIER_VISIT
+	end
+
+
+	def is_lab_visit?
+		return false if self.visit_type_tags.blank?
+		return self.visit_type_tags[0].name == Tag::PATIENT_VISIT_LAB
+	end
+
+	def set_visit_location_options
+		## if the vist_type_tags have changed
+		if self.changed_attributes.include? "visit_type_tags"
+			if is_phlebotomist_visit?
+				## we have to show location options
+				## the patient's location
+				## the organizations location
+				## ask them to enter a location -> that can always been defined.
+				## and this is only if order is not finalized.
+				## suppose you want to change after the order is finalized.
+				## you can cancel it and start over
+			elsif is_courier_visit?
+			
+			elsif is_lab_visit?
+			
+			elsif sample_will_be_delivered_to_lab?
+			
+			else
+			
+			end
 		end
 	end
 
@@ -1487,7 +1586,7 @@ module Concerns::OrderConcern
 					    		:additional_recipients => Notification::Recipient.permitted_params
 					    	},
 					    	{
-					    		:tags => Tag.permitted_params
+					    		:visit_type_tags => Tag.permitted_params
  					    	},
 					    	:procedure_versions_hash,
 					    	:created_at,

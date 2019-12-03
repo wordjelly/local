@@ -38,6 +38,11 @@ module Concerns::LocationConcern
 
   
   	def add_location
+      #okay so the organization must have a location
+      #if he wants to choose the lab locations -> then those should be shown to him.
+      #which should not be too difficult.
+      #to choose
+      #so an accessor choose_location
       #puts " ========== CAME TO ADD LOCATION =================== "
       #exit(1)
       #puts "the the latitude :#{self.latitude} and longitude: #{self.longitude} is:"

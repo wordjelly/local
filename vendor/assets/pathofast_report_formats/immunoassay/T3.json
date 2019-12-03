@@ -199,24 +199,8 @@
 					]
 				},
 				{
-					"max_age_years" : 13,
-					"min_age_years" : 11,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0.91,
-							"max_range_val" : 2.18
-						}
-					]
-				},
-				{
 					"max_age_years" : 20,
-					"min_age_years" : 13,
+					"min_age_years" : 11,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,

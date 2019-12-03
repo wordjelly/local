@@ -1,1 +1,263 @@
-FERR.json
+{
+	"name" : "Ferritin",
+	"description" : "Determination of Serum Ferritin level",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "FERRITIN",
+			"description" : "Serum Ferritin estimation",
+			"lis_code" : "SFERR",
+			"result_type" : "numeric",
+			"units" : "ng/mL",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 3,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 149,
+							"max_range_val" : 1351
+						}
+					]
+				},
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 3,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val " : 149,
+							"max_range_val" : 1351
+						}
+					]
+				},
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 3,
+					"max_age_days" : 30,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 42.2,
+							"max_range_val" : 509
+						}
+					]
+				},
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 3,
+					"max_age_days" : 30,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 42.2,
+							"max_range_val" : 509
+						}
+					]
+				},
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 1,
+					"max_age_months" : 12,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 26,
+							"max_range_val" : 287.6
+						}
+					]
+				},
+				{
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 1,
+					"max_age_months" : 12,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 26,
+							"max_range_val" : 287.6
+						}
+					]
+				},
+				{
+					"max_age_years" : 6,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 10.9,
+							"max_range_val" : 92.2
+						}
+					]
+				},
+				{
+					"max_age_years" : 6,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 10.9,
+							"max_range_val" : 92.2
+						}
+					]
+				},
+				{
+					"max_age_years" : 12,
+					"min_age_years" : 6,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 9.94,
+							"max_range_val" : 71.7
+						}
+					]
+				},
+				{
+					"max_age_years" : 12,
+					"min_age_years" : 6,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 9.94,
+							"max_range_val" : 71.7
+						}
+					]
+				},
+				{
+					"max_age_years" : 17,
+					"min_age_years" : 12,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 15.69,
+							"max_range_val" : 92.4
+						}
+					]
+				},
+				{
+					"max_age_years" : 17,
+					"min_age_years" : 12,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 15.69,
+							"max_range_val" : 92.4
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 30,
+							"max_range_val" : 400
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 13,
+							"max_range_val" : 150
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

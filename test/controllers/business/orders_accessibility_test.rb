@@ -239,8 +239,6 @@ class OrderAccessibilityTest < ActionDispatch::IntegrationTest
 
         o = Business::Order.find(order.id.to_s)
 
-        ## so if a different user updates the order -> then it goes to all of them.
-
         assert_equal 3, o.recipients.size
 
         assert_equal 1, o.additional_recipients.size
