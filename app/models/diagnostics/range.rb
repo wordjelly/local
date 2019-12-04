@@ -148,6 +148,12 @@ class Diagnostics::Range
 	## so that is the flow.
 	attribute :template_tag_ids, Array, mapping: {type: 'keyword'}
 		
+
+	attr_accessor :more_than_one_combination_tag
+	attr_accessor :more_than_on_non_combination_tag
+
+	validates :more_than_one_combination_tag, :more_than_on_non_combination_tag, absence: true 
+
 	#######################################################
 	##
 	##
@@ -258,8 +264,10 @@ class Diagnostics::Range
 			to_add = tids[tid] - (self.tags.select{|c|
 				c.id.to_s == tid
 			}).size
+			k = Tag.find(tid)
 			to_add.times do |n|
-				self.tags << Tag.find(tid)
+				k.nested_id = BSON::ObjectId.new.to_s
+				self.tags << k
 			end
 		end
 
@@ -403,14 +411,23 @@ class Diagnostics::Range
 	def get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
 		matching_history_tags = {}
 		history_tags.keys.each do |tag_id|
-			puts "checking tag id: #{tag_id}"
+			puts "checking history tag with numerical response: #{history_tags[tag_id].numerical_history_response} , and textual history respone : #{history_tags[tag_id].text_history_response}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+			#puts history_tags[tag_id]
 			self.tags.select{|c|
-				puts "checking self tag id: #{c.id.to_s}"
-				((c.id.to_s == tag_id) && (c.history_satisfied?(history_tags[tag_id])) )
+				puts "checking our tag with min and max history: #{c.min_history_val}, #{c.max_history_val}"
+				if c.id.to_s == tag_id
+					puts "the ids are the same"
+					c.history_satisfied?(history_tags[tag_id])
+				else
+					puts "the tag ids are different"
+					false
+				end
 			}.each do |tag|
 				matching_history_tags[tag.nested_id] = tag
 			end
 		end
+		puts "matching history tags become:"
+		puts matching_history_tags.to_s
 		matching_history_tags
 	end
 
@@ -460,44 +477,57 @@ class Diagnostics::Range
 
 
 	def pick_range(history_tags,test_result_numeric,test_result_text)
-		
+			
+		## find a way to switch off the pdf and notification as it takes a lot of time.
 		#puts "incoming history tags are:"
 		#puts history_tags.to_s
-
 		#puts "test result numeric: #{test_result_numeric}"
-
 		#puts "test result text: #{test_result_text}"
+
+		## so we pick a range -> as per the history tags.
+		## 
 
 		self.picked = YES
 			
 		matching_history_tags = get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
 		
-		puts "matching history tags are:"
-		puts matching_history_tags.to_s
+		#puts "matching history tags are:"
+		#puts matching_history_tags.to_s
 
 		unless matching_history_tags.blank?
+			puts "matching history tags not blank"
 			combination_tags = get_combination_tags(matching_history_tags)
+			puts "combination tags are:"
+			puts combination_tags
 			if combination_tags.size > 1
+				puts "more than one combination"
 				self.errors.add(:tags,"more than one combination tag got selected")
+				self.more_than_one_combination_tag = true
 			elsif combination_tags.size == 1
+				puts "only one combination"
 				pick_tag(combination_tags[0])
 			else
+				puts "going for non combinationo"
 				non_combination_tags = get_non_combination_tags(matching_history_tags)
 
 				puts "total non combination tags are:"
 				puts non_combination_tags.size.to_s
 
 				if non_combination_tags.size > 1
+					puts "greater than one non combination tag"
+					self.more_than_on_non_combination_tag = true
 					self.errors.add(:tags,"more than one history has caused multiple history ranges to get selected")
 				elsif non_combination_tags.size == 1
+					puts "non combination tag only 1"
 					pick_tag(non_combination_tags[0])
 				else
+					puts "more than one non combination tag"
 					pick_normal_tag(test_result_numeric,test_result_text)
 					pick_abnormal_tag(test_result_numeric,test_result_text)
 				end
 			end
 		else
-			puts "matching history tags are blank-------->"
+			#puts "matching history tags are blank-------->"
 			pick_normal_tag(test_result_numeric,test_result_text)
 			pick_abnormal_tag(test_result_numeric,test_result_text)
 		end

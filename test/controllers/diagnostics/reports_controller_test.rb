@@ -124,7 +124,7 @@ class ReportsControllerTest < ActionDispatch::IntegrationTest
 
     end
 
-=begin
+
     test " -- creates a report with status, requirement and test -- " do 
     	
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
@@ -194,7 +194,6 @@ class ReportsControllerTest < ActionDispatch::IntegrationTest
 
     end
 
-=end
 
     test " -- creates a procedure version for the report, and all the statuses are given id's -- " do 
 

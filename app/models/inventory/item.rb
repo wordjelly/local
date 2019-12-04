@@ -252,7 +252,7 @@ class Inventory::Item
 					#puts "the current category is: #{self.name}"
 					#exit(1)
 					if i.is_of_category?(category_name)
-						puts "it is of the category:#{category_name}"
+						#puts "it is of the category:#{category_name}"
 						self.applicable_to_report_ids << organization_id_to_report_hash[org_id]
 						applicable = true
 						#puts "found item attributes are:"
@@ -275,12 +275,12 @@ class Inventory::Item
 						return true
 					else
 						## not of the same category error.
-						puts "got different category error"
+						#puts "got different category error"
 						self.different_category = true
 					end
 				else
 					## expired error
-					puts "expired error."
+					#puts "expired error."
 					self.expired_or_already_used = true
 				end
 		
@@ -465,7 +465,7 @@ class Inventory::Item
 	## @param[String] organization_id : the id of the organization to which it is being checked, this is checked in the owner ids.
 	def self.find_with_organization(barcode,organization_id)
 		
-		puts "barcode is: #{barcode}, organization id is: #{organization_id}"
+		#puts "barcode is: #{barcode}, organization id is: #{organization_id}"
 
 		query = {
 			bool: {
@@ -517,12 +517,12 @@ class Inventory::Item
 	## @param[String] category : the name fo the category
 	## @return[Boolean] true/false : gets the item_type_id, and finds the itemType, and checks whether the provided category is mentioned in this item_type
 	def is_of_category?(category)
-		puts "the item type id is: #{self.item_type_id}"
-		puts "checking category: #{category}"
+		#puts "the item type id is: #{self.item_type_id}"
+		#puts "checking category: #{category}"
 		begin
 			item_type = Inventory::ItemType.find(self.item_type_id)
-			puts "item type is:"
-			puts item_type.attributes.to_s
+			#puts "item type is:"
+			#puts item_type.attributes.to_s
 			item_type.categories.include? category
 		rescue => e
 			false

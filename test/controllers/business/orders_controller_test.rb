@@ -429,9 +429,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         #assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
 
     end
-=end
 
-=begin
     test " - if multiple histories are there, picks the combined range -- " do 
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
@@ -545,8 +543,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
 
     end
-=end
-=begin
+
     test " - calculates time since given date - " do 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
 
@@ -707,9 +704,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         assert_equal nil, creat_report.tests[0].ranges[0].tags[-1].picked
 
     end
-=end
 
-=begin
     test " -- value is abnormal, picks the abnormal range - " do 
 
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
@@ -881,7 +876,6 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
         required_number_history_tag = create_required_number_history_tag(plus_lab_employee)
 
-
         required_text_history_tag = create_required_text_history_tag(plus_lab_employee)
 
         creat_report.tests[0].template_tag_ids << required_text_history_tag.id.to_s
@@ -908,9 +902,10 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
         ## we want to give it a textual history val.
         ## so it can be something like how many days since you last smoked.
+
         creat_report.tests[0].ranges[0].tags[-1].min_history_val = 4
         creat_report.tests[0].ranges[0].tags[-1].max_history_val = 14
-        creat_report.tests[0].ranges[0].tags[-2].max_history_val = Tag::YES
+        creat_report.tests[0].ranges[0].tags[-2].text_history_val = Tag::YES
         
 
         ## i think here, the min and max range vals don't 
@@ -921,6 +916,12 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
             puts "error creating merged report"
             exit(1)
         end 
+
+
+        creat_report = Diagnostics::Report.find(creat_report.id.to_s)
+        puts "the creat report DIRECT tags are:"
+        puts creat_report.tests[0].tags.to_s
+       # exit(1)
         ################################################
         ##
         ##
@@ -947,8 +948,8 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         ## answer the question in the first test
         ## so the range interpretation will happen anwwyas.
         ## so when the value is added to the test
-        order.reports[0].tests[0].tags[0].numerical_history_response = 6
-        order.reports[0].tests[0].tags[1].text_history_response = Tag::YES
+        order.reports[0].tests[0].tags[1].numerical_history_response = 6
+        order.reports[0].tests[0].tags[0].text_history_response = Tag::YES
 
 
         order.finalize_order = Business::Order::YES

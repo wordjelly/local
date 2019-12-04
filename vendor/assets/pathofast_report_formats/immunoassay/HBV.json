@@ -1,1 +1,81 @@
-HBV.json
+{
+	"name" : "HBSAg",
+	"description" : "Determination of HBSAg antigen",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "HBSAg",
+			"description" : "Determination of HBSAg antigen",
+			"lis_code" : "HBSAg",
+			"result_type" : "numeric",
+			"units" : "COI",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0.9
+						},
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.9,
+							"max_range_val" : 500
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0.9
+						},
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.9,
+							"max_range_val" : 500
+						}
+					]
+				},
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

@@ -144,10 +144,10 @@ class Business::Payment
 
 	## so first of all you cannot change the status directly, in case it is not a new record.
 	def status_change_conditions
-		puts "payment mode is:"
-		puts self.payment_mode.to_s
-		puts "payment permitted status changes ---->"
-		puts payment_permitted_status_changes.to_s
+		#puts "payment mode is:"
+		#puts self.payment_mode.to_s
+		#puts "payment permitted status changes ---->"
+		#puts payment_permitted_status_changes.to_s
 		return if self.is_a_bill?
 		return if self.payment_mode.blank?
 
@@ -155,7 +155,7 @@ class Business::Payment
 			
 			self.errors.add(:status, "permitted status for this mode of payment is #{payment_permitted_status_changes[self.payment_mode][0]}") unless self.status == payment_permitted_status_changes[self.payment_mode][0]
 		else
-			puts "its not a new record"
+			#puts "its not a new record"
 			if self.changed_attributes.include? "status"
 				self.errors.add(:status, "this mode of payment can only have its status changed to -> #{payment_permitted_status_changes[self.payment_mode][1]}") unless self.status == payment_permitted_status_changes[self.payment_mode][1]
 			end

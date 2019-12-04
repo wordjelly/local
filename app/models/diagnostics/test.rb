@@ -551,8 +551,15 @@ class Diagnostics::Test
 	end
 
 	def assign_range(patient,history_tags)
-		puts "------- CAME TO ASSIGN RANGE ------------ "
+		#puts "------- CAME TO ASSIGN RANGE ------------ "
+		puts "assign_range in test: #{self.name}, with result numeric: #{self.result_numeric} and result text: #{self.result_text}"
+		#puts "the history tags are:"
+		#history_tags.each do |htag|
+		#	puts htag.to_s
+		#end
+
 		self.ranges.each do |r|
+			puts "checking range min_value: #{r.min_value}, max_value: #{r.max_value}, text value: #{r.text_value} ----------------------------->"
 			r.pick_range(history_tags,self.result_numeric, self.result_text) if patient.meets_range_requirements?(r)
 		end
 	end

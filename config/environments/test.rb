@@ -39,7 +39,13 @@ Rails.application.configure do
 
   config.action_mailer.logger = nil
 
-   config.action_mailer.default_url_options = { :host => 'localhost:5000' }
+  config.action_mailer.default_url_options = { :host => 'localhost:5000' }
+
+  ## and only in some test you want it, then you open and close.
+  ## basically.
+  config.ignore_pdf_job = true
+
+  config.ignore_notification_job = true
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 end

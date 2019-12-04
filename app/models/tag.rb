@@ -344,9 +344,9 @@ class Tag
 	## @Called_from : test#history_provided?
 	def history_provided?
 		#puts "came to check history provided?"
-		puts "is history tag: #{is_history_tag?}"
+		#puts "is history tag: #{is_history_tag?}"
 		#puts "selected option: #{self.selected_option}"
-		puts "text history response is: #{self.text_history_response}" 
+		#puts "text history response is: #{self.text_history_response}" 
 		return true unless is_history_tag?
 		self.history_answered?
 	end
@@ -407,15 +407,15 @@ class Tag
 
 	## @called_from : range#pick_range
 	def history_satisfied?(history_tag)
-		#puts "history tag is &&&&&&&&&&&& "
+		puts "--------------------- INCOMING HISTORY TAG NUMERICAL HISTORY RESPONSE #{history_tag.numerical_history_response} , and our min history val: #{self.min_history_val} and max_history_val: #{self.max_history_val} -----------------"
 		#puts history_tag.to_s
 		if !history_tag.numerical_history_response.blank?
-			puts "numerical history response not blank and is: #{history_tag.numerical_history_response}"
-			puts "min history val is: #{self.min_history_val}, and max history val: #{self.max_history_val}"
+			#puts "numerical history response not blank and is: #{history_tag.numerical_history_response}"
+			#puts "min history val is: #{self.min_history_val}, and max history val: #{self.max_history_val}"
 			return history_tag.numerical_history_response.to_f.between?(self.min_history_val.to_f,self.max_history_val.to_f)
 		elsif !history_tag.text_history_response.blank?
-			puts "text history response not blank and is: #{history_tag.text_history_response}"
-			puts "self text history val is: #{self.text_history_val}"
+			#puts "text history response not blank and is: #{history_tag.text_history_response}"
+			#puts "self text history val is: #{self.text_history_val}"
 			return history_tag.text_history_response.to_s == (self.text_history_val.to_s)
 		end
 		false

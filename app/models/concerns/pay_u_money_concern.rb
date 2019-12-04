@@ -20,8 +20,8 @@ module Concerns::PayUMoneyConcern
   	end
 
     def compare_hashes
-      puts "came to compare hashes --->"
-      puts "payumoney payment status: #{self.payumoney_payment_status}"
+      #puts "came to compare hashes --->"
+      #puts "payumoney payment status: #{self.payumoney_payment_status}"
       unless (self.payumoney_payment_status.blank? && self.incoming_hash.blank?)
         if self.payumoney_payment_status === PAYUMONEY_PAYMENT_STATUS_SUCCESS  && self.incoming_hash === callback_calc_hash 
           ## APPROVED CONSTANT IS DEFINED IN PAYMENT.

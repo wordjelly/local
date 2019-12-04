@@ -1,6 +1,6 @@
 {
-	"name" : "Vitamin B12",
-	"description" : "Determination of Serum Vitamin B12 level",
+	"name" : "Cortisol Morning",
+	"description" : "Determination of Serum Cortisol level - 7am - 10am",
 	"rates" : [
 		{
 			"for_organization_id" : "*",
@@ -14,11 +14,11 @@
 	],
 	"tests" : [
 		{
-			"name" : "VITAMIN B12",
-			"description" : "Serum Vitamin B12 estimation",
-			"lis_code" : "VITB12",
+			"name" : "Cortisol Morning",
+			"description" : "Serum Cortisol estimation",
+			"lis_code" : "CORT",
 			"result_type" : "numeric",
-			"units" : "pg/mL",
+			"units" : "nmol/L",
 			"only_include_in_report_if_abnormal" : -1,
 			"test_must_have_value" : 1,
 			"ranges" : [
@@ -33,8 +33,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 191,
-							"max_range_val" : 771
+							"min_range_val" : 171,
+							"max_range_val" : 536
 						}
 					]
 				},
@@ -45,12 +45,12 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Female",
+					"sex" : "Male",
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 191,
-							"max_range_val" : 771
+							"min_range_val" : 171,
+							"max_range_val" : 536
 						}
 					]
 				}

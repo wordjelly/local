@@ -213,23 +213,15 @@ module Concerns::CallbacksConcern
 							class_name = virtus_attribute.member_type.primitive.to_s
 							unless class_name == "BasicObject"
 								## set the id , and call cascade on it.
-								if virtus_attribute.name =~ /item/i
-									#puts "org id while going for item is: #{org_id}"
-								end
 								
 								self.send("#{virtus_attribute.name}").each do |obj|
-									if self.class.name.to_s =~ /receipt/i
-										puts "recipients size is  :#{self.recipients.size}"
-										puts "came to cascade with attribute name------------->: #{virtus_attribute.name.to_s}"
-									end
+									
 									unless obj.is_a? Hash
 										if obj.respond_to? :cascade_id_generation
 											obj.cascade_id_generation(org_id)
 										end
 									else
-										if self.class.name.to_s =~ /receipt/i
-											puts "its a hash"
-										end
+										
 									end
 								end
 							end

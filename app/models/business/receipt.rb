@@ -167,7 +167,7 @@ class Business::Receipt
 	end
 =end
 	def payable_from_organization_id=(payable_from_organization_id)
-		puts "came to payable from organization id."
+		#puts "came to payable from organization id."
 		unless payable_from_organization_id.blank?
 			self.payable_from_organization = Organization.find(payable_from_organization_id) 
 			self.payable_from_organization.run_callbacks(:find)
@@ -176,7 +176,7 @@ class Business::Receipt
 	end
 
 	def payable_to_organization_id=(payable_to_organization_id)
-		puts "came to payable to organization id."
+		#puts "came to payable to organization id."
 		unless payable_to_organization_id.blank?
 			self.payable_to_organization = Organization.find(payable_to_organization_id) 
 			self.payable_to_organization.run_callbacks(:find)
@@ -185,7 +185,7 @@ class Business::Receipt
 	end
 
 	def payable_from_patient_id=(payable_from_patient_id)
-		puts "came to payable from patient id."
+		#puts "came to payable from patient id."
 		unless payable_from_patient_id.blank?
 			self.payable_from_patient = Patient.find(payable_from_patient_id)
 			self.payable_from_patient.run_callbacks(:find)
@@ -387,14 +387,14 @@ class Business::Receipt
 
 	## @called_from : self#add_bill, self#add_payment, self#cancel_payments
 	def update_total
-		puts "came to update total --------------------->"
+		#puts "came to update total --------------------->"
 		return true unless requires_total_update?
-		puts "Crossed update total --------------------->"
+		#puts "Crossed update total --------------------->"
 		self.total = 0
 		self.pending = 0
 		self.paid = 0
 		self.payments.each do |payment|
-			puts "Checking payment id: #{payment.id.to_s}"
+			#puts "Checking payment id: #{payment.id.to_s}"
 			if payment.is_approved?
 				if payment.is_a_bill?
 					self.total += payment.amount
@@ -415,10 +415,10 @@ class Business::Receipt
 				end
 			end
 		end
-		puts "crossed looking at transaction successfully"
+		#puts "crossed looking at transaction successfully"
 		transaction_successfull = false
 		self.pending = (self.total - self.paid)
-		puts "pending is: #{self.pending}"
+		#puts "pending is: #{self.pending}"
 		## so this was successfully done.
 		## so now the next issue is why the pdf url is not getting set.
 		## because we are not doing the job.
@@ -442,9 +442,9 @@ class Business::Receipt
 					#end
 					multi.set(get_race_condition_key_name,UNLOCKED)
 				end
-				puts "multi result is:"
+				#puts "multi result is:"
 				## so if this is the result.
-				puts result.to_s
+				#puts result.to_s
 				if result.blank?
 					transaction_successfull = false
 				elsif result.uniq != ["OK"]
@@ -454,7 +454,7 @@ class Business::Receipt
 					#self.errors.add(:payments, "another payment is being made from your organization, please wait for it to complete, and try again later")
 				end
 			else
-				puts "it was already locked---------"
+				#puts "it was already locked---------"
 				transaction_successfull = false
 				#self.errors.add(:payments, "another payment is being made from your organization, please wait for it to complete, and try again later")
 			end
@@ -485,13 +485,13 @@ class Business::Receipt
 	##
 	##############################################################
 	def locked?
-		puts "Came to check locked."
+		#puts "Came to check locked."
 		if $redis.get(get_race_condition_key_name).blank?
-			puts "the key is blank"
+			#puts "the key is blank"
 			false
 		else
-		   puts "key is not blank"
-		   puts "key is: #{$redis.get(get_race_condition_key_name)}"
+		   #puts "key is not blank"
+		   #puts "key is: #{$redis.get(get_race_condition_key_name)}"
 		   $redis.get(get_race_condition_key_name) == LOCKED
 		end
 	end

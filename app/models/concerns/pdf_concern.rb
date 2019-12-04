@@ -36,9 +36,9 @@ module Concerns::PdfConcern
 		end
 
 		after_save do |document|
-			
-			ScheduleJob.perform_later([document.id.to_s,document.class.name,"pdf_job"])
-			
+			if Rails.configuration.ignore_pdf_job.blank?
+				ScheduleJob.perform_later([document.id.to_s,document.class.name,"pdf_job"])
+			end
 		end
 
 	end

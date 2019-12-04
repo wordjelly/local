@@ -35,7 +35,9 @@ module Concerns::NotificationConcern
 		end
 
 		after_save do |document|
-			ScheduleJob.perform_later([document.id.to_s,document.class.name,"notification_job"])
+			if Rails.configuration.ignore_notification_job.blank?
+				ScheduleJob.perform_later([document.id.to_s,document.class.name,"notification_job"])
+			end
 		end
 
 	end

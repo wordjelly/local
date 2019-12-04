@@ -960,10 +960,10 @@ class Organization
 	## @return[Array:Recipients] an array of recipient objects whose QC's 
 	def recipients_to_notify
 		if self.which_user_ids_should_receive_notifications.blank?
-			puts "which user ids is blank"
+			#puts "which user ids is blank"
 			[Notification::Recipient.new(user_id: self.created_by_user_id.to_s)]
 		else
-			puts "it is not blank"
+			#puts "it is not blank"
 			self.which_user_ids_should_receive_notifications[0..5].map{|user_id|
 				Notification::Recipient.new(user_id: user_id)
 			}

@@ -99,7 +99,7 @@ module TestHelper
     end
 
     def create_required_number_history_tag(user)
-        t = build_required_text_history_tag(user)
+        t = build_required_number_history_tag(user)
         t.save
         unless t.errors.full_messages.blank?
             puts "TestHelper:there were errors saving the required history number tag"
