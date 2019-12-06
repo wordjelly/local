@@ -73,7 +73,7 @@
 				{
 					"max_age_years" : 1,
 					"min_age_years" : 0,
-					"min_age_months" : 0,
+					"min_age_months" : 1,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,

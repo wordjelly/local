@@ -45,7 +45,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",

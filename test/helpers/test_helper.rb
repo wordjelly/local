@@ -120,7 +120,18 @@ module TestHelper
         t
     end
 
-    def _setup
+    ## @param[Hash] args : an optional hash of arguments.
+    ## expected_structure
+    ## 
+=begin
+    {
+        "user_name" => {
+            "inventory_folder_path" : "absolute_path/*.json"
+            "reports_folder_path" : "absolute_path/*.json"
+        }
+    }
+=end
+    def _setup(args={})
         
         JSON.parse(IO.read(Rails.root.join("vendor","assets","others","es_index_classes.json")))["es_index_classes"].each do |cls|
           cls.constantize.send("create_index!",{force: true})
@@ -220,7 +231,6 @@ module TestHelper
             ## and thereafter into the organization -> user_ids
             ## that way it will be fine.
 
-
             organization = Organization.new(JSON.parse(IO.read(Rails.root.join('test','test_json_models','organizations',"#{basename}.json")))["organizations"][0])
             organization.created_by_user = user
             organization.created_by_user_id = user.id.to_s
@@ -286,11 +296,37 @@ module TestHelper
             user = User.find(user.id.to_s)
             build_inventory(user)
             Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-            Dir.glob(Rails.root.join('test','test_json_models','diagnostics','reports','*.json')).each do |report_file_name|
-                report = Diagnostics::Report.new(JSON.parse(IO.read(report_file_name))["reports"][0])
+            ## if you want to, then transfer them
+            ## if organization specific reports are there, otherwise fuck it.
+            puts "basename is: #{basename}"
+
+            reports_folder_path = nil
+            puts "the args are:"
+            puts args.to_s
+            if args[basename].blank?
+                puts "args basename is blank"
+                reports_folder_path = (Rails.root.join('test','test_json_models','diagnostics','reports','*.json'))
+            else
+                if args[basename]["reports_folder_path"].blank?
+                    reports_folder_path = (Rails.root.join('test','test_json_models','diagnostics','reports','*.json'))
+                else
+                    reports_folder_path = args[basename]["reports_folder_path"]
+                end
+            end
+            puts "reports folder path is: #{reports_folder_path}"
+            Dir.glob(reports_folder_path).each do |report_file_name|
+                puts "report file name:#{report_file_name}"
+                json_object = JSON.parse(IO.read(report_file_name))
+                json_object = json_object["reports"].blank? ? json_object : json_object["reports"][0]
+                report = Diagnostics::Report.new(json_object)
                 report.created_by_user = user
                 report.created_by_user_id = user.id.to_s
                 report.save
+                unless report.errors.full_messages.blank?
+                    puts "errors saving report #{report.name} with errors"
+                    puts report.errors.full_messages
+                    exit(1)
+                end
             end
 
             Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
@@ -311,7 +347,37 @@ module TestHelper
         report
     end
 
+    def build_pathofast_patient_order(template_report_ids)
+        bhargav_raut = User.where(:email => "bhargav.r.raut@gmail.com").first
+        ######################################################
+        ##
+        ##
+        ## CREATE PATIENT
+        ##
+        ##
+        ######################################################
+        patients_file_path = Rails.root.join('test','test_json_models','patients','aditya_raut.json')
+        patients = JSON.parse(IO.read(patients_file_path))
+        patient = Patient.new(patients["patients"][0])
+        patient.first_name += "plus".to_s
+        patient.mobile_number = rand.to_s[2..11].to_i
+        patient.created_by_user = latika_sawant
+        patient.created_by_user_id = latika_sawant.id.to_s
+        patient.save
+        puts "ERRORS CREATING Aditya Raut Patient: #{patient.errors.full_messages}"
 
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        o = Business::Order.new
+
+        o.template_report_ids = (template_report_ids || Diagnostics::Report.find_reports_by_organization_name("Pathofast").map{|c| c.id.to_s})
+
+        o.created_by_user = bhargav_raut
+        o.created_by_user_id = bhargav_raut.id.to_s
+        o.patient_id = patient.id.to_s
+        o.skip_pdf_generation = true
+        o
+    end
 
     ## @return[Business::Order] o 
     ## just assembles the order.

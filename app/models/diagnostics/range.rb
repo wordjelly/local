@@ -147,7 +147,13 @@ class Diagnostics::Range
 	## you can however add them and edit them later
 	## so that is the flow.
 	attribute :template_tag_ids, Array, mapping: {type: 'keyword'}
-		
+	
+
+	## for eg if this contains
+	## "Male"
+	## it means that no normal range need be provided for this gender,for this age/sex category.
+	attribute :normal_range_required, Array, mapping: {type: 'keyword'}, default: Diagnostics::Range::YES
+
 
 	attr_accessor :more_than_one_combination_tag
 	attr_accessor :more_than_on_non_combination_tag
@@ -324,6 +330,7 @@ class Diagnostics::Range
 			:min_age,
 			:max_age,
 			:normal_picked,
+			:normal_range_required,
 			:active,
 			:created_at,
 	    	:updated_at,
@@ -403,6 +410,9 @@ class Diagnostics::Range
 			},
 			template_tag_ids: {
 				type: 'keyword'
+			},
+			normal_range_required: {
+				type: 'integer'
 			}
     	}
 
@@ -581,6 +591,11 @@ class Diagnostics::Range
 		self.tags.select{|c|
 			c.is_normal?
 		}.size == 1
+	end
+
+
+	def normal_range_required?
+		self.normal_range_required == Diagnostics::Range::YES
 	end
 
 	def is_male?

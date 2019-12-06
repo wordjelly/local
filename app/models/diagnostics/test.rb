@@ -113,6 +113,8 @@ class Diagnostics::Test
 
 	attribute :test_only_applicable_to_genders, Array, mapping: {type: 'keyword'}, default: Diagnostics::Range::GENDERS
 
+
+
 	attr_accessor :display_result
 	attr_accessor :display_normal_biological_interval
 	attr_accessor :display_count_or_grade
@@ -208,17 +210,25 @@ class Diagnostics::Test
 
 	def all_ages_and_genders_covered_in_ranges_and_no_overlaps
 
+		puts "validating test ------------------> #{self.name}"
 		self.ranges_hash = {}
 		
 		self.ranges.each do |range|
 			range_key = range.min_age.to_s + "_" + range.max_age.to_s + "_" + range.sex
+			puts "range key is: #{range_key}"
 			if self.ranges_hash[range_key].blank?
 				self.ranges_hash[range_key] = range		
 			end 
 		end
 		
+		puts "ranges hash is:"
+		puts self.ranges_hash.keys.to_s
+		puts "---------- ends ----------- "
+		## today's target is to finish interpretation of 
+		## all immunoassay tests, and their auto inferences etc.
+
 		self.ranges_hash.keys.each do |rk|
-			self.errors.add(:ranges,"no normal range defined for this age group and gender test: #{self.name}, range key: #{rk}") unless self.ranges_hash[rk].has_normal_range?
+			self.errors.add(:ranges,"no normal range defined for this age group and gender test: #{self.name}, range key: #{rk}") if ((!self.ranges_hash[rk].has_normal_range?) && (self.ranges_hash[rk].normal_range_required?)) 
 		end
 
 		return unless self.errors.blank?
@@ -235,31 +245,45 @@ class Diagnostics::Test
 			next_range_start_age = self.ranges_hash[range_key].max_age
 
 			next_range_gender = self.ranges_hash[range_key].sex
+				
+			puts "next range start age is: #{next_range_start_age}, and next range gender is: #{next_range_gender}"
 			
 			unless next_range_start_age == Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS
 
-				self.errors.add(:ranges,"contiguous ranges absent") if self.ranges_hash.keys.select{|c|
+				self.errors.add(:ranges,"contiguous ranges absent : expected #{next_range_start_age}_n_#{next_range_gender}") if self.ranges_hash.keys.select{|c|
 					c =~ /#{next_range_start_age}_(\d+)_#{next_range_gender}/
 				}.size == 0
 
 			end
+
+			puts " ------------------------------------- "
 
 		end
 
 		## first select both
 		## if its size is equal, to required, then it should be for the same range.
 		minimum_selected = self.ranges_hash.keys.select{|c|
-			c.to_s =~ /#{Diagnostics::Range::MINIMUM_POSSIBLE_AGE_IN_HOURS}_\d+_(male|female)/i
+			c.to_s =~ /^#{Diagnostics::Range::MINIMUM_POSSIBLE_AGE_IN_HOURS}_\d+_(male|female)/i
 		}
 
 		maximum_selected = self.ranges_hash.keys.select{|c|
 			c.to_s =~ /\d+_#{Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS}_(male|female)/i
 		}
 
+		puts "maximum selected is:"
+		puts maximum_selected.to_s
+
+		puts "minimum selected is:"
+		puts minimum_selected.to_s
+
+		puts "test only applicable to genders"
+		puts self.test_only_applicable_to_genders.to_s
+		puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+
 		
 		self.errors.add(:ranges,"the first range for either male or female does not start at 0 years") unless  minimum_selected.size == self.test_only_applicable_to_genders.size
 
-		self.errors.add(:ranges,"the last range for either male or female does not start at 120 years") unless  maximum_selected.size == self.test_only_applicable_to_genders.size
+		self.errors.add(:ranges,"the last range for either male or female does not end at 120 years") unless  maximum_selected.size == self.test_only_applicable_to_genders.size
 
 		self.test_only_applicable_to_genders.each do |gd|
 		

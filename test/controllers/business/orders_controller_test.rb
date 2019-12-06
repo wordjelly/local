@@ -863,7 +863,6 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         assert_equal nil, o.reports[0].tests[0].ranges[0].tags[2].picked
 
     end
-=end
 
     test " - more than one history range satisfies the value, should raise an error - " do 
         
@@ -967,15 +966,10 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         # assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
 
     end
-
-
-
-=begin
-    test " - more than one combination history range satisfies the value,should raise an error - " do 
-
-    end
 =end
+    
 
+ 
 
 
 

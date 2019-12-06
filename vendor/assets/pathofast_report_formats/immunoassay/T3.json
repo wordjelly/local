@@ -87,10 +87,10 @@
 					]
 				},
 				{
-					"max_age_years" : 0,
+					"max_age_years" : 1,
 					"min_age_years" : 0,
 					"min_age_months" : 3,
-					"max_age_months" : 12,
+					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
 					"sex" : "Male",
@@ -103,10 +103,10 @@
 					]
 				},
 				{
-					"max_age_years" : 0,
+					"max_age_years" : 1,
 					"min_age_years" : 0,
 					"min_age_months" : 3,
-					"max_age_months" : 12,
+					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
 					"sex" : "Female",
@@ -301,8 +301,8 @@
 					]
 				},
 				{
-					"max_age_years" : 50,
-					"min_age_years" : 120,
+					"max_age_years" : 120,
+					"min_age_years" : 50,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -317,8 +317,8 @@
 					]
 				},
 				{
-					"max_age_years" : 50,
-					"min_age_years" : 120,
+					"max_age_years" : 120,
+					"min_age_years" : 50,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
