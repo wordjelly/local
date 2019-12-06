@@ -9,7 +9,7 @@ class Patient
 	include Concerns::AlertConcern
 	include Concerns::NameIdConcern
 	include Concerns::CallbacksConcern
-	
+
 	## so i can try to finish this today 
 	## if all goes well.
 
@@ -22,38 +22,6 @@ class Patient
 
 	index_name "pathofast-patients"	
 
-	## does it have an array of history objects ?
-	## each object can have any number of parameters ?
-	## each type of history can be different ?
-	## like on adding a particular report -> it will require certain histories to be taken
-	## for eg : beta-hcg -> should i embed it in the report itself ?
-	## instead of the patient ?
-	## will be easier to embed.
-	## don't touch the patient.
-	## we will have to give that option everywhere else as well.
-	## so in effect it can only create one user per mobile_number for one organization.
-	## so we have some tags ?
-	## that need to be filled ?
-	## better to have a history object
-	## these will be tags only.
-	## like phase of menstrual cycle ->
-	## and then we can define these inside ranges/reports.
-	## you can edit/add these later
-	## each history object is on the order or the patient ?
-	## order -> 
-	## so it will choose the required history tags. and add them to the order
-	## so the order will embed many histories -> this will be done after adding the report.  
-	## we can do name id concern.
-	## if it does 
-	## so the test will just have some tags -> these will be used to check for history questions.
-	## so the history is an independent object ? or piggy back on tag with type ?
-	## so the tag can have options
-	## and we can refer to these tags in the reports -> create those histories
-	## and use them in the ranges.
-	## problem is that tag options can be ranges , like 
-	## 10 - 20
-	## 30 - 40
-	## test can have required histories.
 	before_save do |document|
 		document.assign_id_from_name(nil)
 	end
@@ -203,6 +171,7 @@ class Patient
 		end
 	end
 	
+
 	#############################################################
 	##
 	##
@@ -236,6 +205,8 @@ class Patient
 		self.first_name + " " + self.last_name
 	end
 
+	#alias_method :name, :full_name
+
 	def age
 		return nil unless self.date_of_birth
 		now = Time.now.utc.to_date
@@ -266,11 +237,14 @@ class Patient
 		[:id , {:patient => [:first_name,:last_name,:date_of_birth, :sex, :email, :mobile_number, :address, :allergies, :anticoagulants, :diabetic, :asthmatic, :heart_problems, {:medications_list => []}, :referring_doctor, :organization_representative_patient]}]
 	end
 
+	#401/ orchids riverside estates, boat club road.
+
 	## @return[Patient] : a dummy patient with the organization_representative_patient set as YES.
 	## @called_from : Patient#find_or_create_organization_patient
 	def self.create_representative_patient
 		new(first_name: BSON::ObjectId.new.to_s, last_name: BSON::ObjectId.new.to_s, sex: MALE, mobile_number: rand.to_s[2..11], date_of_birth: Time.now, organization_representative_patient: YES, address: BSON::ObjectId.new.to_s)
 	end
+
 
 	## @param[String] organization_id : the id of the organization for which we are searching the representative patient.
 	## @return[Patient] representative_patient: the representative patient of the this organization.
@@ -333,10 +307,6 @@ class Patient
 	def has_history?
 		false
 	end
-
-	alias name full_name
-
-
 
 
 end

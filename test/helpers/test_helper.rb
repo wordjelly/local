@@ -334,7 +334,10 @@ module TestHelper
 
         ActionMailer::Base.deliveries = []
         Auth.configuration.stub_otp_api_calls
-        
+        k = $redis.set("security_tokens",JSON.generate(@security_tokens))
+        k = $redis.set("ap_key",@ap_key)
+        #puts "wrote to redis response: #{k}"
+        #exit(1)
     end
 
     def load_error_report(file_name_without_path_or_extension)
@@ -347,35 +350,80 @@ module TestHelper
         report
     end
 
-    def build_pathofast_patient_order(template_report_ids)
-        bhargav_raut = User.where(:email => "bhargav.r.raut@gmail.com").first
-        ######################################################
+    def build_pathofast_patient_order(template_report_ids,patient)
+        priya_hajare = User.where(:email => "priya.hajare@gmail.com").first
+        #####################################################
         ##
         ##
         ## CREATE PATIENT
         ##
         ##
         ######################################################
-        patients_file_path = Rails.root.join('test','test_json_models','patients','aditya_raut.json')
-        patients = JSON.parse(IO.read(patients_file_path))
-        patient = Patient.new(patients["patients"][0])
-        patient.first_name += "plus".to_s
-        patient.mobile_number = rand.to_s[2..11].to_i
-        patient.created_by_user = latika_sawant
-        patient.created_by_user_id = latika_sawant.id.to_s
-        patient.save
-        puts "ERRORS CREATING Aditya Raut Patient: #{patient.errors.full_messages}"
+        if patient.blank?
+            patients_file_path = Rails.root.join('test','test_json_models','patients','aditya_raut.json')
+            patients = JSON.parse(IO.read(patients_file_path))
+            patient = Patient.new(patients["patients"][0])
+            patient.first_name += "plus".to_s
+            patient.mobile_number = rand.to_s[2..11].to_i
+            patient.created_by_user = priya_hajare
+            patient.created_by_user_id = priya_hajare.id.to_s
+            patient.save
+            puts "ERRORS CREATING Aditya Raut Patient: #{patient.errors.full_messages}"
+        end
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
         o = Business::Order.new
 
-        o.template_report_ids = (template_report_ids || Diagnostics::Report.find_reports_by_organization_name("Pathofast").map{|c| c.id.to_s})
+        o.template_report_ids = (template_report_ids || Diagnostics::Report.find_reports_by_organization_name("Pathofast",100).map{|c| c.id.to_s})
 
-        o.created_by_user = bhargav_raut
-        o.created_by_user_id = bhargav_raut.id.to_s
+        o.created_by_user = priya_hajare
+        o.created_by_user_id = priya_hajare.id.to_s
         o.patient_id = patient.id.to_s
         o.skip_pdf_generation = true
+        o
+
+    end
+
+    ## @param[Array] template_report_ids : 
+    ## @return[Business::Order] the order created for the patient from plus path lab.
+    ## test each report
+    ## auto interpretation -> history -> pdf -> email.
+    ## all this for the immunoassay reports today itself.
+    def create_pathofast_patient_order(template_report_ids=nil,patient=nil)
+        o = build_pathofast_patient_order(template_report_ids,patient)
+        puts "the created by user organization -> created by user is not getting loaded. "
+        o.save
+
+        unless o.errors.blank?
+            puts "error creating plus path lab patient order------------------>"
+            puts o.errors.full_messages
+            exit(1)
+        end
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        o
+    end
+
+    ## @param[Array] template_report_ids : 
+    ## @return[Business::Order] the order created for the patient from plus path lab.
+    ## test each report
+    ## auto interpretation -> history -> pdf -> email.
+    ## all this for the immunoassay reports today itself.
+    def create_plus_path_lab_patient_order(template_report_ids=nil)
+        o = build_pathofast_patient_order(template_report_ids)
+        puts "the created by user organization -> created by user is not getting loaded. "
+        o.save
+
+        unless o.errors.blank?
+            puts "error creating plus path lab patient order------------------>"
+            puts o.errors.full_messages
+            exit(1)
+        end
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
         o
     end
 
@@ -458,8 +506,49 @@ module TestHelper
         existing_order
     end
 
+    ## @params[args]
+    ## expected to contain keys
+    ## years
+    ## months
+    ## days
+    ## hours
+    ## created_by_user
+    def create_patient_of_age(args)
+        
+        years = args["years"] || 0
+        months = args["months"] || 0
+        days = args["days"] || 0
+        hours = args["hours"] || 0
+        created_by_user = args["created_by_user"]
+
+        patient = Patient.new
+        
+        time_now = Time.now
+        time_now = time_now - years.years
+        time_now = time_now - months.month
+        time_now = time_now - days.days
+        time_now = time_now - hours.hours
+
+        patients_file_path = Rails.root.join('test','test_json_models','patients','aditya_raut.json')
+        patients = JSON.parse(IO.read(patients_file_path))
+        patient = Patient.new(patients["patients"][0])
+        patient.first_name += "pathofast-".to_s
+        patient.mobile_number = rand.to_s[2..11].to_i
+        patient.date_of_birth = time_now
+        patient.created_by_user = created_by_user
+        patient.created_by_user_id = created_by_user.id.to_s
+
+        patient.save
+
+        patient        
+
+    end
+
 	## @return[Hash]
 	def get_user_headers(security_tokens,user)
+        puts "the user id is: #{user.id.to_s}"
+        puts "security tokens are:"
+        puts security_tokens[user.id.to_s]
 		{ "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json", "X-User-Token" => security_tokens[user.id.to_s]["authentication_token"], "X-User-Es" => security_tokens[user.id.to_s]["es_token"], "X-User-Aid" => "testappid"}
 	end
 

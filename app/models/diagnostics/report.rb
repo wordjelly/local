@@ -659,6 +659,7 @@ class Diagnostics::Report
 		end
 
 		query = {
+			size: 100,
 			query: {
 				bool: {
 					must: [
@@ -681,6 +682,10 @@ class Diagnostics::Report
 			}
 		end
 
+		puts "the query is :"
+		puts query.to_s
+
+
 		search_request = search(query)
 
 		search_request.response.hits.hits.map{|hit|
@@ -692,7 +697,7 @@ class Diagnostics::Report
 
 	end
 
-	def self.find_reports_by_organization_name(organization_name)
+	def self.find_reports_by_organization_name(organization_name,size=10)
 		#puts "searching for organization name: #{organization_name}"
 		search_request = Organization.search({
 			query: {
@@ -705,6 +710,7 @@ class Diagnostics::Report
 		organization_id = search_request.response.hits.hits.first._id
 
 		search_request = search({
+			size: size,
 			query: {
 				term: {
 					currently_held_by_organization: organization_id

@@ -210,20 +210,20 @@ class Diagnostics::Test
 
 	def all_ages_and_genders_covered_in_ranges_and_no_overlaps
 
-		puts "validating test ------------------> #{self.name}"
+		#puts "validating test ------------------> #{self.name}"
 		self.ranges_hash = {}
 		
 		self.ranges.each do |range|
 			range_key = range.min_age.to_s + "_" + range.max_age.to_s + "_" + range.sex
-			puts "range key is: #{range_key}"
+			#puts "range key is: #{range_key}"
 			if self.ranges_hash[range_key].blank?
 				self.ranges_hash[range_key] = range		
 			end 
 		end
 		
-		puts "ranges hash is:"
-		puts self.ranges_hash.keys.to_s
-		puts "---------- ends ----------- "
+		#puts "ranges hash is:"
+		#puts self.ranges_hash.keys.to_s
+		#puts "---------- ends ----------- "
 		## today's target is to finish interpretation of 
 		## all immunoassay tests, and their auto inferences etc.
 
@@ -246,7 +246,7 @@ class Diagnostics::Test
 
 			next_range_gender = self.ranges_hash[range_key].sex
 				
-			puts "next range start age is: #{next_range_start_age}, and next range gender is: #{next_range_gender}"
+			#puts "next range start age is: #{next_range_start_age}, and next range gender is: #{next_range_gender}"
 			
 			unless next_range_start_age == Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS
 
@@ -256,7 +256,7 @@ class Diagnostics::Test
 
 			end
 
-			puts " ------------------------------------- "
+			#puts " ------------------------------------- "
 
 		end
 
@@ -270,15 +270,15 @@ class Diagnostics::Test
 			c.to_s =~ /\d+_#{Diagnostics::Range::MAXIMUM_POSSIBLE_AGE_IN_HOURS}_(male|female)/i
 		}
 
-		puts "maximum selected is:"
-		puts maximum_selected.to_s
+		#puts "maximum selected is:"
+		#puts maximum_selected.to_s
 
-		puts "minimum selected is:"
-		puts minimum_selected.to_s
+		#puts "minimum selected is:"
+		#puts minimum_selected.to_s
 
-		puts "test only applicable to genders"
-		puts self.test_only_applicable_to_genders.to_s
-		puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+		#puts "test only applicable to genders"
+		#puts self.test_only_applicable_to_genders.to_s
+		#puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 
 		
 		self.errors.add(:ranges,"the first range for either male or female does not start at 0 years") unless  minimum_selected.size == self.test_only_applicable_to_genders.size
