@@ -1,6 +1,12 @@
 namespace :pathofast do
   desc "TODO"
 
+    task week: :environment do 
+        l = JSON.parse($redis.get("week_changes_obj"))
+        IO.write("jj.json",JSON.pretty_generate(l))
+    end
+
+
     task auth_issue: :environment do
 
         User.delete_all
@@ -559,6 +565,37 @@ namespace :pathofast do
 
         puts "reached the end"
 
+    end
+
+    task preprocess_pathofast_reports: :environment do 
+        path = Rails.root.join('vendor','assets','pathofast_report_formats','**/*.json')
+        Dir.glob(path).each do |file|
+            begin
+                r = Diagnostics::Report.new(JSON.parse(IO.read(file)))
+                r.tests.each do |test|
+                    test.ranges.each do |range|
+                        range.tags.each do |tag|
+                            if tag.is_history?
+                                tag.nested_id = BSON::ObjectId.new.to_s
+                            end
+                            if tag.is_trimester_tag?
+                                puts "got a trimester tag"
+                                range.template_tag_ids << Tag::LMP_TAG_ID
+                                test.template_tag_ids << Tag::LMP_TAG_ID
+                                puts "Range template tag ids become: #{range.template_tag_ids}"
+                                puts "test template tag ids become: #{test.template_tag_ids}"
+                            end
+                        end
+                        range.template_tag_ids.uniq!
+                    end
+                    test.template_tag_ids.uniq!
+                end
+                IO.write(Rails.root.join('vendor','assets','processed_report_formats',File.basename(file)),JSON.pretty_generate(r.deep_attributes(false,false)))
+            rescue => e
+                puts e.to_s
+                puts "error #{file}"
+            end
+        end
     end
 
 end

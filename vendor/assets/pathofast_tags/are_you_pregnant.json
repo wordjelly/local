@@ -1,0 +1,7 @@
+{
+	"id" : "tags:are_you_pregnant",
+	"range_type" : "history",
+	"name" : "Are You Pregnant",
+	"description" : "Choose Yes or No",
+	"numerical_history_response_derived_from_attribute" : "completed_days_since_date"	
+}

@@ -167,7 +167,7 @@ class Patient
 	
 	after_find do |document|
 		unless document.date_of_birth.blank?
-			document.current_age_in_hours = (Time.now - document.date_of_birth)/3600.0
+			document.current_age_in_hours = ((Time.now - document.date_of_birth)/3600.0).to_i
 		end
 	end
 	
@@ -226,7 +226,12 @@ class Patient
 
 	def meets_range_requirements?(range)
 		 if range.sex == self.sex
-		 	if ((range.min_age <= self.current_age_in_hours) && (range.max_age >= self.current_age_in_hours))
+		 	puts "range min age is: #{range.min_age}"
+		 	puts "patient current age in hours: #{self.current_age_in_hours}"
+		 	puts "range max age is: #{range.max_age}"
+		 	## so to avoid this we can round off .
+		 	## we don't want the decimal.
+		 	if ((range.min_age < self.current_age_in_hours) && (range.max_age >= self.current_age_in_hours))
 		 		return true
 		 	end
 		 end

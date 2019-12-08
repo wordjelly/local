@@ -142,7 +142,7 @@ module Concerns::MissingMethodConcern
 
 		## @param[Boolean] filter_permitted_params : defaults to false, if true will only keep permitted params in the returned attributes.
 		## @return[Hash] deep_attributes
-		def deep_attributes(filter_permitted_params=false)
+		def deep_attributes(filter_permitted_params=false,include_blank_attributes=true)
 			attributes = {}
 			## top level attributes
 			permitted_params_list = []
@@ -195,10 +195,10 @@ module Concerns::MissingMethodConcern
 							
 							unless class_name == "BasicObject"
 
-								attributes[virtus_attribute.name.to_s] << obj.deep_attributes(filter_permitted_params)
+								attributes[virtus_attribute.name.to_s] << obj.deep_attributes(filter_permitted_params,include_blank_attributes)
 
 							else
-
+								## so its a hash.
 								attributes[virtus_attribute.name.to_s] << obj.to_s
 
 							end
@@ -207,9 +207,14 @@ module Concerns::MissingMethodConcern
 					end
 				else
 					attributes[virtus_attribute.name.to_s] = self.send(virtus_attribute.name)
+					
 				end
 			end
-
+			if include_blank_attributes.blank?
+				attributes.delete_if{|key,value|
+					value.blank?
+				}
+			end 
 			attributes
 		end
 

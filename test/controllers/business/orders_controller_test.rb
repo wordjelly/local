@@ -139,7 +139,8 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
 
         reports = Diagnostics::Report.find_reports({:organization_id => plus_lab_employee.organization_members[0].organization_id, :report_name => "creatinine"})
-
+    
+    
         ## ADD THE REQUIRED HISTORY TAG TO THE CREATININE REPORT
         creat_report = reports[0]
         required_history_tag = create_required_text_history_tag(plus_lab_employee)

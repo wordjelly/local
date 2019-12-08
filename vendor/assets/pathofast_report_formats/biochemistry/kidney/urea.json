@@ -1,0 +1,107 @@
+{
+	"name" : "Serum Urea",
+	"description" : "Determination of Serum Urea",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Serum Urea",
+			"description" : "Serum Urea estimation",
+			"lis_code" : "BUNC",
+			"result_type" : "numeric",
+			"units" : "mg/dl",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "Mayo Clinical Laboratories",
+					"max_age_years" : 17,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 14.98,
+							"max_range_val" : 42.8
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Clinical Laboratories",
+					"max_age_years" : 17,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 14.98,
+							"max_range_val" : 42.8
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Clinical Laboratories",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 17.12,
+							"max_range_val" : 51.36
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Clinical Laboratories",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 12.84,
+							"max_range_val" : 44.94
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

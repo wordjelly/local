@@ -1,0 +1,1653 @@
+{
+  "created_at": "2019-12-08 16:14:38 UTC",
+  "updated_at": "2019-12-08 16:14:38 UTC",
+  "public": 0,
+  "tests": [
+    {
+      "created_at": "2019-12-08 16:14:38 UTC",
+      "updated_at": "2019-12-08 16:14:38 UTC",
+      "public": 0,
+      "name": "LH",
+      "lis_code": "SLH",
+      "description": "Serum FSH estimation",
+      "print_all_ranges_in_report": 0,
+      "interpret_ranges": 1,
+      "ranges": [
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 0.0,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 7,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 0.0,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 7,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 0.19,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 7,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 8,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 0.1,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb18c",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb18d",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb18e",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 7,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 8,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 0.1,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 8,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 9,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 0.1,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb18f",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb190",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb191",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 8,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 9,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 0.33,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 9,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 10,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 0.48,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb192",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb193",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb194",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 9,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 10,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 1.58,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 10,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 11,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 5.15,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb195",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb196",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb197",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 10,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 11,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 1.96,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 11,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 12,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 4.91,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb198",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb199",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb19a",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 11,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 12,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 3.7,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 12,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 13,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 10.1,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb19b",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb19c",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb19d",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 12,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 13,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.7,
+              "max_range_val": 4.09,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 13,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 14,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 1.22,
+              "max_range_val": 9.58,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb19e",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb19f",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1a0",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 13,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 14,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 1.46,
+              "max_range_val": 5.73,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 14,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 15,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.99,
+              "max_range_val": 19.5,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1a1",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1a2",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1a3",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 14,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 15,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 1.16,
+              "max_range_val": 5.89,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 15,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 16,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.66,
+              "max_range_val": 17.8,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1a4",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1a5",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1a6",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 15,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 16,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 1.69,
+              "max_range_val": 6.84,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 16,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 17,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.77,
+              "max_range_val": 14.8,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1a7",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1a8",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1a9",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 16,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 17,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 2.56,
+              "max_range_val": 5.01,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 17,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 18,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 1.0,
+              "max_range_val": 6.43,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1aa",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1ab",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1ac",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 17,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 18,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 1.7,
+              "max_range_val": 8.6,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 18,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 120,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 0.0,
+              "range_type": "normal"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb1ad",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "text_history_val": "Follicular Phase",
+              "min_range_val": 2.4,
+              "max_range_val": 12.6,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb1ae",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "text_history_val": "Ovulation Phase",
+              "min_range_val": 14.0,
+              "max_range_val": 95.6,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb1af",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "text_history_val": "Luteal Phase",
+              "min_range_val": 1.0,
+              "max_range_val": 11.4,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb1b0",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "text_history_val": "Postmenopause",
+              "min_range_val": 7.7,
+              "max_range_val": 58.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "1st Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1b1",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 0.0,
+              "max_history_val": 90.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "2nd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1b2",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 90.0,
+              "max_history_val": 180.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "name": "3rd Trimester",
+              "nested_id": "5ded216eacbcd6314b8bb1b3",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 180.0,
+              "max_history_val": 270.0,
+              "min_range_val": 0.0,
+              "max_range_val": 0.5,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 18,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 120,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "template_tag_ids": [
+            "tags:days_since_lmp"
+          ],
+          "normal_range_required": [
+            "1"
+          ]
+        }
+      ],
+      "template_tag_ids": [
+        "tags:days_since_lmp"
+      ],
+      "ready_for_reporting": -1,
+      "verification_done": -1,
+      "result_type": "numeric",
+      "result_raw": "-",
+      "units": "IU/L",
+      "only_include_in_report_if_abnormal": -1,
+      "test_must_have_value": 1,
+      "test_only_applicable_to_genders": [
+        "Male",
+        "Female"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "created_at": "2019-12-08 16:14:38 UTC",
+      "updated_at": "2019-12-08 16:14:38 UTC",
+      "public": 0,
+      "categories": [
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "name": "SST Tube",
+          "quantity": 1.0,
+          "use_category_for_lis": 0
+        }
+      ],
+      "name": "Serum Container"
+    }
+  ],
+  "rates": [
+    {
+      "created_at": "2019-12-08 16:14:38 UTC",
+      "updated_at": "2019-12-08 16:14:38 UTC",
+      "public": 0,
+      "for_organization_id": "*",
+      "rate": 100.0,
+      "name": "5ded216dacbcd6314b8bb145",
+      "patient_rate": 0
+    },
+    {
+      "created_at": "2019-12-08 16:14:38 UTC",
+      "updated_at": "2019-12-08 16:14:38 UTC",
+      "public": 0,
+      "for_organization_id": "*",
+      "rate": 100.0,
+      "name": "5ded216dacbcd6314b8bb145",
+      "patient_rate": 1
+    }
+  ],
+  "name": "Leutinizing Hormone(LH)",
+  "description": "Determination of Serum LH level",
+  "request_rerun": -1,
+  "verify_all": -1,
+  "stat": -1,
+  "top_up_template": -1
+}

@@ -1,0 +1,464 @@
+{
+  "created_at": "2019-12-08 16:14:39 UTC",
+  "updated_at": "2019-12-08 16:14:39 UTC",
+  "public": 0,
+  "tests": [
+    {
+      "created_at": "2019-12-08 16:14:39 UTC",
+      "updated_at": "2019-12-08 16:14:39 UTC",
+      "public": 0,
+      "name": "Serum Creatinine",
+      "lis_code": "SCREAT",
+      "description": "Serum Creatinine estimation",
+      "print_all_ranges_in_report": 0,
+      "interpret_ranges": 1,
+      "ranges": [
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:39 UTC",
+              "updated_at": "2019-12-08 16:14:39 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.3,
+              "max_range_val": 1.0,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 0,
+          "max_age_days": 27,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "reference": "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:39 UTC",
+              "updated_at": "2019-12-08 16:14:39 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.3,
+              "max_range_val": 1.0,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 0,
+          "max_age_days": 27,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "reference": "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:39 UTC",
+              "updated_at": "2019-12-08 16:14:39 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.2,
+              "max_range_val": 0.4,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 27,
+          "min_age_hours": 0,
+          "max_age_years": 1,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "reference": "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:39 UTC",
+              "updated_at": "2019-12-08 16:14:39 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.2,
+              "max_range_val": 0.4,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 27,
+          "min_age_hours": 0,
+          "max_age_years": 1,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "reference": "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:39 UTC",
+              "updated_at": "2019-12-08 16:14:39 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.3,
+              "max_range_val": 0.7,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 1,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 14,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "reference": "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:39 UTC",
+              "updated_at": "2019-12-08 16:14:39 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.3,
+              "max_range_val": 0.7,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 1,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 14,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "reference": "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:39 UTC",
+              "updated_at": "2019-12-08 16:14:39 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.5,
+              "max_range_val": 1.0,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 14,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 17,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "reference": "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:39 UTC",
+              "updated_at": "2019-12-08 16:14:39 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.5,
+              "max_range_val": 1.0,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 14,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 17,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "reference": "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:39 UTC",
+              "updated_at": "2019-12-08 16:14:39 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.7,
+              "max_range_val": 1.2,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 17,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 120,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "reference": "Shrilekha Sairam, Suhasini Domalapalli, Sundaram Muthu et al. Hematological and Biochemical parameters in apparently healthy Indian Population: Defining Reference Intervals. Ind J Clin Biochem(July-Sept 2014) 29(3): 290-297",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:39 UTC",
+              "updated_at": "2019-12-08 16:14:39 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.6,
+              "max_range_val": 0.9,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 17,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 120,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "reference": "Shrilekha Sairam, Suhasini Domalapalli, Sundaram Muthu et al. Hematological and Biochemical parameters in apparently healthy Indian Population: Defining Reference Intervals. Ind J Clin Biochem(July-Sept 2014) 29(3): 290-297",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        }
+      ],
+      "ready_for_reporting": -1,
+      "verification_done": -1,
+      "result_type": "numeric",
+      "result_raw": "-",
+      "units": "mg/dl",
+      "only_include_in_report_if_abnormal": -1,
+      "test_must_have_value": 1,
+      "test_only_applicable_to_genders": [
+        "Male",
+        "Female"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "created_at": "2019-12-08 16:14:39 UTC",
+      "updated_at": "2019-12-08 16:14:39 UTC",
+      "public": 0,
+      "categories": [
+        {
+          "created_at": "2019-12-08 16:14:39 UTC",
+          "updated_at": "2019-12-08 16:14:39 UTC",
+          "public": 0,
+          "name": "SST Tube",
+          "quantity": 1.0,
+          "use_category_for_lis": 0
+        }
+      ],
+      "name": "Serum Container"
+    }
+  ],
+  "rates": [
+    {
+      "created_at": "2019-12-08 16:14:39 UTC",
+      "updated_at": "2019-12-08 16:14:39 UTC",
+      "public": 0,
+      "for_organization_id": "*",
+      "rate": 100.0,
+      "name": "5ded216dacbcd6314b8bb145",
+      "patient_rate": 0
+    },
+    {
+      "created_at": "2019-12-08 16:14:39 UTC",
+      "updated_at": "2019-12-08 16:14:39 UTC",
+      "public": 0,
+      "for_organization_id": "*",
+      "rate": 100.0,
+      "name": "5ded216dacbcd6314b8bb145",
+      "patient_rate": 1
+    }
+  ],
+  "name": "Serum Creatinine",
+  "description": "Determination of Serum Creatinine",
+  "request_rerun": -1,
+  "verify_all": -1,
+  "stat": -1,
+  "top_up_template": -1
+}

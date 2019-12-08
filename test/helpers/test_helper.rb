@@ -86,6 +86,14 @@ module TestHelper
         t
     end
 
+    ## are you pregnant
+    ## please choose, the last menstrual period.
+    ## then the history answers, will be chosen like that
+    ## question is -> days since lmp
+    ## please choose only if ---> 
+    ## and use attribute for answer ---> 
+    ## we do this in the tag.
+
     def build_required_text_history_tag(user)
         t = Tag.new
         t.name = "one"
@@ -197,6 +205,7 @@ module TestHelper
         @security_tokens = {}
         #puts @u.authentication_token.to_s
         #exit(1)
+
         #########################################################
         ##
         ##
@@ -296,15 +305,28 @@ module TestHelper
             user = User.find(user.id.to_s)
             build_inventory(user)
             Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-            ## if you want to, then transfer them
-            ## if organization specific reports are there, otherwise fuck it.
-            puts "basename is: #{basename}"
+                
+            ## so we are going to sort out history interpretation for thyroid and for beta hcg.
+            ## based on the history.
+            tags = JSON.parse(IO.read(Rails.root.join('test','test_json_models','tags',"#{basename}.json")))
+            unless tags["tags"].blank?
+                tags["tags"].each do |tag|
+                    t = Tag.new(tag)
+                    t.created_by_user = user
+                    t.created_by_user_id = user.id.to_s
+                    t.save
+                    unless t.errors.full_messages.blank?
+                        puts "error saving tag:#{tag} in _setup from test_helper.rb"
+                        exit(1)
+                    end
+                end
+            end
 
             reports_folder_path = nil
-            puts "the args are:"
-            puts args.to_s
+            #puts "the args are:"
+            #puts args.to_s
             if args[basename].blank?
-                puts "args basename is blank"
+                #puts "args basename is blank"
                 reports_folder_path = (Rails.root.join('test','test_json_models','diagnostics','reports','*.json'))
             else
                 if args[basename]["reports_folder_path"].blank?
@@ -313,7 +335,7 @@ module TestHelper
                     reports_folder_path = args[basename]["reports_folder_path"]
                 end
             end
-            puts "reports folder path is: #{reports_folder_path}"
+            #puts "reports folder path is: #{reports_folder_path}"
             Dir.glob(reports_folder_path).each do |report_file_name|
                 puts "report file name:#{report_file_name}"
                 json_object = JSON.parse(IO.read(report_file_name))
@@ -412,7 +434,7 @@ module TestHelper
     ## auto interpretation -> history -> pdf -> email.
     ## all this for the immunoassay reports today itself.
     def create_plus_path_lab_patient_order(template_report_ids=nil)
-        o = build_pathofast_patient_order(template_report_ids)
+        o = build_plus_path_lab_patient_order(template_report_ids)
         puts "the created by user organization -> created by user is not getting loaded. "
         o.save
 

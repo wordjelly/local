@@ -35,6 +35,13 @@
 							"range_type" : "normal",
 							"min_range_val" : 0.73,
 							"max_range_val" : 2.88
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 2.88,
+							"max_range_val" : 100,
+							"max_range_val_unbound" : 1,
+							"inference" : "Repeat TSH after 1 week, in fasting state, with free thyroid hormones, and anti-thyroid antibodies if clinically suspected. Rule out drug history."
 						}
 					]
 				},
@@ -51,6 +58,13 @@
 							"range_type" : "normal",
 							"min_range_val" : 0.73,
 							"max_range_val" : 2.88
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 2.88,
+							"max_range_val" : 100,
+							"max_range_val_unbound" : 1,
+							"inference" : "Repeat TSH after 1 week, in fasting state, with free thyroid hormones, and anti-thyroid antibodies if clinically suspected. Rule out drug history."
 						}
 					]
 				},

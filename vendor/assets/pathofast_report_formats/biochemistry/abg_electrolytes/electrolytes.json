@@ -181,8 +181,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 3.7,
-							"max_range_val" : 7.2
+							"min_range_val" : 3.5,
+							"max_range_val" : 5.1
 						}
 					]
 				},
@@ -198,13 +198,13 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 3.7,
-							"max_range_val" : 7.2
+							"min_range_val" : 3.5,
+							"max_range_val" : 5.1
 						}
 					]
 				},
 				{
-					"reference" : "https://www.accp.com/docs/sap/Lab_Values_Table_PedSAP.pdf",
+					"reference" : "https://www.ncbi.nlm.nih.gov/books/NBK307/",
 					"max_age_years" : 120,
 					"min_age_years" : 16,
 					"min_age_months" : 0,
@@ -215,13 +215,13 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 3.7,
-							"max_range_val" : 7.2
+							"min_range_val" : 3.5,
+							"max_range_val" : 5.5
 						}
 					]
 				},
 				{
-					"reference" : "https://www.accp.com/docs/sap/Lab_Values_Table_PedSAP.pdf",
+					"reference" : "https://www.ncbi.nlm.nih.gov/books/NBK307/",
 					"max_age_years" : 120,
 					"min_age_years" : 16,
 					"min_age_months" : 0,
@@ -232,8 +232,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 3.7,
-							"max_range_val" : 7.2
+							"min_range_val" : 3.5,
+							"max_range_val" : 5.5
 						}
 					]
 				}
@@ -260,8 +260,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 130,
-							"max_range_val" : 147
+							"min_range_val" : 95,
+							"max_range_val" : 108
 						}
 					]
 				},
@@ -277,8 +277,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 130,
-							"max_range_val" : 147
+							"min_range_val" : 95,
+							"max_range_val" : 108
 						}
 					]
 				}

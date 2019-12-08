@@ -1,0 +1,209 @@
+{
+	"name" : "Serum Creatinine",
+	"description" : "Determination of Serum Creatinine",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Serum Creatinine",
+			"description" : "Serum Creatinine estimation",
+			"lis_code" : "SCREAT",
+			"result_type" : "numeric",
+			"units" : "mg/dl",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 27,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.3,
+							"max_range_val" : 1.0
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 27,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.3,
+							"max_range_val" : 1.0
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 1,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 27,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.2,
+							"max_range_val" : 0.4
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 1,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 27,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.2,
+							"max_range_val" : 0.4
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 14,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.3,
+							"max_range_val" : 0.7
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 14,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.3,
+							"max_range_val" : 0.7
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 17,
+					"min_age_years" : 14,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.5,
+							"max_range_val" : 1.0
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 17,
+					"min_age_years" : 14,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.5,
+							"max_range_val" : 1.0
+						}
+					]
+				},
+				{
+					"reference" : "Shrilekha Sairam, Suhasini Domalapalli, Sundaram Muthu et al. Hematological and Biochemical parameters in apparently healthy Indian Population: Defining Reference Intervals. Ind J Clin Biochem(July-Sept 2014) 29(3): 290-297",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.7,
+							"max_range_val" : 1.2
+						}
+					]
+				},
+				{
+					"reference" : "Shrilekha Sairam, Suhasini Domalapalli, Sundaram Muthu et al. Hematological and Biochemical parameters in apparently healthy Indian Population: Defining Reference Intervals. Ind J Clin Biochem(July-Sept 2014) 29(3): 290-297",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.6,
+							"max_range_val" : 0.9
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

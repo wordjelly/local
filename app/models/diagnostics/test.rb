@@ -584,6 +584,8 @@ class Diagnostics::Test
 
 		self.ranges.each do |r|
 			puts "checking range min_value: #{r.min_value}, max_value: #{r.max_value}, text value: #{r.text_value} ----------------------------->"
+			## so it would iterate and pick.
+			## actually.
 			r.pick_range(history_tags,self.result_numeric, self.result_text) if patient.meets_range_requirements?(r)
 		end
 	end

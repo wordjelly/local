@@ -1,0 +1,372 @@
+{
+  "created_at": "2019-12-08 16:14:38 UTC",
+  "updated_at": "2019-12-08 16:14:38 UTC",
+  "public": 0,
+  "tests": [
+    {
+      "created_at": "2019-12-08 16:14:38 UTC",
+      "updated_at": "2019-12-08 16:14:38 UTC",
+      "public": 0,
+      "name": "Beta-HCG-Total",
+      "lis_code": "SBHCG",
+      "description": "Serum Total Beta-HCG estimation",
+      "print_all_ranges_in_report": 0,
+      "interpret_ranges": 1,
+      "ranges": [
+        {
+          "created_at": "2019-12-08 16:14:37 UTC",
+          "updated_at": "2019-12-08 16:14:37 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:37 UTC",
+              "updated_at": "2019-12-08 16:14:37 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.0,
+              "max_range_val": 2.0,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 120,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-08 16:14:37 UTC",
+              "updated_at": "2019-12-08 16:14:37 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb152",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "text_history_val": "non-pregnant pre-menopausal",
+              "min_range_val": 0.0,
+              "max_range_val": 1.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:37 UTC",
+              "updated_at": "2019-12-08 16:14:37 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb153",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "text_history_val": "Postmenopause",
+              "min_range_val": 0.0,
+              "max_range_val": 7.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:37 UTC",
+              "updated_at": "2019-12-08 16:14:37 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb154",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 21.0,
+              "max_history_val": 28.0,
+              "min_range_val": 5.8,
+              "max_range_val": 71.2,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:37 UTC",
+              "updated_at": "2019-12-08 16:14:37 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb155",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 28.0,
+              "max_history_val": 35.0,
+              "min_range_val": 9.5,
+              "max_range_val": 750.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:37 UTC",
+              "updated_at": "2019-12-08 16:14:37 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb156",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 35.0,
+              "max_history_val": 42.0,
+              "min_range_val": 217.0,
+              "max_range_val": 7138.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb157",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 42.0,
+              "max_history_val": 49.0,
+              "min_range_val": 158.0,
+              "max_range_val": 31795.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb158",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 49.0,
+              "max_history_val": 56.0,
+              "min_range_val": 3697.0,
+              "max_range_val": 163563.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb159",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 56.0,
+              "max_history_val": 63.0,
+              "min_range_val": 32065.0,
+              "max_range_val": 149571.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb15a",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 63.0,
+              "max_history_val": 70.0,
+              "min_range_val": 63803.0,
+              "max_range_val": 151410.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb15b",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 70.0,
+              "max_history_val": 84.0,
+              "min_range_val": 46509.0,
+              "max_range_val": 186977.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb15c",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 84.0,
+              "max_history_val": 98.0,
+              "min_range_val": 27832.0,
+              "max_range_val": 210612.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb15d",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 98.0,
+              "max_history_val": 105.0,
+              "min_range_val": 13950.0,
+              "max_range_val": 62530.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb15e",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 105.0,
+              "max_history_val": 112.0,
+              "min_range_val": 12039.0,
+              "max_range_val": 70971.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb15f",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 112.0,
+              "max_history_val": 119.0,
+              "min_range_val": 9040.0,
+              "max_range_val": 56451.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb160",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 119.0,
+              "max_history_val": 126.0,
+              "min_range_val": 8175.0,
+              "max_range_val": 55868.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb161",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 126.0,
+              "max_history_val": 133.0,
+              "min_range_val": 8099.0,
+              "max_range_val": 58176.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb162",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 133.0,
+              "max_history_val": 168.0,
+              "min_range_val": 3245.0,
+              "max_range_val": 90907.0,
+              "range_type": "history"
+            },
+            {
+              "created_at": "2019-12-08 16:14:38 UTC",
+              "updated_at": "2019-12-08 16:14:38 UTC",
+              "public": 0,
+              "nested_id": "5ded216eacbcd6314b8bb163",
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_history_val": 168.0,
+              "max_history_val": 252.0,
+              "min_range_val": 2880.0,
+              "max_range_val": 71767.0,
+              "range_type": "history"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 120,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        }
+      ],
+      "ready_for_reporting": -1,
+      "verification_done": -1,
+      "result_type": "numeric",
+      "result_raw": "-",
+      "units": "mIU/ml",
+      "only_include_in_report_if_abnormal": -1,
+      "test_must_have_value": 1,
+      "test_only_applicable_to_genders": [
+        "Male",
+        "Female"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "created_at": "2019-12-08 16:14:38 UTC",
+      "updated_at": "2019-12-08 16:14:38 UTC",
+      "public": 0,
+      "categories": [
+        {
+          "created_at": "2019-12-08 16:14:38 UTC",
+          "updated_at": "2019-12-08 16:14:38 UTC",
+          "public": 0,
+          "name": "SST Tube",
+          "quantity": 1.0,
+          "use_category_for_lis": 0
+        }
+      ],
+      "name": "Serum Container"
+    }
+  ],
+  "rates": [
+    {
+      "created_at": "2019-12-08 16:14:37 UTC",
+      "updated_at": "2019-12-08 16:14:37 UTC",
+      "public": 0,
+      "for_organization_id": "*",
+      "rate": 100.0,
+      "name": "5ded216dacbcd6314b8bb145",
+      "patient_rate": 0
+    },
+    {
+      "created_at": "2019-12-08 16:14:37 UTC",
+      "updated_at": "2019-12-08 16:14:37 UTC",
+      "public": 0,
+      "for_organization_id": "*",
+      "rate": 100.0,
+      "name": "5ded216dacbcd6314b8bb145",
+      "patient_rate": 1
+    }
+  ],
+  "name": "Beta-HCG-Total",
+  "description": "Determination of Serum Total Beta-HCG",
+  "request_rerun": -1,
+  "verify_all": -1,
+  "stat": -1,
+  "top_up_template": -1
+}

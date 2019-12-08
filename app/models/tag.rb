@@ -1,6 +1,12 @@
 require 'elasticsearch/persistence/model'
 class Tag
 
+	## the id of the history tag, which tells how many days since the last menstrual period.
+	## used in pathofast: rake : preprocess_pathofast_reports
+	## basically i had to add this as a template_tag_id for all the reports that had a trimester specific range tag.
+	## this is the id mentioned inside vendor/pathofast_report_formats/history_tags
+	LMP_TAG_ID = "tags:days_since_lmp"
+
 	include Elasticsearch::Persistence::Model
 	include Concerns::AllFieldsConcern
 	include Concerns::NameIdConcern
@@ -88,6 +94,10 @@ class Tag
 
 	attribute :max_range_val, Float, mapping: {type: 'float'}
 
+	attribute :max_range_val_unbound, Integer, mapping: {type: 'integer'}
+
+	attribute :min_range_val_unbound, Integer, mapping: {type: 'integer'}
+
 	attribute :text_range_val , String, mapping: {type: 'keyword'}
 
 	## if this range is selected in the presence of multiple tags.
@@ -136,6 +146,13 @@ class Tag
 
 	attribute :completed_weeks_since_date, Integer, mapping: {type: 'integer'}
 
+	## right so -> we do this before
+	## before_validation.
+	## if this is equal to: completed_years_since_date
+	## then it will automatically assign the value of completed_years_since_date to numerical_history_response
+	attribute :numerical_history_response_derived_from_attribute, String, mapping: {type: 'keyword'}
+
+
 
     mapping do
 	    indexes :name, type: 'keyword', fields: {
@@ -155,15 +172,19 @@ class Tag
 		document.assign_time_since_date unless document._date.blank?
 	end
 
-
+	## so we put that into the setup.
+	## and also the template report ids?
+	## so we will have to put them there.
+	## and also their ids,
+	## will have to be done.
 	def assign_time_since_date
-		puts "came to assing time since date."
+		#puts "came to assing time since date."
 		t = DateTime.now
 		self.completed_weeks_since_date = TimeDifference.between(_date, t).in_weeks.to_i
 		self.completed_months_since_date = TimeDifference.between(_date, t).in_months.to_i
 		self.completed_years_since_date = TimeDifference.between(_date, t).in_years.to_i
 		self.completed_days_since_date = TimeDifference.between(_date, t).in_days.to_i
-		puts "completed are; #{self.completed_weeks_since_date}"
+		self.numerical_history_response = self.send(self.numerical_history_response_derived_from_attribute) unless self.numerical_history_response_derived_from_attribute.blank?
 	end
 
 	## do you want to first embed it in test
@@ -234,6 +255,12 @@ class Tag
 	    	max_range_val: {
 	    		type: 'float'
 	    	},
+	    	min_range_val_unbound: {
+	    		type: 'integer'
+	    	},
+	    	max_range_val_unbound: {
+	    		type: 'integer'
+	    	},
 	    	text_range_val: {
 	    		type: 'keyword'
 	    	},
@@ -288,6 +315,8 @@ class Tag
 					:text_history_val, 
 					:min_range_val, 
 					:max_range_val, 
+					:max_range_val_unbound,
+					:min_range_val_unbound,
 					:text_range_val, 
 					{:combined_with_history_tag_ids => []},
 					:range_type, 
@@ -330,7 +359,9 @@ class Tag
 		self.range_type == HISTORY_TAG
 	end
 
-
+	def is_trimester_tag?
+		self.name =~ /trimester/i
+	end
 
 	def is_required?
 		#puts "is the tag required"
@@ -424,10 +455,29 @@ class Tag
 	## @called_from : range#pick_range
 	def test_value_satisfied?(test_value_numeric, test_value_text)
 		if !test_value_numeric.blank?
-			puts "test value numeric is not blank: #{test_value_numeric}"
-			puts "self min range val is: #{self.min_range_val}"
-			puts "Self max range val is: #{self.max_range_val}"
-			test_value_numeric.between?(self.min_range_val,self.max_range_val)
+			if self.min_range_val_unbound == Tag::YES
+				if test_value_numeric < self.max_range_val
+					true
+				else
+					false
+				end
+			elsif self.max_range_val_unbound == Tag::YES
+				if test_value_numeric >= self.min_range_val
+					true
+				else
+					false
+				end
+			else
+				if self.min_range_val <= test_value_numeric
+					if test_value_numeric < self.max_range_val
+						true
+					else
+						false
+					end
+				else
+					false
+				end
+			end
 		elsif !test_value_text.blank?
 			test_value_text == self.text_range_val
 		end

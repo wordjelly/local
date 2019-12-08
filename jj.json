@@ -1,0 +1,2257 @@
+[
+  {
+    "last_day_of_week_date": "11:2010-05-28",
+    "change": "25",
+    "day_id : first_day_of_week_date": "7:2010-05-24"
+  },
+  {
+    "last_day_of_week_date": "18:2010-06-04",
+    "change": "10",
+    "day_id : first_day_of_week_date": "14:2010-05-31"
+  },
+  {
+    "last_day_of_week_date": "25:2010-06-11",
+    "change": "17",
+    "day_id : first_day_of_week_date": "21:2010-06-07"
+  },
+  {
+    "last_day_of_week_date": "32:2010-06-18",
+    "change": "4",
+    "day_id : first_day_of_week_date": "28:2010-06-14"
+  },
+  {
+    "last_day_of_week_date": "39:2010-06-25",
+    "change": "-31",
+    "day_id : first_day_of_week_date": "35:2010-06-21"
+  },
+  {
+    "last_day_of_week_date": "46:2010-07-02",
+    "change": "-19",
+    "day_id : first_day_of_week_date": "42:2010-06-28"
+  },
+  {
+    "last_day_of_week_date": "53:2010-07-09",
+    "change": "35",
+    "day_id : first_day_of_week_date": "49:2010-07-05"
+  },
+  {
+    "last_day_of_week_date": "60:2010-07-16",
+    "change": "17",
+    "day_id : first_day_of_week_date": "56:2010-07-12"
+  },
+  {
+    "last_day_of_week_date": "67:2010-07-23",
+    "change": "6",
+    "day_id : first_day_of_week_date": "63:2010-07-19"
+  },
+  {
+    "last_day_of_week_date": "74:2010-07-30",
+    "change": "14",
+    "day_id : first_day_of_week_date": "70:2010-07-26"
+  },
+  {
+    "last_day_of_week_date": "81:2010-08-06",
+    "change": "-3",
+    "day_id : first_day_of_week_date": "77:2010-08-02"
+  },
+  {
+    "last_day_of_week_date": "88:2010-08-13",
+    "change": "20",
+    "day_id : first_day_of_week_date": "84:2010-08-09"
+  },
+  {
+    "last_day_of_week_date": "95:2010-08-20",
+    "change": "33",
+    "day_id : first_day_of_week_date": "91:2010-08-16"
+  },
+  {
+    "last_day_of_week_date": "102:2010-08-27",
+    "change": "-33",
+    "day_id : first_day_of_week_date": "98:2010-08-23"
+  },
+  {
+    "last_day_of_week_date": "109:2010-09-03",
+    "change": "23",
+    "day_id : first_day_of_week_date": "105:2010-08-30"
+  },
+  {
+    "last_day_of_week_date": "115:2010-09-09",
+    "change": "20",
+    "day_id : first_day_of_week_date": "112:2010-09-06"
+  },
+  {
+    "last_day_of_week_date": "123:2010-09-17",
+    "change": "19",
+    "day_id : first_day_of_week_date": "119:2010-09-13"
+  },
+  {
+    "last_day_of_week_date": "130:2010-09-24",
+    "change": "1",
+    "day_id : first_day_of_week_date": "126:2010-09-20"
+  },
+  {
+    "last_day_of_week_date": "137:2010-10-01",
+    "change": "25",
+    "day_id : first_day_of_week_date": "133:2010-09-27"
+  },
+  {
+    "last_day_of_week_date": "144:2010-10-08",
+    "change": "-14",
+    "day_id : first_day_of_week_date": "140:2010-10-04"
+  },
+  {
+    "last_day_of_week_date": "151:2010-10-15",
+    "change": "-13",
+    "day_id : first_day_of_week_date": "147:2010-10-11"
+  },
+  {
+    "last_day_of_week_date": "158:2010-10-22",
+    "change": "4",
+    "day_id : first_day_of_week_date": "154:2010-10-18"
+  },
+  {
+    "last_day_of_week_date": "165:2010-10-29",
+    "change": "-8",
+    "day_id : first_day_of_week_date": "161:2010-10-25"
+  },
+  {
+    "last_day_of_week_date": "171:2010-11-04",
+    "change": "35",
+    "day_id : first_day_of_week_date": "168:2010-11-01"
+  },
+  {
+    "last_day_of_week_date": "179:2010-11-12",
+    "change": "-49",
+    "day_id : first_day_of_week_date": "175:2010-11-08"
+  },
+  {
+    "last_day_of_week_date": "186:2010-11-19",
+    "change": "-55",
+    "day_id : first_day_of_week_date": "182:2010-11-15"
+  },
+  {
+    "last_day_of_week_date": "193:2010-11-26",
+    "change": "-58",
+    "day_id : first_day_of_week_date": "189:2010-11-22"
+  },
+  {
+    "last_day_of_week_date": "200:2010-12-03",
+    "change": "44",
+    "day_id : first_day_of_week_date": "196:2010-11-29"
+  },
+  {
+    "last_day_of_week_date": "207:2010-12-10",
+    "change": "-50",
+    "day_id : first_day_of_week_date": "203:2010-12-06"
+  },
+  {
+    "last_day_of_week_date": "213:2010-12-16",
+    "change": "-8",
+    "day_id : first_day_of_week_date": "210:2010-12-13"
+  },
+  {
+    "last_day_of_week_date": "221:2010-12-24",
+    "change": "19",
+    "day_id : first_day_of_week_date": "217:2010-12-20"
+  },
+  {
+    "last_day_of_week_date": "228:2010-12-31",
+    "change": "28",
+    "day_id : first_day_of_week_date": "224:2010-12-27"
+  },
+  {
+    "last_day_of_week_date": "235:2011-01-07",
+    "change": "-68",
+    "day_id : first_day_of_week_date": "231:2011-01-03"
+  },
+  {
+    "last_day_of_week_date": "242:2011-01-14",
+    "change": "-25",
+    "day_id : first_day_of_week_date": "238:2011-01-10"
+  },
+  {
+    "last_day_of_week_date": "249:2011-01-21",
+    "change": "40",
+    "day_id : first_day_of_week_date": "245:2011-01-17"
+  },
+  {
+    "last_day_of_week_date": "256:2011-01-28",
+    "change": "-51",
+    "day_id : first_day_of_week_date": "252:2011-01-24"
+  },
+  {
+    "last_day_of_week_date": "263:2011-02-04",
+    "change": "-20",
+    "day_id : first_day_of_week_date": "259:2011-01-31"
+  },
+  {
+    "last_day_of_week_date": "270:2011-02-11",
+    "change": "6",
+    "day_id : first_day_of_week_date": "266:2011-02-07"
+  },
+  {
+    "last_day_of_week_date": "277:2011-02-18",
+    "change": "14",
+    "day_id : first_day_of_week_date": "273:2011-02-14"
+  },
+  {
+    "last_day_of_week_date": "284:2011-02-25",
+    "change": "-56",
+    "day_id : first_day_of_week_date": "280:2011-02-21"
+  },
+  {
+    "last_day_of_week_date": "291:2011-03-04",
+    "change": "51",
+    "day_id : first_day_of_week_date": "287:2011-02-28"
+  },
+  {
+    "last_day_of_week_date": "298:2011-03-11",
+    "change": "-4",
+    "day_id : first_day_of_week_date": "294:2011-03-07"
+  },
+  {
+    "last_day_of_week_date": "305:2011-03-18",
+    "change": "-16",
+    "day_id : first_day_of_week_date": "301:2011-03-14"
+  },
+  {
+    "last_day_of_week_date": "312:2011-03-25",
+    "change": "62",
+    "day_id : first_day_of_week_date": "308:2011-03-21"
+  },
+  {
+    "last_day_of_week_date": "319:2011-04-01",
+    "change": "6",
+    "day_id : first_day_of_week_date": "315:2011-03-28"
+  },
+  {
+    "last_day_of_week_date": "326:2011-04-08",
+    "change": "-11",
+    "day_id : first_day_of_week_date": "322:2011-04-04"
+  },
+  {
+    "last_day_of_week_date": "333:2011-04-15",
+    "change": "12",
+    "day_id : first_day_of_week_date": "329:2011-04-11"
+  },
+  {
+    "last_day_of_week_date": "339:2011-04-21",
+    "change": "31",
+    "day_id : first_day_of_week_date": "336:2011-04-18"
+  },
+  {
+    "last_day_of_week_date": "347:2011-04-29",
+    "change": "-33",
+    "day_id : first_day_of_week_date": "343:2011-04-25"
+  },
+  {
+    "last_day_of_week_date": "354:2011-05-06",
+    "change": "-9",
+    "day_id : first_day_of_week_date": "350:2011-05-02"
+  },
+  {
+    "last_day_of_week_date": "361:2011-05-13",
+    "change": "-5",
+    "day_id : first_day_of_week_date": "357:2011-05-09"
+  },
+  {
+    "last_day_of_week_date": "368:2011-05-20",
+    "change": "-23",
+    "day_id : first_day_of_week_date": "364:2011-05-16"
+  },
+  {
+    "last_day_of_week_date": "375:2011-05-27",
+    "change": "34",
+    "day_id : first_day_of_week_date": "371:2011-05-23"
+  },
+  {
+    "last_day_of_week_date": "382:2011-06-03",
+    "change": "0",
+    "day_id : first_day_of_week_date": "378:2011-05-30"
+  },
+  {
+    "last_day_of_week_date": "389:2011-06-10",
+    "change": "-13",
+    "day_id : first_day_of_week_date": "385:2011-06-06"
+  },
+  {
+    "last_day_of_week_date": "396:2011-06-17",
+    "change": "-11",
+    "day_id : first_day_of_week_date": "392:2011-06-13"
+  },
+  {
+    "last_day_of_week_date": "403:2011-06-24",
+    "change": "35",
+    "day_id : first_day_of_week_date": "399:2011-06-20"
+  },
+  {
+    "last_day_of_week_date": "410:2011-07-01",
+    "change": "20",
+    "day_id : first_day_of_week_date": "406:2011-06-27"
+  },
+  {
+    "last_day_of_week_date": "417:2011-07-08",
+    "change": "-8",
+    "day_id : first_day_of_week_date": "413:2011-07-04"
+  },
+  {
+    "last_day_of_week_date": "424:2011-07-15",
+    "change": "9",
+    "day_id : first_day_of_week_date": "420:2011-07-11"
+  },
+  {
+    "last_day_of_week_date": "431:2011-07-22",
+    "change": "6",
+    "day_id : first_day_of_week_date": "427:2011-07-18"
+  },
+  {
+    "last_day_of_week_date": "438:2011-07-29",
+    "change": "-44",
+    "day_id : first_day_of_week_date": "434:2011-07-25"
+  },
+  {
+    "last_day_of_week_date": "445:2011-08-05",
+    "change": "-53",
+    "day_id : first_day_of_week_date": "441:2011-08-01"
+  },
+  {
+    "last_day_of_week_date": "452:2011-08-12",
+    "change": "-5",
+    "day_id : first_day_of_week_date": "448:2011-08-08"
+  },
+  {
+    "last_day_of_week_date": "459:2011-08-19",
+    "change": "-65",
+    "day_id : first_day_of_week_date": "456:2011-08-16"
+  },
+  {
+    "last_day_of_week_date": "466:2011-08-26",
+    "change": "-46",
+    "day_id : first_day_of_week_date": "462:2011-08-22"
+  },
+  {
+    "last_day_of_week_date": "473:2011-09-02",
+    "change": "26",
+    "day_id : first_day_of_week_date": "469:2011-08-29"
+  },
+  {
+    "last_day_of_week_date": "480:2011-09-09",
+    "change": "7",
+    "day_id : first_day_of_week_date": "476:2011-09-05"
+  },
+  {
+    "last_day_of_week_date": "487:2011-09-16",
+    "change": "35",
+    "day_id : first_day_of_week_date": "483:2011-09-12"
+  },
+  {
+    "last_day_of_week_date": "494:2011-09-23",
+    "change": "-22",
+    "day_id : first_day_of_week_date": "490:2011-09-19"
+  },
+  {
+    "last_day_of_week_date": "501:2011-09-30",
+    "change": "9",
+    "day_id : first_day_of_week_date": "497:2011-09-26"
+  },
+  {
+    "last_day_of_week_date": "508:2011-10-07",
+    "change": "-16",
+    "day_id : first_day_of_week_date": "504:2011-10-03"
+  },
+  {
+    "last_day_of_week_date": "515:2011-10-14",
+    "change": "54",
+    "day_id : first_day_of_week_date": "511:2011-10-10"
+  },
+  {
+    "last_day_of_week_date": "522:2011-10-21",
+    "change": "-3",
+    "day_id : first_day_of_week_date": "518:2011-10-17"
+  },
+  {
+    "last_day_of_week_date": "529:2011-10-28",
+    "change": "28",
+    "day_id : first_day_of_week_date": "525:2011-10-24"
+  },
+  {
+    "last_day_of_week_date": "536:2011-11-04",
+    "change": "-15",
+    "day_id : first_day_of_week_date": "532:2011-10-31"
+  },
+  {
+    "last_day_of_week_date": "543:2011-11-11",
+    "change": "-57",
+    "day_id : first_day_of_week_date": "540:2011-11-08"
+  },
+  {
+    "last_day_of_week_date": "550:2011-11-18",
+    "change": "-46",
+    "day_id : first_day_of_week_date": "546:2011-11-14"
+  },
+  {
+    "last_day_of_week_date": "557:2011-11-25",
+    "change": "-8",
+    "day_id : first_day_of_week_date": "553:2011-11-21"
+  },
+  {
+    "last_day_of_week_date": "564:2011-12-02",
+    "change": "43",
+    "day_id : first_day_of_week_date": "560:2011-11-28"
+  },
+  {
+    "last_day_of_week_date": "571:2011-12-09",
+    "change": "-40",
+    "day_id : first_day_of_week_date": "567:2011-12-05"
+  },
+  {
+    "last_day_of_week_date": "578:2011-12-16",
+    "change": "-43",
+    "day_id : first_day_of_week_date": "574:2011-12-12"
+  },
+  {
+    "last_day_of_week_date": "585:2011-12-23",
+    "change": "47",
+    "day_id : first_day_of_week_date": "581:2011-12-19"
+  },
+  {
+    "last_day_of_week_date": "592:2011-12-30",
+    "change": "-37",
+    "day_id : first_day_of_week_date": "589:2011-12-27"
+  },
+  {
+    "last_day_of_week_date": "599:2012-01-06",
+    "change": "18",
+    "day_id : first_day_of_week_date": "596:2012-01-03"
+  },
+  {
+    "last_day_of_week_date": "606:2012-01-13",
+    "change": "58",
+    "day_id : first_day_of_week_date": "602:2012-01-09"
+  },
+  {
+    "last_day_of_week_date": "613:2012-01-20",
+    "change": "64",
+    "day_id : first_day_of_week_date": "609:2012-01-16"
+  },
+  {
+    "last_day_of_week_date": "620:2012-01-27",
+    "change": "31",
+    "day_id : first_day_of_week_date": "616:2012-01-23"
+  },
+  {
+    "last_day_of_week_date": "627:2012-02-03",
+    "change": "63",
+    "day_id : first_day_of_week_date": "623:2012-01-30"
+  },
+  {
+    "last_day_of_week_date": "634:2012-02-10",
+    "change": "17",
+    "day_id : first_day_of_week_date": "630:2012-02-06"
+  },
+  {
+    "last_day_of_week_date": "641:2012-02-17",
+    "change": "57",
+    "day_id : first_day_of_week_date": "637:2012-02-13"
+  },
+  {
+    "last_day_of_week_date": "648:2012-02-24",
+    "change": "-59",
+    "day_id : first_day_of_week_date": "645:2012-02-21"
+  },
+  {
+    "last_day_of_week_date": "655:2012-03-02",
+    "change": "33",
+    "day_id : first_day_of_week_date": "651:2012-02-27"
+  },
+  {
+    "last_day_of_week_date": "662:2012-03-09",
+    "change": "32",
+    "day_id : first_day_of_week_date": "658:2012-03-05"
+  },
+  {
+    "last_day_of_week_date": "669:2012-03-16",
+    "change": "-22",
+    "day_id : first_day_of_week_date": "665:2012-03-12"
+  },
+  {
+    "last_day_of_week_date": "676:2012-03-23",
+    "change": "10",
+    "day_id : first_day_of_week_date": "672:2012-03-19"
+  },
+  {
+    "last_day_of_week_date": "683:2012-03-30",
+    "change": "17",
+    "day_id : first_day_of_week_date": "679:2012-03-26"
+  },
+  {
+    "last_day_of_week_date": "688:2012-04-04",
+    "change": "3",
+    "day_id : first_day_of_week_date": "686:2012-04-02"
+  },
+  {
+    "last_day_of_week_date": "697:2012-04-13",
+    "change": "17",
+    "day_id : first_day_of_week_date": "693:2012-04-09"
+  },
+  {
+    "last_day_of_week_date": "704:2012-04-20",
+    "change": "2",
+    "day_id : first_day_of_week_date": "700:2012-04-16"
+  },
+  {
+    "last_day_of_week_date": "711:2012-04-27",
+    "change": "-9",
+    "day_id : first_day_of_week_date": "707:2012-04-23"
+  },
+  {
+    "last_day_of_week_date": "718:2012-05-04",
+    "change": "-46",
+    "day_id : first_day_of_week_date": "714:2012-04-30"
+  },
+  {
+    "last_day_of_week_date": "725:2012-05-11",
+    "change": "-48",
+    "day_id : first_day_of_week_date": "721:2012-05-07"
+  },
+  {
+    "last_day_of_week_date": "732:2012-05-18",
+    "change": "6",
+    "day_id : first_day_of_week_date": "728:2012-05-14"
+  },
+  {
+    "last_day_of_week_date": "739:2012-05-25",
+    "change": "20",
+    "day_id : first_day_of_week_date": "736:2012-05-22"
+  },
+  {
+    "last_day_of_week_date": "746:2012-06-01",
+    "change": "-44",
+    "day_id : first_day_of_week_date": "742:2012-05-28"
+  },
+  {
+    "last_day_of_week_date": "753:2012-06-08",
+    "change": "68",
+    "day_id : first_day_of_week_date": "749:2012-06-04"
+  },
+  {
+    "last_day_of_week_date": "760:2012-06-15",
+    "change": "10",
+    "day_id : first_day_of_week_date": "756:2012-06-11"
+  },
+  {
+    "last_day_of_week_date": "767:2012-06-22",
+    "change": "30",
+    "day_id : first_day_of_week_date": "763:2012-06-18"
+  },
+  {
+    "last_day_of_week_date": "774:2012-06-29",
+    "change": "42",
+    "day_id : first_day_of_week_date": "770:2012-06-25"
+  },
+  {
+    "last_day_of_week_date": "781:2012-07-06",
+    "change": "23",
+    "day_id : first_day_of_week_date": "777:2012-07-02"
+  },
+  {
+    "last_day_of_week_date": "788:2012-07-13",
+    "change": "1",
+    "day_id : first_day_of_week_date": "784:2012-07-09"
+  },
+  {
+    "last_day_of_week_date": "795:2012-07-20",
+    "change": "-8",
+    "day_id : first_day_of_week_date": "791:2012-07-16"
+  },
+  {
+    "last_day_of_week_date": "802:2012-07-27",
+    "change": "-13",
+    "day_id : first_day_of_week_date": "798:2012-07-23"
+  },
+  {
+    "last_day_of_week_date": "809:2012-08-03",
+    "change": "-9",
+    "day_id : first_day_of_week_date": "805:2012-07-30"
+  },
+  {
+    "last_day_of_week_date": "816:2012-08-10",
+    "change": "-10",
+    "day_id : first_day_of_week_date": "812:2012-08-06"
+  },
+  {
+    "last_day_of_week_date": "823:2012-08-17",
+    "change": "2",
+    "day_id : first_day_of_week_date": "819:2012-08-13"
+  },
+  {
+    "last_day_of_week_date": "830:2012-08-24",
+    "change": "-13",
+    "day_id : first_day_of_week_date": "827:2012-08-21"
+  },
+  {
+    "last_day_of_week_date": "837:2012-08-31",
+    "change": "-16",
+    "day_id : first_day_of_week_date": "833:2012-08-27"
+  },
+  {
+    "last_day_of_week_date": "844:2012-09-07",
+    "change": "16",
+    "day_id : first_day_of_week_date": "840:2012-09-03"
+  },
+  {
+    "last_day_of_week_date": "851:2012-09-14",
+    "change": "57",
+    "day_id : first_day_of_week_date": "847:2012-09-10"
+  },
+  {
+    "last_day_of_week_date": "858:2012-09-21",
+    "change": "34",
+    "day_id : first_day_of_week_date": "854:2012-09-17"
+  },
+  {
+    "last_day_of_week_date": "865:2012-09-28",
+    "change": "3",
+    "day_id : first_day_of_week_date": "861:2012-09-24"
+  },
+  {
+    "last_day_of_week_date": "872:2012-10-05",
+    "change": "8",
+    "day_id : first_day_of_week_date": "868:2012-10-01"
+  },
+  {
+    "last_day_of_week_date": "879:2012-10-12",
+    "change": "2",
+    "day_id : first_day_of_week_date": "875:2012-10-08"
+  },
+  {
+    "last_day_of_week_date": "886:2012-10-19",
+    "change": "4",
+    "day_id : first_day_of_week_date": "882:2012-10-15"
+  },
+  {
+    "last_day_of_week_date": "892:2012-10-25",
+    "change": "1",
+    "day_id : first_day_of_week_date": "889:2012-10-22"
+  },
+  {
+    "last_day_of_week_date": "900:2012-11-02",
+    "change": "-1",
+    "day_id : first_day_of_week_date": "896:2012-10-29"
+  },
+  {
+    "last_day_of_week_date": "907:2012-11-09",
+    "change": "0",
+    "day_id : first_day_of_week_date": "903:2012-11-05"
+  },
+  {
+    "last_day_of_week_date": "914:2012-11-16",
+    "change": "-21",
+    "day_id : first_day_of_week_date": "910:2012-11-12"
+  },
+  {
+    "last_day_of_week_date": "921:2012-11-23",
+    "change": "15",
+    "day_id : first_day_of_week_date": "917:2012-11-19"
+  },
+  {
+    "last_day_of_week_date": "928:2012-11-30",
+    "change": "64",
+    "day_id : first_day_of_week_date": "924:2012-11-26"
+  },
+  {
+    "last_day_of_week_date": "935:2012-12-07",
+    "change": "21",
+    "day_id : first_day_of_week_date": "931:2012-12-03"
+  },
+  {
+    "last_day_of_week_date": "942:2012-12-14",
+    "change": "3",
+    "day_id : first_day_of_week_date": "938:2012-12-10"
+  },
+  {
+    "last_day_of_week_date": "949:2012-12-21",
+    "change": "-9",
+    "day_id : first_day_of_week_date": "945:2012-12-17"
+  },
+  {
+    "last_day_of_week_date": "956:2012-12-28",
+    "change": "11",
+    "day_id : first_day_of_week_date": "952:2012-12-24"
+  },
+  {
+    "last_day_of_week_date": "963:2013-01-04",
+    "change": "25",
+    "day_id : first_day_of_week_date": "959:2012-12-31"
+  },
+  {
+    "last_day_of_week_date": "970:2013-01-11",
+    "change": "-7",
+    "day_id : first_day_of_week_date": "966:2013-01-07"
+  },
+  {
+    "last_day_of_week_date": "977:2013-01-18",
+    "change": "-6",
+    "day_id : first_day_of_week_date": "973:2013-01-14"
+  },
+  {
+    "last_day_of_week_date": "984:2013-01-25",
+    "change": "3",
+    "day_id : first_day_of_week_date": "980:2013-01-21"
+  },
+  {
+    "last_day_of_week_date": "991:2013-02-01",
+    "change": "-14",
+    "day_id : first_day_of_week_date": "987:2013-01-28"
+  },
+  {
+    "last_day_of_week_date": "998:2013-02-08",
+    "change": "-21",
+    "day_id : first_day_of_week_date": "994:2013-02-04"
+  },
+  {
+    "last_day_of_week_date": "1005:2013-02-15",
+    "change": "0",
+    "day_id : first_day_of_week_date": "1001:2013-02-11"
+  },
+  {
+    "last_day_of_week_date": "1012:2013-02-22",
+    "change": "-23",
+    "day_id : first_day_of_week_date": "1008:2013-02-18"
+  },
+  {
+    "last_day_of_week_date": "1019:2013-03-01",
+    "change": "-41",
+    "day_id : first_day_of_week_date": "1015:2013-02-25"
+  },
+  {
+    "last_day_of_week_date": "1026:2013-03-08",
+    "change": "54",
+    "day_id : first_day_of_week_date": "1022:2013-03-04"
+  },
+  {
+    "last_day_of_week_date": "1033:2013-03-15",
+    "change": "-29",
+    "day_id : first_day_of_week_date": "1029:2013-03-11"
+  },
+  {
+    "last_day_of_week_date": "1040:2013-03-22",
+    "change": "-45",
+    "day_id : first_day_of_week_date": "1036:2013-03-18"
+  },
+  {
+    "last_day_of_week_date": "1046:2013-03-28",
+    "change": "21",
+    "day_id : first_day_of_week_date": "1043:2013-03-25"
+  },
+  {
+    "last_day_of_week_date": "1054:2013-04-05",
+    "change": "-29",
+    "day_id : first_day_of_week_date": "1050:2013-04-01"
+  },
+  {
+    "last_day_of_week_date": "1061:2013-04-12",
+    "change": "36",
+    "day_id : first_day_of_week_date": "1057:2013-04-08"
+  },
+  {
+    "last_day_of_week_date": "1067:2013-04-18",
+    "change": "66",
+    "day_id : first_day_of_week_date": "1064:2013-04-15"
+  },
+  {
+    "last_day_of_week_date": "1075:2013-04-26",
+    "change": "-3",
+    "day_id : first_day_of_week_date": "1071:2013-04-22"
+  },
+  {
+    "last_day_of_week_date": "1082:2013-05-03",
+    "change": "-17",
+    "day_id : first_day_of_week_date": "1078:2013-04-29"
+  },
+  {
+    "last_day_of_week_date": "1089:2013-05-10",
+    "change": "29",
+    "day_id : first_day_of_week_date": "1085:2013-05-06"
+  },
+  {
+    "last_day_of_week_date": "1096:2013-05-17",
+    "change": "60",
+    "day_id : first_day_of_week_date": "1092:2013-05-13"
+  },
+  {
+    "last_day_of_week_date": "1103:2013-05-24",
+    "change": "-31",
+    "day_id : first_day_of_week_date": "1099:2013-05-20"
+  },
+  {
+    "last_day_of_week_date": "1110:2013-05-31",
+    "change": "-37",
+    "day_id : first_day_of_week_date": "1106:2013-05-27"
+  },
+  {
+    "last_day_of_week_date": "1117:2013-06-07",
+    "change": "-14",
+    "day_id : first_day_of_week_date": "1113:2013-06-03"
+  },
+  {
+    "last_day_of_week_date": "1124:2013-06-14",
+    "change": "-14",
+    "day_id : first_day_of_week_date": "1120:2013-06-10"
+  },
+  {
+    "last_day_of_week_date": "1131:2013-06-21",
+    "change": "-53",
+    "day_id : first_day_of_week_date": "1127:2013-06-17"
+  },
+  {
+    "last_day_of_week_date": "1138:2013-06-28",
+    "change": "39",
+    "day_id : first_day_of_week_date": "1134:2013-06-24"
+  },
+  {
+    "last_day_of_week_date": "1145:2013-07-05",
+    "change": "-24",
+    "day_id : first_day_of_week_date": "1141:2013-07-01"
+  },
+  {
+    "last_day_of_week_date": "1152:2013-07-12",
+    "change": "39",
+    "day_id : first_day_of_week_date": "1148:2013-07-08"
+  },
+  {
+    "last_day_of_week_date": "1159:2013-07-19",
+    "change": "-69",
+    "day_id : first_day_of_week_date": "1155:2013-07-15"
+  },
+  {
+    "last_day_of_week_date": "1166:2013-07-26",
+    "change": "-56",
+    "day_id : first_day_of_week_date": "1162:2013-07-22"
+  },
+  {
+    "last_day_of_week_date": "1173:2013-08-02",
+    "change": "-32",
+    "day_id : first_day_of_week_date": "1169:2013-07-29"
+  },
+  {
+    "last_day_of_week_date": "1179:2013-08-08",
+    "change": "-28",
+    "day_id : first_day_of_week_date": "1176:2013-08-05"
+  },
+  {
+    "last_day_of_week_date": "1187:2013-08-16",
+    "change": "-27",
+    "day_id : first_day_of_week_date": "1183:2013-08-12"
+  },
+  {
+    "last_day_of_week_date": "1194:2013-08-23",
+    "change": "36",
+    "day_id : first_day_of_week_date": "1190:2013-08-19"
+  },
+  {
+    "last_day_of_week_date": "1201:2013-08-30",
+    "change": "-35",
+    "day_id : first_day_of_week_date": "1197:2013-08-26"
+  },
+  {
+    "last_day_of_week_date": "1208:2013-09-06",
+    "change": "90",
+    "day_id : first_day_of_week_date": "1204:2013-09-02"
+  },
+  {
+    "last_day_of_week_date": "1215:2013-09-13",
+    "change": "-1",
+    "day_id : first_day_of_week_date": "1212:2013-09-10"
+  },
+  {
+    "last_day_of_week_date": "1222:2013-09-20",
+    "change": "31",
+    "day_id : first_day_of_week_date": "1218:2013-09-16"
+  },
+  {
+    "last_day_of_week_date": "1229:2013-09-27",
+    "change": "-31",
+    "day_id : first_day_of_week_date": "1225:2013-09-23"
+  },
+  {
+    "last_day_of_week_date": "1236:2013-10-04",
+    "change": "60",
+    "day_id : first_day_of_week_date": "1232:2013-09-30"
+  },
+  {
+    "last_day_of_week_date": "1243:2013-10-11",
+    "change": "54",
+    "day_id : first_day_of_week_date": "1239:2013-10-07"
+  },
+  {
+    "last_day_of_week_date": "1250:2013-10-18",
+    "change": "7",
+    "day_id : first_day_of_week_date": "1246:2013-10-14"
+  },
+  {
+    "last_day_of_week_date": "1257:2013-10-25",
+    "change": "9",
+    "day_id : first_day_of_week_date": "1253:2013-10-21"
+  },
+  {
+    "last_day_of_week_date": "1264:2013-11-01",
+    "change": "79",
+    "day_id : first_day_of_week_date": "1260:2013-10-28"
+  },
+  {
+    "last_day_of_week_date": "1271:2013-11-08",
+    "change": "-51",
+    "day_id : first_day_of_week_date": "1268:2013-11-05"
+  },
+  {
+    "last_day_of_week_date": "1277:2013-11-14",
+    "change": "5",
+    "day_id : first_day_of_week_date": "1274:2013-11-11"
+  },
+  {
+    "last_day_of_week_date": "1285:2013-11-22",
+    "change": "-42",
+    "day_id : first_day_of_week_date": "1281:2013-11-18"
+  },
+  {
+    "last_day_of_week_date": "1292:2013-11-29",
+    "change": "6",
+    "day_id : first_day_of_week_date": "1288:2013-11-25"
+  },
+  {
+    "last_day_of_week_date": "1299:2013-12-06",
+    "change": "39",
+    "day_id : first_day_of_week_date": "1295:2013-12-02"
+  },
+  {
+    "last_day_of_week_date": "1306:2013-12-13",
+    "change": "-58",
+    "day_id : first_day_of_week_date": "1302:2013-12-09"
+  },
+  {
+    "last_day_of_week_date": "1313:2013-12-20",
+    "change": "-7",
+    "day_id : first_day_of_week_date": "1309:2013-12-16"
+  },
+  {
+    "last_day_of_week_date": "1320:2013-12-27",
+    "change": "7",
+    "day_id : first_day_of_week_date": "1316:2013-12-23"
+  },
+  {
+    "last_day_of_week_date": "1327:2014-01-03",
+    "change": "-17",
+    "day_id : first_day_of_week_date": "1323:2013-12-30"
+  },
+  {
+    "last_day_of_week_date": "1334:2014-01-10",
+    "change": "-22",
+    "day_id : first_day_of_week_date": "1330:2014-01-06"
+  },
+  {
+    "last_day_of_week_date": "1341:2014-01-17",
+    "change": "-10",
+    "day_id : first_day_of_week_date": "1337:2014-01-13"
+  },
+  {
+    "last_day_of_week_date": "1348:2014-01-24",
+    "change": "-2",
+    "day_id : first_day_of_week_date": "1344:2014-01-20"
+  },
+  {
+    "last_day_of_week_date": "1355:2014-01-31",
+    "change": "-29",
+    "day_id : first_day_of_week_date": "1351:2014-01-27"
+  },
+  {
+    "last_day_of_week_date": "1362:2014-02-07",
+    "change": "16",
+    "day_id : first_day_of_week_date": "1358:2014-02-03"
+  },
+  {
+    "last_day_of_week_date": "1369:2014-02-14",
+    "change": "-1",
+    "day_id : first_day_of_week_date": "1365:2014-02-10"
+  },
+  {
+    "last_day_of_week_date": "1376:2014-02-21",
+    "change": "22",
+    "day_id : first_day_of_week_date": "1372:2014-02-17"
+  },
+  {
+    "last_day_of_week_date": "1383:2014-02-28",
+    "change": "8",
+    "day_id : first_day_of_week_date": "1379:2014-02-24"
+  },
+  {
+    "last_day_of_week_date": "1390:2014-03-07",
+    "change": "116",
+    "day_id : first_day_of_week_date": "1386:2014-03-03"
+  },
+  {
+    "last_day_of_week_date": "1397:2014-03-14",
+    "change": "-4",
+    "day_id : first_day_of_week_date": "1393:2014-03-10"
+  },
+  {
+    "last_day_of_week_date": "1404:2014-03-21",
+    "change": "-2",
+    "day_id : first_day_of_week_date": "1401:2014-03-18"
+  },
+  {
+    "last_day_of_week_date": "1411:2014-03-28",
+    "change": "28",
+    "day_id : first_day_of_week_date": "1407:2014-03-24"
+  },
+  {
+    "last_day_of_week_date": "1418:2014-04-04",
+    "change": "-15",
+    "day_id : first_day_of_week_date": "1414:2014-03-31"
+  },
+  {
+    "last_day_of_week_date": "1425:2014-04-11",
+    "change": "27",
+    "day_id : first_day_of_week_date": "1421:2014-04-07"
+  },
+  {
+    "last_day_of_week_date": "1431:2014-04-17",
+    "change": "16",
+    "day_id : first_day_of_week_date": "1429:2014-04-15"
+  },
+  {
+    "last_day_of_week_date": "1439:2014-04-25",
+    "change": "6",
+    "day_id : first_day_of_week_date": "1435:2014-04-21"
+  },
+  {
+    "last_day_of_week_date": "1446:2014-05-02",
+    "change": "-18",
+    "day_id : first_day_of_week_date": "1442:2014-04-28"
+  },
+  {
+    "last_day_of_week_date": "1453:2014-05-09",
+    "change": "68",
+    "day_id : first_day_of_week_date": "1449:2014-05-05"
+  },
+  {
+    "last_day_of_week_date": "1460:2014-05-16",
+    "change": "55",
+    "day_id : first_day_of_week_date": "1456:2014-05-12"
+  },
+  {
+    "last_day_of_week_date": "1467:2014-05-23",
+    "change": "4",
+    "day_id : first_day_of_week_date": "1463:2014-05-19"
+  },
+  {
+    "last_day_of_week_date": "1474:2014-05-30",
+    "change": "-25",
+    "day_id : first_day_of_week_date": "1470:2014-05-26"
+  },
+  {
+    "last_day_of_week_date": "1481:2014-06-06",
+    "change": "17",
+    "day_id : first_day_of_week_date": "1477:2014-06-02"
+  },
+  {
+    "last_day_of_week_date": "1488:2014-06-13",
+    "change": "-30",
+    "day_id : first_day_of_week_date": "1484:2014-06-09"
+  },
+  {
+    "last_day_of_week_date": "1495:2014-06-20",
+    "change": "-2",
+    "day_id : first_day_of_week_date": "1491:2014-06-16"
+  },
+  {
+    "last_day_of_week_date": "1502:2014-06-27",
+    "change": "-6",
+    "day_id : first_day_of_week_date": "1498:2014-06-23"
+  },
+  {
+    "last_day_of_week_date": "1509:2014-07-04",
+    "change": "21",
+    "day_id : first_day_of_week_date": "1505:2014-06-30"
+  },
+  {
+    "last_day_of_week_date": "1516:2014-07-11",
+    "change": "-60",
+    "day_id : first_day_of_week_date": "1512:2014-07-07"
+  },
+  {
+    "last_day_of_week_date": "1523:2014-07-18",
+    "change": "62",
+    "day_id : first_day_of_week_date": "1519:2014-07-14"
+  },
+  {
+    "last_day_of_week_date": "1530:2014-07-25",
+    "change": "-4",
+    "day_id : first_day_of_week_date": "1526:2014-07-21"
+  },
+  {
+    "last_day_of_week_date": "1537:2014-08-01",
+    "change": "-6",
+    "day_id : first_day_of_week_date": "1533:2014-07-28"
+  },
+  {
+    "last_day_of_week_date": "1544:2014-08-08",
+    "change": "-31",
+    "day_id : first_day_of_week_date": "1540:2014-08-04"
+  },
+  {
+    "last_day_of_week_date": "1550:2014-08-14",
+    "change": "16",
+    "day_id : first_day_of_week_date": "1547:2014-08-11"
+  },
+  {
+    "last_day_of_week_date": "1558:2014-08-22",
+    "change": "25",
+    "day_id : first_day_of_week_date": "1554:2014-08-18"
+  },
+  {
+    "last_day_of_week_date": "1564:2014-08-28",
+    "change": "5",
+    "day_id : first_day_of_week_date": "1561:2014-08-25"
+  },
+  {
+    "last_day_of_week_date": "1572:2014-09-05",
+    "change": "-2",
+    "day_id : first_day_of_week_date": "1568:2014-09-01"
+  },
+  {
+    "last_day_of_week_date": "1579:2014-09-12",
+    "change": "3",
+    "day_id : first_day_of_week_date": "1575:2014-09-08"
+  },
+  {
+    "last_day_of_week_date": "1586:2014-09-19",
+    "change": "-1",
+    "day_id : first_day_of_week_date": "1582:2014-09-15"
+  },
+  {
+    "last_day_of_week_date": "1593:2014-09-26",
+    "change": "-36",
+    "day_id : first_day_of_week_date": "1589:2014-09-22"
+  },
+  {
+    "last_day_of_week_date": "1598:2014-10-01",
+    "change": "-10",
+    "day_id : first_day_of_week_date": "1596:2014-09-29"
+  },
+  {
+    "last_day_of_week_date": "1607:2014-10-10",
+    "change": "18",
+    "day_id : first_day_of_week_date": "1604:2014-10-07"
+  },
+  {
+    "last_day_of_week_date": "1614:2014-10-17",
+    "change": "16",
+    "day_id : first_day_of_week_date": "1610:2014-10-13"
+  },
+  {
+    "last_day_of_week_date": "1619:2014-10-22",
+    "change": "14",
+    "day_id : first_day_of_week_date": "1617:2014-10-20"
+  },
+  {
+    "last_day_of_week_date": "1628:2014-10-31",
+    "change": "30",
+    "day_id : first_day_of_week_date": "1624:2014-10-27"
+  },
+  {
+    "last_day_of_week_date": "1635:2014-11-07",
+    "change": "12",
+    "day_id : first_day_of_week_date": "1631:2014-11-03"
+  },
+  {
+    "last_day_of_week_date": "1642:2014-11-14",
+    "change": "18",
+    "day_id : first_day_of_week_date": "1638:2014-11-10"
+  },
+  {
+    "last_day_of_week_date": "1649:2014-11-21",
+    "change": "24",
+    "day_id : first_day_of_week_date": "1645:2014-11-17"
+  },
+  {
+    "last_day_of_week_date": "1656:2014-11-28",
+    "change": "13",
+    "day_id : first_day_of_week_date": "1652:2014-11-24"
+  },
+  {
+    "last_day_of_week_date": "1663:2014-12-05",
+    "change": "12",
+    "day_id : first_day_of_week_date": "1659:2014-12-01"
+  },
+  {
+    "last_day_of_week_date": "1670:2014-12-12",
+    "change": "-11",
+    "day_id : first_day_of_week_date": "1666:2014-12-08"
+  },
+  {
+    "last_day_of_week_date": "1677:2014-12-19",
+    "change": "6",
+    "day_id : first_day_of_week_date": "1673:2014-12-15"
+  },
+  {
+    "last_day_of_week_date": "1684:2014-12-26",
+    "change": "-10",
+    "day_id : first_day_of_week_date": "1680:2014-12-22"
+  },
+  {
+    "last_day_of_week_date": "1691:2015-01-02",
+    "change": "29",
+    "day_id : first_day_of_week_date": "1687:2014-12-29"
+  },
+  {
+    "last_day_of_week_date": "1698:2015-01-09",
+    "change": "-20",
+    "day_id : first_day_of_week_date": "1694:2015-01-05"
+  },
+  {
+    "last_day_of_week_date": "1705:2015-01-16",
+    "change": "23",
+    "day_id : first_day_of_week_date": "1701:2015-01-12"
+  },
+  {
+    "last_day_of_week_date": "1712:2015-01-23",
+    "change": "34",
+    "day_id : first_day_of_week_date": "1708:2015-01-19"
+  },
+  {
+    "last_day_of_week_date": "1719:2015-01-30",
+    "change": "-35",
+    "day_id : first_day_of_week_date": "1716:2015-01-27"
+  },
+  {
+    "last_day_of_week_date": "1725:2015-02-05",
+    "change": "-41",
+    "day_id : first_day_of_week_date": "1722:2015-02-02"
+  },
+  {
+    "last_day_of_week_date": "1733:2015-02-13",
+    "change": "52",
+    "day_id : first_day_of_week_date": "1729:2015-02-09"
+  },
+  {
+    "last_day_of_week_date": "1740:2015-02-20",
+    "change": "-6",
+    "day_id : first_day_of_week_date": "1736:2015-02-16"
+  },
+  {
+    "last_day_of_week_date": "1747:2015-02-27",
+    "change": "9",
+    "day_id : first_day_of_week_date": "1743:2015-02-23"
+  },
+  {
+    "last_day_of_week_date": "1753:2015-03-05",
+    "change": "-13",
+    "day_id : first_day_of_week_date": "1750:2015-03-02"
+  },
+  {
+    "last_day_of_week_date": "1761:2015-03-13",
+    "change": "-19",
+    "day_id : first_day_of_week_date": "1757:2015-03-09"
+  },
+  {
+    "last_day_of_week_date": "1768:2015-03-20",
+    "change": "-12",
+    "day_id : first_day_of_week_date": "1764:2015-03-16"
+  },
+  {
+    "last_day_of_week_date": "1775:2015-03-27",
+    "change": "-22",
+    "day_id : first_day_of_week_date": "1771:2015-03-23"
+  },
+  {
+    "last_day_of_week_date": "1779:2015-03-31",
+    "change": "-8",
+    "day_id : first_day_of_week_date": "1778:2015-03-30"
+  },
+  {
+    "last_day_of_week_date": "1788:2015-04-09",
+    "change": "15",
+    "day_id : first_day_of_week_date": "1785:2015-04-06"
+  },
+  {
+    "last_day_of_week_date": "1795:2015-04-16",
+    "change": "-4",
+    "day_id : first_day_of_week_date": "1794:2015-04-15"
+  },
+  {
+    "last_day_of_week_date": "1802:2015-04-23",
+    "change": "7",
+    "day_id : first_day_of_week_date": "1799:2015-04-20"
+  },
+  {
+    "last_day_of_week_date": "1808:2015-04-29",
+    "change": "30",
+    "day_id : first_day_of_week_date": "1806:2015-04-27"
+  },
+  {
+    "last_day_of_week_date": "1816:2015-05-07",
+    "change": "-61",
+    "day_id : first_day_of_week_date": "1813:2015-05-04"
+  },
+  {
+    "last_day_of_week_date": "1823:2015-05-14",
+    "change": "-5",
+    "day_id : first_day_of_week_date": "1820:2015-05-11"
+  },
+  {
+    "last_day_of_week_date": "1830:2015-05-21",
+    "change": "5",
+    "day_id : first_day_of_week_date": "1827:2015-05-18"
+  },
+  {
+    "last_day_of_week_date": "1838:2015-05-29",
+    "change": "22",
+    "day_id : first_day_of_week_date": "1834:2015-05-25"
+  },
+  {
+    "last_day_of_week_date": "1845:2015-06-05",
+    "change": "-57",
+    "day_id : first_day_of_week_date": "1841:2015-06-01"
+  },
+  {
+    "last_day_of_week_date": "1852:2015-06-12",
+    "change": "5",
+    "day_id : first_day_of_week_date": "1848:2015-06-08"
+  },
+  {
+    "last_day_of_week_date": "1859:2015-06-19",
+    "change": "24",
+    "day_id : first_day_of_week_date": "1855:2015-06-15"
+  },
+  {
+    "last_day_of_week_date": "1866:2015-06-26",
+    "change": "2",
+    "day_id : first_day_of_week_date": "1862:2015-06-22"
+  },
+  {
+    "last_day_of_week_date": "1873:2015-07-03",
+    "change": "27",
+    "day_id : first_day_of_week_date": "1869:2015-06-29"
+  },
+  {
+    "last_day_of_week_date": "1880:2015-07-10",
+    "change": "-6",
+    "day_id : first_day_of_week_date": "1876:2015-07-06"
+  },
+  {
+    "last_day_of_week_date": "1887:2015-07-17",
+    "change": "11",
+    "day_id : first_day_of_week_date": "1883:2015-07-13"
+  },
+  {
+    "last_day_of_week_date": "1894:2015-07-24",
+    "change": "-21",
+    "day_id : first_day_of_week_date": "1890:2015-07-20"
+  },
+  {
+    "last_day_of_week_date": "1901:2015-07-31",
+    "change": "28",
+    "day_id : first_day_of_week_date": "1897:2015-07-27"
+  },
+  {
+    "last_day_of_week_date": "1908:2015-08-07",
+    "change": "-1",
+    "day_id : first_day_of_week_date": "1904:2015-08-03"
+  },
+  {
+    "last_day_of_week_date": "1915:2015-08-14",
+    "change": "-8",
+    "day_id : first_day_of_week_date": "1911:2015-08-10"
+  },
+  {
+    "last_day_of_week_date": "1922:2015-08-21",
+    "change": "-41",
+    "day_id : first_day_of_week_date": "1918:2015-08-17"
+  },
+  {
+    "last_day_of_week_date": "1929:2015-08-28",
+    "change": "24",
+    "day_id : first_day_of_week_date": "1925:2015-08-24"
+  },
+  {
+    "last_day_of_week_date": "1936:2015-09-04",
+    "change": "-59",
+    "day_id : first_day_of_week_date": "1932:2015-08-31"
+  },
+  {
+    "last_day_of_week_date": "1943:2015-09-11",
+    "change": "52",
+    "day_id : first_day_of_week_date": "1939:2015-09-07"
+  },
+  {
+    "last_day_of_week_date": "1950:2015-09-18",
+    "change": "29",
+    "day_id : first_day_of_week_date": "1946:2015-09-14"
+  },
+  {
+    "last_day_of_week_date": "1955:2015-09-23",
+    "change": "-16",
+    "day_id : first_day_of_week_date": "1953:2015-09-21"
+  },
+  {
+    "last_day_of_week_date": "1962:2015-09-30",
+    "change": "7",
+    "day_id : first_day_of_week_date": "1960:2015-09-28"
+  },
+  {
+    "last_day_of_week_date": "1971:2015-10-09",
+    "change": "-5",
+    "day_id : first_day_of_week_date": "1967:2015-10-05"
+  },
+  {
+    "last_day_of_week_date": "1978:2015-10-16",
+    "change": "19",
+    "day_id : first_day_of_week_date": "1974:2015-10-12"
+  },
+  {
+    "last_day_of_week_date": "1985:2015-10-23",
+    "change": "4",
+    "day_id : first_day_of_week_date": "1981:2015-10-19"
+  },
+  {
+    "last_day_of_week_date": "1992:2015-10-30",
+    "change": "-26",
+    "day_id : first_day_of_week_date": "1988:2015-10-26"
+  },
+  {
+    "last_day_of_week_date": "1998:2015-11-05",
+    "change": "-20",
+    "day_id : first_day_of_week_date": "1995:2015-11-02"
+  },
+  {
+    "last_day_of_week_date": "2038:2015-12-15",
+    "change": "99999",
+    "day_id : first_day_of_week_date": "2038:2015-12-15"
+  },
+  {
+    "last_day_of_week_date": "2068:2016-01-14",
+    "change": "99999",
+    "day_id : first_day_of_week_date": "2068:2016-01-14"
+  },
+  {
+    "last_day_of_week_date": "2079:2016-01-25",
+    "change": "99999",
+    "day_id : first_day_of_week_date": "2079:2016-01-25"
+  },
+  {
+    "last_day_of_week_date": "2093:2016-02-08",
+    "change": "99999",
+    "day_id : first_day_of_week_date": "2093:2016-02-08"
+  },
+  {
+    "last_day_of_week_date": "2104:2016-02-19",
+    "change": "99999",
+    "day_id : first_day_of_week_date": "2104:2016-02-19"
+  },
+  {
+    "last_day_of_week_date": "2110:2016-02-25",
+    "change": "99999",
+    "day_id : first_day_of_week_date": "2110:2016-02-25"
+  },
+  {
+    "last_day_of_week_date": "2149:2016-04-04",
+    "change": "99999",
+    "day_id : first_day_of_week_date": "2149:2016-04-04"
+  },
+  {
+    "last_day_of_week_date": "2200:2016-05-25",
+    "change": "99999",
+    "day_id : first_day_of_week_date": "2200:2016-05-25"
+  },
+  {
+    "last_day_of_week_date": "2216:2016-06-10",
+    "change": "9",
+    "day_id : first_day_of_week_date": "2212:2016-06-06"
+  },
+  {
+    "last_day_of_week_date": "2264:2016-07-28",
+    "change": "99999",
+    "day_id : first_day_of_week_date": "2264:2016-07-28"
+  },
+  {
+    "last_day_of_week_date": "2369:2016-11-10",
+    "change": "99999",
+    "day_id : first_day_of_week_date": "2369:2016-11-10"
+  },
+  {
+    "last_day_of_week_date": "2405:2016-12-16",
+    "change": "-4",
+    "day_id : first_day_of_week_date": "2401:2016-12-12"
+  },
+  {
+    "last_day_of_week_date": "2412:2016-12-23",
+    "change": "-20",
+    "day_id : first_day_of_week_date": "2408:2016-12-19"
+  },
+  {
+    "last_day_of_week_date": "2419:2016-12-30",
+    "change": "17",
+    "day_id : first_day_of_week_date": "2416:2016-12-27"
+  },
+  {
+    "last_day_of_week_date": "2426:2017-01-06",
+    "change": "13",
+    "day_id : first_day_of_week_date": "2423:2017-01-03"
+  },
+  {
+    "last_day_of_week_date": "2433:2017-01-13",
+    "change": "34",
+    "day_id : first_day_of_week_date": "2429:2017-01-09"
+  },
+  {
+    "last_day_of_week_date": "2440:2017-01-20",
+    "change": "-14",
+    "day_id : first_day_of_week_date": "2436:2017-01-16"
+  },
+  {
+    "last_day_of_week_date": "2447:2017-01-27",
+    "change": "46",
+    "day_id : first_day_of_week_date": "2443:2017-01-23"
+  },
+  {
+    "last_day_of_week_date": "2454:2017-02-03",
+    "change": "31",
+    "day_id : first_day_of_week_date": "2450:2017-01-30"
+  },
+  {
+    "last_day_of_week_date": "2461:2017-02-10",
+    "change": "-8",
+    "day_id : first_day_of_week_date": "2457:2017-02-06"
+  },
+  {
+    "last_day_of_week_date": "2468:2017-02-17",
+    "change": "15",
+    "day_id : first_day_of_week_date": "2464:2017-02-13"
+  },
+  {
+    "last_day_of_week_date": "2474:2017-02-23",
+    "change": "10",
+    "day_id : first_day_of_week_date": "2471:2017-02-20"
+  },
+  {
+    "last_day_of_week_date": "2482:2017-03-03",
+    "change": "-6",
+    "day_id : first_day_of_week_date": "2478:2017-02-27"
+  },
+  {
+    "last_day_of_week_date": "2489:2017-03-10",
+    "change": "3",
+    "day_id : first_day_of_week_date": "2485:2017-03-06"
+  },
+  {
+    "last_day_of_week_date": "2496:2017-03-17",
+    "change": "3",
+    "day_id : first_day_of_week_date": "2493:2017-03-14"
+  },
+  {
+    "last_day_of_week_date": "2503:2017-03-24",
+    "change": "1",
+    "day_id : first_day_of_week_date": "2499:2017-03-20"
+  },
+  {
+    "last_day_of_week_date": "2510:2017-03-31",
+    "change": "18",
+    "day_id : first_day_of_week_date": "2506:2017-03-27"
+  },
+  {
+    "last_day_of_week_date": "2517:2017-04-07",
+    "change": "-5",
+    "day_id : first_day_of_week_date": "2513:2017-04-03"
+  },
+  {
+    "last_day_of_week_date": "2523:2017-04-13",
+    "change": "8",
+    "day_id : first_day_of_week_date": "2520:2017-04-10"
+  },
+  {
+    "last_day_of_week_date": "2531:2017-04-21",
+    "change": "-4",
+    "day_id : first_day_of_week_date": "2527:2017-04-17"
+  },
+  {
+    "last_day_of_week_date": "2538:2017-04-28",
+    "change": "23",
+    "day_id : first_day_of_week_date": "2534:2017-04-24"
+  },
+  {
+    "last_day_of_week_date": "2545:2017-05-05",
+    "change": "12",
+    "day_id : first_day_of_week_date": "2542:2017-05-02"
+  },
+  {
+    "last_day_of_week_date": "2552:2017-05-12",
+    "change": "-4",
+    "day_id : first_day_of_week_date": "2548:2017-05-08"
+  },
+  {
+    "last_day_of_week_date": "2559:2017-05-19",
+    "change": "-2",
+    "day_id : first_day_of_week_date": "2555:2017-05-15"
+  },
+  {
+    "last_day_of_week_date": "2566:2017-05-26",
+    "change": "31",
+    "day_id : first_day_of_week_date": "2562:2017-05-22"
+  },
+  {
+    "last_day_of_week_date": "2573:2017-06-02",
+    "change": "8",
+    "day_id : first_day_of_week_date": "2569:2017-05-29"
+  },
+  {
+    "last_day_of_week_date": "2580:2017-06-09",
+    "change": "10",
+    "day_id : first_day_of_week_date": "2576:2017-06-05"
+  },
+  {
+    "last_day_of_week_date": "2587:2017-06-16",
+    "change": "1",
+    "day_id : first_day_of_week_date": "2583:2017-06-12"
+  },
+  {
+    "last_day_of_week_date": "2594:2017-06-23",
+    "change": "-8",
+    "day_id : first_day_of_week_date": "2590:2017-06-19"
+  },
+  {
+    "last_day_of_week_date": "2601:2017-06-30",
+    "change": "0",
+    "day_id : first_day_of_week_date": "2598:2017-06-27"
+  },
+  {
+    "last_day_of_week_date": "2608:2017-07-07",
+    "change": "8",
+    "day_id : first_day_of_week_date": "2604:2017-07-03"
+  },
+  {
+    "last_day_of_week_date": "2615:2017-07-14",
+    "change": "11",
+    "day_id : first_day_of_week_date": "2611:2017-07-10"
+  },
+  {
+    "last_day_of_week_date": "2622:2017-07-21",
+    "change": "10",
+    "day_id : first_day_of_week_date": "2618:2017-07-17"
+  },
+  {
+    "last_day_of_week_date": "2629:2017-07-28",
+    "change": "16",
+    "day_id : first_day_of_week_date": "2625:2017-07-24"
+  },
+  {
+    "last_day_of_week_date": "2636:2017-08-04",
+    "change": "-11",
+    "day_id : first_day_of_week_date": "2632:2017-07-31"
+  },
+  {
+    "last_day_of_week_date": "2643:2017-08-11",
+    "change": "-37",
+    "day_id : first_day_of_week_date": "2639:2017-08-07"
+  },
+  {
+    "last_day_of_week_date": "2650:2017-08-18",
+    "change": "-2",
+    "day_id : first_day_of_week_date": "2646:2017-08-14"
+  },
+  {
+    "last_day_of_week_date": "2656:2017-08-24",
+    "change": "14",
+    "day_id : first_day_of_week_date": "2653:2017-08-21"
+  },
+  {
+    "last_day_of_week_date": "2664:2017-09-01",
+    "change": "2",
+    "day_id : first_day_of_week_date": "2660:2017-08-28"
+  },
+  {
+    "last_day_of_week_date": "2671:2017-09-08",
+    "change": "2",
+    "day_id : first_day_of_week_date": "2668:2017-09-05"
+  },
+  {
+    "last_day_of_week_date": "2678:2017-09-15",
+    "change": "7",
+    "day_id : first_day_of_week_date": "2674:2017-09-11"
+  },
+  {
+    "last_day_of_week_date": "2685:2017-09-22",
+    "change": "-27",
+    "day_id : first_day_of_week_date": "2681:2017-09-18"
+  },
+  {
+    "last_day_of_week_date": "2692:2017-09-29",
+    "change": "-5",
+    "day_id : first_day_of_week_date": "2688:2017-09-25"
+  },
+  {
+    "last_day_of_week_date": "2699:2017-10-06",
+    "change": "4",
+    "day_id : first_day_of_week_date": "2696:2017-10-03"
+  },
+  {
+    "last_day_of_week_date": "2706:2017-10-13",
+    "change": "18",
+    "day_id : first_day_of_week_date": "2702:2017-10-09"
+  },
+  {
+    "last_day_of_week_date": "2712:2017-10-19",
+    "change": "-28",
+    "day_id : first_day_of_week_date": "2709:2017-10-16"
+  },
+  {
+    "last_day_of_week_date": "2720:2017-10-27",
+    "change": "31",
+    "day_id : first_day_of_week_date": "2716:2017-10-23"
+  },
+  {
+    "last_day_of_week_date": "2727:2017-11-03",
+    "change": "26",
+    "day_id : first_day_of_week_date": "2723:2017-10-30"
+  },
+  {
+    "last_day_of_week_date": "2734:2017-11-10",
+    "change": "-3",
+    "day_id : first_day_of_week_date": "2730:2017-11-06"
+  },
+  {
+    "last_day_of_week_date": "2741:2017-11-17",
+    "change": "15",
+    "day_id : first_day_of_week_date": "2737:2017-11-13"
+  },
+  {
+    "last_day_of_week_date": "2748:2017-11-24",
+    "change": "0",
+    "day_id : first_day_of_week_date": "2744:2017-11-20"
+  },
+  {
+    "last_day_of_week_date": "2755:2017-12-01",
+    "change": "-27",
+    "day_id : first_day_of_week_date": "2751:2017-11-27"
+  },
+  {
+    "last_day_of_week_date": "2762:2017-12-08",
+    "change": "10",
+    "day_id : first_day_of_week_date": "2758:2017-12-04"
+  },
+  {
+    "last_day_of_week_date": "2769:2017-12-15",
+    "change": "1",
+    "day_id : first_day_of_week_date": "2765:2017-12-11"
+  },
+  {
+    "last_day_of_week_date": "2776:2017-12-22",
+    "change": "2",
+    "day_id : first_day_of_week_date": "2772:2017-12-18"
+  },
+  {
+    "last_day_of_week_date": "2783:2017-12-29",
+    "change": "-5",
+    "day_id : first_day_of_week_date": "2780:2017-12-26"
+  },
+  {
+    "last_day_of_week_date": "2790:2018-01-05",
+    "change": "10",
+    "day_id : first_day_of_week_date": "2787:2018-01-02"
+  },
+  {
+    "last_day_of_week_date": "2797:2018-01-12",
+    "change": "3",
+    "day_id : first_day_of_week_date": "2793:2018-01-08"
+  },
+  {
+    "last_day_of_week_date": "2804:2018-01-19",
+    "change": "32",
+    "day_id : first_day_of_week_date": "2800:2018-01-15"
+  },
+  {
+    "last_day_of_week_date": "2810:2018-01-25",
+    "change": "15",
+    "day_id : first_day_of_week_date": "2807:2018-01-22"
+  },
+  {
+    "last_day_of_week_date": "2818:2018-02-02",
+    "change": "-38",
+    "day_id : first_day_of_week_date": "2814:2018-01-29"
+  },
+  {
+    "last_day_of_week_date": "2825:2018-02-09",
+    "change": "-24",
+    "day_id : first_day_of_week_date": "2821:2018-02-05"
+  },
+  {
+    "last_day_of_week_date": "2832:2018-02-16",
+    "change": "-21",
+    "day_id : first_day_of_week_date": "2828:2018-02-12"
+  },
+  {
+    "last_day_of_week_date": "2839:2018-02-23",
+    "change": "10",
+    "day_id : first_day_of_week_date": "2835:2018-02-19"
+  },
+  {
+    "last_day_of_week_date": "2845:2018-03-01",
+    "change": "-31",
+    "day_id : first_day_of_week_date": "2842:2018-02-26"
+  },
+  {
+    "last_day_of_week_date": "2853:2018-03-09",
+    "change": "-21",
+    "day_id : first_day_of_week_date": "2849:2018-03-05"
+  },
+  {
+    "last_day_of_week_date": "2860:2018-03-16",
+    "change": "-7",
+    "day_id : first_day_of_week_date": "2856:2018-03-12"
+  },
+  {
+    "last_day_of_week_date": "2867:2018-03-23",
+    "change": "-24",
+    "day_id : first_day_of_week_date": "2863:2018-03-19"
+  },
+  {
+    "last_day_of_week_date": "2872:2018-03-28",
+    "change": "1",
+    "day_id : first_day_of_week_date": "2870:2018-03-26"
+  },
+  {
+    "last_day_of_week_date": "2881:2018-04-06",
+    "change": "22",
+    "day_id : first_day_of_week_date": "2877:2018-04-02"
+  },
+  {
+    "last_day_of_week_date": "2888:2018-04-13",
+    "change": "4",
+    "day_id : first_day_of_week_date": "2884:2018-04-09"
+  },
+  {
+    "last_day_of_week_date": "2895:2018-04-20",
+    "change": "-15",
+    "day_id : first_day_of_week_date": "2891:2018-04-16"
+  },
+  {
+    "last_day_of_week_date": "2902:2018-04-27",
+    "change": "17",
+    "day_id : first_day_of_week_date": "2898:2018-04-23"
+  },
+  {
+    "last_day_of_week_date": "2909:2018-05-04",
+    "change": "4",
+    "day_id : first_day_of_week_date": "2905:2018-04-30"
+  },
+  {
+    "last_day_of_week_date": "2916:2018-05-11",
+    "change": "22",
+    "day_id : first_day_of_week_date": "2912:2018-05-07"
+  },
+  {
+    "last_day_of_week_date": "2923:2018-05-18",
+    "change": "-23",
+    "day_id : first_day_of_week_date": "2919:2018-05-14"
+  },
+  {
+    "last_day_of_week_date": "2930:2018-05-25",
+    "change": "20",
+    "day_id : first_day_of_week_date": "2926:2018-05-21"
+  },
+  {
+    "last_day_of_week_date": "2937:2018-06-01",
+    "change": "3",
+    "day_id : first_day_of_week_date": "2933:2018-05-28"
+  },
+  {
+    "last_day_of_week_date": "2944:2018-06-08",
+    "change": "7",
+    "day_id : first_day_of_week_date": "2940:2018-06-04"
+  },
+  {
+    "last_day_of_week_date": "2951:2018-06-15",
+    "change": "-1",
+    "day_id : first_day_of_week_date": "2947:2018-06-11"
+  },
+  {
+    "last_day_of_week_date": "2958:2018-06-22",
+    "change": "14",
+    "day_id : first_day_of_week_date": "2954:2018-06-18"
+  },
+  {
+    "last_day_of_week_date": "2965:2018-06-29",
+    "change": "-9",
+    "day_id : first_day_of_week_date": "2961:2018-06-25"
+  },
+  {
+    "last_day_of_week_date": "2972:2018-07-06",
+    "change": "10",
+    "day_id : first_day_of_week_date": "2968:2018-07-02"
+  },
+  {
+    "last_day_of_week_date": "2979:2018-07-13",
+    "change": "7",
+    "day_id : first_day_of_week_date": "2975:2018-07-09"
+  },
+  {
+    "last_day_of_week_date": "2986:2018-07-20",
+    "change": "7",
+    "day_id : first_day_of_week_date": "2982:2018-07-16"
+  },
+  {
+    "last_day_of_week_date": "2993:2018-07-27",
+    "change": "23",
+    "day_id : first_day_of_week_date": "2989:2018-07-23"
+  },
+  {
+    "last_day_of_week_date": "3000:2018-08-03",
+    "change": "-5",
+    "day_id : first_day_of_week_date": "2996:2018-07-30"
+  },
+  {
+    "last_day_of_week_date": "3007:2018-08-10",
+    "change": "8",
+    "day_id : first_day_of_week_date": "3003:2018-08-06"
+  },
+  {
+    "last_day_of_week_date": "3014:2018-08-17",
+    "change": "12",
+    "day_id : first_day_of_week_date": "3010:2018-08-13"
+  },
+  {
+    "last_day_of_week_date": "3021:2018-08-24",
+    "change": "-16",
+    "day_id : first_day_of_week_date": "3017:2018-08-20"
+  },
+  {
+    "last_day_of_week_date": "3028:2018-08-31",
+    "change": "-7",
+    "day_id : first_day_of_week_date": "3024:2018-08-27"
+  },
+  {
+    "last_day_of_week_date": "3035:2018-09-07",
+    "change": "-12",
+    "day_id : first_day_of_week_date": "3031:2018-09-03"
+  },
+  {
+    "last_day_of_week_date": "3042:2018-09-14",
+    "change": "-1",
+    "day_id : first_day_of_week_date": "3038:2018-09-10"
+  },
+  {
+    "last_day_of_week_date": "3049:2018-09-21",
+    "change": "-46",
+    "day_id : first_day_of_week_date": "3045:2018-09-17"
+  },
+  {
+    "last_day_of_week_date": "3056:2018-09-28",
+    "change": "6",
+    "day_id : first_day_of_week_date": "3052:2018-09-24"
+  },
+  {
+    "last_day_of_week_date": "3063:2018-10-05",
+    "change": "-36",
+    "day_id : first_day_of_week_date": "3059:2018-10-01"
+  },
+  {
+    "last_day_of_week_date": "3070:2018-10-12",
+    "change": "32",
+    "day_id : first_day_of_week_date": "3066:2018-10-08"
+  },
+  {
+    "last_day_of_week_date": "3077:2018-10-19",
+    "change": "-12",
+    "day_id : first_day_of_week_date": "3073:2018-10-15"
+  },
+  {
+    "last_day_of_week_date": "3084:2018-10-26",
+    "change": "-26",
+    "day_id : first_day_of_week_date": "3080:2018-10-22"
+  },
+  {
+    "last_day_of_week_date": "3091:2018-11-02",
+    "change": "30",
+    "day_id : first_day_of_week_date": "3087:2018-10-29"
+  },
+  {
+    "last_day_of_week_date": "3098:2018-11-09",
+    "change": "2",
+    "day_id : first_day_of_week_date": "3094:2018-11-05"
+  },
+  {
+    "last_day_of_week_date": "3105:2018-11-16",
+    "change": "28",
+    "day_id : first_day_of_week_date": "3101:2018-11-12"
+  },
+  {
+    "last_day_of_week_date": "3111:2018-11-22",
+    "change": "-11",
+    "day_id : first_day_of_week_date": "3108:2018-11-19"
+  },
+  {
+    "last_day_of_week_date": "3119:2018-11-30",
+    "change": "19",
+    "day_id : first_day_of_week_date": "3115:2018-11-26"
+  },
+  {
+    "last_day_of_week_date": "3126:2018-12-07",
+    "change": "-10",
+    "day_id : first_day_of_week_date": "3122:2018-12-03"
+  },
+  {
+    "last_day_of_week_date": "3133:2018-12-14",
+    "change": "28",
+    "day_id : first_day_of_week_date": "3129:2018-12-10"
+  },
+  {
+    "last_day_of_week_date": "3140:2018-12-21",
+    "change": "-5",
+    "day_id : first_day_of_week_date": "3136:2018-12-17"
+  },
+  {
+    "last_day_of_week_date": "3147:2018-12-28",
+    "change": "15",
+    "day_id : first_day_of_week_date": "3143:2018-12-24"
+  },
+  {
+    "last_day_of_week_date": "3154:2019-01-04",
+    "change": "1",
+    "day_id : first_day_of_week_date": "3150:2018-12-31"
+  },
+  {
+    "last_day_of_week_date": "3161:2019-01-11",
+    "change": "5",
+    "day_id : first_day_of_week_date": "3157:2019-01-07"
+  },
+  {
+    "last_day_of_week_date": "3168:2019-01-18",
+    "change": "8",
+    "day_id : first_day_of_week_date": "3164:2019-01-14"
+  },
+  {
+    "last_day_of_week_date": "3175:2019-01-25",
+    "change": "-15",
+    "day_id : first_day_of_week_date": "3171:2019-01-21"
+  },
+  {
+    "last_day_of_week_date": "3182:2019-02-01",
+    "change": "16",
+    "day_id : first_day_of_week_date": "3178:2019-01-28"
+  },
+  {
+    "last_day_of_week_date": "3189:2019-02-08",
+    "change": "4",
+    "day_id : first_day_of_week_date": "3185:2019-02-04"
+  },
+  {
+    "last_day_of_week_date": "3196:2019-02-15",
+    "change": "-16",
+    "day_id : first_day_of_week_date": "3192:2019-02-11"
+  },
+  {
+    "last_day_of_week_date": "3203:2019-02-22",
+    "change": "8",
+    "day_id : first_day_of_week_date": "3199:2019-02-18"
+  },
+  {
+    "last_day_of_week_date": "3210:2019-03-01",
+    "change": "-4",
+    "day_id : first_day_of_week_date": "3206:2019-02-25"
+  },
+  {
+    "last_day_of_week_date": "3217:2019-03-08",
+    "change": "8",
+    "day_id : first_day_of_week_date": "3214:2019-03-05"
+  },
+  {
+    "last_day_of_week_date": "3224:2019-03-15",
+    "change": "51",
+    "day_id : first_day_of_week_date": "3220:2019-03-11"
+  },
+  {
+    "last_day_of_week_date": "3231:2019-03-22",
+    "change": "0",
+    "day_id : first_day_of_week_date": "3227:2019-03-18"
+  },
+  {
+    "last_day_of_week_date": "3237:2019-03-28",
+    "change": "39",
+    "day_id : first_day_of_week_date": "3234:2019-03-25"
+  },
+  {
+    "last_day_of_week_date": "3245:2019-04-05",
+    "change": "-8",
+    "day_id : first_day_of_week_date": "3241:2019-04-01"
+  },
+  {
+    "last_day_of_week_date": "3252:2019-04-12",
+    "change": "3",
+    "day_id : first_day_of_week_date": "3248:2019-04-08"
+  },
+  {
+    "last_day_of_week_date": "3258:2019-04-18",
+    "change": "4",
+    "day_id : first_day_of_week_date": "3255:2019-04-15"
+  },
+  {
+    "last_day_of_week_date": "3266:2019-04-26",
+    "change": "11",
+    "day_id : first_day_of_week_date": "3262:2019-04-22"
+  },
+  {
+    "last_day_of_week_date": "3273:2019-05-03",
+    "change": "6",
+    "day_id : first_day_of_week_date": "3270:2019-04-30"
+  },
+  {
+    "last_day_of_week_date": "3280:2019-05-10",
+    "change": "-20",
+    "day_id : first_day_of_week_date": "3276:2019-05-06"
+  },
+  {
+    "last_day_of_week_date": "3287:2019-05-17",
+    "change": "28",
+    "day_id : first_day_of_week_date": "3283:2019-05-13"
+  },
+  {
+    "last_day_of_week_date": "3294:2019-05-24",
+    "change": "15",
+    "day_id : first_day_of_week_date": "3290:2019-05-20"
+  },
+  {
+    "last_day_of_week_date": "3301:2019-05-31",
+    "change": "-9",
+    "day_id : first_day_of_week_date": "3297:2019-05-27"
+  },
+  {
+    "last_day_of_week_date": "3308:2019-06-07",
+    "change": "-19",
+    "day_id : first_day_of_week_date": "3304:2019-06-03"
+  },
+  {
+    "last_day_of_week_date": "3315:2019-06-14",
+    "change": "-14",
+    "day_id : first_day_of_week_date": "3311:2019-06-10"
+  },
+  {
+    "last_day_of_week_date": "3322:2019-06-21",
+    "change": "12",
+    "day_id : first_day_of_week_date": "3318:2019-06-17"
+  },
+  {
+    "last_day_of_week_date": "3329:2019-06-28",
+    "change": "16",
+    "day_id : first_day_of_week_date": "3325:2019-06-24"
+  },
+  {
+    "last_day_of_week_date": "3336:2019-07-05",
+    "change": "3",
+    "day_id : first_day_of_week_date": "3332:2019-07-01"
+  },
+  {
+    "last_day_of_week_date": "3343:2019-07-12",
+    "change": "0",
+    "day_id : first_day_of_week_date": "3339:2019-07-08"
+  },
+  {
+    "last_day_of_week_date": "3350:2019-07-19",
+    "change": "-22",
+    "day_id : first_day_of_week_date": "3346:2019-07-15"
+  },
+  {
+    "last_day_of_week_date": "3357:2019-07-26",
+    "change": "1",
+    "day_id : first_day_of_week_date": "3353:2019-07-22"
+  },
+  {
+    "last_day_of_week_date": "3364:2019-08-02",
+    "change": "-37",
+    "day_id : first_day_of_week_date": "3360:2019-07-29"
+  },
+  {
+    "last_day_of_week_date": "3371:2019-08-09",
+    "change": "28",
+    "day_id : first_day_of_week_date": "3367:2019-08-05"
+  },
+  {
+    "last_day_of_week_date": "3378:2019-08-16",
+    "change": "18",
+    "day_id : first_day_of_week_date": "3375:2019-08-13"
+  },
+  {
+    "last_day_of_week_date": "3385:2019-08-23",
+    "change": "-44",
+    "day_id : first_day_of_week_date": "3381:2019-08-19"
+  },
+  {
+    "last_day_of_week_date": "3392:2019-08-30",
+    "change": "-19",
+    "day_id : first_day_of_week_date": "3388:2019-08-26"
+  },
+  {
+    "last_day_of_week_date": "3399:2019-09-06",
+    "change": "16",
+    "day_id : first_day_of_week_date": "3396:2019-09-03"
+  },
+  {
+    "last_day_of_week_date": "3406:2019-09-13",
+    "change": "22",
+    "day_id : first_day_of_week_date": "3402:2019-09-09"
+  },
+  {
+    "last_day_of_week_date": "3413:2019-09-20",
+    "change": "40",
+    "day_id : first_day_of_week_date": "3409:2019-09-16"
+  },
+  {
+    "last_day_of_week_date": "3420:2019-09-27",
+    "change": "-23",
+    "day_id : first_day_of_week_date": "3416:2019-09-23"
+  },
+  {
+    "last_day_of_week_date": "3427:2019-10-04",
+    "change": "-47",
+    "day_id : first_day_of_week_date": "3423:2019-09-30"
+  },
+  {
+    "last_day_of_week_date": "3434:2019-10-11",
+    "change": "10",
+    "day_id : first_day_of_week_date": "3430:2019-10-07"
+  },
+  {
+    "last_day_of_week_date": "3441:2019-10-18",
+    "change": "33",
+    "day_id : first_day_of_week_date": "3437:2019-10-14"
+  },
+  {
+    "last_day_of_week_date": "3448:2019-10-25",
+    "change": "-1",
+    "day_id : first_day_of_week_date": "3445:2019-10-22"
+  },
+  {
+    "last_day_of_week_date": "3455:2019-11-01",
+    "change": "15",
+    "day_id : first_day_of_week_date": "3452:2019-10-29"
+  },
+  {
+    "last_day_of_week_date": "3462:2019-11-08",
+    "change": "14",
+    "day_id : first_day_of_week_date": "3458:2019-11-04"
+  },
+  {
+    "last_day_of_week_date": "3469:2019-11-15",
+    "change": "-3",
+    "day_id : first_day_of_week_date": "3465:2019-11-11"
+  },
+  {
+    "last_day_of_week_date": "3476:2019-11-22",
+    "change": "4",
+    "day_id : first_day_of_week_date": "3472:2019-11-18"
+  },
+  {
+    "last_day_of_week_date": "3483:2019-11-29",
+    "change": "12",
+    "day_id : first_day_of_week_date": "3479:2019-11-25"
+  }
+]

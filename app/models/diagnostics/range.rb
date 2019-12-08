@@ -255,6 +255,11 @@ class Diagnostics::Range
 	end
 
 	def add_tags
+		## so only the remaining problems is the nested_id
+		## ill have to preprocess history json tags
+		## and add object ids to them.
+		## inside the report formats;
+		## otherwise no issues.
 		tids = {}
 
 		self.template_tag_ids.each_with_index{|val,key|

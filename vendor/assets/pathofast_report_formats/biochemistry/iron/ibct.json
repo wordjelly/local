@@ -1,0 +1,107 @@
+{
+	"name" : "Serum Iron Binding Capacity",
+	"description" : "Determination of Serum Iron Binding Capacity",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Serum Iron Binding Capacity",
+			"description" : "Serum Iron Binding Capacity",
+			"lis_code" : "SIBCT",
+			"result_type" : "numeric",
+			"units" : "mcg/dL",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 1,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 100,
+							"max_range_val" : 400
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 1,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 100,
+							"max_range_val" : 400
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 120,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 27,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 250,
+							"max_range_val" : 425
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 120,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 27,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 250,
+							"max_range_val" : 425
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

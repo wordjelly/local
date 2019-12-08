@@ -1,0 +1,11 @@
+{
+	"tags" : [
+		{
+			"id" : "tags:days_since_lmp",
+			"range_type" : "history",
+			"name" : "Days Since Last Menstrual Period",
+			"description" : "Choose the date of your last menstrual period below, (only applicable if you are pregnant), leave blank otherwise",
+			"numerical_history_response_derived_from_attribute" : "completed_days_since_date"	
+		}
+	]
+}
