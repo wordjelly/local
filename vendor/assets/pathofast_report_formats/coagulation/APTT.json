@@ -1,1 +1,286 @@
-APTT.json
+{
+	"name" : "Activated Partial Thromboplastin Time",
+	"description" : "Determination of Activated Partial Thromboplastin Time level",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Activated Partial Thromboplastin Time",
+			"description" : "Activated Partial Thromboplastin Time estimation",
+			"lis_code" : "APTT",
+			"result_type" : "numeric",
+			"units" : "seconds",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 6,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 6,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 9,
+					"min_age_years" : 7,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 27,
+							"max_range_val" : 38
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 9,
+					"min_age_years" : 7,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 27,
+							"max_range_val" : 38
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 11,
+					"min_age_years" : 9,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 27,
+							"max_range_val" : 38
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 11,
+					"min_age_years" : 9,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 27,
+							"max_range_val" : 38
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 13,
+					"min_age_years" : 11,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 27,
+							"max_range_val" : 39
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 13,
+					"min_age_years" : 11,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 27,
+							"max_range_val" : 39
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 15,
+					"min_age_years" : 13,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 26,
+							"max_range_val" : 36
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 15,
+					"min_age_years" : 13,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 26,
+							"max_range_val" : 36
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 17,
+					"min_age_years" : 15,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 26,
+							"max_range_val" : 35
+						}
+					]
+				},
+				{
+					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"max_age_years" : 17,
+					"min_age_years" : 15,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 26,
+							"max_range_val" : 35
+						}
+					]
+				},
+				{
+					"reference" : "Lab Defined Range",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 26.26,
+							"max_range_val" : 35.12
+						},
+						{
+							"name" : "Heparin Infusion",
+							"range_type" : "history",
+							"min_range_val" : 75,
+							"max_range_val" : 90,
+							"text_history_val" : "Heparin Infusion" 
+						}
+					]
+				},
+				{
+					"reference" : "Lab Defined Range",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 26.26,
+							"max_range_val" : 35.12
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

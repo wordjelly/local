@@ -18,6 +18,9 @@ class Tag
 
 	index_name "pathofast-tags"
 
+	## when no values are available for this age and sex
+	attribute :undefined, Integer, mapping: {type: 'integer'}
+
 	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	validates_presence_of :name
 

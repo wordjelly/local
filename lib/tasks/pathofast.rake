@@ -5,8 +5,7 @@ namespace :pathofast do
         l = JSON.parse($redis.get("week_changes_obj"))
         IO.write("jj.json",JSON.pretty_generate(l))
     end
-
-
+    
     task auth_issue: :environment do
 
         User.delete_all

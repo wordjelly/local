@@ -1,0 +1,209 @@
+{
+	"name" : "Serum Calcium",
+	"description" : "Determination of Serum Calcium level",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Serum Calcium",
+			"description" : "Serum Calcium estimation",
+			"lis_code" : "CAA",
+			"result_type" : "numeric",
+			"units" : "mg/dl",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 11,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 8.7,
+							"max_range_val" : 11
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 0,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 11,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 8.7,
+							"max_range_val" : 11
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 17,
+					"min_age_years" : 0,
+					"min_age_months" : 12,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 9.3,
+							"max_range_val" : 10.6
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 17,
+					"min_age_years" : 0,
+					"min_age_months" : 12,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 9.3,
+							"max_range_val" : 10.6
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 59,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 8.6,
+							"max_range_val" : 10
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 59,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 8.6,
+							"max_range_val" : 10
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 90,
+					"min_age_years" : 59,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 8.8,
+							"max_range_val" : 10.2
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 90,
+					"min_age_years" : 59,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 8.8,
+							"max_range_val" : 10.2
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 90,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 8.2,
+							"max_range_val" : 9.6
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 90,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 8.2,
+							"max_range_val" : 9.6
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

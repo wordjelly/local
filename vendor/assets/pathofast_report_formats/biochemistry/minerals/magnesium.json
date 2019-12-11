@@ -1,6 +1,6 @@
 {
-	"name" : "Prothrombin Time",
-	"description" : "Determination of Prothrombin Time level",
+	"name" : "Serum Magnesium",
+	"description" : "Determination of Serum Magnesium level",
 	"rates" : [
 		{
 			"for_organization_id" : "*",
@@ -14,17 +14,17 @@
 	],
 	"tests" : [
 		{
-			"name" : "Prothrombin Time",
-			"description" : "Prothrombin Time estimation",
-			"lis_code" : "PT",
+			"name" : "Serum Magnesium",
+			"description" : "Serum Magnesium estimation",
+			"lis_code" : "MG",
 			"result_type" : "numeric",
-			"units" : "seconds",
+			"units" : "mg/dl",
 			"only_include_in_report_if_abnormal" : -1,
 			"test_must_have_value" : 1,
 			"ranges" : [
 				{
-					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
-					"max_age_years" : 6,
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 2,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -34,34 +34,32 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 0,
-							"max_range_val" : 0,
-							"undefined" : 1
+							"min_range_val" : 1.6,
+							"max_range_val" : 2.7
 						}
 					]
 				},
 				{
-					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
-					"max_age_years" : 6,
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 2,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Female",
+					"sex" : "Male",
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 0,
-							"max_range_val" : 0,
-							"undefined" : 1
+							"min_range_val" : 1.6,
+							"max_range_val" : 2.7
 						}
 					]
 				},
 				{
-					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
-					"max_age_years" : 9,
-					"min_age_years" : 6,
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 5,
+					"min_age_years" : 2,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -70,32 +68,66 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 13,
-							"max_range_val" : 15.4
+							"min_range_val" : 1.6,
+							"max_range_val" : 2.6
 						}
 					]
 				},
 				{
-					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
-					"max_age_years" : 9,
-					"min_age_years" : 6,
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 5,
+					"min_age_years" : 2,
+					"min_age_months" : 12,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.6,
+							"max_range_val" : 2.6
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 8,
+					"min_age_years" : 5,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Female",
+					"sex" : "Male",
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 13,
-							"max_range_val" : 15.4
+							"min_range_val" : 1.6,
+							"max_range_val" : 2.5
 						}
 					]
 				},
 				{
-					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 8,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.6,
+							"max_range_val" : 2.5
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
 					"max_age_years" : 11,
-					"min_age_years" : 9,
+					"min_age_years" : 8,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -104,15 +136,15 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 13,
-							"max_range_val" : 15.6
+							"min_range_val" : 1.6,
+							"max_range_val" : 2.4
 						}
 					]
 				},
 				{
-					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
 					"max_age_years" : 11,
-					"min_age_years" : 9,
+					"min_age_years" : 8,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -121,14 +153,14 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 13,
-							"max_range_val" : 15.6
+							"min_range_val" : 1.6,
+							"max_range_val" : 2.4
 						}
 					]
 				},
 				{
-					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
-					"max_age_years" : 13,
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 17,
 					"min_age_years" : 11,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -138,14 +170,14 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 13,
-							"max_range_val" : 15.2
+							"min_range_val" : 1.6,
+							"max_range_val" : 2.3
 						}
 					]
 				},
 				{
-					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
-					"max_age_years" : 13,
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 17,
 					"min_age_years" : 11,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -155,93 +187,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 13,
-							"max_range_val" : 15.2
-						}
-					]
-				},
-				{
-					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
-					"max_age_years" : 15,
-					"min_age_years" : 13,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 12.8,
-							"max_range_val" : 15.4
-						}
-					]
-				},
-				{
-					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
-					"max_age_years" : 15,
-					"min_age_years" : 13,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 12.8,
-							"max_range_val" : 15.4
-						}
-					]
-				},
-				{
-					"reference" : "Lab Defined Range",
-					"max_age_years" : 17,
-					"min_age_years" : 15,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 12.51,
-							"max_range_val" : 15.1
-						}
-					]
-				},
-				{
-					"reference" : "Lab Defined Range",
-					"max_age_years" : 17,
-					"min_age_years" : 15,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 12.51,
-							"max_range_val" : 15.1
-						}
-					]
-				},
-				{
-					"reference" : "Lab Specific Range",
-					"max_age_years" : 120,
-					"min_age_years" : 17,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Male",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0,
-							"max_range_val" : 13
+							"min_range_val" : 1.6,
+							"max_range_val" : 2.4
 						}
 					]
 				},
@@ -257,8 +204,25 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 0,
-							"max_range_val" : 13
+							"min_range_val" : 1.7,
+							"max_range_val" : 2.3
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.7,
+							"max_range_val" : 2.3
 						}
 					]
 				}

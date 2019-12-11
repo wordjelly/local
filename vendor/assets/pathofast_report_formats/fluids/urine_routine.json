@@ -1,1 +1,472 @@
-{}
+{
+	"name" : "Urine Routine (Chemistry & Microscopy)",
+	"description" : "Urine Routine (Chemistry & Microscopy)",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Pus Cells",
+			"description" : "Number of WBC's per high power field",
+			"lis_code" : "URINE_WBC",
+			"result_type" : "numeric",
+			"units" : "nos",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 5
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 6,
+							"max_range_val" : 10,
+							"inference" : "1+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 11,
+							"max_range_val" : 15,
+							"inference" : "2+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 16,
+							"max_range_val" : 20,
+							"inference" : "3+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 21,
+							"max_range_val" : 30,
+							"inference" : "4+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 31,
+							"max_range_val" : 50,
+							"inference" : "5+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 51,
+							"max_range_val" : 100,
+							"inference" : "6+"
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 5
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 6,
+							"max_range_val" : 10,
+							"inference" : "1+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 11,
+							"max_range_val" : 15,
+							"inference" : "2+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 16,
+							"max_range_val" : 20,
+							"inference" : "3+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 21,
+							"max_range_val" : 30,
+							"inference" : "4+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 31,
+							"max_range_val" : 50,
+							"inference" : "5+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 51,
+							"max_range_val" : 100,
+							"inference" : "6+"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Red Blood Cell Count",
+			"description" : "Number of Red Blood Cells per high power field",
+			"lis_code" : "URINE_RBC",
+			"result_type" : "numeric",
+			"units" : "nos",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 3
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 3,
+							"max_range_val" : 10,
+							"inference" : "1+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 11,
+							"max_range_val" : 15,
+							"inference" : "2+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 16,
+							"max_range_val" : 20,
+							"max_range_value_unbound" : 1,
+							"inference" : "3+"
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 3
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 3,
+							"max_range_val" : 10,
+							"inference" : "1+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 11,
+							"max_range_val" : 15,
+							"inference" : "2+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 16,
+							"max_range_val" : 20,
+							"max_range_value_unbound" : 1,
+							"inference" : "3+"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Transitional Epithelial Cell Count",
+			"description" : "Number of Transitional Epithelial Celss per high power field",
+			"lis_code" : "URINE_TEC",
+			"result_type" : "numeric",
+			"units" : "nos",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 3
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 3,
+							"max_range_val" : 10,
+							"inference" : "1+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 11,
+							"max_range_val" : 15,
+							"inference" : "2+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 16,
+							"max_range_val" : 20,
+							"max_range_value_unbound" : 1,
+							"inference" : "3+"
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 3
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 3,
+							"max_range_val" : 10,
+							"inference" : "1+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 11,
+							"max_range_val" : 15,
+							"inference" : "2+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 16,
+							"max_range_val" : 20,
+							"max_range_value_unbound" : 1,
+							"inference" : "3+"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Renal Tubular Epithelial Cell Count",
+			"description" : "Number of Renal Tubular Epithelial Cells per high power field",
+			"lis_code" : "URINE_RTEC",
+			"result_type" : "numeric",
+			"units" : "nos",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 3
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 3,
+							"max_range_val" : 10,
+							"inference" : "1+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 11,
+							"max_range_val" : 15,
+							"inference" : "2+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 16,
+							"max_range_val" : 20,
+							"max_range_value_unbound" : 1,
+							"inference" : "3+"
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 3
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 3,
+							"max_range_val" : 10,
+							"inference" : "1+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 11,
+							"max_range_val" : 15,
+							"inference" : "2+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 16,
+							"max_range_val" : 20,
+							"max_range_value_unbound" : 1,
+							"inference" : "3+"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Renal Tubular Epithelial Cell Count",
+			"description" : "Number of Renal Tubular Epithelial Cells per high power field",
+			"lis_code" : "URINE_RTEC",
+			"result_type" : "numeric",
+			"units" : "nos",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 3
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 3,
+							"max_range_val" : 10,
+							"inference" : "1+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 11,
+							"max_range_val" : 15,
+							"inference" : "2+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 16,
+							"max_range_val" : 20,
+							"max_range_value_unbound" : 1,
+							"inference" : "3+"
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 3
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 3,
+							"max_range_val" : 10,
+							"inference" : "1+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 11,
+							"max_range_val" : 15,
+							"inference" : "2+"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 16,
+							"max_range_val" : 20,
+							"max_range_value_unbound" : 1,
+							"inference" : "3+"
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

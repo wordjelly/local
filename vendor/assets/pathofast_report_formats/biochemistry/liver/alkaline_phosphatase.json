@@ -1,0 +1,209 @@
+{
+	"name" : "Serum Alkaline Phosphatase",
+	"description" : "Determination of Serum Alkaline Phosphatase level",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Serum Alkaline Phosphatase",
+			"description" : "Serum Alkaline Phosphatase estimation",
+			"lis_code" : "ALP",
+			"result_type" : "numeric",
+			"units" : "U/L",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "Mosby's Manual of Diagnostic and Laboratory Tests, Age and sex distribution of alkaline phosphatase isoenzymes by agarose electrophoresis",
+					"max_age_years" : 2,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 85,
+							"max_range_val" : 235
+						}
+					]
+				},
+				{
+					"reference" : "Mosby's Manual of Diagnostic and Laboratory Tests, Age and sex distribution of alkaline phosphatase isoenzymes by agarose electrophoresis",
+					"max_age_years" : 2,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 85,
+							"max_range_val" : 235
+						}
+					]
+				},
+				{
+					"reference" : "Mosby's Manual of Diagnostic and Laboratory Tests, Age and sex distribution of alkaline phosphatase isoenzymes by agarose electrophoresis",
+					"max_age_years" : 8,
+					"min_age_years" : 2,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 65,
+							"max_range_val" : 210
+						}
+					]
+				},
+				{
+					"reference" : "Mosby's Manual of Diagnostic and Laboratory Tests, Age and sex distribution of alkaline phosphatase isoenzymes by agarose electrophoresis",
+					"max_age_years" : 8,
+					"min_age_years" : 2,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 65,
+							"max_range_val" : 210
+						}
+					]
+				},
+				{
+					"reference" : "Mosby's Manual of Diagnostic and Laboratory Tests, Age and sex distribution of alkaline phosphatase isoenzymes by agarose electrophoresis",
+					"max_age_years" : 15,
+					"min_age_years" : 8,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 60,
+							"max_range_val" : 300
+						}
+					]
+				},
+				{
+					"reference" : "Mosby's Manual of Diagnostic and Laboratory Tests, Age and sex distribution of alkaline phosphatase isoenzymes by agarose electrophoresis",
+					"max_age_years" : 15,
+					"min_age_years" : 18,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 60,
+							"max_range_val" : 300
+						}
+					]
+				},
+				{
+					"reference" : "Mosby's Manual of Diagnostic and Laboratory Tests, Age and sex distribution of alkaline phosphatase isoenzymes by agarose electrophoresis",
+					"max_age_years" : 21,
+					"min_age_years" : 15,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 30,
+							"max_range_val" : 200
+						}
+					]
+				},
+				{
+					"reference" : "Mosby's Manual of Diagnostic and Laboratory Tests, Age and sex distribution of alkaline phosphatase isoenzymes by agarose electrophoresis",
+					"max_age_years" : 21,
+					"min_age_years" : 15,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 30,
+							"max_range_val" : 200
+						}
+					]
+				},
+				{
+					"reference" : "Mosby's Manual of Diagnostic and Laboratory Tests, Age and sex distribution of alkaline phosphatase isoenzymes by agarose electrophoresis",
+					"max_age_years" : 120,
+					"min_age_years" : 21,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 30,
+							"max_range_val" : 120
+						}
+					]
+				},
+				{
+					"reference" : "Mosby's Manual of Diagnostic and Laboratory Tests, Age and sex distribution of alkaline phosphatase isoenzymes by agarose electrophoresis",
+					"max_age_years" : 120,
+					"min_age_years" : 21,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 30,
+							"max_range_val" : 120
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

@@ -1,6 +1,6 @@
 {
-	"name" : "HBA1C",
-	"description" : "Determination of HBA1C level",
+	"name" : "Peripheral Blood Smear for Malaria",
+	"description" : "Determination of Peripheral Blood Smear for Malaria level",
 	"rates" : [
 		{
 			"for_organization_id" : "*",
@@ -14,11 +14,10 @@
 	],
 	"tests" : [
 		{
-			"name" : "HBA1C",
-			"description" : " HBA1C estimation",
-			"lis_code" : "HBA1C",
-			"result_type" : "numeric",
-			"units" : "%",
+			"name" : "Thick Smear (Giemsa Stain)",
+			"description" : "Thick Smear Microscopy by Giemsa Stain",
+			"lis_code" : "TSGM",
+			"result_type" : "text",
 			"only_include_in_report_if_abnormal" : -1,
 			"test_must_have_value" : 1,
 			"ranges" : [

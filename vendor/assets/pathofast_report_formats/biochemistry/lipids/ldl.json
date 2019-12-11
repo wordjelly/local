@@ -1,1 +1,219 @@
-ldl.json
+{
+	"name" : "Serum Low Density Lipoproteins",
+	"description" : "Determination of Serum Low Density Lipoproteins",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Serum Low Density Lipoprotein",
+			"description" : "Serum Low Density Lipoprotein estimation",
+			"lis_code" : "LDL",
+			"result_type" : "numeric",
+			"units" : "mg/dl",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 1,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 1,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 17,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 110
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 110,
+							"max_range_val" : 129,
+							"inference" : "Borderline Elevated. Monitoring advised. "
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 129,
+							"max_range_val" : 1000,
+							"max_range_val_unbound" : 1,
+							"inference" : "High, please correlate clinically and follow up."
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 17,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 110
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 110,
+							"max_range_val" : 129,
+							"inference" : "Borderline Elevated. Monitoring advised. "
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 129,
+							"max_range_val" : 1000,
+							"max_range_val_unbound" : 1,
+							"inference" : "High, please correlate clinically and follow up."
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 100
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 100,
+							"max_range_val" : 129,
+							"inference" : "Above Optimal."
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 129,
+							"max_range_val" : 160,
+							"inference" : "Borderline High. Monitoring advised. "
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 160,
+							"max_range_val" : 189,
+							"inference" : "High, please correlate clinically and follow up."
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 189,
+							"max_range_val" : 1000,
+							"max_range_val_unbound" : 1,
+							"inference" : "Very High, please correlate clinically and follow up."
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 27,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 100
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 100,
+							"max_range_val" : 129,
+							"inference" : "Above Optimal."
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 129,
+							"max_range_val" : 160,
+							"inference" : "Borderline High. Monitoring advised. "
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 160,
+							"max_range_val" : 189,
+							"inference" : "High, please correlate clinically and follow up."
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 189,
+							"max_range_val" : 1000,
+							"max_range_val_unbound" : 1,
+							"inference" : "Very High, please correlate clinically and follow up."
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

@@ -1,6 +1,6 @@
 {
-	"name" : "Serum Very Low Density Lipoproteinss",
-	"description" : "Determination of Serum Very Low Density Lipoproteinss, calculated by Friedwald's formula",
+	"name" : "Serum Direct Bilirubin",
+	"description" : "Determination of Serum Direct Bilirubin level",
 	"rates" : [
 		{
 			"for_organization_id" : "*",
@@ -14,17 +14,17 @@
 	],
 	"tests" : [
 		{
-			"name" : "Serum Very Low Density Lipoproteins",
-			"description" : "Serum Very Low Density Lipoproteins estimation",
-			"lis_code" : "LDL",
+			"name" : "Serum Direct Bilirubin",
+			"description" : "Serum Direct Bilirubin estimation",
+			"lis_code" : "BID",
 			"result_type" : "numeric",
 			"units" : "mg/dl",
 			"only_include_in_report_if_abnormal" : -1,
 			"test_must_have_value" : 1,
 			"ranges" : [
 				{
-					"reference" : "Indian Journal of Clinical Biochemistry, 2009 / 24 (2) 190-193",
-					"max_age_years" : 20,
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 1,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -41,8 +41,8 @@
 					]
 				},
 				{
-					"reference" : "Indian Journal of Clinical Biochemistry, 2009 / 24 (2) 190-193",
-					"max_age_years" : 20,
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 1,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -59,9 +59,9 @@
 					]
 				},
 				{
-					"reference" : "Indian Journal of Clinical Biochemistry, 2009 / 24 (2) 190-193",
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
 					"max_age_years" : 120,
-					"min_age_years" : 20,
+					"min_age_years" : 1,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -70,27 +70,25 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 8,
-							"max_range_val" : 51.2,
-							"max_range_val_unbound" : 1
+							"min_range_val" : 0,
+							"max_range_val" : 0.3
 						}
 					]
 				},
 				{
-					"reference" : "Indian Journal of Clinical Biochemistry, 2009 / 24 (2) 190-193",
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
 					"max_age_years" : 120,
-					"min_age_years" : 20,
+					"min_age_years" : 1,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 8.2,
-							"max_range_val" : 45,
-							"max_range_val_unbound" : 1
+							"min_range_val" : 0,
+							"max_range_val" : 0.3
 						}
 					]
 				}

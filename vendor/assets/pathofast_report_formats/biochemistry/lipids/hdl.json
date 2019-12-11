@@ -1,1 +1,181 @@
-hdl.json
+{
+	"name" : "Serum High Density Lipoprotein Density Lipoproteins",
+	"description" : "Determination of Serum High Density Lipoprotein Density Lipoproteins",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Serum High Density Lipoprotein Density Lipoprotein",
+			"description" : "Serum High Density Lipoprotein Density Lipoprotein estimation",
+			"lis_code" : "LDL",
+			"result_type" : "numeric",
+			"units" : "mg/dl",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 1,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 1,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 17,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0,
+							"max_range_val" : 40
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 40,
+							"max_range_val" : 45,
+							"inference" : "Borderline Low. Monitoring advised. "
+						},
+						{
+							"range_type" : "normal",
+							"min_range_val" : 40,
+							"max_range_val" : 1000,
+							"max_range_val_unbound" : 1
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 17,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0,
+							"max_range_val" : 40
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 40,
+							"max_range_val" : 45,
+							"inference" : "Borderline Low. Monitoring advised. "
+						},
+						{
+							"range_type" : "normal",
+							"min_range_val" : 40,
+							"max_range_val" : 1000,
+							"max_range_val_unbound" : 1
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0,
+							"max_range_val" : 40,
+							"inference" : "Low"
+						},
+						{
+							"range_type" : "normal",
+							"min_range_val" : 40,
+							"max_range_val" : 500,
+							"max_range_val_unbound" : 1
+						}
+					]
+				},
+				{
+					"reference" : "https://www.unboundmedicine.com/harrietlane/view/Harriet_Lane_Handbook/309269/all/TABLE_27_1:_Reference_Values",
+					"max_age_years" : 120,
+					"min_age_years" : 17,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 27,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0,
+							"max_range_val" : 50,
+							"inference" : "Low"
+						},
+						{
+							"range_type" : "normal",
+							"min_range_val" : 50,
+							"max_range_val" : 500,
+							"max_range_val_unbound" : 1
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

@@ -1,0 +1,724 @@
+{
+	"name" : "TB-Quantiferon Gold",
+	"description" : "ELISA for TB-Quantiferon Gold",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Nil",
+			"description" : "Nil OD",
+			"lis_code" : "NILOD",
+			"result_type" : "numeric",
+			"units" : "OD",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1,
+							"not_applicable" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 8
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 8
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "ESAT-6",
+			"description" : "ESAT-6 OD",
+			"lis_code" : "ESAT6OD",
+			"result_type" : "numeric",
+			"units" : "OD",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "CFP-10",
+			"description" : "CFP-10 OD",
+			"lis_code" : "CFP-10OD",
+			"result_type" : "numeric",
+			"units" : "OD",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Mitogen",
+			"description" : "Mitogen OD",
+			"lis_code" : "MITOGENOD",
+			"result_type" : "numeric",
+			"units" : "OD",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "ESAT-6 - Nil",
+			"description" : "ESAT-6 - Nil",
+			"lis_code" : "ESAT6NILOD",
+			"result_type" : "numeric",
+			"units" : "OD",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "CPF-10 - Nil",
+			"description" : "CPF-10 - Nil",
+			"lis_code" : "CPF10NILOD",
+			"result_type" : "numeric",
+			"units" : "OD",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Mitogen - Nil",
+			"description" : "Mitogen - Nil",
+			"lis_code" : "MITOGENNILOD",
+			"result_type" : "numeric",
+			"units" : "OD",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Cumulative Result",
+			"description" : "Cumulative Result of the Test",
+			"lis_code" : "CUMRESULT",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "negative",
+							"undefined" : 1
+						},
+						{
+							"range_type" : "abnormal",
+							"text_range_val" : "positive",
+							"undefined" : 1,
+							"inference" : "Positive, clinical and radiological correlation advised. Please refer to notes below."
+						}
+					]
+				},
+				{
+					"reference" : "https://www.cdc.gov/tb/publications/factsheets/testing/igra.htm",
+					"max_age_years" : 5,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"not_applicable" : 1,
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "negative",
+							"undefined" : 1
+						},
+						{
+							"range_type" : "abnormal",
+							"text_range_val" : "positive",
+							"undefined" : 1,
+							"inference" : "Positive, clinical and radiological correlation advised. Please refer to notes below."
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative",
+							"inference" : "Negative"
+						},
+						{
+							"range_type" : "abnormal",
+							"text_range_val" : "Positive",
+							"inference" : "Positive, clinical and radiological correlation advised. Please refer to notes below."
+						}
+					]
+				},
+				{
+					"reference" : "http://www.quantiferon.com/wp-content/uploads/2017/04/English_QFT_ELISA_R04_082016.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 5,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative",
+							"inference" : "Negative"
+						},
+						{
+							"range_type" : "abnormal",
+							"text_range_val" : "Positive",
+							"inference" : "Positive, clinical and radiological correlation advised. Please refer to notes below."
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Plasma Container",
+			"categories" : [
+				{
+					"name" : "Lithium Heparin Tube",
+					"quantity" : 3.0
+				}
+			]	
+		}
+	]
+}

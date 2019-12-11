@@ -155,6 +155,11 @@ class Diagnostics::Range
 	attribute :normal_range_required, Array, mapping: {type: 'keyword'}, default: Diagnostics::Range::YES
 
 
+	## when the range is not applicable to the test
+	## for eg : a range for 0 - 5 (Male) is not applicable to Nil antigen in TB gold report.
+	## basically for 0 - 5 years the test is not to be done.
+	attribute :not_applicable, Integer, mapping: {type: 'integer'}
+
 	attr_accessor :more_than_one_combination_tag
 	attr_accessor :more_than_on_non_combination_tag
 
@@ -343,6 +348,7 @@ class Diagnostics::Range
 	    	:currently_held_by_organization,
 	    	:created_by_user_id,
 	    	:owner_ids,
+	    	:not_applicable,
 	    	{
 	    		:tags => Tag.permitted_params[1][:tag]
 	    	},
@@ -417,6 +423,9 @@ class Diagnostics::Range
 				type: 'keyword'
 			},
 			normal_range_required: {
+				type: 'integer'
+			},
+			not_applicable: {
 				type: 'integer'
 			}
     	}

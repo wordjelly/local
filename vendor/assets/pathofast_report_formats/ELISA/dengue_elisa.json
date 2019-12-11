@@ -1,0 +1,99 @@
+{
+	"name" : "Dengue NS1 ELISA",
+	"description" : "Determination of Dengue NS1 ELISA",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "NS1_ELISA",
+			"description" : "Dengue NS1 ELISA",
+			"lis_code" : "NS1ELISA",
+			"result_type" : "numeric",
+			"units" : "ratio",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val_unbound" : 1,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0.5,
+							"max_range_val" : 0.99,
+							"inference" : "Borderline"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0.99,
+							"max_range_val" : 5,
+							"max_range_val_unbound" : 1,
+							"inference" : "Positive"
+						}
+					]
+				},
+				{
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val_unbound" : 1,
+							"min_range_val" : 0,
+							"max_range_val" : 0.5
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0.5,
+							"max_range_val" : 0.99,
+							"inference" : "Borderline"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0.99,
+							"max_range_val" : 5,
+							"max_range_val_unbound" : 1,
+							"inference" : "Positive"
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

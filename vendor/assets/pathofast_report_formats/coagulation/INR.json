@@ -1,6 +1,6 @@
 {
-	"name" : "Serum Very Low Density Lipoproteinss",
-	"description" : "Determination of Serum Very Low Density Lipoproteinss, calculated by Friedwald's formula",
+	"name" : "INR",
+	"description" : "Determination of International Normalized Ratio",
 	"rates" : [
 		{
 			"for_organization_id" : "*",
@@ -14,17 +14,17 @@
 	],
 	"tests" : [
 		{
-			"name" : "Serum Very Low Density Lipoproteins",
-			"description" : "Serum Very Low Density Lipoproteins estimation",
-			"lis_code" : "LDL",
+			"name" : "International Normalized Ratio",
+			"description" : "International Normalized Ratio estimation",
+			"lis_code" : "INR",
 			"result_type" : "numeric",
-			"units" : "mg/dl",
+			"units" : "ratio",
 			"only_include_in_report_if_abnormal" : -1,
 			"test_must_have_value" : 1,
 			"ranges" : [
 				{
-					"reference" : "Indian Journal of Clinical Biochemistry, 2009 / 24 (2) 190-193",
-					"max_age_years" : 20,
+					"reference" : "Lab Defined Range",
+					"max_age_years" : 17,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -41,8 +41,8 @@
 					]
 				},
 				{
-					"reference" : "Indian Journal of Clinical Biochemistry, 2009 / 24 (2) 190-193",
-					"max_age_years" : 20,
+					"reference" : "Lab Defined Range",
+					"max_age_years" : 17,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -59,9 +59,9 @@
 					]
 				},
 				{
-					"reference" : "Indian Journal of Clinical Biochemistry, 2009 / 24 (2) 190-193",
+					"reference" : "Lab Defined Range",
 					"max_age_years" : 120,
-					"min_age_years" : 20,
+					"min_age_years" : 17,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -70,27 +70,51 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 8,
-							"max_range_val" : 51.2,
-							"max_range_val_unbound" : 1
+							"min_range_val" : 1,
+							"max_range_val" : 1.3
+						},
+						{
+							"name" : "Warfarin Therapy",
+							"range_type" : "history",
+							"min_range_val" : 2.5,
+							"max_range_val" : 3,
+							"text_history_val" : "Standard Intensity Warfarin Therapy"
+						},
+						{
+							"name" : "Warfarin Therapy",
+							"range_type" : "history",
+							"min_range_val" : 2.5,
+							"max_range_val" : 3,
+							"text_history_val" : "High Intensity Warfarin Therapy"
 						}
 					]
 				},
 				{
-					"reference" : "Indian Journal of Clinical Biochemistry, 2009 / 24 (2) 190-193",
+					"reference" : "Lab Defined Range",
 					"max_age_years" : 120,
-					"min_age_years" : 20,
+					"min_age_years" : 17,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 8.2,
-							"max_range_val" : 45,
-							"max_range_val_unbound" : 1
+							"min_range_val" : 1,
+							"max_range_val" : 1.3
+						},
+						{
+							"range_type" : "history",
+							"min_range_val" : 2.5,
+							"max_range_val" : 3,
+							"text_history_val" : "Standard Intensity Warfarin Therapy"
+						},
+						{
+							"range_type" : "history",
+							"min_range_val" : 2.5,
+							"max_range_val" : 3,
+							"text_history_val" : "High Intensity Warfarin Therapy"
 						}
 					]
 				}
