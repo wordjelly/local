@@ -203,6 +203,12 @@ class Diagnostics::Report
 	end
 
 
+	## @called_from : #order_concern#update_reports
+	def prune_test_ranges(patient)
+		self.tests.each do |test|
+			test.prune_ranges(patient)
+		end
+	end
 
 	def fields_not_to_show_in_form_hash(root="*")
 		{

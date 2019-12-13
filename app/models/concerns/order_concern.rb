@@ -372,8 +372,8 @@ module Concerns::OrderConcern
 			##
 			##
 			#################################################
-			document.update_reports
 			document.load_patient
+			document.update_reports
 			document.update_recipients
 			document.update_requirements
 			document.update_report_items
@@ -827,7 +827,9 @@ module Concerns::OrderConcern
 				report.current_user = self.current_user
 				#puts "report found is: #{report.id.to_s}"
 				report.run_callbacks(:find)
-
+				#before adding the report, prune that bitch.
+				#for all the ranges.
+				report.prune_test_ranges(self.patient)
 				self.reports << report
 			end
 		end

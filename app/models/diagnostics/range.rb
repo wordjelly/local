@@ -675,4 +675,6 @@ class Diagnostics::Range
 		end
 	end
 
+
+
 end 

@@ -22,8 +22,8 @@
 			"test_must_have_value" : 1,
 			"ranges" : [
 				{
-					"reference" : "https://care.diabetesjournals.org/content/25/8/1326.figures-only",
-					"max_age_years" : 17,
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -33,14 +33,18 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 4.5,
-							"max_range_val" : 5.4
+							"text_range_val" : "Malarial Parasite Absent"
+						},
+						{
+							"range_type" : "abnormal",
+							"text_range_val" : "Malarial Parasite Present",
+							"inference" : "Positive for MP"
 						}
 					]
 				},
 				{
-					"reference" : "https://care.diabetesjournals.org/content/25/8/1326.figures-only",
-					"max_age_years" : 17,
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -50,15 +54,27 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 4.4,
-							"max_range_val" : 5.3
+							"text_range_val" : "Malarial Parasite Absent"
+						},
+						{
+							"range_type" : "abnormal",
+							"text_range_val" : "Malarial Parasite Present",
+							"inference" : "Positive for MP"
 						}
 					]
-				},
+				}
+			]
+		},
+		{
+			"name" : "Thin Smear (Giemsa Stain)",
+			"description" : "Thin Smear Microscopy by Giemsa Stain",
+			"lis_code" : "ThinSGM",
+			"result_type" : "text",
+			"ranges" : [
 				{
 					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
 					"max_age_years" : 120,
-					"min_age_years" : 17,
+					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -67,28 +83,19 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 4.0,
-							"max_range_val" : 5.6
+							"text_range_val" : "Malarial Parasite Absent"
 						},
 						{
 							"range_type" : "abnormal",
-							"min_range_val" : 5.6,
-							"max_range_val" : 6.4,
-							"inference" : "Increased Risk of Diabetes"
-						},
-						{
-							"range_type" : "abnormal",
-							"min_range_val" : 6.4,
-							"max_range_val" : 13,
-							"max_range_val_unbound" : 1,
-							"inference" : "Diagnostic for Diabetes"
+							"text_range_val" : "Malarial Parasite Present",
+							"inference" : "Positive for MP"
 						}
 					]
 				},
 				{
 					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
 					"max_age_years" : 120,
-					"min_age_years" : 17,
+					"min_age_years" : 0,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -97,21 +104,159 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 4.0,
-							"max_range_val" : 5.6
+							"text_range_val" : "Malarial Parasite Absent"
 						},
 						{
 							"range_type" : "abnormal",
-							"min_range_val" : 5.6,
-							"max_range_val" : 6.4,
-							"inference" : "Increased Risk of Diabetes"
+							"text_range_val" : "Malarial Parasite Present",
+							"inference" : "Positive for MP"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Thin Film (Leishman Stain)",
+			"description" : "Thin Smear Microscopy by Leishman Stain",
+			"lis_code" : "ThinLeishmanGM",
+			"result_type" : "text",
+			"ranges" : [
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Malarial Parasite Absent"
 						},
 						{
 							"range_type" : "abnormal",
-							"min_range_val" : 6.4,
-							"max_range_val" : 13,
+							"text_range_val" : "Malarial Parasite Present",
+							"inference" : "Positive for MP"
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Malarial Parasite Absent"
+						},
+						{
+							"range_type" : "abnormal",
+							"text_range_val" : "Malarial Parasite Present",
+							"inference" : "Positive for MP"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Parasite Index",
+			"description" : "Number of Asexual Forms/1000 RBC's",
+			"lis_code" : "ParasiteIndex",
+			"result_type" : "numeric",
+			"units" : "%",
+			"ranges" : [
+				{
+					"reference" : "http://medind.nic.in/iaa/t12/i2/iaat12i2p450.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 1
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 1,
+							"max_range_val" : 5,
+							"inference" : "Parasite Index 1-5%"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 5,
+							"max_range_val" : 10,
+							"inference" : "Parasite Index 5-10%"
+						},
+						,
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 10,
+							"max_range_val" : 20,
+							"inference" : "Parasite Index 10-20%"
+						},
+						,
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 20,
+							"max_range_val" : 100,
 							"max_range_val_unbound" : 1,
-							"inference" : "Diagnostic for Diabetes"
+							"inference" : "Parasite Index >= 20%"
+						}
+					]
+				},
+				{
+					"reference" : "http://medind.nic.in/iaa/t12/i2/iaat12i2p450.pdf",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 1
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 1,
+							"max_range_val" : 5,
+							"inference" : "Parasite Index 1-5%"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 5,
+							"max_range_val" : 10,
+							"inference" : "Parasite Index 5-10%"
+						},
+						,
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 10,
+							"max_range_val" : 20,
+							"inference" : "Parasite Index 10-20%"
+						},
+						,
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 20,
+							"max_range_val" : 100,
+							"max_range_val_unbound" : 1,
+							"inference" : "Parasite Index >= 20%"
 						}
 					]
 				}

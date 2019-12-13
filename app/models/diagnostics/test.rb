@@ -2,7 +2,6 @@ require 'elasticsearch/persistence/model'
 class Diagnostics::Test	
 		
 
-
 	include Elasticsearch::Persistence::Model
 	include Concerns::NameIdConcern
 	include Concerns::ImageLoadConcern
@@ -12,7 +11,6 @@ class Diagnostics::Test
 	include Concerns::MissingMethodConcern
 	include Concerns::FormConcern
 	include Concerns::CallbacksConcern
-
 			
 	TEXTUAL_RESULT = "text"
 	NUMERIC_RESULT = "numeric"
@@ -572,6 +570,15 @@ class Diagnostics::Test
 		self.ranges.each do |r|
 			r.unpick
 		end
+	end
+
+	## @called_from : order#update_reports
+	## We only keep those ranges inside each test which match the age and sex of the patient.
+	## no order ranges are maintained, as this saves space.
+	def prune_ranges(patient)
+		self.ranges.reject! { |c|
+			!patient.meets_range_requirements?(r)
+		}
 	end
 
 	def assign_range(patient,history_tags)

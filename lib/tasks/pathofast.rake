@@ -566,6 +566,90 @@ namespace :pathofast do
 
     end
 
+    ## esr. gram, afb, pus, urine culture and urine.
+    ## these are the main things.
+    ## and we are through.
+    ## and anti-ccp.
+    ## it will read csv from a given file and generate the ranges from that.
+    task cbc: :environment do 
+        report = Diagnostics::Report.new
+        report.name = "Complete Blood Count with Peripheral Smear"
+        report.description = "26 parameter blood count, with peripheral thin film smear preparation"
+        csv_file_path = Rails.root.join('vendor','assets','csv','complete_blood_count_ranges.csv')
+        csv_file = IO.read(csv_file_path)
+        test_names = ["WBC","RBC","HGB","HCT","MCV","MCH","MC-HC","RDW%","PLT","MPV","NEU%","LYMPH%","MONO%","EOS%","BASO%","NEU-ABS","LYM-ABS","MONO-ABS","EOS-ABS","BASO-ABS"]
+        csv_file.split(/(#{test_names.join("|")})/)[1..-1].each_slice(2) do |slice|
+            test_name = slice[0]
+            test_text = slice[1]
+            test = Diagnostics::Test.new(name: test_name, lis_code: test_name)
+
+            #puts "test name is :#{test_name}"
+            #puts "test text is:"
+            #puts test_text
+            test_text.split(/\n/).each do |range_line|
+                cells = range_line.split(/\t/)
+                unless cells.blank?
+                    #puts "cells are"
+                    #puts cells.to_s
+                    min_age = cells[0].to_i
+                    max_age = cells[3].gsub(/\<|\>/,'')
+                    max_age = max_age == "adult" ? 120 : max_age.to_i
+                    puts "min age is: #{min_age}, max age is: #{max_age}"
+                    min_age_unit = cells[1]
+                    max_age_unit = cells[4]
+                    puts "min age unit is: #{min_age_unit}, max age unit: #{max_age_unit}"
+                    male_range_min_value = cells[5].split("-")[0]
+                    male_range_max_value = cells[5].split("-")[1]
+                    female_range_min_value = cells[6].split("-")[0]
+                    female_range_max_value = cells[6].split("-")[1]
+
+                    ########### FOR MALE.
+                    range = Diagnostics::Range.new(sex: "Male")
+                    if min_age_unit == "d"
+                        range.min_age_days = min_age
+                    elsif min_age_unit == "y"
+                        range.min_age_years = min_age
+                    end
+
+                    if max_age_unit == "d"
+                        range.max_age_days = max_age
+                    elsif max_age_unit == "y"
+                        range.max_age_years = max_age
+                    end
+
+                    range.tags << Tag.new(range_type: "normal", min_range_val: male_range_min_value, max_range_val: male_range_max_value)
+                    
+                    test.ranges << range
+
+                    ########## FOR FEMALE
+                    range = Diagnostics::Range.new(sex: "Female")
+                    if min_age_unit == "d"
+                        range.min_age_days = min_age
+                    elsif min_age_unit == "y"
+                        range.min_age_years = min_age
+                    end
+
+                    if max_age_unit == "d"
+                        range.max_age_days = max_age
+                    elsif max_age_unit == "y"
+                        range.max_age_years = max_age
+                    end
+
+                    range.tags << Tag.new(range_type: "normal", min_range_val: female_range_min_value, max_range_val: female_range_max_value)  
+
+                    test.ranges << range
+                end
+            end
+            report.tests << test
+        end
+
+        #puts JSON.pretty_generate(report.deep_attributes(true,false))
+        cbc_report_path = csv_file_path = Rails.root.join('vendor','assets','pathofast_report_formats','hematology','CBC.json')
+        
+        IO.write(cbc_report_path,JSON.pretty_generate(report.deep_attributes(true,false)))
+    
+    end
+
     task preprocess_pathofast_reports: :environment do 
         path = Rails.root.join('vendor','assets','pathofast_report_formats','**/*.json')
         Dir.glob(path).each do |file|
