@@ -197,13 +197,10 @@ class Diagnostics::Test
 	##
 	##
 	##########################################################
-	## what about special attributes ?
-	## so the patient has to be passed in?
-	## do we add anything special about the patient.
-	## a report that contains any test that has special ranges.
-	## will not be added, unless that information is defined on the patient.
-
-	validate :all_ages_and_genders_covered_in_ranges_and_no_overlaps
+	
+	## the order organization is blank if this is a raw report, 
+	## otherwise inside any order, this is automatically set before_validation, so we can use that 
+	validate :all_ages_and_genders_covered_in_ranges_and_no_overlaps, :if => Proc.new{|c| c.order_organization.blank? }
 
 
 	def all_ages_and_genders_covered_in_ranges_and_no_overlaps
@@ -577,7 +574,7 @@ class Diagnostics::Test
 	## no order ranges are maintained, as this saves space.
 	def prune_ranges(patient)
 		self.ranges.reject! { |c|
-			!patient.meets_range_requirements?(r)
+			!patient.meets_range_requirements?(c)
 		}
 	end
 

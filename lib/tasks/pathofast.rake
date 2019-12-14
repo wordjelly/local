@@ -48,6 +48,10 @@ namespace :pathofast do
         puts @headers.to_s
 
     end
+
+    ## and we wanna add the reports
+    ## basically that too.
+
     task recreate_indices: :environment do
   	    JSON.parse(IO.read(Rails.root.join("vendor","assets","others","es_index_classes.json")))["es_index_classes"].each do |cls|
           puts "creating index for :#{cls}"
@@ -650,6 +654,22 @@ namespace :pathofast do
     
     end
 
+    task add_pathofast_reports: :environment do 
+        Diagnostics::Report.send("create_index!",{force: true})
+        u = User.where(:email => "bhargav.r.raut@gmail.com").first
+        path = Rails.root.join('vendor','assets','pathofast_report_formats','**/*.json')
+        Dir.glob(path)[0..2].each do |file|
+            r = Diagnostics::Report.new(JSON.parse(IO.read(file)))
+            r.created_by_user = u
+            r.created_by_user_id = u.id.to_s
+            r.save
+            unless r.errors.full_messages.blank?
+                puts "errors saving report :#{r.name}"
+                puts r.errors.full_messages.to_s
+            end
+        end
+    end
+
     task preprocess_pathofast_reports: :environment do 
         path = Rails.root.join('vendor','assets','pathofast_report_formats','**/*.json')
         Dir.glob(path).each do |file|
@@ -673,7 +693,10 @@ namespace :pathofast do
                     end
                     test.template_tag_ids.uniq!
                 end
+
                 IO.write(Rails.root.join('vendor','assets','processed_report_formats',File.basename(file)),JSON.pretty_generate(r.deep_attributes(false,false)))
+        
+
             rescue => e
                 puts e.to_s
                 puts "error #{file}"

@@ -1,0 +1,26 @@
+<% recipients_array = [] %>
+<% if local_assigns[:recipients] %>
+  <%= puts "recipients are defined" %>
+  <% recipients_array = recipients %>
+<% else %>
+  <%= puts "recipients are not defined" %>
+  <% recipients_array = @recipients %>
+<% end %>
+<table>
+  <thead>
+    <tr>
+        <th>Name</th>
+        <th>User Id</th>
+        <th>Patient Id</th>
+        <th>Phone Numbers</th>
+        <th>Email Ids</th>
+        <th>Options</th>
+    </tr>
+  </thead>
+  <tbody>
+  	<% recipients_array.each do |recipient| %>
+  	<% @recipient = recipient %>
+  	<%= render :partial => "/notification/recipients/show" %>
+  	<% end %>
+  </tbody>
+</table>

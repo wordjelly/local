@@ -1,0 +1,8 @@
+<tr>
+	<td><%= @recipient.name %></td>
+	<td><%= (@recipient.user_id || '') %></td>
+	<td><%= (@recipient.patient_id || '') %></td>
+	<td><%= @recipient.phone_numbers.to_s %></td>
+	<td><%= @recipient.email_ids.to_s %></td>
+	<td><%= render :partial => "/notification/recipients/options" %></td>
+</tr>

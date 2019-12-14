@@ -252,8 +252,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 1.00,
-							"max_range_val" : 1.64
+							"min_range_val" : 12.9,
+							"max_range_val" : 21.4
 						}
 					]
 				},

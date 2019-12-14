@@ -14,6 +14,7 @@ class Tag
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::FormConcern
 	include Concerns::CallbacksConcern
 
 	index_name "pathofast-tags"
@@ -488,6 +489,28 @@ class Tag
 
 	def is_picked?
 		self.picked == YES
+	end
+
+	def summary_row(args={})
+		'
+			<tr>
+				<td>' + self.name + '</td>
+				<td><div class="edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
+			</tr>
+		'
+	end
+
+	## should return the table, and th part.
+	## will return some headers.
+	def summary_table_headers(args={})
+		'''
+			<thead>
+	          	<tr>
+	              	<th>Name</th>
+			        <th>Options</th>
+	          	</tr>
+	        </thead>
+		'''
 	end
 
 

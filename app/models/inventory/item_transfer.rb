@@ -9,7 +9,7 @@ class Inventory::ItemTransfer
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::EsBulkIndexConcern
-		include Concerns::CallbacksConcern
+	include Concerns::CallbacksConcern
 
 
 	attr_accessor :to_user

@@ -10,6 +10,7 @@ class Notification::Recipient
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::MissingMethodConcern
+	include Concerns::FormConcern
 	include Concerns::CallbacksConcern
 
 	YES = 1
@@ -148,6 +149,45 @@ class Notification::Recipient
 		[self.user_id_matches?(recipient),self.phone_numbers_match?(recipient),self.email_ids_match?(recipient),self.patient_id_matches?(recipient)].select{|c|
 			!c.blank?
 		}.size > 0	
+	end
+
+	## summary table headers
+	#############################################################3
+	##
+	##
+	## OVERRIDDEN FROM NESTED FORM.
+	##
+	##
+	#############################################################
+	## this gets overriden in the different things.
+	def summary_row(args={})
+		'
+			<tr>
+				<td>' + self.name + '</td>
+				<td>' + (self.user_id || '') + '</td>
+				<td>' + (self.patient_id  || '') + '</td>
+				<td>' + self.phone_numbers.to_s + '</td>
+				<td>' + self.email_ids.to_s + '</td
+				<td><div class="edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
+			</tr>
+		'
+	end
+
+	## should return the table, and th part.
+	## will return some headers.
+	def summary_table_headers(args={})
+		'''
+			<thead>
+	          	<tr>
+	              	<th>Name</th>
+			        <th>User Id</th>
+			        <th>Patient Id</th>
+			        <th>Phone Numbers</th>
+			        <th>Email Ids</th>
+			        <th>Options</th>
+	          	</tr>
+	        </thead>
+		'''
 	end
 
 end

@@ -55,5 +55,11 @@ Rails.application.configure do
     #domain: 'sandboxc0248205473845c3a998e44941ee503e.mailgun.org'
     domain: 'pathofast.com'
   }
+
+  ## NOTIFICATION(TRANSACTIONAL AFTER REPORT GENERATION, AND PDF JOBS)
+  config.ignore_pdf_job = true
+
+  config.ignore_notification_job = true
+  
   
 end

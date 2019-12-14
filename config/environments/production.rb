@@ -96,5 +96,10 @@ Rails.application.configure do
     api_key: ENV["MAILGUN_API_KEY"],
     domain: 'pathofast.com'
   }
+
+  config.ignore_pdf_job = true
+
+  config.ignore_notification_job = true
+  
   
 end
