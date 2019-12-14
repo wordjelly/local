@@ -1,0 +1,758 @@
+{
+  "created_at": "2019-12-13 12:43:54 UTC",
+  "updated_at": "2019-12-13 12:43:54 UTC",
+  "public": 0,
+  "tests": [
+    {
+      "created_at": "2019-12-13 12:43:54 UTC",
+      "updated_at": "2019-12-13 12:43:54 UTC",
+      "public": 0,
+      "name": "Reticulocyte Count(%)",
+      "lis_code": "RET_COUNT_PERCENTAGE",
+      "description": "Reticulocyte Count(%) estimation",
+      "print_all_ranges_in_report": 0,
+      "interpret_ranges": 1,
+      "ranges": [
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 3.4,
+              "max_range_val": 5.4,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 1,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 0,
+          "max_age_days": 3,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 3.4,
+              "max_range_val": 5.4,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 1,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 0,
+          "max_age_days": 3,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 1.06,
+              "max_range_val": 2.37,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 4,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 0,
+          "max_age_days": 28,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 1.06,
+              "max_range_val": 2.37,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 4,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 0,
+          "max_age_days": 28,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 2.12,
+              "max_range_val": 3.4,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 28,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 0,
+          "max_age_days": 42,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 2.12,
+              "max_range_val": 3.4,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 28,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 0,
+          "max_age_days": 42,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 1.55,
+              "max_range_val": 2.7,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 42,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 5,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 1.55,
+              "max_range_val": 2.7,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 0,
+          "min_age_days": 42,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 5,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.99,
+              "max_range_val": 1.82,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 5,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 23,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.99,
+              "max_range_val": 1.82,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 5,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 0,
+          "max_age_months": 23,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.82,
+              "max_range_val": 1.45,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 23,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 5,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.82,
+              "max_range_val": 1.45,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 0,
+          "min_age_months": 23,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 5,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.98,
+              "max_range_val": 1.94,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 5,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 11,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.98,
+              "max_range_val": 1.94,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 5,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 11,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.9,
+              "max_range_val": 1.49,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 11,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 17,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.9,
+              "max_range_val": 1.49,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 11,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 17,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.6,
+              "max_range_val": 2.71,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 17,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 120,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Male",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        },
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "active": 0,
+          "tags": [
+            {
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
+              "public": 0,
+              "selected_option_must_match_history_options": -1,
+              "option_must_be_chosen": -1,
+              "min_range_val": 0.6,
+              "max_range_val": 2.71,
+              "range_type": "normal"
+            }
+          ],
+          "min_age_years": 17,
+          "min_age_months": 0,
+          "min_age_days": 0,
+          "min_age_hours": 0,
+          "max_age_years": 120,
+          "max_age_months": 0,
+          "max_age_days": 0,
+          "max_age_hours": 0,
+          "min_age": 0,
+          "max_age": 0,
+          "sex": "Female",
+          "min_value": 0.0,
+          "max_value": 0.0,
+          "text_value": "Not Entered",
+          "picked": -1,
+          "is_default_range": -1,
+          "normal_picked": -1,
+          "normal_range_required": [
+            "1"
+          ]
+        }
+      ],
+      "ready_for_reporting": -1,
+      "verification_done": -1,
+      "result_type": "numeric",
+      "result_raw": "-",
+      "units": "%",
+      "only_include_in_report_if_abnormal": -1,
+      "test_must_have_value": 1,
+      "test_only_applicable_to_genders": [
+        "Male",
+        "Female"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "created_at": "2019-12-13 12:43:54 UTC",
+      "updated_at": "2019-12-13 12:43:54 UTC",
+      "public": 0,
+      "categories": [
+        {
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
+          "public": 0,
+          "name": "SST Tube",
+          "quantity": 1.0,
+          "use_category_for_lis": 0
+        }
+      ],
+      "name": "Serum Container"
+    }
+  ],
+  "rates": [
+    {
+      "created_at": "2019-12-13 12:43:54 UTC",
+      "updated_at": "2019-12-13 12:43:54 UTC",
+      "public": 0,
+      "for_organization_id": "*",
+      "rate": 100.0,
+      "name": "5df38788acbcd644499eee2a",
+      "patient_rate": 0
+    },
+    {
+      "created_at": "2019-12-13 12:43:54 UTC",
+      "updated_at": "2019-12-13 12:43:54 UTC",
+      "public": 0,
+      "for_organization_id": "*",
+      "rate": 100.0,
+      "name": "5df38788acbcd644499eee2a",
+      "patient_rate": 1
+    }
+  ],
+  "name": "Vitamin B12",
+  "description": "Determination of Reticulocyte Count(%)",
+  "request_rerun": -1,
+  "verify_all": -1,
+  "stat": -1,
+  "top_up_template": -1
+}

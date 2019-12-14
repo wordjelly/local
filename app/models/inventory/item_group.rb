@@ -9,9 +9,10 @@ class Inventory::ItemGroup
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::TransferConcern
-		include Concerns::CallbacksConcern
+	include Concerns::CallbacksConcern
 
-
+	## we were able to create our own item groups
+	## 
 
 	index_name "pathofast-inventory-item-groups"
 	document_type "inventory/item-group"
@@ -180,6 +181,8 @@ class Inventory::ItemGroup
 	    end
 	end
 
+	
+
 	def load_associate_item_counts
 		search_request = Inventory::Item.search({
 			query: {
@@ -295,7 +298,7 @@ class Inventory::ItemGroup
 		end
 	end
 =end
-
+	
 	## what is there in transfer?
 	## just give the item from one person to another.
 	## or transfer location
@@ -345,10 +348,10 @@ class Inventory::ItemGroup
 			item.run_callbacks(:find)
 			items << item
 		end
-		puts "the components for transfer are:"
-		puts "***************************************************************************************************************************************************************************"
-		puts items.to_s
-		puts "****************************************************************************************************************************************************************************"
+		#puts "the components for transfer are:"
+		#puts "***************************************************************************************************************************************************************************"
+		#puts items.to_s
+		#puts "****************************************************************************************************************************************************************************"
 		items
     end
 

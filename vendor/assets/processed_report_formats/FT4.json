@@ -1,11 +1,11 @@
 {
-  "created_at": "2019-12-08 16:14:38 UTC",
-  "updated_at": "2019-12-08 16:14:38 UTC",
+  "created_at": "2019-12-13 12:43:55 UTC",
+  "updated_at": "2019-12-13 12:43:55 UTC",
   "public": 0,
   "tests": [
     {
-      "created_at": "2019-12-08 16:14:38 UTC",
-      "updated_at": "2019-12-08 16:14:38 UTC",
+      "created_at": "2019-12-13 12:43:55 UTC",
+      "updated_at": "2019-12-13 12:43:55 UTC",
       "public": 0,
       "name": "FT4",
       "lis_code": "FT4",
@@ -14,14 +14,14 @@
       "interpret_ranges": 1,
       "ranges": [
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -52,14 +52,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -90,14 +90,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -128,14 +128,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -166,14 +166,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -204,14 +204,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -242,14 +242,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -280,14 +280,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -318,14 +318,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -356,14 +356,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -394,14 +394,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -432,14 +432,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -448,12 +448,12 @@
               "range_type": "normal"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1c0",
+              "nested_id": "5df3878bacbcd644499eeeaa",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -463,12 +463,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1c1",
+              "nested_id": "5df3878bacbcd644499eeeab",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -478,12 +478,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1c2",
+              "nested_id": "5df3878bacbcd644499eeeac",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -518,14 +518,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -556,14 +556,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -572,12 +572,12 @@
               "range_type": "normal"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1c3",
+              "nested_id": "5df3878bacbcd644499eeead",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -587,12 +587,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1c4",
+              "nested_id": "5df3878bacbcd644499eeeae",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -602,12 +602,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1c5",
+              "nested_id": "5df3878bacbcd644499eeeaf",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -642,14 +642,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -680,14 +680,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -696,12 +696,12 @@
               "range_type": "normal"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1c6",
+              "nested_id": "5df3878bacbcd644499eeeb0",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -711,12 +711,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1c7",
+              "nested_id": "5df3878bacbcd644499eeeb1",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -726,12 +726,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1c8",
+              "nested_id": "5df3878bacbcd644499eeeb2",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -766,14 +766,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -804,14 +804,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -820,12 +820,12 @@
               "range_type": "normal"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1c9",
+              "nested_id": "5df3878bacbcd644499eeeb3",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -835,12 +835,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1ca",
+              "nested_id": "5df3878bacbcd644499eeeb4",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -850,12 +850,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:38 UTC",
-              "updated_at": "2019-12-08 16:14:38 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216eacbcd6314b8bb1cb",
+              "nested_id": "5df3878bacbcd644499eeeb5",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -908,13 +908,13 @@
   ],
   "requirements": [
     {
-      "created_at": "2019-12-08 16:14:38 UTC",
-      "updated_at": "2019-12-08 16:14:38 UTC",
+      "created_at": "2019-12-13 12:43:55 UTC",
+      "updated_at": "2019-12-13 12:43:55 UTC",
       "public": 0,
       "categories": [
         {
-          "created_at": "2019-12-08 16:14:38 UTC",
-          "updated_at": "2019-12-08 16:14:38 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "name": "SST Tube",
           "quantity": 1.0,
@@ -926,21 +926,21 @@
   ],
   "rates": [
     {
-      "created_at": "2019-12-08 16:14:38 UTC",
-      "updated_at": "2019-12-08 16:14:38 UTC",
+      "created_at": "2019-12-13 12:43:54 UTC",
+      "updated_at": "2019-12-13 12:43:54 UTC",
       "public": 0,
       "for_organization_id": "*",
       "rate": 100.0,
-      "name": "5ded216dacbcd6314b8bb145",
+      "name": "5df38788acbcd644499eee2a",
       "patient_rate": 0
     },
     {
-      "created_at": "2019-12-08 16:14:38 UTC",
-      "updated_at": "2019-12-08 16:14:38 UTC",
+      "created_at": "2019-12-13 12:43:54 UTC",
+      "updated_at": "2019-12-13 12:43:54 UTC",
       "public": 0,
       "for_organization_id": "*",
       "rate": 100.0,
-      "name": "5ded216dacbcd6314b8bb145",
+      "name": "5df38788acbcd644499eee2a",
       "patient_rate": 1
     }
   ],

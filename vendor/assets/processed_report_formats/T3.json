@@ -1,11 +1,11 @@
 {
-  "created_at": "2019-12-08 16:14:39 UTC",
-  "updated_at": "2019-12-08 16:14:39 UTC",
+  "created_at": "2019-12-13 12:43:55 UTC",
+  "updated_at": "2019-12-13 12:43:55 UTC",
   "public": 0,
   "tests": [
     {
-      "created_at": "2019-12-08 16:14:39 UTC",
-      "updated_at": "2019-12-08 16:14:39 UTC",
+      "created_at": "2019-12-13 12:43:55 UTC",
+      "updated_at": "2019-12-13 12:43:55 UTC",
       "public": 0,
       "name": "T3",
       "lis_code": "T3",
@@ -14,14 +14,14 @@
       "interpret_ranges": 1,
       "ranges": [
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -30,8 +30,8 @@
               "range_type": "normal"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -64,14 +64,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -80,8 +80,8 @@
               "range_type": "normal"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -114,14 +114,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -152,14 +152,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -190,14 +190,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -228,14 +228,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -266,14 +266,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -304,14 +304,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -342,14 +342,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -380,14 +380,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -418,14 +418,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -456,14 +456,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -472,12 +472,12 @@
               "range_type": "normal"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216facbcd6314b8bb1fd",
+              "nested_id": "5df3878bacbcd644499eeee7",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -487,12 +487,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "2nd Trimester Range",
               "description": "The range in the second trimester",
-              "nested_id": "5ded216facbcd6314b8bb1fe",
+              "nested_id": "5df3878bacbcd644499eeee8",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 90.0,
@@ -502,12 +502,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "3rd Trimester Range",
               "description": "The range in the third trimester",
-              "nested_id": "5ded216facbcd6314b8bb1ff",
+              "nested_id": "5df3878bacbcd644499eeee9",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 180.0,
@@ -542,14 +542,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -580,14 +580,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -596,12 +596,12 @@
               "range_type": "normal"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216facbcd6314b8bb200",
+              "nested_id": "5df3878bacbcd644499eeeea",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -611,12 +611,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "2nd Trimester Range",
               "description": "The range in the second trimester",
-              "nested_id": "5ded216facbcd6314b8bb201",
+              "nested_id": "5df3878bacbcd644499eeeeb",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 90.0,
@@ -626,12 +626,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "3rd Trimester Range",
               "description": "The range in the third trimester",
-              "nested_id": "5ded216facbcd6314b8bb202",
+              "nested_id": "5df3878bacbcd644499eeeec",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 180.0,
@@ -666,14 +666,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -704,14 +704,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -720,12 +720,12 @@
               "range_type": "normal"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "1st Trimester Range",
               "description": "The range in the first trimester",
-              "nested_id": "5ded216facbcd6314b8bb203",
+              "nested_id": "5df3878bacbcd644499eeeed",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 0.0,
@@ -735,12 +735,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "2nd Trimester Range",
               "description": "The range in the second trimester",
-              "nested_id": "5ded216facbcd6314b8bb204",
+              "nested_id": "5df3878bacbcd644499eeeee",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 90.0,
@@ -750,12 +750,12 @@
               "range_type": "history"
             },
             {
-              "created_at": "2019-12-08 16:14:39 UTC",
-              "updated_at": "2019-12-08 16:14:39 UTC",
+              "created_at": "2019-12-13 12:43:55 UTC",
+              "updated_at": "2019-12-13 12:43:55 UTC",
               "public": 0,
               "name": "3rd Trimester Range",
               "description": "The range in the third trimester",
-              "nested_id": "5ded216facbcd6314b8bb205",
+              "nested_id": "5df3878bacbcd644499eeeef",
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
               "min_history_val": 180.0,
@@ -808,13 +808,13 @@
   ],
   "requirements": [
     {
-      "created_at": "2019-12-08 16:14:39 UTC",
-      "updated_at": "2019-12-08 16:14:39 UTC",
+      "created_at": "2019-12-13 12:43:55 UTC",
+      "updated_at": "2019-12-13 12:43:55 UTC",
       "public": 0,
       "categories": [
         {
-          "created_at": "2019-12-08 16:14:39 UTC",
-          "updated_at": "2019-12-08 16:14:39 UTC",
+          "created_at": "2019-12-13 12:43:55 UTC",
+          "updated_at": "2019-12-13 12:43:55 UTC",
           "public": 0,
           "name": "SST Tube",
           "quantity": 1.0,
@@ -826,21 +826,21 @@
   ],
   "rates": [
     {
-      "created_at": "2019-12-08 16:14:39 UTC",
-      "updated_at": "2019-12-08 16:14:39 UTC",
+      "created_at": "2019-12-13 12:43:55 UTC",
+      "updated_at": "2019-12-13 12:43:55 UTC",
       "public": 0,
       "for_organization_id": "*",
       "rate": 100.0,
-      "name": "5ded216dacbcd6314b8bb145",
+      "name": "5df38788acbcd644499eee2a",
       "patient_rate": 0
     },
     {
-      "created_at": "2019-12-08 16:14:39 UTC",
-      "updated_at": "2019-12-08 16:14:39 UTC",
+      "created_at": "2019-12-13 12:43:55 UTC",
+      "updated_at": "2019-12-13 12:43:55 UTC",
       "public": 0,
       "for_organization_id": "*",
       "rate": 100.0,
-      "name": "5ded216dacbcd6314b8bb145",
+      "name": "5df38788acbcd644499eee2a",
       "patient_rate": 1
     }
   ],

@@ -677,6 +677,7 @@ namespace :pathofast do
             rescue => e
                 puts e.to_s
                 puts "error #{file}"
+                exit(1)
             end
         end
     end

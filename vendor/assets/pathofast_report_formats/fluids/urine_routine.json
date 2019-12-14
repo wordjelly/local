@@ -315,75 +315,29 @@
 						{
 							"range_type" : "normal",
 							"min_range_val" : 0,
-							"max_range_val" : 3
+							"max_range_val" : 0
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 0,
+							"max_range_val" : 3,
+							"inference" : "1+"
 						},
 						{
 							"range_type" : "abnormal",
 							"min_range_val" : 3,
 							"max_range_val" : 10,
-							"inference" : "1+"
-						},
-						{
-							"range_type" : "abnormal",
-							"min_range_val" : 11,
-							"max_range_val" : 15,
 							"inference" : "2+"
 						},
 						{
 							"range_type" : "abnormal",
-							"min_range_val" : 16,
+							"min_range_val" : 10,
 							"max_range_val" : 20,
 							"max_range_value_unbound" : 1,
 							"inference" : "3+"
 						}
 					]
 				},
-				{
-					"max_age_years" : 120,
-					"min_age_years" : 0,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
-							"min_range_val" : 0,
-							"max_range_val" : 3
-						},
-						{
-							"range_type" : "abnormal",
-							"min_range_val" : 3,
-							"max_range_val" : 10,
-							"inference" : "1+"
-						},
-						{
-							"range_type" : "abnormal",
-							"min_range_val" : 11,
-							"max_range_val" : 15,
-							"inference" : "2+"
-						},
-						{
-							"range_type" : "abnormal",
-							"min_range_val" : 16,
-							"max_range_val" : 20,
-							"max_range_value_unbound" : 1,
-							"inference" : "3+"
-						}
-					]
-				}
-			]
-		},
-		{
-			"name" : "Renal Tubular Epithelial Cell Count",
-			"description" : "Number of Renal Tubular Epithelial Cells per high power field",
-			"lis_code" : "URINE_RTEC",
-			"result_type" : "numeric",
-			"units" : "nos",
-			"only_include_in_report_if_abnormal" : -1,
-			"test_must_have_value" : 1,
-			"ranges" : [
 				{
 					"reference" : "",
 					"max_age_years" : 120,
@@ -397,58 +351,23 @@
 						{
 							"range_type" : "normal",
 							"min_range_val" : 0,
-							"max_range_val" : 3
+							"max_range_val" : 0
 						},
 						{
 							"range_type" : "abnormal",
-							"min_range_val" : 3,
-							"max_range_val" : 10,
-							"inference" : "1+"
-						},
-						{
-							"range_type" : "abnormal",
-							"min_range_val" : 11,
-							"max_range_val" : 15,
-							"inference" : "2+"
-						},
-						{
-							"range_type" : "abnormal",
-							"min_range_val" : 16,
-							"max_range_val" : 20,
-							"max_range_value_unbound" : 1,
-							"inference" : "3+"
-						}
-					]
-				},
-				{
-					"max_age_years" : 120,
-					"min_age_years" : 0,
-					"min_age_months" : 0,
-					"max_age_months" : 0,
-					"min_age_days" : 0,
-					"max_age_days" : 0,
-					"sex" : "Female",
-					"tags" : [
-						{
-							"range_type" : "normal",
 							"min_range_val" : 0,
-							"max_range_val" : 3
+							"max_range_val" : 3,
+							"inference" : "1+"
 						},
 						{
 							"range_type" : "abnormal",
 							"min_range_val" : 3,
 							"max_range_val" : 10,
-							"inference" : "1+"
-						},
-						{
-							"range_type" : "abnormal",
-							"min_range_val" : 11,
-							"max_range_val" : 15,
 							"inference" : "2+"
 						},
 						{
 							"range_type" : "abnormal",
-							"min_range_val" : 16,
+							"min_range_val" : 10,
 							"max_range_val" : 20,
 							"max_range_value_unbound" : 1,
 							"inference" : "3+"

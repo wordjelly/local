@@ -16,8 +16,12 @@ class Inventory::ItemType
 	index_name "pathofast-inventory-item-types"
 	document_type "inventory/item-type"
 
-	## supplier is always you.
-	## there is no other supplier.
+	## so there are two major problems
+	## add inventory already existing inside the lab
+	## for eg -> item_group
+	## local_item_group
+	## in that item_types
+	## and then create such bunches.
 
 	attribute :name, String
 	validates_presence_of :name

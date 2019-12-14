@@ -35,8 +35,14 @@ class Inventory::Item
 
 	## what happens after this?
 	## where to add this, inside the local item group.
-
+	## okay so what needs to be done here
+	## first we create a bunch of item types
+	## say a simple SST tube
+	## then we 
 	attribute :transaction_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
+
+	## so here if there is no known transaction, then we are in trouble.
+	## because for the transaction the supplier is necessary.
 	validates_presence_of :transaction_id, :if => Proc.new{|c| !c.barcode.blank?}
 
 	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}

@@ -819,6 +819,21 @@ module Concerns::OrderConcern
 			c.id.to_s
 		}
 
+		## what about collapse ranges ?
+		## suppose we keep sex as an array 
+		## and we match on that ?
+		## patient meets age requirements ?
+		## we will have to write a program to first find the 
+		## range and convert
+		## it.
+		## next step is to make a patient 
+		## create 5 reports of the pre-op
+		## add some test value 
+		## and see what kind of report is generated
+		## if the emails are sent
+		## and if the receipt is generated -> how to print it.
+		## then we move for lis-> with proper codes -> and interfacing.
+
 		self.template_report_ids.each do |r_id|
 			#puts "doing template report id: #{r_id}"
 			unless existing_report_ids.include? r_id

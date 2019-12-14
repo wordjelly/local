@@ -1,11 +1,11 @@
 {
-  "created_at": "2019-12-08 16:14:37 UTC",
-  "updated_at": "2019-12-08 16:14:37 UTC",
+  "created_at": "2019-12-13 12:43:54 UTC",
+  "updated_at": "2019-12-13 12:43:54 UTC",
   "public": 0,
   "tests": [
     {
-      "created_at": "2019-12-08 16:14:37 UTC",
-      "updated_at": "2019-12-08 16:14:37 UTC",
+      "created_at": "2019-12-13 12:43:54 UTC",
+      "updated_at": "2019-12-13 12:43:54 UTC",
       "public": 0,
       "name": "IgE",
       "lis_code": "IGE",
@@ -14,14 +14,14 @@
       "interpret_ranges": 1,
       "ranges": [
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -52,14 +52,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -90,14 +90,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -128,14 +128,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -166,14 +166,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -204,14 +204,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -242,14 +242,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -280,14 +280,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -318,14 +318,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -356,14 +356,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -394,14 +394,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -432,14 +432,14 @@
           ]
         },
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "active": 0,
           "tags": [
             {
-              "created_at": "2019-12-08 16:14:37 UTC",
-              "updated_at": "2019-12-08 16:14:37 UTC",
+              "created_at": "2019-12-13 12:43:54 UTC",
+              "updated_at": "2019-12-13 12:43:54 UTC",
               "public": 0,
               "selected_option_must_match_history_options": -1,
               "option_must_be_chosen": -1,
@@ -485,13 +485,13 @@
   ],
   "requirements": [
     {
-      "created_at": "2019-12-08 16:14:37 UTC",
-      "updated_at": "2019-12-08 16:14:37 UTC",
+      "created_at": "2019-12-13 12:43:54 UTC",
+      "updated_at": "2019-12-13 12:43:54 UTC",
       "public": 0,
       "categories": [
         {
-          "created_at": "2019-12-08 16:14:37 UTC",
-          "updated_at": "2019-12-08 16:14:37 UTC",
+          "created_at": "2019-12-13 12:43:54 UTC",
+          "updated_at": "2019-12-13 12:43:54 UTC",
           "public": 0,
           "name": "SST Tube",
           "quantity": 1.0,
@@ -503,21 +503,21 @@
   ],
   "rates": [
     {
-      "created_at": "2019-12-08 16:14:37 UTC",
-      "updated_at": "2019-12-08 16:14:37 UTC",
+      "created_at": "2019-12-13 12:43:54 UTC",
+      "updated_at": "2019-12-13 12:43:54 UTC",
       "public": 0,
       "for_organization_id": "*",
       "rate": 100.0,
-      "name": "5ded216dacbcd6314b8bb145",
+      "name": "5df38788acbcd644499eee2a",
       "patient_rate": 0
     },
     {
-      "created_at": "2019-12-08 16:14:37 UTC",
-      "updated_at": "2019-12-08 16:14:37 UTC",
+      "created_at": "2019-12-13 12:43:54 UTC",
+      "updated_at": "2019-12-13 12:43:54 UTC",
       "public": 0,
       "for_organization_id": "*",
       "rate": 100.0,
-      "name": "5ded216dacbcd6314b8bb145",
+      "name": "5df38788acbcd644499eee2a",
       "patient_rate": 1
     }
   ],
