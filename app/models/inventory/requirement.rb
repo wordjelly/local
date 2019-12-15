@@ -18,6 +18,10 @@ class Inventory::Requirement
 	attribute :categories, Array[Inventory::Category]
 	attribute :name, String, mapping: {type: 'keyword'}
 
+	## so we make an item group
+	## only validation is that an item can belong to only 2 max 
+	## item groups.
+	## 
 
 	def self.permitted_params
 		[

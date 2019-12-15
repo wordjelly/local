@@ -14,6 +14,7 @@ class Inventory::Category
 	include Concerns::FormConcern
 	include Concerns::CallbacksConcern
 
+	## how to make a local item group.
 
 	attribute :name, String, mapping: {type: 'keyword'}
 	## this is a percentage.
@@ -171,6 +172,8 @@ class Inventory::Category
 		
 
 		organization_id_to_report_hash = {}
+
+		
 
 		selected_reports = reports.select{|c| 
 			

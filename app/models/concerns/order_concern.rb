@@ -502,18 +502,22 @@ module Concerns::OrderConcern
 		else
 			return if self.validations_to_skip.include? "set_changed_for_lis"
 		end
-		#puts "inside changed for lis---"
-		#puts self.changed_attributes.to_s
+		puts "inside changed for lis---"
+		puts "the changed attributes"
+		puts self.changed_attributes.to_s
+
+		puts "changed array attribute sizes:"
+		puts self.changed_array_attribute_sizes.to_s
 
 		## okay so good old changed attributes.
 		## so changed for lis is not suppose to be triggered here.
 		## what about if this is a new record ?
 		## 
 		## if the changed for lis itself was changed, don't do anything
-		return if self.changed_attributes.include? "changed_for_lis".to_sym
+		return if self.changed_attributes.include? "changed_for_lis"
 
-		["reports","categories"].each do |k|
-			if self.changed_array_attribute_sizes.include? k.to_sym
+		["template_report_ids","categories"].each do |k|
+			if self.changed_array_attribute_sizes.include? k
 				self.changed_for_lis = Time.now.to_i
 			end
 		end
@@ -528,13 +532,15 @@ module Concerns::OrderConcern
 			#puts category.changed_attributes.to_s
 			#puts category.changed_array_attribute_sizes.to_s
 			#puts category.changed_array_attribute_sizes
-			if category.changed_array_attribute_sizes.include? "items"
-				self.changed_for_lis = Time.now.to_i
-			else
-				category.items.each do |item|
+			unless category.changed_array_attribute_sizes.blank?
+				if category.changed_array_attribute_sizes.include? "items"
+					self.changed_for_lis = Time.now.to_i
+				else
+					category.items.each do |item|
 
-					if item.changed_attributes.include? "use_code".to_sym
-						self.changed_for_lis = Time.now.to_i
+						if item.changed_attributes.include? "use_code".to_sym
+							self.changed_for_lis = Time.now.to_i
+						end
 					end
 				end
 			end
@@ -841,6 +847,7 @@ module Concerns::OrderConcern
 				report.created_by_user = User.find(report.created_by_user_id)
 				report.current_user = self.current_user
 				#puts "report found is: #{report.id.to_s}"
+				#exit(1)
 				report.run_callbacks(:find)
 				#before adding the report, prune that bitch.
 				#for all the ranges.
@@ -1039,13 +1046,13 @@ module Concerns::OrderConcern
 		}
 
 		self.categories.each do |category|
-			#puts "doing category: #{category.name}"
+			puts "doing category: #{category.name}"
 
 			category.set_item_report_applicability(self.reports)
 			
 			category.items.each do |item|
-				#puts "item applicable to reports are:"
-				#puts item.applicable_to_report_ids.to_s
+				puts "item applicable to reports are:"
+				puts item.applicable_to_report_ids.to_s
 				#exit(1)
 				## can this item be created at all?
 				## that's the first thing.f
@@ -1528,6 +1535,8 @@ module Concerns::OrderConcern
 	def update_lis_results(order_from_lis)
 		self.tests_changed_by_lis ||= {}
 		test_to_result_hash = order_from_lis.get_test_to_result_hash
+		puts "test to result hash is:"
+		puts test_to_result_hash
 		## suppose an order no longer exists.
 		## test has changed / been deleted
 		## anything.
@@ -1539,12 +1548,20 @@ module Concerns::OrderConcern
 			report.tests.each do |test|
 				unless test_to_result_hash[test.lis_code].blank?
 					if test.can_be_updated_by_lis?(test_to_result_hash[test.lis_code],report)
-						test.result_raw = test_to_result_hash[test.lis_code]
+						puts "came to yes we can update ht result."
+						puts test_to_result_hash[test.lis_code]
+						puts "the raw result is:"
+						puts test_to_result_hash[test.lis_code][report.currently_held_by_organization]
+
+						test.result_raw = test_to_result_hash[test.lis_code][report.currently_held_by_organization]
+						puts "result raw is: #{test.result_raw}"
 						if self.tests_changed_by_lis[test.lis_code].blank?
 							self.tests_changed_by_lis[test.lis_code] = {report.currently_held_by_organization => []}
 						end
 						self.tests_changed_by_lis[test.lis_code][report.currently_held_by_organization] << test_to_result_hash[test.lis_code]
 					end
+				else
+					puts "test to result has is blank for: #{test.lis_code}"
 				end
 			end
 		end
@@ -1558,9 +1575,9 @@ module Concerns::OrderConcern
 		self.reports.each do |report|
 			report.tests.each do |test|
 				report_org = report.currently_held_by_organization
-				if !expected_updates[lis_code].blank?
-					if !expected_updates[lis_code][currently_held_by_organization].blank?
-						self.errors.add(:tests, "the test: #{test.name}, was not successfully updated") unless (test.result_raw == expected_updates[lis_code][currently_held_by_organization])
+				if !expected_updates[test.lis_code].blank?
+					if !expected_updates[test.lis_code][currently_held_by_organization].blank?
+						self.errors.add(:tests, "the test: #{test.name}, was not successfully updated") unless (test.result_raw == expected_updates[test.lis_code][currently_held_by_organization])
 					end
 				end
 			end
@@ -1693,6 +1710,8 @@ module Concerns::OrderConcern
 				response["hits"]["hits"].each do |hit|
 					order = Business::Order.new(hit["_source"])
 					order.id = hit["_id"]
+					order.created_by_user = User.find(order.created_by_user_id)
+					order.run_callbacks(:find)
 					orders[order.id.to_s] = order
 				end
 			end
@@ -1749,7 +1768,7 @@ module Concerns::OrderConcern
 				}
 			})
 			orders = []
-			puts search_request.response.to_s
+			#puts search_request.response.to_s
 			total_hits = search_request.response.total
 			search_request.response.hits.hits.each do |hit|
 				order = Business::Order.new(hit["_source"])

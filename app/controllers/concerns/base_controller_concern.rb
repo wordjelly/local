@@ -189,6 +189,10 @@ module Concerns::BaseControllerConcern
 			instance.versions.push(v)
 		end
 
+		# so how to transfer from one item group --> a local item group
+		# so the local_item_group -> can there be multiple ?
+		# 
+
 		# okay so the permitted parameters.
 		## this has to be a global setting
 		## like in test, we have to be able to disable it in the

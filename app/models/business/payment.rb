@@ -296,7 +296,7 @@ class Business::Payment
 
 		customizations = {}
 
-		customizations["payment_mode"] = "<div class='input-field'>" + (select_tag(root + "[payment_mode]",options_for_select(PAYMENT_MODES,(self.payment_mode || CASH)))) + "<label>Choose Payment Mode</label></div>"
+		customizations["payment_mode"] = "<div class='input-field'>" + (select_tag(root + "[payment_mode]",options_for_select(PAYMENT_MODES),{:include_blank => true})) + "<label>Choose Payment Mode</label></div>"
 
 		customizations["payment_type"] = "<div class='input-field'>" + (select_tag(root + "[payment_type]",options_for_select(PAYMENT_TYPES,(self.payment_type || BILL)))) + "<label>Choose Payment Type</label></div>"
 

@@ -337,14 +337,16 @@ class Inventory::Item
 		## make an item and item group controller.
 		## and views
 		## then we move to item transfer.
+		puts "came to assign id from name, the id was: #{self.id}, the name was: #{self.name}, the barcode was: #{self.barcode}"
 		if self.id.blank?	
 			if self.code_matches?
-				#puts "code matched."
+				puts "code matched."
 				self.id = self.name = self.code
-				#puts "self id : #{self.id}"
-				#puts "self name : #{self.name}"
-				#puts "self code: #{self.code}"
+				puts "self id : #{self.id}"
+				puts "self name : #{self.name}"
+				puts "self code: #{self.code}"
 			else
+				puts "code does not match."
 				self.id = self.name = self.barcode
 			end
 		end
@@ -388,9 +390,11 @@ class Inventory::Item
 		## i just want to test if the matching is working, and a
 		## range is being picked or not.
 		## then we go for dropdown.
+		##puts "self name is: #{self.name}, id is: #{self.id}"
+
 		'
 			<tr>
-				<td>' + self.name + '</td>
+				<td>' + (self.barcode || self.code) + '</td>
 				<td>' + date + '</td>
 				<td><div class="edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Edit</div></td>
 			</tr>

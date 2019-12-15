@@ -16,7 +16,7 @@
 		{
 			"name" : "Prothrombin Time",
 			"description" : "Prothrombin Time estimation",
-			"lis_code" : "PT",
+			"lis_code" : "SPT",
 			"result_type" : "numeric",
 			"units" : "seconds",
 			"only_include_in_report_if_abnormal" : -1,
@@ -117,7 +117,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
@@ -151,7 +151,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
@@ -185,7 +185,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
@@ -219,7 +219,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
@@ -253,7 +253,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
@@ -267,10 +267,10 @@
 	],
 	"requirements" : [
 		{
-			"name" : "Serum Container",
+			"name" : "Citrate Container",
 			"categories" : [
 				{
-					"name" : "SST Tube",
+					"name" : "Citrate Tube",
 					"quantity" : 1.0
 				}
 			]	

@@ -5,8 +5,6 @@ class InterfacesController < ApplicationController
 
 	def index
 		if @authorization_error.blank?
-			## need the total hit size as well.
-
 			result = Business::Order.find_orders_changed_for_lis(params,@organization)
 			orders = result[:orders]
 			size = result[:size]
@@ -78,21 +76,34 @@ class InterfacesController < ApplicationController
 		if @authorization_error.blank?
 			#puts "the permitted params are:"
 			#puts params.to_s
-			incoming_orders = permitted_params[:orders].map{|c| Business::Order.new(c) }
+			incoming_orders = permitted_params[:orders].map{|c| o = Business::Order.new(c)
+			 }
 			orders = Business::Order.find_orders({orders: incoming_orders})
 			## find_orders returns a hash keyed by id.
 			orders.keys.each do |order_id|
 				order = orders[order_id]
-				order.update_lis_results(orders[order_id])
+				order.update_lis_results(incoming_orders.select{|c| c.id.to_s == order_id}[0])
 				order.skip_owners_validations = true	
+
 				order.validations_to_skip = ["set_changed_for_lis","cascade_id_generation"]
-				order.validate
+				puts "the deep attributes becom:"
+				puts order.reports[0].tests[0].attributes.to_s
+				puts "----------------------------------------------"
+				k = order.valid?
+				puts "-------------------- THESE ARE THE ERRORS --------------------- #{k.to_s} "
+				puts order.errors.full_messages.to_s
+				puts order.reports[0].errors.full_messages
+				puts order.reports[0].tests[0].errors.full_messages
+				
+				#puts order.reports[0].tests[0].attributes.to_s
+				#exit(1)
+				puts order.deep_attributes(true,false)
 				Business::Order.add_bulk_item({
 					update: {
 						_index: Business::Order.index_name,
 						_type: Business::Order.document_type,
 						_id: order.id.to_s,
-						data: {doc: order.attributes}
+						data: {doc: order.deep_attributes(true,false)}
 					}
 				})
 			end
@@ -111,7 +122,10 @@ class InterfacesController < ApplicationController
 				updated_orders[updated_order_id].lis_updates_done?(orders[updated_order_id].tests_changed_by_lis)
 			end
 		end
-		
+			
+		puts "updated orders are:"
+		puts updated_orders.to_s
+
 		respond_to do |format|
 			format.json do 
 				unless @authorization_error.blank?

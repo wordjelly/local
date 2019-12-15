@@ -16,7 +16,7 @@
 		{
 			"name" : "International Normalized Ratio",
 			"description" : "International Normalized Ratio estimation",
-			"lis_code" : "INR",
+			"lis_code" : "SINR",
 			"result_type" : "numeric",
 			"units" : "ratio",
 			"only_include_in_report_if_abnormal" : -1,
@@ -123,10 +123,10 @@
 	],
 	"requirements" : [
 		{
-			"name" : "Serum Container",
+			"name" : "Citrate Container",
 			"categories" : [
 				{
-					"name" : "SST Tube",
+					"name" : "Citrate Tube",
 					"quantity" : 1.0
 				}
 			]	

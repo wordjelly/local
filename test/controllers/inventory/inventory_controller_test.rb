@@ -855,30 +855,5 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 	end
 =end	
 	
-	## so lets start with the basic architecture.
-	## let me get payments, balance, top up,
-	## orders, reports, statements -
-	## inventory, working.
-	## at least the basics.
-	## then we move to packages,rates,notifications and
-	## percentage deployable code -> is what matters.
-	## so we start with a basic architecture.
-	## how much of this can you deploy.
-	## that is the question.
-	## no point forging ahead.
-	## at least -> organization -> creates patient
-	## patient -> or i can simulate just the payments part first
-	## and check specific shit.
-	## okay so today's targets -> simulate the payment.
-	## with a multi patient architecture
-	## like plus wants one report -> patient.
-	## and one report to us -> which we bill to her.
-	## and another alternative architecture
-	## then do top up and check.
-	## and prepare architecture for that
-	## patient dummy organization -> 
-	## this much we target today.
-	## i divide the tests into 
-	## so let me start with the architecture.
 
 end

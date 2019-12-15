@@ -508,10 +508,10 @@ class Diagnostics::Test
 	## so here we add_result.
 	## 
 	def add_result(patient,history_tags)
-		#puts "Called add result with patient data"
-		#puts "the result raw is:"
-		#puts self.result_raw.to_s
-		#puts "result text is:"
+		puts "Called add result with patient data"
+		puts "the result raw is:"
+		puts self.result_raw.to_s
+		puts "result text is:"
 		#puts self.result_text.to_s
 		unless (self.result_raw.blank? || self.result_raw == DEFAULT_RESULT)
 			
@@ -783,8 +783,20 @@ class Diagnostics::Test
 	## @called_from : app/models/concerns/order_concern.rb
 	## when the lis wants to add a result for this test, you can use this method to decide if it should be allowed or not.
 	def can_be_updated_by_lis?(lis_test_result,parent_report)
+		puts "list test result"
+		puts lis_test_result.to_s
+		puts "parent report currently held"
+		puts parent_report.currently_held_by_organization
 		if lis_test_result.keys[0] == parent_report.currently_held_by_organization
-			(!self.is_verification_done? && self.is_ready_for_reporting?)
+			##  && self.is_ready_for_reporting?
+			
+			if (self.verification_done == -1)
+				puts "Returning true to change the test by lis lis"
+				true
+			else
+				puts "return false"
+				false
+			end
 		else
 			false
 		end

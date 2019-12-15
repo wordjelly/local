@@ -210,6 +210,7 @@ module Concerns::MissingMethodConcern
 					
 				end
 			end
+			attributes["id"] = self.id.to_s
 			if include_blank_attributes.blank?
 				attributes.delete_if{|key,value|
 					value.blank?

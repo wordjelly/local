@@ -590,9 +590,11 @@ class Business::Receipt
 		if self.newly_added == true	
 			return true		
 		else
-			if self.prev_size["payments"] < self.current_size["payments"]
-				self.force_pdf_generation = true
-				#return true
+			unless (self.prev_size.blank? && self.current_size.blank?)
+				if self.prev_size["payments"] < self.current_size["payments"]
+					self.force_pdf_generation = true
+					#return true
+				end
 			end
 			if self.any_payment_status_changed?
 				#return true

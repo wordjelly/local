@@ -39,6 +39,14 @@ class Inventory::ItemGroup
 	## this is auto assigned from the barcode.
 	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
 	
+	## so we just update it.
+	## update an existing item ?
+	## no we update it -> 
+	## transfer existing.
+	## previous item groups
+	## we add one thing like this.
+	## what else
+	## transfer -> ?
 
 	## so here we want to scan the location id or have an autocomplete on it?
 	attribute :location_id, String, mapping: {type: 'keyword', copy_to: "search_all"}

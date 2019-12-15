@@ -657,7 +657,7 @@ namespace :pathofast do
     task add_pathofast_reports: :environment do 
         Diagnostics::Report.send("create_index!",{force: true})
         u = User.where(:email => "bhargav.r.raut@gmail.com").first
-        path = Rails.root.join('vendor','assets','pathofast_report_formats','**/*.json')
+        path = Rails.root.join('vendor','assets','pathofast_report_formats','coagulation','**/*.json')
         Dir.glob(path)[0..2].each do |file|
             r = Diagnostics::Report.new(JSON.parse(IO.read(file)))
             r.created_by_user = u

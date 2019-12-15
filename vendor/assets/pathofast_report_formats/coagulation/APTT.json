@@ -16,7 +16,7 @@
 		{
 			"name" : "Activated Partial Thromboplastin Time",
 			"description" : "Activated Partial Thromboplastin Time estimation",
-			"lis_code" : "APTT",
+			"lis_code" : "SAPTT",
 			"result_type" : "numeric",
 			"units" : "seconds",
 			"only_include_in_report_if_abnormal" : -1,
@@ -61,7 +61,7 @@
 				{
 					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
 					"max_age_years" : 9,
-					"min_age_years" : 7,
+					"min_age_years" : 6,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -78,7 +78,7 @@
 				{
 					"reference" : "http://clinchem.aaccjnls.org/content/clinchem/51/9/1738.full.pdf",
 					"max_age_years" : 9,
-					"min_age_years" : 7,
+					"min_age_years" : 6,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -117,7 +117,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
@@ -151,7 +151,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
@@ -185,7 +185,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
@@ -219,7 +219,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
@@ -260,12 +260,19 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
 							"min_range_val" : 26.26,
 							"max_range_val" : 35.12
+						},
+						{
+							"name" : "Heparin Infusion",
+							"range_type" : "history",
+							"min_range_val" : 75,
+							"max_range_val" : 90,
+							"text_history_val" : "Heparin Infusion" 
 						}
 					]
 				}
@@ -274,10 +281,10 @@
 	],
 	"requirements" : [
 		{
-			"name" : "Serum Container",
+			"name" : "Citrate Container",
 			"categories" : [
 				{
-					"name" : "SST Tube",
+					"name" : "Citrate Tube",
 					"quantity" : 1.0
 				}
 			]	

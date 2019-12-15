@@ -9,7 +9,7 @@ class Inventory::ItemType
 	include Concerns::OwnersConcern
 	include Concerns::AlertConcern
 	include Concerns::FormConcern
-	include Concerns::VersionedConcern
+	#include Concerns::VersionedConcern
 	include Concerns::CallbacksConcern
 
 
