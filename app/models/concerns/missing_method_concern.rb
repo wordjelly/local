@@ -37,6 +37,10 @@ module Concerns::MissingMethodConcern
 		##single attribute -> can be true(if it was newly added) or blank.
 		## intended to be used with 
 		attr_accessor :newly_added
+
+		attr_accessor :attributes_were
+
+		attr_accessor :attributes_are
   	
 	    ## initialize these if they are nil.
 	    ## At this stage.
@@ -220,6 +224,13 @@ module Concerns::MissingMethodConcern
 		end
 
 	end
+
+	## sort out remaining issues of interfaces
+	## so lets start with this. 
+	## and why its polling multiple times.
+	## sort that
+	## and also the response returning
+	## run tests for pf lab interface basically.
 
 	module ClassMethods
 

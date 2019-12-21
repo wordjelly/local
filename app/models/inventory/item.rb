@@ -27,18 +27,20 @@ class Inventory::Item
 	## that is also important at this stage.
 	attribute :supplier_item_group_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
-	## we need also an internal item_group_id.
-	## how does this play out?
-	## we don't add items on transactions.
-	## this is done on item groups.
+	## so its assigned to one item group already
+	## a local item group -> that was created when we came here
+	## so i want to make an item group -> 
+	## like a collection packet -> 
+	## i want to add a barcode to it.
+	## we basically want to update the local_item_group_id.
+	## as we created a new local item group -> bought it -> added items to it.
+	## so we can give an option (add existing item)
+	## something like existing item id
+	## then it can decide further.
+	## 
 	attribute :local_item_group_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
-	## what happens after this?
-	## where to add this, inside the local item group.
-	## okay so what needs to be done here
-	## first we create a bunch of item types
-	## say a simple SST tube
-	## then we 
+	
 	attribute :transaction_id, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
 	## so here if there is no known transaction, then we are in trouble.
@@ -52,7 +54,9 @@ class Inventory::Item
 	## anand will create some item types (lithium and red top tube.)
 	## then pathofast will order them.
 	## then pathofast will use them in an order.
-
+	## suppose we check existing item ?
+	## would that work better -> it will see if already alloted to any patient ?
+	## so we say update item.
 
 	attribute :location_id, String, mapping: {type: 'keyword'}
 
@@ -186,9 +190,48 @@ class Inventory::Item
 
 	end
 
+	validate :item_type_id_change
+
+	## for eg transferring tube from one packet to another.
+	## find even one order where this item exists, and it is not complete.
+	validate :local_item_group_id_change
+
 	before_validation do |document|
 		document.assign_id_from_name(nil)
 	end
+
+	## can the local item group change ?
+	## if its not already inside some order
+	## can we chagne it ?
+	## right so for that, first the patient order has to be totally completed
+	## if that is done, then it can be transferred.
+	## so how to check that ?
+	## same here only.
+
+	def item_type_id_change
+		if self.changed_attributes.include? "item_type_id"
+			if self.attributes_were["item_type_id"].blank?
+			else
+				self.errors.add(:item_type_id, "the item type id cannot be changed") if self.item_type_id != self.attributes_were["item_type_id"]
+			end
+		end
+	end
+
+	def local_item_group_id_change
+		if self.changed_attributes.include? "local_item_group_id"
+			unless self.attributes_were["local_item_group_id"].blank?
+				if order =  Business::Order.find_incomplete_order_with_barcode(self.id.to_s)
+					self.errors.add(:local_item_group_id,"this item ")
+				end
+			end
+		end
+	end
+
+
+
+	## local item group was changed
+	## is this allowed?
+	## the item was assigned to someone.
 
 	########################################################
 	##

@@ -16,6 +16,8 @@ gem 'virtus'
 gem 'premailer-rails'
 gem 'youtube_rails'
 gem 'time_difference'
+gem 'rest-firebase'
+gem 'jwt'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails','5.2.3'

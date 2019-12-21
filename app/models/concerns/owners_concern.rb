@@ -91,10 +91,8 @@ module Concerns::OwnersConcern
 					## this part will change a bit.
 					self.owner_ids << [self.created_by_user.id.to_s]
 					unless self.created_by_user.organization.blank?
-						
 						self.owner_ids << [self.created_by_user.organization.id.to_s]
 						self.currently_held_by_organization = created_by_user.organization.id.to_s
-						
 					end
 				end
 				## if the document is an organization, its own id 

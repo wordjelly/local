@@ -1,4 +1,38 @@
 // this is the add_item_definition function.
+$(document).on('click','.add_existing_item',function(event){
+
+	$(this).next().toggle();
+
+});
+
+$(document).on('click','.submit_existing_item_to_group',function(event){
+
+	var item_id = $(this).prev().val();
+
+	var params = {
+		item: {
+			local_item_group_id : $(this).attr("data-local-item-group-id"),
+			item_type_id : $(this).attr("data-item-type-id"),
+			expiry_date : $(this).attr("data-expiry-date"),
+			transaction_id : $(this).attr("data-transaction-id"),
+			supplier_item_group_id : $(this).attr("data-supplier-item-group-id")
+		}
+	}
+
+	var params_string = $.param(params);
+
+	//console.log("params string is:");
+	//console.log(params_string);
+
+	var getUrl = window.location;
+	
+	var url = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + "/items/"  +  item_id + "/edit?" + params_string;
+
+	window.location.href = url;
+
+	//console.log("base url is:" + baseUrl);
+});
+
 $(document).on('click','.add_item_definition',function(event){
 	// together with this it should have the remove icon.
 	// and somehow seperate and indent

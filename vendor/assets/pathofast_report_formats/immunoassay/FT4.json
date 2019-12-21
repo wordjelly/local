@@ -370,8 +370,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 0.94,
-							"max_range_val" : 1.57
+							"min_range_val" : 12.1,
+							"max_range_val" : 20.2
 						}
 					]
 				},

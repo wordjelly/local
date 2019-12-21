@@ -64,6 +64,12 @@ class Inventory::ItemGroup
 	
 	attribute :supplier_id, String, mapping: {type: 'keyword'}
 
+	## new item form is opened
+	## not from here
+	## so what we will do is select that
+	## if its before save ?
+	## or what ?
+	## this is not easy.
 	## the supplier id will be the self.
 	## unless it is provided.
 	## in that case, if we are cloning.
@@ -181,7 +187,13 @@ class Inventory::ItemGroup
 	      	}
 	    },
 	    copy_to: "search_all"
-
+	   	
+	   	## so if its an existing item
+	   	## we give such an option
+	   	## in that view
+	   	## so we use the barcode as the id.
+	   	## just give a custom field.
+	   	## on click handler etc.
 	    indexes :item_definitions, type: 'nested' do 
 	    	indexes :item_type_id, type: 'keyword'
 	    	indexes :quantity, type: 'integer'
@@ -189,7 +201,11 @@ class Inventory::ItemGroup
 	    end
 	end
 
-	
+	## that will hit item create
+	## actually that is not the right entry point.
+	## what we can do is what ?
+	## transfer_existing_item
+	## prompt for the barcode using javascript -> send to edit that item, so its just a small form issue.
 
 	def load_associate_item_counts
 		search_request = Inventory::Item.search({

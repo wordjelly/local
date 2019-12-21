@@ -14,7 +14,7 @@ class InterfacesController < ApplicationController
 				unless @authorization_error.blank?
 					render :json => {errors: @authorization_error}, status: :unauthorized
 				else
-					render :json => params.merge({:orders => orders})
+					render :json => params.merge({:orders => orders, :size => size})
 				end
 			end				
 		end
@@ -86,45 +86,31 @@ class InterfacesController < ApplicationController
 				order.skip_owners_validations = true	
 
 				order.validations_to_skip = ["set_changed_for_lis","cascade_id_generation"]
-				puts "the deep attributes becom:"
-				puts order.reports[0].tests[0].attributes.to_s
-				puts "----------------------------------------------"
-				k = order.valid?
-				puts "-------------------- THESE ARE THE ERRORS --------------------- #{k.to_s} "
-				puts order.errors.full_messages.to_s
-				puts order.reports[0].errors.full_messages
-				puts order.reports[0].tests[0].errors.full_messages
-				
-				#puts order.reports[0].tests[0].attributes.to_s
-				#exit(1)
-				puts order.deep_attributes(true,false)
-				Business::Order.add_bulk_item({
-					update: {
-						_index: Business::Order.index_name,
-						_type: Business::Order.document_type,
-						_id: order.id.to_s,
-						data: {doc: order.deep_attributes(true,false)}
-					}
-				})
+
+				if order.valid?
+					Business::Order.add_bulk_item({
+						update: {
+							_index: Business::Order.index_name,
+							_type: Business::Order.document_type,
+							_id: order.id.to_s,
+							data: {doc: order.deep_attributes(true,false)}
+						}
+					})
+				end
 			end
 		
-
 			Business::Order.flush_bulk
 			Elasticsearch::Persistence.client.indices.refresh index: Business::Order.index_name
 			updated_orders = Business::Order.find_orders({orders: incoming_orders})
 			updated_orders.keys.each do |updated_order_id|
-				## write an autoremove.
-				## and move on the rates logic.
-				## and payments logic.
-				## why can't i do this in two days ?
-				## i need a discount and rate api.
-				## 
 				updated_orders[updated_order_id].lis_updates_done?(orders[updated_order_id].tests_changed_by_lis)
 			end
 		end
-			
-		puts "updated orders are:"
-		puts updated_orders.to_s
+
+		#puts "updated orders is a #{updated_orders.class}"
+		#puts "to json----------------------->"
+		#puts updated_orders.to_json
+		#exit(1)
 
 		respond_to do |format|
 			format.json do 
@@ -135,6 +121,7 @@ class InterfacesController < ApplicationController
 				end
 			end
 		end
+		
 	end
 
 

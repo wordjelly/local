@@ -26,6 +26,19 @@
 								This Item Group Has Not Been Ordered
 							<% else %>
 								<% if @item_group.transaction.received? %>
+									<!-- fortunately here no custom forms -->
+									<span class="add_existing_item">
+										Add Existing Item
+									</span>
+									
+									<div style="display:none;">
+										<span>Enter existing item barcode, and then click submit</span>
+										<input type="text" class="existing_item_barcode" />
+										<a class="waves-effect waves-light btn submit_existing_item_to_group" data-local-item-group-id="<%= @item_group.id.to_s %>" data-item-type-id="<%= id['item_type_id'] %>" data-expiry-date="<%= id['expiry_date'] %>" data-transaction-id="<%= @item_group.transaction.id.to_s
+										 %>" data-supplier-item-group-id="<%= @item_group.cloned_from_item_group_id %>" >Submit</a>
+									</div>
+									<!-- so what should be validated -->
+									<!-- when the item group is changing -->
 									<%= link_to "Add Item", new_inventory_item_path(:item => {:local_item_group_id => @item_group.id.to_s, :item_type_id => id["item_type_id"],:expiry_date => id["expiry_date"], :transaction_id => @item_group.transaction_id, :supplier_item_group_id => @item_group.cloned_from_item_group_id})%>
 									<%= link_to "See All Items", inventory_items_path(:item => {:local_item_group_id => @item_group.id.to_s, :expiry_date => id["expiry_date"], :item_type_id => id["item_type_id"], :transaction_id => @item_group.transaction_id, :supplier_item_group_id => @item_group.cloned_from_item_group_id}) %>
 								<% else %>

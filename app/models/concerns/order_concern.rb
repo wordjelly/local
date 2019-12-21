@@ -59,6 +59,8 @@ module Concerns::OrderConcern
 		## so we will sort this one out
 		attribute :changed_for_lis, Date, mapping: {type: 'date', format: 'epoch_second'}
 
+		attribute :trigger_lis_poll, Integer, mapping: {type: 'integer'}, default: NO
+
 		attribute :name, String, mapping: {type: 'keyword'}
 
 		attribute :reports, Array[Diagnostics::Report]
@@ -341,8 +343,20 @@ module Concerns::OrderConcern
 		## if you do it each time, it will be a problem.
 		before_save do |document|
 			document.receipts.each do |receipt|
-				puts "going to update the total."
+				#puts "going to update the total."
 				throw(:abort) unless receipt.update_total
+			end
+		end
+
+		after_save do |document|
+			if document.trigger_lis_poll == YES
+				document.reports.each do |report|
+					$event_notifier.trigger_lis_poll(report.currently_held_by_organization,{:epoch => document.changed_for_lis.to_i.to_s})
+				end
+			else
+				if document.all_reports_verified?
+					$event_notifier.trigger_order_delete(report.currently_held_by_organization,{:order_id => self.id.to_s})
+				end
 			end
 		end
 
@@ -497,17 +511,21 @@ module Concerns::OrderConcern
 	# @Called_from : before_validation in self.
 	# @used_to : set an attribute on self called set_changed_for_lis, this is used by the local lis to check for which orders have changed and download them.
 	def set_changed_for_lis
+		## so in this case, we reset and then set only
+		## so after save it is accessible.
+		self.trigger_lis_poll = NO
 		return if self.new_record?
 		if self.validations_to_skip.blank?
 		else
 			return if self.validations_to_skip.include? "set_changed_for_lis"
 		end
-		puts "inside changed for lis---"
-		puts "the changed attributes"
-		puts self.changed_attributes.to_s
+		
+		#puts "inside changed for lis---"
+		#puts "the changed attributes"
+		#puts self.changed_attributes.to_s
 
-		puts "changed array attribute sizes:"
-		puts self.changed_array_attribute_sizes.to_s
+		#puts "changed array attribute sizes:"
+		#puts self.changed_array_attribute_sizes.to_s
 
 		## okay so good old changed attributes.
 		## so changed for lis is not suppose to be triggered here.
@@ -519,6 +537,8 @@ module Concerns::OrderConcern
 		["template_report_ids","categories"].each do |k|
 			if self.changed_array_attribute_sizes.include? k
 				self.changed_for_lis = Time.now.to_i
+				## here we push the event notification
+				self.trigger_lis_poll = YES
 			end
 		end
 		## only if all requirements fulfilled.
@@ -535,11 +555,15 @@ module Concerns::OrderConcern
 			unless category.changed_array_attribute_sizes.blank?
 				if category.changed_array_attribute_sizes.include? "items"
 					self.changed_for_lis = Time.now.to_i
+					self.trigger_lis_poll = YES
 				else
 					category.items.each do |item|
 
 						if item.changed_attributes.include? "use_code".to_sym
 							self.changed_for_lis = Time.now.to_i
+							self.trigger_lis_poll = YES
+							## this has to trigger after save.
+							## not before.
 						end
 					end
 				end
@@ -825,25 +849,13 @@ module Concerns::OrderConcern
 			c.id.to_s
 		}
 
-		## what about collapse ranges ?
-		## suppose we keep sex as an array 
-		## and we match on that ?
-		## patient meets age requirements ?
-		## we will have to write a program to first find the 
-		## range and convert
-		## it.
-		## next step is to make a patient 
-		## create 5 reports of the pre-op
-		## add some test value 
-		## and see what kind of report is generated
-		## if the emails are sent
-		## and if the receipt is generated -> how to print it.
-		## then we move for lis-> with proper codes -> and interfacing.
-
 		self.template_report_ids.each do |r_id|
 			#puts "doing template report id: #{r_id}"
 			unless existing_report_ids.include? r_id
+				puts "rid is: #{r_id}"
 				report = Diagnostics::Report.find(r_id)
+				#puts "report is :#{report}"
+				puts "created by user id is: #{report.created_by_user_id}"
 				report.created_by_user = User.find(report.created_by_user_id)
 				report.current_user = self.current_user
 				#puts "report found is: #{report.id.to_s}"
@@ -1768,8 +1780,8 @@ module Concerns::OrderConcern
 				}
 			})
 			orders = []
-			#puts search_request.response.to_s
-			total_hits = search_request.response.total
+			puts search_request.response.to_s
+			total_hits = search_request.response.hits.total
 			search_request.response.hits.hits.each do |hit|
 				order = Business::Order.new(hit["_source"])
 				order.id = hit["_id"]
@@ -1787,6 +1799,40 @@ module Concerns::OrderConcern
 				orders << order
 			end
 			{orders: orders, size: total_hits}
+		end
+
+		def find_incomplete_order_with_barcode(item_id)
+			search_request = Business::Order.search({
+				size: 1,
+				query: {
+					bool: {
+						must: 
+						[
+							{
+								nested: {
+									path: "categories",
+									query: {
+										nested: {
+											path: "categories.items",
+											query: {
+												bool: {
+													should: [
+														{
+															term: {
+																field: ""
+															}
+														}
+													]
+												}
+											}
+										}
+									}
+								}
+							}
+						]
+					}
+				}
+			})
 		end
 
 	end

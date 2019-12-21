@@ -41,9 +41,11 @@ class ::Hash
 		object.changed_array_attribute_sizes ||= []
 		object.prev_size ||= {}
 		object.current_size ||= {}
+		object.attributes_were ||= {}
+		object.attributes_are || {}
 
 		self.keys.each do |k|
-			
+			object.attributes_were[k] = self[k]
 			next if self[k].nil?
 			next unless object.respond_to? k
 			if self[k].is_a? Hash
@@ -60,9 +62,6 @@ class ::Hash
 				object.current_size[k] = self[k].size
 				
 				if object.send(k).blank?
-					#if(k.to_s == "recipients")
-					#	puts "got it as blank"
-					#end
 					object.send("#{k}=",self[k]) unless assign.blank?
 					unless self[k].blank?
 						object.changed_attributes << k
@@ -70,9 +69,6 @@ class ::Hash
 					end
 
 				elsif (object.send(k).size != self[k].size)
-					#if(k.to_s == "recipients")
-					#	puts "size is different"
-					#end
 					self[k].each_with_index{|val,key|
 						
 						break if (key == object.send(k).size) 

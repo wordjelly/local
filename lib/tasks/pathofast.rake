@@ -670,6 +670,297 @@ namespace :pathofast do
         end
     end
 
+
+    ## now we can test.
+    task prepare_ruby_astm_env: :environment do 
+
+
+        JSON.parse(IO.read(Rails.root.join("vendor","assets","others","es_index_classes.json")))["es_index_classes"].each do |cls|
+          cls.constantize.send("create_index!",{force: true})
+        end
+        User.delete_all
+        User.es.index.delete
+        User.es.index.create
+        Auth::Client.delete_all
+
+        tags = Tag.create_default_employee_roles
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+
+        @u = User.new(email: "developer@gmail.com", password: "hello111", password_confirmation: "hello111", confirmed_at: Time.now.to_i)
+        @u.save
+        #puts @u.errors.full_messages.to_s
+        #puts @u.authentication_token.to_s
+        #exit(1)
+        @u = User.find(@u.id.to_s)
+        @u.confirm
+        @u.save
+        #puts @u.errors.full_messages.to_s
+        @u = User.find(@u.id.to_s)
+        #puts @u.authentication_token.to_s
+        @c = Auth::Client.new(:resource_id => @u.id, :api_key => "test", :app_ids => ["testappid"])
+        @c.redirect_urls = ["http://www.google.com"]
+        @c.versioned_create
+        @u.client_authentication["testappid"] = "test_es_token"
+        @u.save
+        @ap_key = @c.api_key
+        @u = User.find(@u.id.to_s)
+
+        @u.confirm
+        @u.save
+        #puts @u.errors.full_messages.to_s
+        #puts @u.authentication_token.to_s
+        @c = Auth::Client.new(:resource_id => @u.id, :api_key => "test", :app_ids => ["testappid"])
+        @c.redirect_urls = ["http://www.google.com"]
+        @c.versioned_create
+        @u.client_authentication["testappid"] = "test_es_token"
+        @u.save
+        @ap_key = @c.api_key
+
+        ## key => user id
+        ## value => {auth_token =>  "", client_authentication => ""}
+        @security_tokens = {}
+
+        user_file_name = Rails.root.join('test','test_json_models','users','bhargav_raut.json')
+        ## now comes the user, organization and inventory creation.
+        basename = File.basename(user_file_name,".json")
+        user = User.new(JSON.parse(IO.read(user_file_name))["users"][0])
+        user.save
+        user.confirm
+        user.save
+        user.client_authentication["testappid"] = BSON::ObjectId.new.to_s
+        user.save
+        @security_tokens[user.id.to_s] = {
+            "authentication_token" => user.authentication_token,
+            "es_token" => user.client_authentication["testappid"]
+        }
+
+        unless user.errors.full_messages.blank?
+            puts "error creating user"
+            exit(1)
+        end
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+        user = User.find(user.id.to_s)
+            
+        
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+        
+        ## we add it to the organization members,
+        ## and thereafter into the organization -> user_ids
+        ## that way it will be fine.
+
+        organization = Organization.new(JSON.parse(IO.read(Rails.root.join('test','test_json_models','organizations',"#{basename}.json")))["organizations"][0])
+        organization.created_by_user = user
+        organization.created_by_user_id = user.id.to_s
+        organization.who_can_verify_reports = [user.id.to_s]
+        organization.role = Organization::LAB
+        ## so we add God as a default recipient on all organizations
+        ## for the purpose of testing.
+        organization.recipients << Notification::Recipient.new(email_ids: ["god@gmail.com"])
+        organization.save 
+        unless organization.errors.full_messages.blank?
+            puts "errors creating organizaiton--------->"
+            puts organization.errors.full_messages.to_s
+            exit(1)
+        end
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        user = User.find(user.id.to_s)
+
+
+        item_type = Inventory::ItemType.new(JSON.parse(IO.read(Rails.root.join("test","test_json_models","inventory","item_types","BD_Citrate_tube.json"))))
+        item_type.created_by_user = user
+        item_type.created_by_user_id = user.id.to_s 
+        item_type.save
+        unless item_type.errors.full_messages.blank?
+            puts "Errors saving item type:"
+            puts item_type.errors.full_messages
+            exit(1)
+        end
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        item_group = Inventory::ItemGroup.new
+        item_group.name = "BD Citrate Tube 100 pcs"
+        item_group.group_type = "Consumables"
+        item_group.item_definitions = [
+            {
+                item_type_id: item_type.id.to_s,
+                quantity: 100,
+                expiry_date: "2020-02-02"
+            }   
+        ]
+        item_group.created_by_user = user
+        item_group.created_by_user_id = user.id.to_s
+        item_group.save
+        unless item_group.errors.full_messages.blank?
+            puts "Errors saving item group:"
+            puts item_group.errors.full_messages
+            exit(1)
+        end
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        ## now the next thing is to order this item group.
+        ## and to start adding items to it.
+        ## order the item group.
+        transaction = Inventory::Transaction.new
+        transaction.supplier_item_group_id = item_group.id.to_s
+        transaction.supplier_id = organization.id.to_s
+        transaction.quantity_ordered = 1
+        transaction.created_by_user_id = user.id.to_s
+        transaction.created_by_user = user
+        transaction.save
+        unless transaction.errors.full_messages.blank?
+            puts "Errors creating transaction:"
+            puts transaction.errors.full_messages
+            exit(1)
+        end
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        transaction = Inventory::Transaction.find(transaction.id.to_s)
+        transaction.run_callbacks(:find)
+        transaction.quantity_received = 1
+        transaction.save
+        unless transaction.errors.full_messages.blank?
+            puts "Errors creating transaction:"
+            puts transaction.errors.full_messages
+            exit(1)
+        end       
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*" 
+
+        ## now we have the local item group.
+        ## now we want to find that item group, and add items to it.
+        transaction = Inventory::Transaction.find(transaction.id.to_s)
+        transaction.run_callbacks(:find)
+        local_item_group_id = transaction.local_item_groups[0].id.to_s
+
+
+        ## now we want to create items with this as the item group.
+        ## we create 20 items.
+        #######################
+        path = Rails.root.join('vendor','assets','pathofast_report_formats','coagulation','**/*.json')
+        report_ids = []
+        Dir.glob(path)[0..2].each do |file|
+            r = Diagnostics::Report.new(JSON.parse(IO.read(file)))
+            r.created_by_user = user
+            r.created_by_user_id = user.id.to_s
+            r.save
+            report_ids << r.id.to_s
+            unless r.errors.full_messages.blank?
+                puts "errors saving report :#{r.name}"
+                puts r.errors.full_messages.to_s
+                exit(1)
+            end
+        end
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        #######################
+        item_ids = []
+        20.times do |n|
+            item = Inventory::Item.new
+            item.barcode = "abcdefg#{n}"
+            item.item_type_id = item_type.id.to_s
+            item.expiry_date = "2020-02-02"
+            item.transaction_id = transaction.id.to_s
+            item.local_item_group_id = local_item_group_id
+            item.created_by_user = user
+            item.created_by_user_id = user.id.to_s
+            item.save
+            unless item.errors.full_messages.blank?
+                puts "errors saving item: #{item.barcode}"
+                puts item.errors.full_messages
+                exit(1)
+            end
+            item_ids << item.id.to_s
+        end
+
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+        ## now create twenty orders, and add the reports and barcodes into them.
+        patients_file_path = Rails.root.join('test','test_json_models','patients','aditya_raut.json')
+        patients = JSON.parse(IO.read(patients_file_path))
+        patient = Patient.new(patients["patients"][0])
+        patient.first_name += "plus".to_s
+        patient.mobile_number = rand.to_s[2..11].to_i
+        patient.created_by_user = user
+        patient.created_by_user_id = user.id.to_s
+        patient.save
+        puts "ERRORS CREATING Aditya Raut Patient: #{patient.errors.full_messages}"
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        item_ids.each do |item_id|
+            o = Business::Order.new
+            o.patient_id = patient.id.to_s
+            o.created_by_user = user
+            o.created_by_user_id = user.id.to_s
+            o.save
+           
+            unless o.errors.full_messages.blank?
+                puts "errors saving order"
+                puts o.errors.full_messages
+                exit(1)
+            else
+                Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+                o = Business::Order.find(o.id.to_s)
+                o.run_callbacks(:find)
+                o.template_report_ids << report_ids
+                o.template_report_ids.flatten!
+                o.created_by_user = user
+                o.save  
+                unless o.errors.full_messages.blank?
+                    puts "errors saving order"
+                    puts o.errors.full_messages
+                    exit(1)
+                else
+                    Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+                    o = Business::Order.find(o.id.to_s)
+                    o.run_callbacks(:find)
+                    o.categories.first.items << Inventory::Item.find(item_id)
+                    o.created_by_user = user
+                    o.save
+                    unless o.errors.full_messages.blank?
+                        puts "errors saving order"
+                        puts o.errors.full_messages
+                        exit(1)
+                    else
+
+                    end
+                end
+            end
+        end
+        ######################################################
+        ##
+        ##
+        ## CREATE ONE ORDER WITH SOME REPORTS, BUT WITHOUT ANY BARCODES
+        ##
+        ##
+        ######################################################
+        o = Business::Order.new
+        o.patient_id = patient.id.to_s
+        o.created_by_user = user
+        o.created_by_user_id = user.id.to_s
+        o.save
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+        o = Business::Order.find(o.id.to_s)
+        o.run_callbacks(:find)
+        o.template_report_ids << report_ids
+        o.template_report_ids.flatten!
+        o.created_by_user = user
+        o.save  
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+    
+        organization = Organization.find(organization.id)
+    
+        puts "LIS KEY:#{organization.lis_security_key}, ORGANIZATION ID:#{organization.id.to_s}"
+
+    end
+
     task preprocess_pathofast_reports: :environment do 
         path = Rails.root.join('vendor','assets','pathofast_report_formats','**/*.json')
         Dir.glob(path).each do |file|
