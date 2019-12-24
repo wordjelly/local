@@ -1,0 +1,11 @@
+{
+	"name" : "BD Citrate Tube 5 tubes",
+	"group_type" : "Consumable",
+	"item_definitions" : [
+		{
+			"item_type_id" : "BD_Citrate_tube",
+			"quantity" : 5,
+			"expiry_date" : "2025-04-05"
+		}
+	]
+}

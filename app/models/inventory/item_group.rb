@@ -286,8 +286,8 @@ class Inventory::ItemGroup
 				}
 			]
 		if defined? @permitted_params
-			base[1][:item_type] << @permitted_params
-			base[1][:item_type].flatten!
+			base[1][:item_group] << @permitted_params
+			base[1][:item_group].flatten!
 		end
 		base
 	end
@@ -372,11 +372,90 @@ class Inventory::ItemGroup
 			item.run_callbacks(:find)
 			items << item
 		end
-		#puts "the components for transfer are:"
-		#puts "***************************************************************************************************************************************************************************"
-		#puts items.to_s
-		#puts "****************************************************************************************************************************************************************************"
 		items
     end
+
+    ############################################################
+    ##
+    ##
+    ## HELPERS
+    ##
+    ##
+    ############################################################
+    ## @return[Hash]
+    ## key -> category_name
+    ## value -> [item_id_one,item_id_two]
+    ## @called_from : order_concern.rb#update_categories_from_item_group 
+    def get_items_grouped_by_category_name
+    	result = {}
+    	search_request = Inventory::Item.search({
+			query: {
+				term: {
+					local_item_group_id: self.id.to_s
+				}
+			},
+			aggregations: {
+				categories: {
+					terms: {
+						field: "categories"
+					},
+					aggs: {
+						item_id: {
+							terms: {
+								field: "barcode"
+							}
+						}
+					}
+				}
+			}
+		})
+		search_request.response.aggregations.categories.buckets.each do |category_bucket|
+			category = category_bucket["key"]
+			item_ids = []
+			category_bucket.item_id.buckets.each do |item_bucket|
+				item_ids << item_bucket["key"] 
+			end
+			result[category] = item_ids
+			## so when you are adding -> then it is loading that item.
+			## 
+		end
+		result
+    end
+
+
+    def self.find_organization_item_groups(organization_id)
+    	
+    	query = {
+			bool: {
+				must: [
+					{
+						term: {
+							owner_ids: organization_id
+						}
+					}
+				]
+			}
+		}
+
+		search_request = Inventory::ItemGroup.search(
+			{
+				size: 10,
+				query: query
+			}
+		)
+			
+		item_groups = []
+
+	 	search_request.response.hits.hits.each do |hit|
+	 		item_group = Inventory::ItemGroup.new(hit["_source"])
+	 		item_group.id = hit["_id"]
+	 		item_group.run_callbacks(:find)
+	 		item_groups << item_group
+	 	end
+
+
+	 	item_groups
+
+    end	
 
 end

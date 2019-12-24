@@ -1,6 +1,7 @@
 {
 	"item_types" : [
 		{
+			"id" : "BD_SST_tube",
 			"name" : "BD SST Tube",
 			"categories" : ["SST Tube"]
 		}

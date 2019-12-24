@@ -508,10 +508,10 @@ class Diagnostics::Test
 	## so here we add_result.
 	## 
 	def add_result(patient,history_tags)
-		puts "Called add result with patient data"
-		puts "the result raw is:"
-		puts self.result_raw.to_s
-		puts "result text is:"
+		#puts "Called add result with patient data"
+		#puts "the result raw is:"
+		#puts self.result_raw.to_s
+		#puts "result text is:"
 		#puts self.result_text.to_s
 		unless (self.result_raw.blank? || self.result_raw == DEFAULT_RESULT)
 			
@@ -580,14 +580,14 @@ class Diagnostics::Test
 
 	def assign_range(patient,history_tags)
 		#puts "------- CAME TO ASSIGN RANGE ------------ "
-		puts "assign_range in test: #{self.name}, with result numeric: #{self.result_numeric} and result text: #{self.result_text}"
+		#puts "assign_range in test: #{self.name}, with result numeric: #{self.result_numeric} and result text: #{self.result_text}"
 		#puts "the history tags are:"
 		#history_tags.each do |htag|
 		#	puts htag.to_s
 		#end
 
 		self.ranges.each do |r|
-			puts "checking range min_value: #{r.min_value}, max_value: #{r.max_value}, text value: #{r.text_value} ----------------------------->"
+			#puts "checking range min_value: #{r.min_value}, max_value: #{r.max_value}, text value: #{r.text_value} ----------------------------->"
 			## so it would iterate and pick.
 			## actually.
 			r.pick_range(history_tags,self.result_numeric, self.result_text) if patient.meets_range_requirements?(r)

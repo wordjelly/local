@@ -31,7 +31,12 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     end
 
     test " -- on adding an item, updates to all relevant reports, and reduces required quantities of all other categories --" do 
-
+    
+        ## create organization
+        ## join organization
+        ## remove from organization
+        ## accept to organization
+        ## 
         
 
         Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
@@ -967,13 +972,10 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
         # assert_equal Tag::YES, o.reports[0].tests[0].ranges[0].tags[-1].picked
 
     end
+
 =end
-    
+
 
  
-
-
-
-
 
 end

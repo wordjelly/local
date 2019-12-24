@@ -1,25 +1,179 @@
 module TestHelper
 
-    def build_inventory(organization_user)
-        Dir.glob(Rails.root.join('test','test_json_models','inventory','item_types','*.json')).each do |file_name|
-            JSON.parse(IO.read(file_name))["item_types"].each do |item_type_definition|
-                item_type = Inventory::ItemType.new(item_type_definition)
+    ## @param args[Hash] : shold contain a :user and a :item_group_id
+    ## @return[Inventory::ItemGroup] the local item group, cloned in the transaction.
+    def order_item_group(args={})
+        raise "no item group id or name provided" if args[:item_group_id].blank?
+        raise "no user is provided " if args[:user].blank?
+
+        search_results = Inventory::ItemGroup.search({
+            size: 1,
+                query: {
+                    ids: {
+                        values: [args[:item_group_id]]
+                    }
+                }
+        })
+
+        unless search_results.response.hits.hits.blank?
+            supplier_item_group = Inventory::ItemGroup.new(search_results.response.hits.hits.first)
+            supplier_item_group.run_callbacks(:find)
+            tr = Inventory::Transaction.new
+            tr.supplier_item_group_id = supplier_item_group.id.to_s
+            tr.supplier_id = supplier_item_group.supplier_id
+            tr.created_by_user = args[:user]
+            tr.created_by_user_id = args[:user].id.to_s
+            tr.save
+            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+            ## so now you ordered it.
+            ## now you get the local item group.
+            tr = Inventory::Transaction.find(tr.id.to_s)
+            tr.run_callbacks(:find)
+            tr.quantity_received = 2
+            tr.created_by_user = args[:user]
+            tr.created_by_user_id = args[:user].id.to_s
+            tr.save
+            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+            tr = Inventory::Transaction.find(tr.id.to_s)
+            tr.run_callbacks(:find)
+            local_item_group = tr.local_item_groups[0]
+            return local_item_group
+
+        else
+            raise "no such item group found with id: #{args[:item_group_id]}"
+        end
+
+    end
+
+    ## basically take the item_groups -> order them -> 
+    def build_transaction_inventory(organization_user)
+        Dir.glob(Rails.root.join('test','test_json_models','inventory','item_groups','*.json')).each do |file_name|
+            item_group = Inventory::ItemGroup.new(JSON.parse(IO.read(file_name)))
+            item_group.created_by_user = organization_user
+            item_group.created_by_user_id = organization_user.id.to_s
+            item_group.save
+            
+            unless item_group.errors.full_messages.blank?
+                puts "error saving item group in testhelper, method #build_transaction_inventory"
+                puts "errors: #{item_group.errors.full_messages}"
+                exit(1)
+            end
+
+            item_group.item_definitions.each do |id|
+                item_type_id = id["item_type_id"]   
+                item_type_object = JSON.parse(IO.read(Rails.root.join('test','test_json_models','inventory','item_types',"#{item_type_id}.json")))
+                
+                item_type = nil
+                if item_type_object["item_types"]
+                    item_type = Inventory::ItemType.new(item_type_object["item_types"][0])
+                else
+                    item_type = Inventory::ItemType.new(item_type_object)
+                end
+
+
                 item_type.created_by_user = organization_user
                 item_type.created_by_user_id = organization_user.id.to_s
+                item_type.save
+                unless item_type.errors.full_messages.blank?
+                    puts "error saving item type"
+                    puts "errors: #{item_type.errors.full_messages}"
+                    exit(1)
+                end
+                Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+            end
+
+            ## now we want to make a transaction for the item group.
+            tr = Inventory::Transaction.new
+            tr.supplier_item_group_id = item_group.id.to_s
+            tr.supplier_id = item_group.supplier_id
+            tr.created_by_user = organization_user
+            tr.created_by_user_id = organization_user.id.to_s
+            tr.save
+            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+            tr = Inventory::Transaction.find(tr.id.to_s)
+            tr.run_callbacks(:find)
+            tr.quantity_received = 2
+            tr.created_by_user = organization_user
+            tr.created_by_user_id = organization_user.id.to_s
+            tr.save
+            Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+            ## mark this transaction as received.
+            ## and then proceed.
+
+            ## now we have ordered the item group.
+            ## now we want to add some items to it.
+            ## 
+            search_results = Inventory::ItemGroup.search({
+            size: 1,
+                query: {
+                    term: {
+                        cloned_from_item_group_id: item_group.id.to_s
+                    }
+                }
+            })
+
+            assert_equal 1, search_results.response.hits.hits.size
+            local_item_group = Inventory::ItemGroup.new(search_results.response.hits.hits.first)
+            local_item_group.run_callbacks(:find)
+
+
+            ## so again take the item group and get after it.
+            ## so here we have added some items to it.
+            ## instead we want one more 
+            item_group.item_definitions.each do |id|
+                item = Inventory::Item.new
+                item.transaction_id = tr.id.to_s
+                item.supplier_item_group_id = item_group.id.to_s
+                item.local_item_group_id = local_item_group.id.to_s
+                item.item_type_id = id["item_type_id"]
+                puts "searcing for the item type--------------->#{item.item_type_id}"
+                item.categories = Inventory::ItemType.find(id["item_type_id"]).categories
+                item.barcode = "12345"
+                item.expiry_date = "2025-05-05"
+                item.created_by_user = organization_user
+                item.created_by_user_id = organization_user.id.to_s
+                item.save
+                unless item.errors.full_messages.blank?
+                    puts "there are errors saving the item."
+                    puts "error "
+                    puts "errors: #{item.errors.full_messages}"
+                    exit(1)
+                end
+            end
+
+        end
+    end
+
+    def build_inventory(organization_user)
+        Dir.glob(Rails.root.join('test','test_json_models','inventory','item_types','*.json')).each do |file_name|
+            obj =  JSON.parse(IO.read(file_name))
+            item_types = obj["item_types"].blank? ? obj : obj["item_types"]
+            item_types = [item_types].flatten
+            puts "item types are: #{item_types}"
+            item_types.each do |item_type_definition|
+                item_type = Inventory::ItemType.new(item_type_definition)
+                item_type.id = BSON::ObjectId.new.to_s
+                item_type.created_by_user = organization_user
+                item_type.created_by_user_id = organization_user.id.to_s
+                ## so here can be do an alternate version of build inventory ?
+                ## where we build item groups -> then transaction -> then you can do more with it.
+                ## or you can have item groups predefined.
+                ## and then transact on them.
                 item_type.save(op_type: 'create')
                 if item_type.errors.full_messages.
                     blank?
                     Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-                    #puts "path is:"
-                    #puts Rails.root.join('test','test_json_models','inventory','items',"#{File.basename(file_name)}")
-                    #puts JSON.parse(IO.read(Rails.root.join('test','test_json_models','inventory','items',"#{file_name}")))
-                    #exit(1) 
                     JSON.parse(IO.read(Rails.root.join('test','test_json_models','inventory','items',"#{File.basename(file_name)}")))["items"].each do |item_definition|
 
                         item = Inventory::Item.new(item_definition)
                         item.barcode = BSON::ObjectId.new.to_s
                         item.created_by_user = organization_user
                         item.created_by_user_id = organization_user.id.to_s
+                        item.categories = item_type.categories
                         item.item_type_id = item_type.id.to_s
                         item.save(op_type: 'create')
                         unless item.errors.full_messages.blank?
@@ -135,7 +289,8 @@ module TestHelper
     {
         "user_name" => {
             "inventory_folder_path" : "absolute_path/*.json"
-            "reports_folder_path" : "absolute_path/*.json"
+            "reports_folder_path" : "absolute_path/*.json",
+            "use_transaction_inventory" : true
         }
     }
 =end
@@ -303,7 +458,18 @@ module TestHelper
             Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
             user = User.find(user.id.to_s)
-            build_inventory(user)
+            
+            unless args[basename].blank?
+                unless args[basename]["use_transaction_inventory"].blank?
+                    build_transaction_inventory(user)
+                else
+                     build_inventory(user)
+                end
+            else
+                 build_inventory(user)
+            end
+
+           
             Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
                 
             ## so we are going to sort out history interpretation for thyroid and for beta hcg.
@@ -372,8 +538,10 @@ module TestHelper
         report
     end
 
-    def build_pathofast_patient_order(template_report_ids,patient)
-        priya_hajare = User.where(:email => "priya.hajare@gmail.com").first
+    def build_pathofast_patient_order(template_report_ids,patient,user=nil)
+        if user.blank?
+            user = User.where(:email => "priya.hajare@gmail.com").first
+        end
         #####################################################
         ##
         ##
@@ -387,8 +555,8 @@ module TestHelper
             patient = Patient.new(patients["patients"][0])
             patient.first_name += "plus".to_s
             patient.mobile_number = rand.to_s[2..11].to_i
-            patient.created_by_user = priya_hajare
-            patient.created_by_user_id = priya_hajare.id.to_s
+            patient.created_by_user = user
+            patient.created_by_user_id = user.id.to_s
             patient.save
             puts "ERRORS CREATING Aditya Raut Patient: #{patient.errors.full_messages}"
         end
@@ -399,8 +567,8 @@ module TestHelper
 
         o.template_report_ids = (template_report_ids || Diagnostics::Report.find_reports_by_organization_name("Pathofast",100).map{|c| c.id.to_s})
 
-        o.created_by_user = priya_hajare
-        o.created_by_user_id = priya_hajare.id.to_s
+        o.created_by_user = user
+        o.created_by_user_id = user.id.to_s
         o.patient_id = patient.id.to_s
         o.skip_pdf_generation = true
         o

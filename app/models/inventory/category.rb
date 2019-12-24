@@ -167,7 +167,7 @@ class Inventory::Category
 	## @return[nil]
 	## @called_from : Concerns::OrderConcern::update_report_items
 	## takes each item, in the category, takes its provided barcode, takes from self, the reports(optional/required) that this item is applicable to, gets that report from the incoming reports array, will delete the item if its not applicable to any basically will give an error. If a barcode is not applicable for a particular report, will add that in the cannot_be_added_to_reports, array for the item, and this is later used in the report#add_item def.
-	def set_item_report_applicability(reports)
+	def set_item_report_applicability(reports,order_id)
 		report_ids = self.optional_for_reports + self.required_for_reports
 		
 
@@ -217,7 +217,7 @@ class Inventory::Category
 				organization_id_to_report_hash.keys.each do |org_id|
 
 					#puts "doing org id: #{org_id}"
-					res = it.get_item_details_from_barcode(org_id,self.name,organization_id_to_report_hash[org_id],applicable,organization_id_to_report_hash)
+					res = it.get_item_details_from_barcode(org_id,self.name,organization_id_to_report_hash[org_id],applicable,organization_id_to_report_hash,order_id)
 					#puts "applicable becomes:"
 					#puts applicable.to_s
 					unless res.blank?
@@ -241,5 +241,11 @@ class Inventory::Category
 		self.items.size == required_item_quantity
 	end
 
+	def additional_required_items
+		mod = self.quantity % 100
+		required_item_quantity = (self.quantity/100).to_i
+		required_item_quantity += 1 if (mod > 0)
+		required_item_quantity - self.items.size
+	end
 
 end

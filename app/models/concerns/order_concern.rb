@@ -89,7 +89,6 @@ module Concerns::OrderConcern
 		## and populate the reports array.
 		attribute :template_report_ids, Array, mapping: {type: 'keyword'}
 
-		attribute :local_item_group_id
 
 		attribute :procedure_versions_hash, Hash
 
@@ -256,8 +255,37 @@ module Concerns::OrderConcern
 		## ids of the recipients which we want to resend the reports to.
 		attribute :resend_recipient_ids, Array
 
-		## skip resend notifications
+		## skip resend notification
 		attr_accessor :skip_resend_notifications
+
+
+		#########################################################
+		##
+		##
+		## ORDER COMPLETED
+		## change it to NO on adding a report	
+		##
+		##
+		#########################################################
+		attribute :order_completed, Integer, mapping: {type: 'integer'}, default: NO
+
+
+		#########################################################
+		##
+		##
+		## item group
+		##
+		##
+		#########################################################
+		## what if you change this ?
+		## what if you added the wrong item ?
+		## this depends on what exactly ?
+		## if the collection has already been done ?
+		## so we give a convenience method
+		attribute :local_item_group_id, String, mapping: {type: 'keyword'}
+
+		attr_accessor :local_item_group
+
 
 		settings index: { 
 		    number_of_shards: 1, 
@@ -338,6 +366,10 @@ module Concerns::OrderConcern
 			c.changed_attributes.include? "finalize_order"
 		}	
 
+		validate :order_completed_not_changed
+
+		validate :local_item_group_id_changed
+
 		## once finalized can it be changed again ?
 
 		## if you do it each time, it will be a problem.
@@ -355,7 +387,9 @@ module Concerns::OrderConcern
 				end
 			else
 				if document.all_reports_verified?
-					$event_notifier.trigger_order_delete(report.currently_held_by_organization,{:order_id => self.id.to_s})
+					document.reports.each do |report|
+						$event_notifier.trigger_order_delete(report.currently_held_by_organization,{:order_id => self.id.to_s})
+					end
 				end
 			end
 		end
@@ -366,6 +400,7 @@ module Concerns::OrderConcern
 		## now let me add one signature.
 		## this should happen before the validations.
 		## not after.
+
 		before_validation do |document|
 			#################################################
 			##
@@ -384,12 +419,28 @@ module Concerns::OrderConcern
 			document.check_for_top_up
 			#################################################
 			##
+			## first some item group level validation tests
+			## if its already in an order 
+			## marked as incomplete -> should give error
+			## etc.
+			## now we are adding local item groups
+			## now what happens next ?
+			## so its adding locai 
+			## so first inventory tests.
+			## so i will make one collection packet
+			## set the item groups on that
+			## and reuse
+			## check changing priority -> if it triggers a poll
+			## check that
+			## and its UI.
+			## so first some local item group tests.
 			##
 			#################################################
 			document.load_patient
 			document.update_reports
 			document.update_recipients
 			document.update_requirements
+			document.update_items_from_item_group
 			document.update_report_items
 			document.gather_history
 			document.add_report_values
@@ -456,6 +507,28 @@ module Concerns::OrderConcern
 			end
 		end
 		recipients_to_add
+	end
+
+	def load_local_item_group
+		self.local_item_group = Inventory::ItemGroup.find(self.local_item_group_id) unless self.local_item_group_id.blank?
+		self.local_item_group.run_callbacks(:find) unless self.local_item_group.blank?
+	end
+
+	## @called_from : before_validation
+	def update_items_from_item_group
+		unless self.local_item_group.blank?
+			items_grouped_by_category = self.local_item_group.get_items_grouped_by_category_name
+			self.categories.each do |category|
+				additional_required_items = category.additional_required_items
+				if additional_required_items > 0
+					if item_ids = items_grouped_by_category[category]
+						item_ids.slice(0,additional_required_items).each do |barcode|
+							category.items.add(Inventory::Item.new(barcode: barcode))
+						end
+					end
+				end
+			end
+		end
 	end
 
 	## if the size changes ?
@@ -616,6 +689,22 @@ module Concerns::OrderConcern
 		#exit(1)
 	end	
 
+	## @called from validation method#local_item_group_id
+	def can_change_local_item_group_id?
+		true
+	end
+
+	def local_item_group_id_changed
+		if self.changed_attributes.include? "local_item_group_id"
+			self.errors.add(:local_item_group_id,"you cannot change the item group at this stage, create a new order if required") unless can_change_local_item_group_id?
+		end
+	end
+
+	## the user cannot change the value of order_completed
+	def order_completed_not_changed
+		self.errors.add(:order_completed, "you cannot change the order status to completed, this is automatically derived") if self.changed_attributes.include? "order_completed"
+	end
+
 	## validation, called if finalize_order has changed.
 	## how does the range interpretation take place with these tags.
 	## ya i can deliver it on the pathofast portal
@@ -637,11 +726,7 @@ module Concerns::OrderConcern
 	end
 
 	def receipts_size_unchanged
-		#unless ((self.prev_size["receipts"].blank?) && (self.current_size["receipts"].blank?))
-			#if self.prev_size["receipts"] != self.current_size["receipts"]
-				self.errors.add(:receipts, "you cannot add or remove receipts") if self.changed_array_attribute_sizes.include? "receipts"
-			#end
-		#end
+		self.errors.add(:receipts, "you cannot add or remove receipts") if self.changed_array_attribute_sizes.include? "receipts"
 	end
 
 	## 
@@ -753,6 +838,7 @@ module Concerns::OrderConcern
 	## child elements.
 	def set_accessors
 		## and the location.
+		self.load_local_item_group
 		self.reports.each do |report|
 			report.order_organization = self.organization
 			report.set_accessors
@@ -852,19 +938,13 @@ module Concerns::OrderConcern
 		self.template_report_ids.each do |r_id|
 			#puts "doing template report id: #{r_id}"
 			unless existing_report_ids.include? r_id
-				puts "rid is: #{r_id}"
 				report = Diagnostics::Report.find(r_id)
-				#puts "report is :#{report}"
-				puts "created by user id is: #{report.created_by_user_id}"
 				report.created_by_user = User.find(report.created_by_user_id)
 				report.current_user = self.current_user
-				#puts "report found is: #{report.id.to_s}"
-				#exit(1)
 				report.run_callbacks(:find)
-				#before adding the report, prune that bitch.
-				#for all the ranges.
 				report.prune_test_ranges(self.patient)
 				self.reports << report
+				self.order_completed = NO
 			end
 		end
 	end
@@ -1058,13 +1138,13 @@ module Concerns::OrderConcern
 		}
 
 		self.categories.each do |category|
-			puts "doing category: #{category.name}"
+			#puts "doing category: #{category.name}"
 
-			category.set_item_report_applicability(self.reports)
+			category.set_item_report_applicability(self.reports,self.id.to_s)
 			
 			category.items.each do |item|
-				puts "item applicable to reports are:"
-				puts item.applicable_to_report_ids.to_s
+				#puts "item applicable to reports are:"
+				#puts item.applicable_to_report_ids.to_s
 				#exit(1)
 				## can this item be created at all?
 				## that's the first thing.f
@@ -1514,6 +1594,9 @@ module Concerns::OrderConcern
 
 	end
 
+	## so we don't permit it ?
+	## 
+
 	## the order referred to here is the order that came in from the lis.
 	## @called_From : self#update_lis_result
 	## the results are keyed by organization id.
@@ -1614,7 +1697,6 @@ module Concerns::OrderConcern
 							{:resend_recipient_ids => []},
 							{:template_report_ids => []},
 							:patient_id,
-							:local_item_group_id,
 							:start_epoch,
 							{
 								:categories => Inventory::Category.permitted_params
@@ -1644,7 +1726,9 @@ module Concerns::OrderConcern
 					    	:bill_outsourced_reports_to_patient,
 					    	:bill_outsourced_reports_to_order_creator,
 					    	:do_top_up,
-					    	:finalize_order
+					    	:finalize_order,
+					    	:order_completed,
+					    	:local_item_group_id
 						]
 					}
 				]
@@ -1801,39 +1885,7 @@ module Concerns::OrderConcern
 			{orders: orders, size: total_hits}
 		end
 
-		def find_incomplete_order_with_barcode(item_id)
-			search_request = Business::Order.search({
-				size: 1,
-				query: {
-					bool: {
-						must: 
-						[
-							{
-								nested: {
-									path: "categories",
-									query: {
-										nested: {
-											path: "categories.items",
-											query: {
-												bool: {
-													should: [
-														{
-															term: {
-																field: ""
-															}
-														}
-													]
-												}
-											}
-										}
-									}
-								}
-							}
-						]
-					}
-				}
-			})
-		end
+		
 
 	end
 

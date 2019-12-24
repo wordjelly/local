@@ -49,6 +49,8 @@ class Inventory::Item
 
 	attribute :name, String, mapping: {type: 'keyword', copy_to: "search_all"}
 
+	## category names copied over from the item_type
+	attribute :categories, Array, mapping: {type: 'keyword'}
 
 	## so now lets make inventory work.
 	## anand will create some item types (lithium and red top tube.)
@@ -63,6 +65,8 @@ class Inventory::Item
 	attribute :filled_amount, Float
 
 	attribute :expiry_date, Date, mapping: {type: 'date', format: 'yyyy-MM-dd'}
+
+	validate :expired?
 	validates_presence_of :expiry_date, :if => Proc.new{|c| !c.barcode.blank?}
 
 	## only the barcode has to be validated, depending again on the context
@@ -76,7 +80,7 @@ class Inventory::Item
 	## if you chose outsource to x.
 	## then it will check in their inventory.
 	## not your's
-	attribute :barcode, String
+	attribute :barcode, String, mapping: {type: 'keyword'}
 	#validates_presence_of :barcode
 
 	## suppose that we don't have a barcode
@@ -217,11 +221,14 @@ class Inventory::Item
 		end
 	end
 
+	# add item group to order.
+	# so if this is there
+	# 
 	def local_item_group_id_change
 		if self.changed_attributes.include? "local_item_group_id"
 			unless self.attributes_were["local_item_group_id"].blank?
-				if order =  Business::Order.find_incomplete_order_with_barcode(self.id.to_s)
-					self.errors.add(:local_item_group_id,"this item ")
+				if order =  Inventory::Item.item_already_used_in_order?(self.id.to_s,nil)
+					self.errors.add(:local_item_group_id,"this item has already been used in order id: #{order.id.to_s}, and that order is not yet complete ")
 				end
 			end
 		end
@@ -240,8 +247,80 @@ class Inventory::Item
 	##
 	##
 	########################################################
+	## will look for any order, which has been marked as incomplete(which is the default), and where this item was registered.
+	## or an order, where this item was marked as utilized.
+	## i.e some sample was added to it. 
+	def self.item_already_used_in_order?(item_id,order_id)
+		## ignore the existing order if one is already there.
+		query = 
+		{
+			bool: {
+				must: 
+				[
+					{
+						nested: {
+							path: "categories",
+							query: {
+								nested: {
+									path: "categories.items",
+									query: {
+										bool: {
+											should: [
+												{
+													term: {
+														"categories.items.barcode".to_sym => item_id
+													}
+												},
+												{
+													term: {
+														"categories.items.code".to_sym => item_id
+													}
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						term: {
+							order_completed: Business::Order::NO
+						}
+					}
+				]
+			}
+		}
+
+		unless order_id.blank?
+			query[:bool][:must_not] = [
+				{
+					ids: {
+						values: [order_id]
+					}
+				}
+			]
+		end
+
+		search_request = Business::Order.search({
+			size: 1,
+			query: query
+
+		})
+		total_hits = search_request.response.hits.total
+		#total_hits > 0
+		puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!total hits are: #{total_hits}"
+		unless total_hits == 0
+			order = Business::Order.new(search_request.response.hits.hits.first["_source"])
+			order.id = search_request.response.hits.hits.first["_id"]
+			order.run_callbacks(:find)
+			return order
+		end
+		nil
+	end
+
 	def self.permitted_params
-		base = [:id,{:item => [:name,:available,:id,:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space,:use_code,:code,:applicable_to_report_ids]}]
+		base = [:id,{:item => [:name,:available,:id,:local_item_group_id, :supplier_item_group_id, :item_type_id, :location_id, :transaction_id, :filled_amount, :expiry_date, :barcode, :contents_expiry_date,:space,:use_code,:code,:applicable_to_report_ids,{:categories => []},]}]
 		if defined? @permitted_params
 			base[1][:item] << @permitted_params
 			base[1][:item].flatten!
@@ -265,6 +344,9 @@ class Inventory::Item
 				},
 				barcode: {
 					type: 'keyword'
+				},
+				categories: {
+					type: 'keyword'
 				}
 			}
 		}
@@ -282,7 +364,7 @@ class Inventory::Item
 	## @param[String] org_id : the organization id of the reports, to which this item is attempted to being added, these are
 	## @param[String] category_name : the name of the category to which the user has attempted to add this item, inside the order.
 	## @working : Loads the item from the inventory that corresponds to this barcode, and assigns its expiry, transaction id and other details to the item that has been created inside the category in the order.
-	def get_item_details_from_barcode(org_id,category_name,report_ids,applicable,organization_id_to_report_hash)
+	def get_item_details_from_barcode(org_id,category_name,report_ids,applicable,organization_id_to_report_hash,order_id)
 		
 		unless self.barcode.blank?
 
@@ -293,7 +375,7 @@ class Inventory::Item
 				self.not_found = true
 			else
 				## add the transaction, name etc.
-				if i.is_available?
+				if i.is_available?(order_id)
 					## then we don't add any errors.
 					## add the details of expiry date, transaction, and all the other stuff here.
 					## if its a denovo item, then skip these validations.
@@ -380,16 +462,16 @@ class Inventory::Item
 		## make an item and item group controller.
 		## and views
 		## then we move to item transfer.
-		puts "came to assign id from name, the id was: #{self.id}, the name was: #{self.name}, the barcode was: #{self.barcode}"
+		#puts "came to assign id from name, the id was: #{self.id}, the name was: #{self.name}, the barcode was: #{self.barcode}"
 		if self.id.blank?	
 			if self.code_matches?
-				puts "code matched."
+				#puts "code matched."
 				self.id = self.name = self.code
-				puts "self id : #{self.id}"
-				puts "self name : #{self.name}"
-				puts "self code: #{self.code}"
+				#puts "self id : #{self.id}"
+				#puts "self name : #{self.name}"
+				#puts "self code: #{self.code}"
 			else
-				puts "code does not match."
+				#puts "code does not match."
 				self.id = self.name = self.barcode
 			end
 		end
@@ -460,10 +542,20 @@ class Inventory::Item
 
 	## @return[Boolean] true/false, if the item has not been used for any other order, and has not expired.
 	## the method assumes that the available flag will be turned on and off in the item, depending on whether the item has been recycled or utilized inside another order.
-	def is_available?
-		if self.available == 1
+	def is_available?(order_id)
+		if order = Inventory::Item.item_already_used_in_order?(self.id.to_s,order_id)
+			puts "there is an incomplete order where this item has already been used."
+		else
+			puts "there is no incomplete order where this item has already been used."
 			if Date.today < self.expiry_date
+				puts "today's date is less than its expiry date so we are returning true."
 				return true
+			else
+				puts "date today is: #{Date.today}"
+				puts "expiry date is: #{self.expiry_date}"
+				puts "is it less: #{Date.today < self.expiry_date}"
+				puts "expiry date issue."
+				return false
 			end
 		end
 		return false
@@ -570,8 +662,10 @@ class Inventory::Item
 	## @param[String] category : the name fo the category
 	## @return[Boolean] true/false : gets the item_type_id, and finds the itemType, and checks whether the provided category is mentioned in this item_type
 	def is_of_category?(category)
-		#puts "the item type id is: #{self.item_type_id}"
-		#puts "checking category: #{category}"
+		self.categories.include? category
+		# when we add the new item, we need to add that.
+		# in the show view.
+=begin
 		begin
 			item_type = Inventory::ItemType.find(self.item_type_id)
 			#puts "item type is:"
@@ -580,6 +674,7 @@ class Inventory::Item
 		rescue => e
 			false
 		end
+=end
 	end
 
 	######################################################
@@ -595,6 +690,12 @@ class Inventory::Item
 		self.errors.add(:barcode, "This barcode was already used, or the tube has expired") if self.expired_or_already_used == true
 		self.errors.add(:different_category, "This tube is a of a different type and cannot be used") if self.different_category == true
 		self.errors.add(:code_mismatch,"The code entered does not match the code provided, please try again.") if self.code_mismatch == true
+	end
+
+	def expired?
+		unless self.expiry_date.blank?
+			self.errors.add(:expiry_date, "this item cannot be created as its expiry date has already elapsed") if (Date.today >= self.expiry_date)
+		end
 	end
 
 end

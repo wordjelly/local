@@ -866,11 +866,14 @@ namespace :pathofast do
             item.barcode = "abcdefg#{n}"
             item.item_type_id = item_type.id.to_s
             item.expiry_date = "2020-02-02"
+            item.categories = item_type.categories
             item.transaction_id = transaction.id.to_s
             item.local_item_group_id = local_item_group_id
             item.created_by_user = user
             item.created_by_user_id = user.id.to_s
             item.save
+            # so now we want to group the items by the categories
+            # the belong to that item group.
             unless item.errors.full_messages.blank?
                 puts "errors saving item: #{item.barcode}"
                 puts item.errors.full_messages

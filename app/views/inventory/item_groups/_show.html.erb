@@ -15,7 +15,11 @@
 				<th>Options</th>
 			</thead>
 			<tbody>
+				<!-- i may have to make a model out of the item_definition -->
 				<% @item_group.item_definitions.each do |id| %>
+					<% item_type = Inventory::ItemType.find(id["item_type_id"]) 
+					   item_type.run_callbacks(:find)
+					%>
 					<tr>
 						<td><%= id["item_type_id"] %></td>
 						<td><%= id["quantity"] %></td>
@@ -39,7 +43,7 @@
 									</div>
 									<!-- so what should be validated -->
 									<!-- when the item group is changing -->
-									<%= link_to "Add Item", new_inventory_item_path(:item => {:local_item_group_id => @item_group.id.to_s, :item_type_id => id["item_type_id"],:expiry_date => id["expiry_date"], :transaction_id => @item_group.transaction_id, :supplier_item_group_id => @item_group.cloned_from_item_group_id})%>
+									<%= link_to "Add Item", new_inventory_item_path(:item => {:categories => item_type.categories,  :local_item_group_id => @item_group.id.to_s, :item_type_id => id["item_type_id"],:expiry_date => id["expiry_date"], :transaction_id => @item_group.transaction_id, :supplier_item_group_id => @item_group.cloned_from_item_group_id})%>
 									<%= link_to "See All Items", inventory_items_path(:item => {:local_item_group_id => @item_group.id.to_s, :expiry_date => id["expiry_date"], :item_type_id => id["item_type_id"], :transaction_id => @item_group.transaction_id, :supplier_item_group_id => @item_group.cloned_from_item_group_id}) %>
 								<% else %>
 									Order Not Yet Received

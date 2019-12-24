@@ -1,136 +1,27 @@
 require "test_helper"
+require 'helpers/test_helper'
+
 
 class InventoryControllerTest < ActionDispatch::IntegrationTest
 
+	include TestHelper
+
 	setup do 
-
-		Organization.create_index! force: true
-		#NormalRange.create_index! force: true
-		Tag.create_index! force: true
-		Barcode.create_index! force: true
-		Inventory::ItemType.create_index! force: true
-		Inventory::ItemGroup.create_index! force: true
-		Inventory::Item.create_index! force: true
-		Inventory::Transaction.create_index! force: true
-		Inventory::ItemTransfer.create_index! force: true
-		Inventory::Comment.create_index! force: true
-		## that's the end of it
-		User.delete_all
-        Auth::Client.delete_all
-        #########################################################
-        ##
-        ##
-        ## PATHOFAST USERS
-        ##
-        ##
-        #########################################################
-        @u = User.new(email: "bhargav.r.raut@gmail.com", password: "hello111", password_confirmation: "hello111", confirmed_at: Time.now.to_i)
-        @u.save
-        @u = User.find(@u.id.to_s)
-        @u.confirm
-        @u.save
-        @u2 = User.new(email: "icantremember111@gmail.com", password: "hello111", password_confirmation: "hello111", confirmed_at: Time.now.to_i)
-        @u2.save
-        @u2 = User.find(@u2.id.to_s)
-        @u2.confirm
-        @u2.save
-		@c = Auth::Client.new(:resource_id => @u.id, :api_key => "test", :app_ids => ["testappid"])
-        @c.redirect_urls = ["http://www.google.com"]
-        @c.versioned_create
-        @u.client_authentication["testappid"] = "test_es_token"
-        @u.save
-        @u2.client_authentication["testappid"] = "test_es_token_two"
-        @ap_key = @c.api_key
-
-        #########################################################
-        ##
-        ##
-        ## ROLES
-        ##
-        ##
-        #########################################################
-        @pathologist_role = Tag.new(name: "Pathologist",created_by_user: @u, tag_type: Tag::EMPLOYEE_TAG)
-        
-		@pathologist_role.save
-		#puts "these are the pathologist role error messages ------------------"
-		#puts @pathologist_role.errors.full_messages.to_s
-		
-		#puts Tag.find("Pathologist")
-		
-		#exit(1)
-
-
-		@technician_role = Tag.new(name: "Technician", created_by_user: @u, tag_type: Tag::EMPLOYEE_TAG)
-		
-		@technician_role.save
-
-        ##########################################################
-        ##
-        ##
-        ##
-        ## KONDHWA DIAGNOSTIC USERS
-        ##
-        ##
-        ##########################################################
-        @atif = User.new(email: "atif@gmail.com", password: "hello111", password_confirmation: "hello111", confirmed_at: Time.now.to_i)
-        @atif.save
-        @atif = User.find(@atif.id.to_s)
-        @atif.confirm
-        @atif.save
-        @atif.client_authentication["testappid"] = "test_es_token_three"
-        @atif.save
-        @atif.employee_role_id = "Pathologist"
-        ##########################################################
-
-        @pathan = User.new(email: "pathan@gmail.com", password: "hello111", password_confirmation: "hello111", confirmed_at: Time.now.to_i)
-        @pathan.save
-        @pathan = User.find(@pathan.id.to_s)
-        @pathan.confirm
-        @pathan.save
-        @pathan.client_authentication["testappid"] = "test_es_token_four"
-        @pathan.employee_role_id = "Technician"
-        #########################################################
-        ##
-        ##
-        ## ENDS.
-        ##
-        ##
-        #########################################################
-		@organization = Organization.new(name: "Pathofast diagnostis", address: "Manisha Terrace, 2nd floor", phone_number: "020 49304930", description: "A good lab", verifiers: 2, user_ids: [@u2.id.to_s], role_ids: ["Pathologist","Technician"], role: Organization::LAB)
-		@organization.created_by_user = @u
-		@organization.save
-
-		@organization_kondhwa = Organization.new(name: "Kondhwa Diagnostic Center", address: "Near KEM hospital, Camp", phone_number: "020 44232211", description: "a good lab", verifiers: 2, user_ids: [@pathan.id.to_s], role_ids: ["Pathologist","Technician"], role: Organization::LAB)
-		@organization_kondhwa.created_by_user = @atif
-		@organization_kondhwa.save
-
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-		@headers = { "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json", "X-User-Token" => @u.authentication_token, "X-User-Es" => @u.client_authentication["testappid"], "X-User-Aid" => "testappid"}
-
-		@headers_kondhwa = { "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json", "X-User-Token" => @atif.authentication_token, "X-User-Es" => @atif.client_authentication["testappid"], "X-User-Aid" => "testappid"}
-		
-		@u2.organization_id = @organization.id.to_s
-		@u2.employee_role_id = "Pathologist"
-		#puts "it organization id is: #{@u2.organization_id}"
-		@u2.save
-		#puts "--------------------- THESE ARE THE ERROR MESSAGES ---------------- "
-		#puts @u2.errors.full_messages
-
-		@u2 = User.find(@u2.id.to_s)
-		
-
-		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
-		@u2 = User.find(@u2.id.to_s)
-		@u = User.find(@u.id.to_s)
-		@atif = User.find(@atif.id.to_s)
-		@pathan = User.find(@pathan.id.to_s)
-
+		_setup({
+			"bhargav_raut" => {
+				"use_transaction_inventory" => true
+			}
+		})
 	end
 
 
+	## first fix this spec.
+	## then proceed.
 	test " -- creates item type -- " do 
 
-		post inventory_item_types_path, params: {item_type: {name: "first item type", barcode_required: "yes", virtual_units: 10 }, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
+		plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+		post inventory_item_types_path, params: {item_type: {name: "first item type", barcode_required: "yes", virtual_units: 10 }, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
 
 		assert_equal "201", response.code.to_s
 
@@ -138,39 +29,47 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 	test " -- creates item group with item types, and quantities -- " do 
 
+		plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
 		## we have to be able to create an item type
 		## without fucking up.
 		item_type = Inventory::ItemType.new
-		item_type.created_by_user = @atif
+		item_type.created_by_user = plus_lab_employee
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		
+		item_type.created_by_user_id = plus_lab_employee.id.to_s
 		item_type.save
-
+		unless item_type.errors.full_messages.blank?
+			puts "errors saving item type"
+			exit(1)
+		end
 		## now create another item type.
 
 		item_type_two = Inventory::ItemType.new
-		item_type_two.created_by_user = @atif
+		item_type_two.created_by_user = plus_lab_employee
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		
+		item_type.created_by_user_id = plus_lab_employee.id.to_s
 		item_type_two.save
+		unless item_type_two.errors.full_messages.blank?
+			puts "errors saving item type two"
+			exit(1)
+		end
 		## now save them both into the shit.
 
 		post inventory_item_groups_path, params: {item_group: {item_definitions: [
 				{
 					item_type_id: "first item type",
 					quantity: 2,
-					expiry_date: "2015-01-01"	
+					expiry_date: "2025-01-01"	
 				},
 				{
 					item_type_id: "second item type",
 					quantity: 5,
-					expiry_date: "2018-01-01"
+					expiry_date: "2028-01-01"
 				}
-		], name: "Item Group", group_type: "kit"}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers_kondhwa
+		], name: "Item Group", group_type: "kit"}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
 
 		assert_equal "201", response.code
 
@@ -180,38 +79,38 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 	
 		## we have to be able to create an item type
 		## without fucking up.
+		plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
 		item_type = Inventory::ItemType.new
-		item_type.created_by_user = @atif
+		item_type.created_by_user = plus_lab_employee
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		
 		item_type.save
 
 		## now create another item type.
 		item_type_two = Inventory::ItemType.new
-		item_type_two.created_by_user = @atif
+		item_type_two.created_by_user = plus_lab_employee
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		
 		item_type_two.save
 
 		## now save them both into the shit.
 		item_group = Inventory::ItemGroup.new
-		item_group.created_by_user = @atif
+		item_group.created_by_user = plus_lab_employee
 		item_group.name = "TSH"
 		item_group.group_type = "kit"			
 		item_group.item_definitions = [
 			{
 				item_type_id: "first item type",
 				quantity: 2,
-				expiry_date: "2015-01-01"	
+				expiry_date: "2025-01-01"	
 			},
 			{
 				item_type_id: "second item type",
 				quantity: 5,
-				expiry_date: "2018-01-01"
+				expiry_date: "2028-01-01"
 			}
 		]
 		
@@ -226,7 +125,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		
 		#tr.save
 
-		post inventory_transactions_path, params: {transaction: {supplier_item_group_id: item_group.id.to_s, supplier_id: item_group.supplier_id}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
+		post inventory_transactions_path, params: {transaction: {supplier_item_group_id: item_group.id.to_s, supplier_id: item_group.supplier_id}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
 
 		puts "the response body is:"
 		puts response.body.to_s
@@ -236,38 +135,48 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 	test " -- receives an item group order, and creates local item groups, equal to the quantity received. -- " do 
 
+		plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
 		item_type = Inventory::ItemType.new
-		item_type.created_by_user = @atif
+		item_type.created_by_user = plus_lab_employee
+		item_type.created_by_user_id = plus_lab_employee.id.to_s
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		
 		item_type.save
+		unless item_type.errors.full_messages.blank?
+			puts "errors saving the item"
+			exit(1)
+		end
 
 		## now create another item type.
 		item_type_two = Inventory::ItemType.new
-		item_type_two.created_by_user = @atif
+		item_type_two.created_by_user = plus_lab_employee
+		item_type.created_by_user_id = plus_lab_employee.id.to_s
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
-		item_type_two.virtual_units = 10
-		
+		item_type_two.virtual_units = 10		
 		item_type_two.save
+		unless item_type_two.errors.full_messages.blank?
+			puts "errors saving the item type two"
+			exit(1)
+		end
 
 		## now save them both into the shit.
 		item_group = Inventory::ItemGroup.new
-		item_group.created_by_user = @atif
+		item_group.created_by_user = plus_lab_employee
 		item_group.name = "TSH"
 		item_group.group_type = "kit"			
 		item_group.item_definitions = [
 			{
 				item_type_id: "first item type",
 				quantity: 2,
-				expiry_date: "2015-01-01"	
+				expiry_date: "2025-01-01"	
 			},
 			{
 				item_type_id: "second item type",
 				quantity: 5,
-				expiry_date: "2018-01-01"
+				expiry_date: "2028-01-01"
 			}
 		]
 		
@@ -278,8 +187,8 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		tr = Inventory::Transaction.new
 		tr.supplier_item_group_id = item_group.id.to_s
 		tr.supplier_id = item_group.supplier_id
-		tr.created_by_user = @u
-		
+		tr.created_by_user = plus_lab_employee
+		tr.created_by_user_id = plus_lab_employee.id.to_s
 		tr.save
 
 		puts "these are the create transaction errors."
@@ -288,7 +197,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		## refresh the indices.
 		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
-		put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
+		put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: get_user_headers(@security_tokens,plus_lab_employee)
 
 
 
@@ -316,38 +225,45 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 	test " -- receives an item group order, and creates local item groups, equal to the quantity received, the local item group is owned by the organization that ordered the item group -- " do 
 
+		plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+		pathofast_user = User.where(:email => "bhargav.r.raut@gmail.com").first
+
+
+
 		item_type = Inventory::ItemType.new
-		item_type.created_by_user = @atif
+		item_type.created_by_user = plus_lab_employee
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
-		
+		item_type.created_by_user_id = plus_lab_employee.id.to_s
 		item_type.save
 
 		## now create another item type.
 		item_type_two = Inventory::ItemType.new
-		item_type_two.created_by_user = @atif
+		item_type_two.created_by_user = plus_lab_employee
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
-		
+		item_type.created_by_user_id = plus_lab_employee.id.to_s
 		item_type_two.save
 
 		## now save them both into the shit.
 		item_group = Inventory::ItemGroup.new
-		item_group.created_by_user = @atif
+		item_group.created_by_user = plus_lab_employee
+		item_group.created_by_user_id = plus_lab_employee.id.to_s
 		item_group.name = "TSH"
 		item_group.group_type = "kit"			
 		item_group.item_definitions = [
 			{
 				item_type_id: "first item type",
 				quantity: 2,
-				expiry_date: "2015-01-01"	
+				expiry_date: "2025-01-01"	
 			},
 			{
 				item_type_id: "second item type",
 				quantity: 5,
-				expiry_date: "2018-01-01"
+				expiry_date: "2028-01-01"
 			}
 		]
 		
@@ -358,8 +274,8 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		tr = Inventory::Transaction.new
 		tr.supplier_item_group_id = item_group.id.to_s
 		tr.supplier_id = item_group.supplier_id
-		tr.created_by_user = @u
-		
+		tr.created_by_user = pathofast_user
+		tr.created_by_user_id = pathofast_user.id.to_s
 		tr.save
 
 		puts "these are the create transaction errors."
@@ -368,7 +284,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		## refresh the indices.
 		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
 
-		put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
+		put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: get_user_headers(@security_tokens,pathofast_user)
 
 
 		puts "the response code is:"
@@ -407,15 +323,22 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## so the local item group is not yet settled.
 
-		assert_equal local_item_group.currently_held_by_organization, @u.organization.id.to_s
+
+		assert_equal local_item_group.currently_held_by_organization, pathofast_user.organization.id.to_s
 		#assert_equal local_item_group.owner_ids.include? @u.organization.id.to_s, true
 		#assert_equal local_item_group.currently_held_by_organization, @u.organization.id.to_s 
 	end
 
 	test " -- creates item belonging local item group -- " do 
-			
+				
+		plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+		pathofast_user = User.where(:email => "bhargav.r.raut@gmail.com").first
+
+
 		item_type = Inventory::ItemType.new
-		item_type.created_by_user = @atif
+		item_type.created_by_user = plus_lab_employee
+		item_type.created_by_user_id = plus_lab_employee.id.to_s
 		item_type.name = "first item type"
 		item_type.barcode_required = true
 		item_type.virtual_units = 10
@@ -424,7 +347,8 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## now create another item type.
 		item_type_two = Inventory::ItemType.new
-		item_type_two.created_by_user = @atif
+		item_type_two.created_by_user = plus_lab_employee
+		item_type_two.created_by_user_id = plus_lab_employee.id.to_s
 		item_type_two.name = "second item type"
 		item_type_two.barcode_required = true
 		item_type_two.virtual_units = 10
@@ -433,19 +357,20 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 
 		## now save them both into the shit.
 		item_group = Inventory::ItemGroup.new
-		item_group.created_by_user = @atif
+		item_group.created_by_user = plus_lab_employee
+		item_group.created_by_user_id = plus_lab_employee.id.to_s
 		item_group.name = "TSH"
 		item_group.group_type = "kit"			
 		item_group.item_definitions = [
 			{
 				item_type_id: "first item type",
 				quantity: 2,
-				expiry_date: "2015-01-01"	
+				expiry_date: "2025-01-01"	
 			},
 			{
 				item_type_id: "second item type",
 				quantity: 5,
-				expiry_date: "2018-01-01"
+				expiry_date: "2028-01-01"
 			}
 		]
 		
@@ -456,8 +381,8 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		tr = Inventory::Transaction.new
 		tr.supplier_item_group_id = item_group.id.to_s
 		tr.supplier_id = item_group.supplier_id
-		tr.created_by_user = @u
-		
+		tr.created_by_user = pathofast_user
+		tr.created_by_user_id = pathofast_user.id.to_s
 		tr.save
 
 		puts "these are the create transaction errors."
@@ -469,7 +394,10 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		#put inventory_transaction_path(tr.id.to_s), params: {transaction: {quantity_received: 2}, :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: @headers
 
 		tr = Inventory::Transaction.find(tr.id.to_s)
+		tr.run_callbacks(:find)
 		tr.quantity_received = 2
+		tr.created_by_user = pathofast_user
+		tr.created_by_user_id = pathofast_user.id.to_s
 		tr.save
 
 		## so a local item_group should have been created.
@@ -490,13 +418,362 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		local_item_group.run_callbacks(:find)
 
 		## now we make an item.
-		post inventory_items_path, params: {item: {transaction_id: tr.id.to_s, supplier_item_group_id: item_group.id.to_s, local_item_group_id: local_item_group, item_type_id: item_type_two.id.to_s, barcode: "123445", expiry_date: "2015-05-05"}}
+		post inventory_items_path, params: {item: {transaction_id: tr.id.to_s, supplier_item_group_id: item_group.id.to_s, local_item_group_id: local_item_group, item_type_id: item_type_two.id.to_s, barcode: "123445", expiry_date: "2025-05-05"},:api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: get_user_headers(@security_tokens,pathofast_user)
 
 		assert_equal "201", response.code.to_s
 
 
 	end
 
+	test " -- shifts item from one local item group to another" do 
+
+
+		plus_lab_employee = User.where(:email => "afrin.shaikh@gmail.com").first
+
+
+		pathofast_user = User.where(:email => "bhargav.r.raut@gmail.com").first
+
+
+		item_type = Inventory::ItemType.new
+		item_type.created_by_user = plus_lab_employee
+		item_type.created_by_user_id = plus_lab_employee.id.to_s
+		item_type.name = "first item type"
+		item_type.barcode_required = true
+		item_type.virtual_units = 10
+		
+		item_type.save
+
+		## now create another item type.
+		item_type_two = Inventory::ItemType.new
+		item_type_two.created_by_user = plus_lab_employee
+		item_type_two.created_by_user_id = plus_lab_employee.id.to_s
+		item_type_two.name = "second item type"
+		item_type_two.barcode_required = true
+		item_type_two.virtual_units = 10
+		
+		item_type_two.save
+
+		## now save them both into the shit.
+		item_group = Inventory::ItemGroup.new
+		item_group.created_by_user = plus_lab_employee
+		item_group.created_by_user_id = plus_lab_employee.id.to_s
+		item_group.name = "TSH"
+		item_group.group_type = "kit"			
+		item_group.item_definitions = [
+			{
+				item_type_id: "first item type",
+				quantity: 2,
+				expiry_date: "2025-01-01"	
+			},
+			{
+				item_type_id: "second item type",
+				quantity: 5,
+				expiry_date: "2028-01-01"
+			}
+		]
+
+		item_group.save
+		assert_equal [], item_group.errors.full_messages
+
+		## item group two with the same item types.
+		item_group_two = Inventory::ItemGroup.new
+		item_group_two.created_by_user = plus_lab_employee
+		item_group_two.created_by_user_id = plus_lab_employee.id.to_s
+		item_group_two.name = "TSH Two"
+		item_group_two.group_type = "kit"			
+		item_group_two.item_definitions = [
+			{
+				item_type_id: "first item type",
+				quantity: 2,
+				expiry_date: "2025-01-01"	
+			}
+		]
+		
+		item_group_two.save
+		assert_equal [], item_group_two.errors.full_messages
+
+		### ORDER AND SAVE THE FIRST ITEM GROUP.
+		tr = Inventory::Transaction.new
+		tr.supplier_item_group_id = item_group.id.to_s
+		tr.supplier_id = item_group.supplier_id
+		tr.created_by_user = pathofast_user
+		tr.created_by_user_id = pathofast_user.id.to_s
+		tr.save
+
+		puts "these are the create transaction errors."
+		puts tr.errors.full_messages.to_s
+
+		## refresh the indices.
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+		
+		tr = Inventory::Transaction.find(tr.id.to_s)
+		tr.run_callbacks(:find)
+		tr.quantity_received = 2
+		tr.created_by_user = pathofast_user
+		tr.created_by_user_id = pathofast_user.id.to_s
+		tr.save
+
+		## so a local item_group should have been created.
+		## which was cloned from this item group.
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+		########### ORDER AND SAVE ITEM TWO
+		tr2 = Inventory::Transaction.new
+		tr2.supplier_item_group_id = item_group_two.id.to_s
+		tr2.supplier_id = item_group_two.supplier_id
+		tr2.created_by_user = pathofast_user
+		tr2.created_by_user_id = pathofast_user.id.to_s
+		tr2.save
+
+		puts "these are the create transaction errors."
+		puts tr2.errors.full_messages.to_s
+
+		## refresh the indices.
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+		
+		tr2 = Inventory::Transaction.find(tr2.id.to_s)
+		tr2.run_callbacks(:find)
+		tr2.quantity_received = 2
+		tr2.created_by_user = pathofast_user
+		tr2.created_by_user_id = pathofast_user.id.to_s
+		tr2.save
+
+		## so a local item_group should have been created.
+		## which was cloned from this item group.
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+		#######################################################
+		## ADD ITEM TO FIRST ITEM GROUP(LOCAL)
+
+		search_results = Inventory::ItemGroup.search({
+			size: 1,
+			query: {
+				term: {
+					cloned_from_item_group_id: item_group.id.to_s
+				}
+			}
+		})
+
+		assert_equal 1, search_results.response.hits.hits.size
+		local_item_group = Inventory::ItemGroup.new(search_results.response.hits.hits.first)
+		local_item_group.run_callbacks(:find)
+
+		item = Inventory::Item.new
+		item.transaction_id = tr.id.to_s
+		item.supplier_item_group_id = item_group.id.to_s
+		item.local_item_group_id = local_item_group.id.to_s
+		item.item_type_id = item_type.id.to_s
+		item.barcode = "12345"
+		item.expiry_date = "2025-05-05"
+		item.created_by_user = pathofast_user
+		item.created_by_user_id = pathofast_user.id.to_s
+		item.save
+
+		assert_equal [], item.errors.full_messages
+
+
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+		search_results = Inventory::ItemGroup.search({
+			size: 1,
+			query: {
+				term: {
+					cloned_from_item_group_id: item_group_two.id.to_s
+				}
+			}
+		})
+
+
+		local_item_group_two = Inventory::ItemGroup.new(search_results.response.hits.hits.first)
+		local_item_group_two.run_callbacks(:find)
+
+		## now do the transfer item group call.
+
+		put inventory_item_path(item.id.to_s), params: {item: item.attributes.merge({local_item_group_id: local_item_group_two.id.to_s}), :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: get_user_headers(@security_tokens,pathofast_user)
+
+		assert_equal "204", response.code.to_s
+
+		Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+		## now get that item and see its local item group.
+		item = Inventory::Item.find(item.id.to_s)
+		assert_equal item.local_item_group_id, local_item_group_two.id.to_s
+		#{item: {transaction_id: tr.id.to_s, supplier_item_group_id: item_group.id.to_s, local_item_group_id: local_item_group, item_type_id: item_type_two.id.to_s, barcode: "123445", expiry_date: "2025-05-05"},:api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: get_user_headers(@security_tokens,pathofast_user)
+
+		## now we have to put.
+
+
+	end
+
+	test " -- does not shift item , if it is part of an order, marked as incomplete -- " do 
+
+		pathofast_user = User.where(:email => "bhargav.r.raut@gmail.com").first
+
+		order = build_pathofast_patient_order(nil,nil,pathofast_user)
+		order.save
+
+
+		unless order.errors.full_messages.blank?
+			puts "errors saving order THIS ONE------------"
+			puts order.errors.full_messages
+			exit(1)
+		end		
+
+		pathofast_items = Inventory::Item.find_organization_items(pathofast_user.organization.id.to_s,"BD_SST_tube")
+
+		order = Business::Order.find(order.id.to_s)
+		order.run_callbacks(:find)
+		order.categories.each_with_index {|category,key|
+			if pathofast_items[0].categories.include? category.name
+				category.items << Inventory::Item.new(barcode: pathofast_items[0].barcode, item_type_id: pathofast_items[0].item_type_id, transaction_id: pathofast_items[0].transaction_id, expiry_date: pathofast_items[0].expiry_date)
+			end
+		}
+		order.created_by_user = pathofast_user
+		#order.reports[0].categories[0].items.add(Inventory::Item.new(barocde: pathofast_items[0]))
+		order.save
+		unless order.errors.full_messages.blank?
+			puts "errors saving order"
+			puts order.errors.full_messages
+			exit(1)
+		end		
+
+		order = Business::Order.find(order.id.to_s)
+
+		## now we order another item group.
+
+		## of the same type.
+		## as before.
+		## and try to add this item to that.
+		pathofast_item_groups = Inventory::ItemGroup.find_organization_item_groups(pathofast_user.organization.id.to_s)
+
+		puts "pathofast item groups are:"
+		puts pathofast_item_groups.to_s
+
+		newly_cloned_item_group = nil
+		pathofast_item_groups.each do |item_group|
+			if item_group.cloned_from_item_group_id.blank?
+				if item_group.name == "BD SST Tube 5 tubes"
+					## we want to make transaction and clone.
+					newly_cloned_item_group = order_item_group({:user => pathofast_user, :item_group_id => item_group.id.to_s})
+
+				end
+			end
+		end
+
+		## now if you try to transfer an item to this.
+		## it should not allow it.
+		## we basically update that item.
+		## so this should not be allowed at all.
+		## validate this.
+		item = Inventory::Item.find(pathofast_items[0].id.to_s)
+		item.run_callbacks(:find)
+		item.local_item_group_id = newly_cloned_item_group.id.to_s
+		item.created_by_user = pathofast_user
+		item.created_by_user_id = pathofast_user.id.to_s
+		#item.save
+		## i need to look into that.
+		#puts item.errors.full_messages.to_s
+
+		put inventory_item_path(item.id.to_s), params: {item: item.attributes.merge({local_item_group_id: newly_cloned_item_group.id.to_s}), :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: get_user_headers(@security_tokens,pathofast_user)
+
+		assert_equal "404", response.code.to_s
+
+		puts response.body.to_s
+
+	end
+
+
+	test " -- shifts item if the previous order has been marked as completed -- " do 
+
+		pathofast_user = User.where(:email => "bhargav.r.raut@gmail.com").first
+
+		order = build_pathofast_patient_order(nil,nil,pathofast_user)
+		order.save
+
+
+		unless order.errors.full_messages.blank?
+			puts "errors saving order THIS ONE------------"
+			puts order.errors.full_messages
+			exit(1)
+		end		
+
+		pathofast_items = Inventory::Item.find_organization_items(pathofast_user.organization.id.to_s,"BD_SST_tube")
+
+		order = Business::Order.find(order.id.to_s)
+		order.run_callbacks(:find)
+		order.categories.each_with_index {|category,key|
+			if pathofast_items[0].categories.include? category.name
+				category.items << Inventory::Item.new(barcode: pathofast_items[0].barcode, item_type_id: pathofast_items[0].item_type_id, transaction_id: pathofast_items[0].transaction_id, expiry_date: pathofast_items[0].expiry_date)
+			end
+		}
+		order.created_by_user = pathofast_user
+		#order.reports[0].categories[0].items.add(Inventory::Item.new(barocde: pathofast_items[0]))
+		order.save
+		unless order.errors.full_messages.blank?
+			puts "errors saving order FIRST TIME-----------------"
+			puts order.errors.full_messages
+			exit(1)
+		end		
+
+		order = Business::Order.find(order.id.to_s)
+		order.run_callbacks(:find)
+		order.order_completed = Business::Order::YES
+		order.created_by_user = pathofast_user
+		order.created_by_user_id = pathofast_user.id.to_s
+		order.save
+		unless order.errors.full_messages.blank?
+			puts "errors saving order SECOND TIME-------------------"
+			puts order.errors.full_messages
+			exit(1)
+		end		
+		## now we order another item group.
+
+		## of the same type.
+		## as before.
+		## and try to add this item to that.
+		pathofast_item_groups = Inventory::ItemGroup.find_organization_item_groups(pathofast_user.organization.id.to_s)
+
+		puts "pathofast item groups are:"
+		puts pathofast_item_groups.to_s
+
+		newly_cloned_item_group = nil
+		pathofast_item_groups.each do |item_group|
+			if item_group.cloned_from_item_group_id.blank?
+				if item_group.name == "BD SST Tube 5 tubes"
+					## we want to make transaction and clone.
+					newly_cloned_item_group = order_item_group({:user => pathofast_user, :item_group_id => item_group.id.to_s})
+
+				end
+			end
+		end
+
+		## now if you try to transfer an item to this.
+		## it should not allow it.
+		## we basically update that item.
+		## so this should not be allowed at all.
+		## validate this.
+		item = Inventory::Item.find(pathofast_items[0].id.to_s)
+		item.run_callbacks(:find)
+		item.local_item_group_id = newly_cloned_item_group.id.to_s
+		item.created_by_user = pathofast_user
+		item.created_by_user_id = pathofast_user.id.to_s
+		#item.save
+		## i need to look into that.
+		#puts item.errors.full_messages.to_s
+
+		put inventory_item_path(item.id.to_s), params: {item: item.attributes.merge({local_item_group_id: newly_cloned_item_group.id.to_s}), :api_key => @ap_key, :current_app_id => "testappid" }.to_json, headers: get_user_headers(@security_tokens,pathofast_user)
+
+		assert_equal "204", response.code.to_s
+
+		puts response.body.to_s
+
+
+	end
+
+
+	
+=begin
 	test " -- transfers single time between members of different organizations -- " do 
 			
 		item_type = Inventory::ItemType.new
@@ -525,12 +802,12 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 			{
 				item_type_id: "first item type",
 				quantity: 2,
-				expiry_date: "2015-01-01"	
+				expiry_date: "2025-01-01"	
 			},
 			{
 				item_type_id: "second item type",
 				quantity: 5,
-				expiry_date: "2018-01-01"
+				expiry_date: "2025-01-01"
 			}
 		]
 		
@@ -583,7 +860,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item.local_item_group_id = local_item_group.to_s
 		item.item_type_id = item_type_two.id.to_s
 		item.barcode = "1234556"
-		item.expiry_date = "2015-05-05"
+		item.expiry_date = "2025-05-05"
 		item.created_by_user = @u
 		
 		item.save
@@ -635,12 +912,12 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 			{
 				item_type_id: "first item type",
 				quantity: 2,
-				expiry_date: "2015-01-01"	
+				expiry_date: "2025-01-01"	
 			},
 			{
 				item_type_id: "second item type",
 				quantity: 5,
-				expiry_date: "2018-01-01"
+				expiry_date: "2025-01-01"
 			}
 		]
 		
@@ -693,7 +970,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item.local_item_group_id = local_item_group.to_s
 		item.item_type_id = item_type_two.id.to_s
 		item.barcode = "1234556"
-		item.expiry_date = "2015-05-05"
+		item.expiry_date = "2025-05-05"
 		item.created_by_user = @u
 		
 		item.save
@@ -746,12 +1023,12 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 			{
 				item_type_id: "first item type",
 				quantity: 2,
-				expiry_date: "2015-01-01"	
+				expiry_date: "2025-01-01"	
 			},
 			{
 				item_type_id: "second item type",
 				quantity: 5,
-				expiry_date: "2018-01-01"
+				expiry_date: "2025-01-01"
 			}
 		]
 		
@@ -806,7 +1083,7 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		item.local_item_group_id = local_item_group.to_s
 		item.item_type_id = item_type_two.id.to_s
 		item.barcode = "1234556"
-		item.expiry_date = "2015-05-05"
+		item.expiry_date = "2025-05-05"
 		item.created_by_user = @u
 		
 		item.save
@@ -836,24 +1113,14 @@ class InventoryControllerTest < ActionDispatch::IntegrationTest
 		assert_equal @atif.organization.id.to_s, item.currently_held_by_organization
 
 	end
-
+=end
 =begin
 	test " transfers transaction and all its components to another organization -- " do 
 
 	end
 =end
 		
-=begin
-	test " -- transferring items between local item groups, subtracts it from the existing item group and transfers it to the new item group -- " do 
 
-	end
-=end	
-	
-=begin
-	test " -- allows lab/hospital/doctor to create local item groups with new item types, and then populate them with items -- " do 
-
-	end
-=end	
 	
 
 end
