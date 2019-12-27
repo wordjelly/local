@@ -12,8 +12,7 @@
 
 	<a class="dropdown-trigger btn" href="#" data-target='bills'>Billing</a>
 		
-	<% puts "this is the representative patient" %>
-	<% puts current_user.organization.representative_patient %>
+	
 	<ul id='organization' class='dropdown-content'>
 		<% if current_user.has_organization? %>
 			<li><i class="material-icons">view_module</i><%= link_to current_user.organization.name, organization_path(current_user.organization.id.to_s) %></li>

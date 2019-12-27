@@ -62,6 +62,15 @@ class Inventory::Category
 
 	def self.index_properties	
 		{
+			created_at: {
+				type: 'date'
+			},
+			updated_at: {
+				type: 'date'
+			},
+			public: {
+				type: 'integer'
+			},
 			quantity: {
 				type: 'float'
 			},
@@ -203,7 +212,6 @@ class Inventory::Category
 			
 			if !it.use_code.blank?
 				if it.code_matches?
-					## in this case, we don't do any of the barcode level validations.
 					organization_id_to_report_hash.keys.each do |org_id|
 						it.applicable_to_report_ids << organization_id_to_report_hash[org_id]
 					end
@@ -215,11 +223,7 @@ class Inventory::Category
 				applicable = false
 
 				organization_id_to_report_hash.keys.each do |org_id|
-
-					#puts "doing org id: #{org_id}"
 					res = it.get_item_details_from_barcode(org_id,self.name,organization_id_to_report_hash[org_id],applicable,organization_id_to_report_hash,order_id)
-					#puts "applicable becomes:"
-					#puts applicable.to_s
 					unless res.blank?
 						applicable = res if applicable.blank?
 					end

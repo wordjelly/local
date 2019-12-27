@@ -283,11 +283,6 @@ class Patient
 		representative_patient
 	end
 
-	## now make an order with the representative patient.
-	## how does balance work.
-	## as usual.
-	## in the organization view.
-	## i want to see that.
 
 	## @param[String] organization_id
 	## @param[String] user_id_who_created_organization

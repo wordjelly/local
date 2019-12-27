@@ -17,13 +17,29 @@ class OrganizationMember
 	def set_membership_status(user_id)
 		unless self.organization_id.blank?
 			
-			organization = Organization.find(self.organization_id)
-			
+			organization = nil
 
+			if RequestStore.store[self.organization_id].blank?
+				puts "cannot find organization: #{self.organization_id} in the request store"
+				organization = Organization.find(self.organization_id)
+				RequestStore.store[self.organization_id] = organization
+			else
+				organization = RequestStore.store[self.organization_id]
+			end
+
+			#organization = ((RequestStore.store[self.organization_id]) || Organization.find(self.organization_id))
+			
+			
 			## so the secondary skip will be done here.
 			## we don't want to trigger it again.
 			organization.skip_load_created_by_user = true
 			organization.run_callbacks(:find)
+			RequestStore.store[self.organization_id].users_pending_approval ||= organization.users_pending_approval
+			RequestStore.store[self.organization_id].employee_roles ||= organization.employee_roles
+			RequestStore.store[self.organization_id].locations ||= organization.locations
+			RequestStore.store[self.organization_id].representative_patient ||= organization.representative_patient
+			RequestStore.store[self.organization_id].after_find_performed = true
+
 
 			self.organization = organization
 			unless self.created_by_this_user.blank?

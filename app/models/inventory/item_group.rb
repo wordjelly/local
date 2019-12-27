@@ -388,6 +388,7 @@ class Inventory::ItemGroup
     ## @called_from : order_concern.rb#update_categories_from_item_group 
     def get_items_grouped_by_category_name
     	result = {}
+    	puts "self id is: #{self.id.to_s}"
     	search_request = Inventory::Item.search({
 			query: {
 				term: {
@@ -416,8 +417,6 @@ class Inventory::ItemGroup
 				item_ids << item_bucket["key"] 
 			end
 			result[category] = item_ids
-			## so when you are adding -> then it is loading that item.
-			## 
 		end
 		result
     end

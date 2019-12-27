@@ -672,7 +672,7 @@ class Diagnostics::Test
 		              <th>' + (self.result_raw || DEFAULT_RESULT) + '</th>
 		              <th>' + (self.units || DEFAULT_UNITS) + '</th>
 		              <th>' + range_name + '</th>
-		              <th>' + inference + '</th>
+		              <th>' + (inference || '') + '</th>
 		              <th>' + self.is_ready_for_reporting? + '</th>
 		              <th>' + self.is_verification_done? + '</th>
 		              <th><div class="add_result_manually edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Add Result Manually</div>

@@ -1,0 +1,91 @@
+{
+	"reports" : [
+		{
+			"name" : "T3",
+			"description" : "Determination of Serum T3",
+			"rates" : [
+				{
+					"for_organization_id" : "*",
+					"rate" : 100
+				},
+				{
+					"for_organization_id" : "*",
+					"rate" : 300,
+					"patient_rate" : 1
+				}
+			],
+			"tests" : [
+				{
+					"name" : "T3",
+					"description" : "Serum T3",
+					"lis_code" : "T3",
+					"result_type" : "numeric",
+					"units" : "ng/dl",
+					"only_include_in_report_if_abnormal" : -1,
+					"test_must_have_value" : 1,
+					"ranges" : [
+						{
+							"max_age_years" : 120,
+							"min_age_years" : 0,
+							"sex" : "Female",
+							"tags" : [
+								{
+									"range_type" : "normal",
+									"min_range_val" : 10,
+									"max_range_val" : 20
+								},
+								{
+									"range_type" : "abnormal",
+									"min_range_val" : 20,
+									"max_range_val" : 25,
+									"grade" : "1",
+									"count" : 2,
+									"inference" : "Check kidney function tests"
+								}
+							]
+						},
+						{
+							"max_age_years" : 120,
+							"min_age_years" : 0,
+							"sex" : "Male",
+							"tags" : [
+								{
+									"range_type" : "normal",
+									"min_range_val" : 10,
+									"max_range_val" : 20
+								},
+								{
+									"range_type" : "abnormal",
+									"min_range_val" : 20,
+									"max_range_val" : 25,
+									"grade" : "1",
+									"count" : 2,
+									"inference" : "Check kidney function tests"
+								}
+							]
+						}
+					]
+				}
+			],
+			"requirements" : [
+				{
+					"name" : "Serum Container",
+					"categories" : [
+						{
+							"name" : "SST Tube",
+							"quantity" : 20.0
+						},
+						{
+							"name" : "RST Tube",
+							"quantity" : 20.0
+						},
+						{
+							"name" : "Plain Tube",
+							"quantity" : 20.0
+						}
+					]	
+				}
+			]
+		}
+	]
+}

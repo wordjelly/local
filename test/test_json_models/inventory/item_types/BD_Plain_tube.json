@@ -1,0 +1,9 @@
+{
+	"item_types" : [
+		{
+			"id" : "BD_Plain_tube",
+			"name" : "BD Plain Tube",
+			"categories" : ["Plain Tube"]
+		}
+	]
+}

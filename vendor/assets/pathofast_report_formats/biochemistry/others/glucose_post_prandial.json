@@ -1,0 +1,143 @@
+{
+	"name" : "Serum Glucose(Post-Prandial)",
+	"description" : "Determination of Serum Glucose level(Post-Prandial 2 hours)",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "Serum Glucose",
+			"description" : "Serum Glucose estimation",
+			"lis_code" : "GLUR",
+			"result_type" : "numeric",
+			"units" : "mg/dL",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 1,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 1,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 0,
+							"undefined" : 1
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 70,
+							"max_range_val" : 140
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 140,
+							"max_range_val" : 199,
+							"inference" : "Impaired Glucose Tolerance"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 199,
+							"max_range_val" : 700,
+							"inference" : "Evaluate for Diabetes",
+							""
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 1,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 70,
+							"max_range_val" : 140
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 140,
+							"max_range_val" : 199,
+							"inference" : "Impaired Glucose Tolerance"
+						},
+						{
+							"range_type" : "abnormal",
+							"min_range_val" : 199,
+							"max_range_val" : 700,
+							"inference" : "Evaluate for Diabetes",
+							""
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "Serum Container",
+			"categories" : [
+				{
+					"name" : "Fluoride Tube",
+					"quantity" : 1.0
+				},
+				{
+					"name" : "SST Tube",
+					"quantity" : 1.0
+				},
+				{
+					"name" : "Plain Tube",
+					"quantity" : 1.0
+				}
+			]	
+		}
+	]
+}

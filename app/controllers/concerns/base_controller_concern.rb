@@ -288,22 +288,27 @@ module Concerns::BaseControllerConcern
 			end		
 		else
 
+			t1 = Time.now.to_f
 			assign_incoming_attributes
+			t2 = Time.now.to_f
+			puts "assign attributes takes---------------------------------------------------------------->: #{(t2 - t1).in_milliseconds}"
 
 		end
 
 		## so after find does not load the created_by_user
 		## what about a current_user ?
 		if current_user
-			puts "------------ THERE IS A CURRENT USER --------------- "
 			instance_variable_get("@#{get_resource_name}").send("created_by_user=",current_user) 
 		end
 		
 	
 		#puts " ---------- ENDING HERE ---------------- "
 
+		t1 = Time.now
 		instance_variable_get("@#{get_resource_name}").send("save")
 		set_errors_instance_variable(instance_variable_get("@#{get_resource_name}"))
+		t2 = Time.now
+		puts "save in update takes --------------------------------------------------------------------> #{(t2 - t1).in_milliseconds}"
 		set_alert_instance_variable(instance_variable_get("@#{get_resource_name}"))
 		instance_variable_get("@#{get_resource_name}").send("run_callbacks","find".to_sym)
 

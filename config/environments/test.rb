@@ -48,4 +48,5 @@ Rails.application.configure do
   config.ignore_notification_job = true
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+  config.ignore_trigger_lis_job = false
 end

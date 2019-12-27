@@ -69,9 +69,14 @@ module Concerns::MissingMethodConcern
 
 	    ## so this i can put in missing method ?
 		## but it has no access to that.
+		## i'm calling new_record 500 times.
 		after_find do |document|
+			#puts "doing after find with class:#{document.class.name}"
+			#t1 = Time.now
 			document.cascade_callbacks(:find)
-			document.newly_added = false
+			#t2 = Time.now
+			#puts "cascade callbacks takes: #{(t2 - t1).in_milliseconds}"
+			document.newly_added = false unless document.id.blank?
 			document.changed_attributes ||= []
 			document.changed_array_attribute_sizes ||= []
 			## same old shit here.

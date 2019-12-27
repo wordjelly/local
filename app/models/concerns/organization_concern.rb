@@ -95,8 +95,11 @@ module Concerns::OrganizationConcern
 
 		after_find do |document|
 			#puts "came to after find-----------------"
+			t1 = Time.now
 			document.set_membership_statuses_for_organization_members
 			document.set_organization
+			t2 = Time.now
+			puts "time taken after find in organization concner: #{(t2 - t1).in_milliseconds}"
 		end
 
 	end
@@ -189,11 +192,15 @@ module Concerns::OrganizationConcern
 
     def set_organization
     	#puts " ----------- !!!!!!!!!!!!!! ------------ "
-    	#puts "Came to set organization"
+    	#puts "Came to set organization with class: #{self.class.name}"
     	#puts "the organization members are:"
     	#puts self.organization_members.to_s
     	#puts "self organization is:"
     	#puts self.organization.to_s
+    	#so now we stop finding everything, everywhere, all over the place.
+    	#we find only once.
+    	#and do whatever we have to on it.
+    	t1 = Time.now
     	if self.organization.blank?
     		k = self.organization_members.select{|c|
     			(c.membership_status == Organization::USER_VERIFIED) || (c.created_by_this_user == OrganizationMember::CREATED_BY_THIS_USER)
@@ -202,7 +209,8 @@ module Concerns::OrganizationConcern
     		#puts k.to_s
     		unless k.blank?
     			#puts "going to find organization ---------->"
-    			if self.organization = Organization.find(k[0].organization_id)
+    			self.organization = k[0].organization
+    			unless self.organization.blank?
     				## so the order -> created by user
     				## that created by user -> 
     				## organization -> 
@@ -211,9 +219,9 @@ module Concerns::OrganizationConcern
     				## that user -> had an organization which was set here
     				## now we want to know which user created that organization.
     				## so for organization -> we can load it from the created_by_user_id.
-    				self.organization.skip_load_created_by_user = true
+    				#self.organization.skip_load_created_by_user = true
 
-    				self.organization.run_callbacks(:find)
+    				#self.organization.run_callbacks(:find)
 
     				#puts "did organization after find."
     				#puts "is there a representative patient?"
@@ -228,6 +236,8 @@ module Concerns::OrganizationConcern
     		#puts self.organization.to_s
     		#puts "----------------------------------------"
     	end
+    	#t2 = Time.now
+		#puts "set organization takes: #{self.class.name} takes: #{(t2-t1).in_milliseconds}"
     end
 
     ## @param[Hash] headers : the hash of headers

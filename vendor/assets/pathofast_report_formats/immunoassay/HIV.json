@@ -37,7 +37,7 @@
 							"max_range_val" : 0.9
 						},
 						{
-							"range_type" : "normal",
+							"range_type" : "abnormal",
 							"min_range_val" : 0.9,
 							"max_range_val" : 500
 						}
@@ -58,7 +58,7 @@
 							"max_range_val" : 0.9
 						},
 						{
-							"range_type" : "normal",
+							"range_type" : "abnormal",
 							"min_range_val" : 0.9,
 							"max_range_val" : 500
 						}
@@ -73,7 +73,11 @@
 			"categories" : [
 				{
 					"name" : "SST Tube",
-					"quantity" : 1.0
+					"quantity" : 0.1
+				},
+				{
+					"name" : "Plain Tube",
+					"quantity" : 0.1
 				}
 			]	
 		}

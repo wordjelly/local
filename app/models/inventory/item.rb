@@ -376,12 +376,7 @@ class Inventory::Item
 			else
 				## add the transaction, name etc.
 				if i.is_available?(order_id)
-					## then we don't add any errors.
-					## add the details of expiry date, transaction, and all the other stuff here.
-					## if its a denovo item, then skip these validations.
-					#puts "the item category is: #{i.category}"
-					#puts "the current category is: #{self.name}"
-					#exit(1)
+					
 					if i.is_of_category?(category_name)
 						#puts "it is of the category:#{category_name}"
 						self.applicable_to_report_ids << organization_id_to_report_hash[org_id]
@@ -544,21 +539,22 @@ class Inventory::Item
 	## the method assumes that the available flag will be turned on and off in the item, depending on whether the item has been recycled or utilized inside another order.
 	def is_available?(order_id)
 		if order = Inventory::Item.item_already_used_in_order?(self.id.to_s,order_id)
-			puts "there is an incomplete order where this item has already been used."
+			#puts "there is an incomplete order where this item has already been used."
+			return false
 		else
-			puts "there is no incomplete order where this item has already been used."
+			#puts "there is no incomplete order where this item has already been used."
 			if Date.today < self.expiry_date
-				puts "today's date is less than its expiry date so we are returning true."
+				#puts "today's date is less than its expiry date so we are returning true."
 				return true
 			else
-				puts "date today is: #{Date.today}"
-				puts "expiry date is: #{self.expiry_date}"
-				puts "is it less: #{Date.today < self.expiry_date}"
-				puts "expiry date issue."
+				#puts "date today is: #{Date.today}"
+				#puts "expiry date is: #{self.expiry_date}"
+				#puts "is it less: #{Date.today < self.expiry_date}"
+				#puts "expiry date issue."
 				return false
 			end
 		end
-		return false
+		#return false
 	end
 
 
@@ -663,18 +659,6 @@ class Inventory::Item
 	## @return[Boolean] true/false : gets the item_type_id, and finds the itemType, and checks whether the provided category is mentioned in this item_type
 	def is_of_category?(category)
 		self.categories.include? category
-		# when we add the new item, we need to add that.
-		# in the show view.
-=begin
-		begin
-			item_type = Inventory::ItemType.find(self.item_type_id)
-			#puts "item type is:"
-			#puts item_type.attributes.to_s
-			item_type.categories.include? category
-		rescue => e
-			false
-		end
-=end
 	end
 
 	######################################################
@@ -690,6 +674,8 @@ class Inventory::Item
 		self.errors.add(:barcode, "This barcode was already used, or the tube has expired") if self.expired_or_already_used == true
 		self.errors.add(:different_category, "This tube is a of a different type and cannot be used") if self.different_category == true
 		self.errors.add(:code_mismatch,"The code entered does not match the code provided, please try again.") if self.code_mismatch == true
+		## will it raise an error ?
+		## 
 	end
 
 	def expired?

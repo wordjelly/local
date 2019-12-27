@@ -143,21 +143,24 @@ module Concerns::OwnersConcern
 		## to load the organization.
 		## so we are not being able to cascade these callbacks.
 		after_find do |document|	
-			## so this is being done after find.
-			## why was it not cascaded ?
-			## the callback 
-			## it would have gotten set.
-			#puts "Came to after find with class: #{document.class.name}"		
+			#t1 = Time.now
 			unless document.class.name == "Organization"
 				unless document.currently_held_by_organization.blank?
-					#puts "doing after find on class: #{document.class.name}"
-					document.organization = Organization.find(document.currently_held_by_organization)
-					#puts "the organization becomes: #{document.organization.id.to_s}"
+					#tx = Time.now
+
+					document.organization = ((RequestStore.store[document.currently_held_by_organization])  || Organization.find(document.currently_held_by_organization))
+					RequestStore.store[document.currently_held_by_organization] = document.organization
+					#ty = Time.now
+					#puts "find organization inside owners concern from class: #{self.class.name}, takes: #{(ty-tx).in_milliseconds}"
 				end
 			end
-
+			#tx = Time.now
 			document.load_created_by_user
+			#ty = Time.now
+			#puts "load created by user class: #{self.class.name}, takes: #{(ty-tx).in_milliseconds}"
 
+			#t2 = Time.now
+			#puts "after_find owners concern  from class: #{self.class.name} takes: #{(t2-t1).in_milliseconds}"
 		end
 
 		## so this is on set only
@@ -172,7 +175,11 @@ module Concerns::OwnersConcern
 			#puts "skip load is: #{self.skip_load_created_by_user}"
 			#so its at the most called on skip_load.
 			if self.skip_load_created_by_user.blank?	
-				self.created_by_user = User.find(self.created_by_user_id) unless (self.created_by_user_id.blank?)
+				unless (self.created_by_user_id.blank?)
+					
+					self.created_by_user = ((RequestStore.store[self.created_by_user_id]) || (User.find(self.created_by_user_id)))
+					RequestStore.store[self.created_by_user_id] = self.created_by_user 
+				end
 			else
 				#puts "its not blank."
 			end

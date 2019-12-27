@@ -1,1 +1,73 @@
-{}
+{
+	"name" : "ESR",
+	"description" : "Determination of ESR",
+	"rates" : [
+		{
+			"for_organization_id" : "*",
+			"rate" : 100
+		},
+		{
+			"for_organization_id" : "*",
+			"rate" : 100,
+			"patient_rate" : 1
+		}
+	],
+	"tests" : [
+		{
+			"name" : "ESR",
+			"description" : "Eryhtrocyte Sedimentation Rate",
+			"lis_code" : "ESR",
+			"result_type" : "numeric",
+			"units" : "mm/hr",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3552202/",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 4,
+							"max_range_val" : 52
+						}
+					]
+				},
+				{
+					"reference" : "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3552202/",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 4,
+							"max_range_val" : 73
+						}
+					]
+				}
+			]
+		}
+	],
+	"requirements" : [
+		{
+			"name" : "ESR Tube",
+			"categories" : [
+				{
+					"name" : "ESR Tube",
+					"quantity" : 0.1
+				}
+			]	
+		}
+	]
+}

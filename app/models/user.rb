@@ -155,7 +155,7 @@ class User
     ##
     ############################################################
     after_find do |document|
-      document.set_patients_pending_approval
+      #document.set_patients_pending_approval
       document.load_credentials
     end
 

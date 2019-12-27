@@ -378,84 +378,93 @@ module Concerns::OrderConcern
 				#puts "going to update the total."
 				throw(:abort) unless receipt.update_total
 			end
+			$redis.set("before_save",Time.now.to_f.to_s)
 		end
 
+		## now we knock off all the puts
+		## and think about request store.
+		## now we block the load images
+		## keep it only for whatever needs it
+		## not just some bloody random after_find
+		## its taking 100 miliseconds by itself.
+		## okay lets solve the search problem
+		## and not return half the planet.
+		## and see how it goes after we add hemogram and urine routine
+		## 
 		after_save do |document|
 			if document.trigger_lis_poll == YES
-				document.reports.each do |report|
-					$event_notifier.trigger_lis_poll(report.currently_held_by_organization,{:epoch => document.changed_for_lis.to_i.to_s})
+				if Rails.configuration.ignore_trigger_lis_job.blank?
+					puts "ignore trigger lis job is : #{Rails.configuration.ignore_trigger_lis_job}"
+					ScheduleJob.perform_later([document.id.to_s,document.class.name,"trigger_lis_poll_job"])
 				end
 			else
 				if document.all_reports_verified?
-					document.reports.each do |report|
-						$event_notifier.trigger_order_delete(report.currently_held_by_organization,{:order_id => self.id.to_s})
+					if Rails.configuration.ignore_trigger_lis_job.blank?
+						puts "ignore trigger lis job is : #{Rails.configuration.ignore_trigger_lis_job}"
+						ScheduleJob.perform_later([document.id.to_s,document.class.name,"trigger_order_delete_job"])
 					end
 				end
 			end
+			$redis.set("after_save",Time.now.to_f.to_s)
 		end
 
-		## after find is not being done for the reports.
-		## i think.
-		## okay so why did it generate the report.
-		## now let me add one signature.
-		## this should happen before the validations.
-		## not after.
 
 		before_validation do |document|
-			#################################################
-			##
-			##
-			## IF WE ARE DOING A TOP UP
-			## WE NEED THE DUMMY PATIENT -> of the organization
-			## of the creating user
-			## all that has to be populated herewith.
-			## does the payment also have to be created?
-			## without a receipt, it cannot be generated.
-			## that has to be done after generate receipts
-			## then on creating this -> it has to be go to the verification -> online by paypal. 
-			##
-			##
-			#################################################
+			t1 = Time.now
 			document.check_for_top_up
-			#################################################
-			##
-			## first some item group level validation tests
-			## if its already in an order 
-			## marked as incomplete -> should give error
-			## etc.
-			## now we are adding local item groups
-			## now what happens next ?
-			## so its adding locai 
-			## so first inventory tests.
-			## so i will make one collection packet
-			## set the item groups on that
-			## and reuse
-			## check changing priority -> if it triggers a poll
-			## check that
-			## and its UI.
-			## so first some local item group tests.
-			##
-			#################################################
+			t2 = Time.now
+			puts "step : check_for_top_up  , time taken #{(t2 - t1).in_milliseconds}"
 			document.load_patient
+			t3 = Time.now
+			puts "step : load_patient  , time taken #{(t3 - t2).in_milliseconds}"
 			document.update_reports
+			t4 = Time.now
+			puts "step : update_reports  , time taken #{(t4 - t3).in_milliseconds}"
 			document.update_recipients
+			t5 = Time.now
+			puts "step : update_recipients  , time taken #{(t5 - t4).in_milliseconds}"
 			document.update_requirements
+			t6 = Time.now
+			puts "step : update_requirements  , time taken #{(t6 - t5).in_milliseconds}"
 			document.update_items_from_item_group
+			t7 = Time.now
+			puts "step : update items from item group  , time taken #{(t7 - t6).in_milliseconds}"
 			document.update_report_items
+			t8 = Time.now
+			puts "step : update_report_items  , time taken #{(t8 - t7).in_milliseconds}"
 			document.gather_history
+			t9 = Time.now
+			puts "step : gather_history  , time taken #{(t9 - t8).in_milliseconds}"
 			document.add_report_values
+			t10 = Time.now
+			puts "step : add_report_values  , time taken #{(t10 - t9).in_milliseconds}"
 			document.verify
+			t11 = Time.now
+			puts "step : verify  , time taken #{(t11 - t10).in_milliseconds}"
 			document.set_accessors
+			t12 = Time.now
+			puts "step : set_accessors  , time taken #{(t12 - t11).in_milliseconds}"
 			document.set_changed_for_lis
+			t13 = Time.now
+			puts "step : set_changed_for_lis  , time taken #{(t13 - t12).in_milliseconds}"
 			document.generate_report_impressions
+			t14 = Time.now
+			puts "step : generate_report_impressions  , time taken #{(t14 - t13).in_milliseconds}"
 			document.generate_receipts
+			t15 = Time.now
+			puts "step : generate_receipts  , time taken #{(t15 - t14).in_milliseconds}"
 			document.cascade_id_generation(nil)
+			t16 = Time.now
+			puts "step : cascade_id_generation  , time taken #{(t16 - t15).in_milliseconds}"
+			puts "total time for before validation: #{(t16 - t1).in_milliseconds}"
+			$redis.set("before_validation",Time.now.to_f.to_s)
 		end
 
 
 		after_validation do |document|
 			document.set_force_pdf_generation_for_receipts
 			document.resend_notifications unless document.skip_resend_notifications.blank?
+			$redis.set("after_validation",Time.now.to_f.to_s)
 		end
 
 
@@ -464,6 +473,19 @@ module Concerns::OrderConcern
 			document.set_accessors
 		end
 
+	end
+
+	def trigger_lis_poll_job
+		self.reports.each do |report|
+			$event_notifier.trigger_lis_poll(report.currently_held_by_organization,{:epoch => self.changed_for_lis.to_i.to_s})
+		end
+	end
+
+
+	def trigger_order_delete_job
+		self.reports.each do |report|
+			$event_notifier.trigger_order_delete(report.currently_held_by_organization,{:order_id => self.id.to_s})
+		end
 	end
 
 	#################################
@@ -510,25 +532,44 @@ module Concerns::OrderConcern
 	end
 
 	def load_local_item_group
+		#puts "local item group id is #{self.local_item_group_id}"
 		self.local_item_group = Inventory::ItemGroup.find(self.local_item_group_id) unless self.local_item_group_id.blank?
 		self.local_item_group.run_callbacks(:find) unless self.local_item_group.blank?
 	end
 
 	## @called_from : before_validation
 	def update_items_from_item_group
+		puts "Came to update items from item group -------------->"
+		load_local_item_group if self.local_item_group.blank?
+		puts "the local item group becomes: #{self.local_item_group}"
 		unless self.local_item_group.blank?
+			puts "local item group is not blank -------- grouping item groups by category "
 			items_grouped_by_category = self.local_item_group.get_items_grouped_by_category_name
+			puts "items grouped by category"
+			puts items_grouped_by_category.to_s
 			self.categories.each do |category|
+				puts "checking category: #{category.name}"
 				additional_required_items = category.additional_required_items
+				puts "additional required items: #{additional_required_items}"
 				if additional_required_items > 0
-					if item_ids = items_grouped_by_category[category]
+					puts "additional required items are greater than 0"
+					if item_ids = items_grouped_by_category[category.name]
+						puts "we have item ids: #{item_ids}"
 						item_ids.slice(0,additional_required_items).each do |barcode|
-							category.items.add(Inventory::Item.new(barcode: barcode))
+							puts "Adding barcode----------->"
+							category.items.push(Inventory::Item.new(barcode: barcode))
 						end
 					end
 				end
 			end
 		end
+
+		puts "--------- AFTER UPDATING THESE ARE THE ITEMS ----------- "
+		self.categories.each do |category|
+			puts category.items.to_s
+		end
+		puts "--------- AFTER UPDATING THESE ARE THE ITEMS END ----------- "
+
 	end
 
 	## if the size changes ?
@@ -586,27 +627,30 @@ module Concerns::OrderConcern
 	def set_changed_for_lis
 		## so in this case, we reset and then set only
 		## so after save it is accessible.
+		t1 = Time.now
 		self.trigger_lis_poll = NO
+		x1 = Time.now
 		return if self.new_record?
 		if self.validations_to_skip.blank?
 		else
 			return if self.validations_to_skip.include? "set_changed_for_lis"
 		end
 		
-		#puts "inside changed for lis---"
-		#puts "the changed attributes"
-		#puts self.changed_attributes.to_s
-
-		#puts "changed array attribute sizes:"
-		#puts self.changed_array_attribute_sizes.to_s
-
-		## okay so good old changed attributes.
-		## so changed for lis is not suppose to be triggered here.
-		## what about if this is a new record ?
-		## 
-		## if the changed for lis itself was changed, don't do anything
 		return if self.changed_attributes.include? "changed_for_lis"
+		x2 = Time.now
+		puts  " sub pre=first level: #{(x2 - x1).in_milliseconds} "
 
+
+		x1 = Time.now
+		if self.changed_attributes.include? "local_item_group_id"
+			self.changed_for_lis = Time.now.to_i
+			## here we push the event notification
+			self.trigger_lis_poll = YES
+		end
+		x2 = Time.now
+		puts  " pre=first level: #{(x2 - x1).in_milliseconds} "
+
+		x1 = Time.now
 		["template_report_ids","categories"].each do |k|
 			if self.changed_array_attribute_sizes.include? k
 				self.changed_for_lis = Time.now.to_i
@@ -614,9 +658,28 @@ module Concerns::OrderConcern
 				self.trigger_lis_poll = YES
 			end
 		end
+		x2 = Time.now
+		puts  " first level: #{(x2 - x1).in_milliseconds} "
+
+		x1 = Time.now
+		self.reports.each do |report|
+			report.requirements.each do |requirement|
+				requirement.categories.each do |category|
+					unless category.changed_attributes.blank?
+						if category.changed_attributes.include? "use_category_for_lis"
+							self.trigger_lis_poll = YES
+						end
+					end
+				end
+			end
+		end
+		x2 = Time.now
+		puts  "second level: #{(x2 - x1).in_milliseconds} "
+
 		## only if all requirements fulfilled.
 		## otherwise none of this is of any use.
 		## so will have to set this.
+		x1 = Time.now
 		self.categories.each do |category|
 
 			#puts "is the category newly added?"
@@ -643,7 +706,11 @@ module Concerns::OrderConcern
 			end
 			
 		end
+		x2 = Time.now
+		puts  "third level: #{(x2 - x1).in_milliseconds} "
+		t2 = Time.now
 
+		puts "internal set changed for lis: #{(t2-t1).in_milliseconds}"
 	end
 
 
@@ -720,6 +787,8 @@ module Concerns::OrderConcern
 
 			report.tests.each do |test|
 				#puts "checking test: #{test.name.to_s}"
+				puts "report: #{report}"
+				puts "test: #{test}"
 				self.errors.add(:reports, "the test #{test.name}, in the report: #{report.name}, has not been provided with the relevant history #{test.get_history_questions}, please answer questions to finalize the order") unless test.history_provided?(self.history_tags)
 			end
 		end
@@ -837,12 +906,14 @@ module Concerns::OrderConcern
 	## sets the accessors of order, if any, and also those of the
 	## child elements.
 	def set_accessors
-		## and the location.
+		t1 = Time.now.to_i
 		self.load_local_item_group
 		self.reports.each do |report|
 			report.order_organization = self.organization
 			report.set_accessors
 		end
+		t2 = Time.now.to_i
+		puts "set accessors takes: #{t2*1000.to_f - t1*1000.to_f}"
 	end
 
 

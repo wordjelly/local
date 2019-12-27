@@ -87,8 +87,20 @@ class ::Hash
 						self[k].each_with_index{|val,key|
 							if key >= object.prev_size[k]
 								cls = object.get_attribute_class(k)
-								object.send(k).push(cls.constantize.new(val)) 
-								object.send(k)[-1].newly_added = true
+								#puts "class is: #{cls}"
+								#puts "cls constantize is : #{cls.constantize}"
+								#puts "the val is:"
+								#puts val.to_s
+								kk = val
+								if cls.to_s == "BasicObject"
+
+								else
+									kk = cls.constantize.new(val)
+								end
+								object.send(k).push(kk) 
+								unless cls.to_s == "BasicObject"
+									object.send(k)[-1].newly_added = true
+								end
 							end
 						}
 					elsif object.prev_size[k] > object.current_size[k]

@@ -1,0 +1,21 @@
+{
+	"name" : "Pathofast Collection Packet",
+	"group_type" : "Kit",
+	"item_definitions" : [
+		{
+			"item_type_id" : "BD_SST_tube",
+			"quantity" : 1,
+			"expiry_date" : "2025-04-05"
+		},
+		{
+			"item_type_id" : "BD_RST_tube",
+			"quantity" : 1,
+			"expiry_date" : "2025-04-05"
+		},
+		{
+			"item_type_id" : "BD_Plain_tube",
+			"quantity" : 1,
+			"expiry_date" : "2025-04-05"
+		}
+	]
+}

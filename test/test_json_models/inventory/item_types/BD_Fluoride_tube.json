@@ -1,0 +1,9 @@
+{
+	"item_types" : [
+		{
+			"id" : "BD_Fluoride_tube",
+			"name" : "BD Fluoride Tube",
+			"categories" : ["Fluoride Tube"]
+		}
+	]
+}

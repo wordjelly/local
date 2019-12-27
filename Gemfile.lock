@@ -1070,6 +1070,8 @@ GEM
       json
     redis (3.3.1)
     remotipart (1.4.3)
+    request_store (1.5.0)
+      rack (>= 1.4)
     responders (3.0.0)
       actionpack (>= 5.0)
       railties (>= 5.0)
@@ -1238,6 +1240,7 @@ DEPENDENCIES
   premailer-rails
   rails (= 5.2.3)
   rails_12factor
+  request_store
   responders
   rest-firebase
   sass-rails

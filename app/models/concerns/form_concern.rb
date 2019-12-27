@@ -338,7 +338,7 @@ module Concerns::FormConcern
 
 			unless self.send(attr.name).blank?
 				tab_content += self.send(attr.name)[0].summary_table_open
-				puts "the attr name is: #{self.send(attr.name)}"
+				#puts "the attr name is: #{self.send(attr.name)}"
 				tab_content += self.send(attr.name)[0].summary_table_headers({"root" => root})
 				tab_content += self.send(attr.name)[0].summary_table_body_open
 

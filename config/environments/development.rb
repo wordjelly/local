@@ -61,5 +61,6 @@ Rails.application.configure do
 
   config.ignore_notification_job = true
   
+  config.ignore_trigger_lis_job = true
   
 end

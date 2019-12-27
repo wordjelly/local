@@ -23,12 +23,17 @@ class Organization
 	include Concerns::LocationConcern
 	include Concerns::NotificationConcern
 
+	attr_accessor :after_find_performed
+
 	
 	after_find do |document|
-		document.load_users_pending_approval
-		document.load_employee_roles
-		document.load_locations
-		document.load_representative_patient
+		if document.after_find_performed.blank?
+			document.load_users_pending_approval
+			document.load_employee_roles
+			document.load_locations
+			document.load_representative_patient
+			document.after_find_performed = true
+		end
 	end
 
 	before_validation do |document|
@@ -39,7 +44,8 @@ class Organization
 		document.assign_employee_roles
 		## so there is a representative patient.
 		## similar to this we want a representative organizaiton.
-		document.representative_patient = Patient.find_or_create_organization_patient(document.id.to_s,document.created_by_user)
+		## this also has to be done with request store and the time will surely reduce.
+		document.representative_patient = Patient.find_or_create_organization_patient(document.id.to_s,document.created_by_user) if document.representative_patient.blank?
 	end
 
 	after_save do |document|
@@ -603,6 +609,7 @@ class Organization
 			}
 		}
 
+		#solve it.
 		#puts "pending user query is ------------------------------------>"
 		#puts JSON.pretty_generate(query)
 
@@ -662,10 +669,6 @@ class Organization
 	 		location.run_callbacks(:find)
 	 		self.locations << location
 	 	end
-
-	 	## so this is the organization's location
-	 	## this is used in location concern.
-	 	## we can use that in the organization also.
 	 	
 	end
 

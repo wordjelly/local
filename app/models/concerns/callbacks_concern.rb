@@ -7,6 +7,7 @@ module Concerns::CallbacksConcern
   		include ActiveModel::Validations::Callbacks
 
 
+
   		###############################################################
   		##
   		##
@@ -37,6 +38,9 @@ module Concerns::CallbacksConcern
 			document.nullify_nil_attributes
 			document.cascade_callbacks(:save){false}
 		end
+
+		## should be set after_find
+		## 
 
 		## @called_from : before_validation
 		## current_user is defined in owners_concern
@@ -96,7 +100,11 @@ module Concerns::CallbacksConcern
 									unless arr.is_a? Hash
 										unless arr.is_a? Array
 											unless arr.valid?
-												self.errors.add(virtus_attribute.name.to_sym,arr.errors.full_messages)
+												if self.respond_to? :name
+													self.errors.add(virtus_attribute.name.to_sym,(arr.errors.full_messages + [name]).flatten)
+												else
+													self.errors.add(virtus_attribute.name.to_sym,arr.errors.full_messages)
+												end
 											end
 										end
 									end
@@ -110,11 +118,18 @@ module Concerns::CallbacksConcern
 		end
 
 		def new_record?
-			begin
-				self.class.find(self.id.to_s)
-				false
-			rescue
-				true
+			puts "is it a new record with class: #{self.class.name}: #{self.newly_added}"
+			if self.newly_added == nil
+				begin
+					self.class.find(self.id.to_s)
+					self.newly_added = false
+					false
+				rescue
+					self.newly_added = true
+					true
+				end
+			else
+				self.newly_added
 			end
 		end
 

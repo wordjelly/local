@@ -2,7 +2,7 @@
   "tests": [
     {
       "name": "WBC",
-      "lis_code": "WBC",
+      "lis_code": "TLCparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -704,7 +704,7 @@
     },
     {
       "name": "RBC",
-      "lis_code": "RBC",
+      "lis_code": "RBCparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -1405,8 +1405,8 @@
       ]
     },
     {
-      "name": "HGB",
-      "lis_code": "HGB",
+      "name": "HBparam",
+      "lis_code": "HBparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -2108,7 +2108,7 @@
     },
     {
       "name": "HCT",
-      "lis_code": "HCT",
+      "lis_code": "HCTparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -2810,7 +2810,7 @@
     },
     {
       "name": "MCV",
-      "lis_code": "MCV",
+      "lis_code": "MCVparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -3512,7 +3512,7 @@
     },
     {
       "name": "MCH",
-      "lis_code": "MCH",
+      "lis_code": "MCHparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -4213,8 +4213,8 @@
       ]
     },
     {
-      "name": "MC-HC",
-      "lis_code": "MC-HC",
+      "name": "MCHC",
+      "lis_code": "MCHCparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -4915,8 +4915,8 @@
       ]
     },
     {
-      "name": "RDW%",
-      "lis_code": "RDW%",
+      "name": "RDW-CV",
+      "lis_code": "RDWCVparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -5618,7 +5618,7 @@
     },
     {
       "name": "PLT",
-      "lis_code": "PLT",
+      "lis_code": "PCparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -6320,7 +6320,7 @@
     },
     {
       "name": "MPV",
-      "lis_code": "MPV",
+      "lis_code": "MPVparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -7022,7 +7022,7 @@
     },
     {
       "name": "NEU%",
-      "lis_code": "NEU%",
+      "lis_code": "Nparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -7600,7 +7600,7 @@
     },
     {
       "name": "LYMPH%",
-      "lis_code": "LYMPH%",
+      "lis_code": "Lparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -8302,7 +8302,7 @@
     },
     {
       "name": "MONO%",
-      "lis_code": "MONO%",
+      "lis_code": "Mparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -9004,7 +9004,7 @@
     },
     {
       "name": "EOS%",
-      "lis_code": "EOS%",
+      "lis_code": "Eparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -9706,7 +9706,7 @@
     },
     {
       "name": "BASO%",
-      "lis_code": "BASO%",
+      "lis_code": "BASOparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -9850,7 +9850,7 @@
     },
     {
       "name": "NEU-ABS",
-      "lis_code": "NEU-ABS",
+      "lis_code": "ANCparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -10552,7 +10552,7 @@
     },
     {
       "name": "LYM-ABS",
-      "lis_code": "LYM-ABS",
+      "lis_code": "ALCparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -11254,7 +11254,7 @@
     },
     {
       "name": "MONO-ABS",
-      "lis_code": "MONO-ABS",
+      "lis_code": "AMCparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -11956,7 +11956,7 @@
     },
     {
       "name": "EOS-ABS",
-      "lis_code": "EOS-ABS",
+      "lis_code": "AECparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -12534,7 +12534,7 @@
     },
     {
       "name": "BASO-ABS",
-      "lis_code": "BASO-ABS",
+      "lis_code": "ABCparam",
       "description": "test",
       "print_all_ranges_in_report": 0,
       "interpret_ranges": 1,
@@ -12615,7 +12615,62 @@
       ]
     }
   ],
-  "name": "Complete Blood Count with Peripheral Smear",
+  "requirements" : [
+    {
+      "name" : "Anticoagulated Blood",
+      "categories" : [
+        {
+          "name" : "EDTA Tube",
+          "quantity" : 0.1
+        },
+        {
+          "name" : "Heparin Tube",
+          "quantity" : 0.1
+        },
+        {
+          "name" : "Citrate Tube",
+          "quantity" : 0.1
+        }
+      ] 
+    },
+    {
+      "name" : "Glass Slide",
+      "categories" : [
+        {
+          "name" : "Glass Slide",
+          "quantity" : 2.0
+        }
+      ] 
+    },
+    {
+      "name" : "Leishman Stain",
+      "categories" : [
+        {
+          "name" : "Leishman Stain",
+          "quantity" : 2.0
+        }
+      ] 
+    },
+    {
+      "name" : "Leishman Buffer",
+      "categories" : [
+        {
+          "name" : "Leishman Buffer",
+          "quantity" : 2.0
+        }
+      ] 
+    },
+    {
+      "name" : "Microtip",
+      "categories" : [
+        {
+          "name" : "Microtip",
+          "quantity" : 2.0
+        }
+      ] 
+    }
+  ],
+  "name": "Hemogram",
   "description": "26 parameter blood count, with peripheral thin film smear preparation",
   "request_rerun": -1,
   "verify_all": -1,

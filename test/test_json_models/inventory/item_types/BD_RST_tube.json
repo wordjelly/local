@@ -1,0 +1,9 @@
+{
+	"item_types" : [
+		{
+			"id" : "BD_RST_tube",
+			"name" : "BD RST Tube",
+			"categories" : ["RST Tube"]
+		}
+	]
+}

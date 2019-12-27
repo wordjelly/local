@@ -1,5 +1,112 @@
 module TestHelper
 
+
+    def build_pathofast_collection_packet(args)
+
+        supplier_item_group = Inventory::ItemGroup.new(JSON.parse(IO.read(Rails.root.join("test","test_json_models","inventory","item_groups","collection_packet.json"))))
+
+        supplier_item_group.created_by_user = args[:user]
+        
+        supplier_item_group.created_by_user_id = args[:user].id.to_s
+
+        supplier_item_group.save
+
+        unless supplier_item_group.errors.full_messages.blank?
+            puts "errors saving the supplier item group in build_pathofast_collection_packet"
+            exit(1)
+        end
+        
+        tr = Inventory::Transaction.new
+        tr.supplier_item_group_id = supplier_item_group.id.to_s
+        tr.supplier_id = supplier_item_group.supplier_id
+        tr.created_by_user = args[:user]
+        tr.created_by_user_id = args[:user].id.to_s
+        tr.save
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        ## so now you ordered it.
+        ## now you get the local item group.
+        tr = Inventory::Transaction.find(tr.id.to_s)
+        tr.run_callbacks(:find)
+        tr.quantity_received = 1
+        tr.created_by_user = args[:user]
+        tr.created_by_user_id = args[:user].id.to_s
+        tr.save
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        tr = Inventory::Transaction.find(tr.id.to_s)
+        tr.run_callbacks(:find)
+        local_item_group = tr.local_item_groups[0]
+        local_item_group.item_definitions.each_with_index {|id,key|
+            item = Inventory::Item.new
+            item.transaction_id = tr.id.to_s
+            item.supplier_item_group_id = supplier_item_group.id.to_s
+            item.local_item_group_id = local_item_group.id.to_s
+            item.item_type_id = id["item_type_id"]
+            item.categories = Inventory::ItemType.find(id["item_type_id"]).categories
+            item.barcode = "12345#{key}"
+            item.expiry_date = "2025-05-05"
+            item.created_by_user = args[:user]
+            item.created_by_user_id = args[:user].id.to_s
+            item.save
+            unless item.errors.full_messages.blank?
+                puts "there are errors saving the item."
+                puts "error "
+                puts "errors: #{item.errors.full_messages}"
+                exit(1)
+            end
+        }
+        return local_item_group
+
+    end
+
+
+    def build_pathofast_t3_order(template_report_ids,user,patient)
+
+        if user.blank?
+            user = User.where(:email => "priya.hajare@gmail.com").first
+        end
+        #####################################################
+        ##
+        ##
+        ## CREATE PATIENT
+        ##
+        ##
+        ######################################################
+        if patient.blank?
+            patients_file_path = Rails.root.join('test','test_json_models','patients','aditya_raut.json')
+            patients = JSON.parse(IO.read(patients_file_path))
+            patient = Patient.new(patients["patients"][0])
+            patient.first_name += "plus".to_s
+            patient.mobile_number = rand.to_s[2..11].to_i
+            patient.created_by_user = user
+            patient.created_by_user_id = user.id.to_s
+            patient.save
+            puts "ERRORS CREATING Aditya Raut Patient: #{patient.errors.full_messages}"
+        end
+
+        Elasticsearch::Persistence.client.indices.refresh index: "pathofast*"
+
+        o = Business::Order.new
+
+        o.template_report_ids = (template_report_ids || Diagnostics::Report.find_reports_by_organization_name("Pathofast",100).map{|c| 
+            if c.name == "T3"
+                c.id.to_s
+            else
+                nil
+            end
+        }.compact)
+
+        o.created_by_user = user
+        o.created_by_user_id = user.id.to_s
+        o.patient_id = patient.id.to_s
+        o.skip_pdf_generation = true
+        o.save
+
+        o
+    end
+
+
     ## @param args[Hash] : shold contain a :user and a :item_group_id
     ## @return[Inventory::ItemGroup] the local item group, cloned in the transaction.
     def order_item_group(args={})

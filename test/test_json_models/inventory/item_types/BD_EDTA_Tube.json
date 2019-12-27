@@ -1,0 +1,9 @@
+{
+	"item_types" : [
+		{
+			"id" : "BD_EDTA_tube",
+			"name" : "BD EDTA Tube",
+			"categories" : ["EDTA Tube"]
+		}
+	]
+}

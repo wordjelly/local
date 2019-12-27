@@ -11,3 +11,6 @@
 /log/*
 !/log/.keep
 /tmp
+
+# Ignore firebase-credentials
+/config/firebase_credentials.json

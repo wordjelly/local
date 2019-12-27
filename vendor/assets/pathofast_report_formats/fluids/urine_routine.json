@@ -319,7 +319,7 @@
 						},
 						{
 							"range_type" : "abnormal",
-							"min_range_val" : 0,
+							"min_range_val" : 1,
 							"max_range_val" : 3,
 							"inference" : "1+"
 						},
@@ -346,7 +346,7 @@
 					"max_age_months" : 0,
 					"min_age_days" : 0,
 					"max_age_days" : 0,
-					"sex" : "Male",
+					"sex" : "Female",
 					"tags" : [
 						{
 							"range_type" : "normal",
@@ -355,7 +355,7 @@
 						},
 						{
 							"range_type" : "abnormal",
-							"min_range_val" : 0,
+							"min_range_val" : 1,
 							"max_range_val" : 3,
 							"inference" : "1+"
 						},
@@ -375,15 +375,570 @@
 					]
 				}
 			]
+		},
+		{
+			"name" : "Urine Glucose(Strip)",
+			"description" : "Urine Glucose Estimation",
+			"lis_code" : "GLU",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Protein",
+			"description" : "Urine Protein Estimation",
+			"lis_code" : "PRO",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Bile Salts",
+			"description" : "Bile Salts",
+			"lis_code" : "BIL",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Urobilinogen",
+			"description" : "Urobilinogen",
+			"lis_code" : "URO",
+			"result_type" : "numeric",
+			"units" : "umol/L",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 17
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0,
+							"max_range_val" : 17
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Ketones",
+			"description" : "Ketones",
+			"lis_code" : "KET",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Leucocyte Esterase",
+			"description" : "Leucocyte Esterase",
+			"lis_code" : "LEU",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Nitrites",
+			"description" : "Nitrites",
+			"lis_code" : "NIT",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Blood",
+			"description" : "Blood",
+			"lis_code" : "BLO",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Negative"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Color",
+			"description" : "Color",
+			"lis_code" : "COL",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Pale Yellow"
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Pale Yellow"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Appearance",
+			"description" : "Appearance",
+			"lis_code" : "CLA",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Clear"
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Clear"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "pH",
+			"description" : "pH",
+			"lis_code" : "pH",
+			"result_type" : "numeric",
+			"units" : "-",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 4.6,
+							"max_range_val" : 8.0
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 4.6,
+							"max_range_val" : 8.0
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Specific Gravity",
+			"description" : "Specific Gravity",
+			"lis_code" : "SG",
+			"result_type" : "numeric",
+			"units" : "-",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.016,
+							"max_range_val" : 1.022
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 1.016,
+							"max_range_val" : 1.022
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "Odour",
+			"description" : "Odour",
+			"lis_code" : "URINE_ODOUR",
+			"result_type" : "text",
+			"only_include_in_report_if_abnormal" : -1,
+			"test_must_have_value" : 1,
+			"ranges" : [
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Ammonical"
+						}
+					]
+				},
+				{
+					"reference" : "",
+					"max_age_years" : 120,
+					"min_age_years" : 0,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"text_range_val" : "Ammonical"
+						}
+					]
+				}
+			]
 		}
 	],
 	"requirements" : [
 		{
-			"name" : "Serum Container",
+			"name" : "Urine Container",
 			"categories" : [
 				{
-					"name" : "SST Tube",
-					"quantity" : 1.0
+					"name" : "Urine Container",
+					"quantity" : 0.1
 				}
 			]	
 		}

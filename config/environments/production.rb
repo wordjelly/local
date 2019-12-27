@@ -97,9 +97,11 @@ Rails.application.configure do
     domain: 'pathofast.com'
   }
 
-  config.ignore_pdf_job = true
+  config.ignore_pdf_job = false
 
-  config.ignore_notification_job = true
+  config.ignore_notification_job = false
   
+  config.ignore_trigger_lis_job = true
+
   
 end

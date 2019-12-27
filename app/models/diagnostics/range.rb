@@ -204,7 +204,12 @@ class Diagnostics::Range
 
 		self.tags.each do |tag|
 			unless tag.min_range_val.blank?
-				self.errors.add(:tags,I18n.t("min_max_overlap_error")) unless min_max_values_hash[tag.min_range_val].blank?
+				unless min_max_values_hash[tag.min_range_val].blank?
+					#puts "current min val: #{tag.min_range_val}"
+					#puts min_max_values_hash.keys.to_s
+					#exit(1)
+					self.errors.add(:tags,I18n.t("min_max_overlap_error")) 
+				end
 				
 				if (tag.is_normal? || tag.is_abnormal?)
 					min_val_overlap(tag.min_range_val,min_max_values_hash)
@@ -647,7 +652,10 @@ class Diagnostics::Range
 		t = self.tags.select{|c|
 			c.is_normal?
 		}
-		if t.size == 1
+		if t.size >= 1
+			## because it got more than one.
+			## that's why it failed here.
+			## we need to sort this slime out fast.
 			t[0]
 		else
 			nil
