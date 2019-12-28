@@ -1667,6 +1667,9 @@ module Concerns::OrderConcern
 		#exit(1)
 
 		## and send the transactional sms.
+		## highlighting if abnormal
+		## printing all the ranges -> in case history is unknown.
+		## 
 
 	    Tempfile.open(file_name) do |f| 
 		  f.binmode
