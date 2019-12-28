@@ -30,6 +30,10 @@
 			<%= f.text_field :location_id, :data => {:autocomplete_type => "locations"} %>
 			<%= f.label :location_id %>
 
+			<% @item.categories.each do |category| %>
+				<%= text_field_tag "item[categories][]", category %>
+				<%= f.label :categories %>
+			<% end %>
 			<!-- the item group should get a count of the items that have already been registered, and show them -->
 			<!-- that is also important -->
 			<!-- now comes the item transfer and comments on the transaction level -->

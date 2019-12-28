@@ -453,12 +453,8 @@ class Diagnostics::Report
 				:classes => ["choose_report"]
 			}
 		else
-			## now let's see how this works.
-			## now we need to know which organization this is
-			## this should be done after find.
-			## for the record.
 			self.search_options << {
-				:text => ("Outsource to" + self.organization.name),
+				:text => ("Outsource to" + self.currently_held_by_organization),
 				"data_id".to_sym => self.id.to_s,
 				:class => ["choose_report","outsource"]
 			}

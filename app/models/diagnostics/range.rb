@@ -197,7 +197,7 @@ class Diagnostics::Range
 	end
 
 	def min_max_overlap
-
+		t1 = Time.now
 		min_max_values_hash = {}
 		
 		text_hash = {}
@@ -226,6 +226,8 @@ class Diagnostics::Range
 				end
 			end
 		end
+		t2 = Time.now
+		puts "min max overlap validation takes: #{(t2-t1).in_milliseconds}"
 	end
 
 	##########################################################
@@ -237,9 +239,13 @@ class Diagnostics::Range
 	##########################################################
 
 	before_validation do |document|
+		t1 = Time.now
 		document.set_min_and_max_age
 		document.update_tags
+		t2 = Time.now
+		puts "before validation total time in range: #{(t2-t1).in_milliseconds}"
 	end
+
 
 	def remove_tags 
 		#puts "came to remove tags.---------------->"

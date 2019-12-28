@@ -1,4 +1,5 @@
 <li class="collection-item search_result teal-text">
+<%= puts result.attributes %>
 <% link_text = (result.respond_to? "name") ? result.send("name") : result.id.to_s %>
 <!-- there's no such thing as a users path -->
 
@@ -8,10 +9,11 @@
 <% link_description = (result.respond_to? "description") ? result.send("description") : "" %>
 
 <% organization_name = "" %>
+<!-- it could be derived from the organization members -->
 <% if result.class.name =~ /Organization/ %>
 	<% organization_name = result.name %>
 <% else %>
-	<% organization_name = (result.respond_to? "organization") ? result.send("organization").name : "" %>
+	<% organization_name = (result.respond_to? "currently_held_by_organization") ? result.send("currently_held_by_organization") : "" %>
 <% end %>
 
 <% created_at = result.created_at.strftime("%b %d %Y %I:%M %P") %>

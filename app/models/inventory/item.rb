@@ -175,9 +175,12 @@ class Inventory::Item
 	end
 
 	def customizations(root)
+		return {}
+=begin
 		{
 			"code" => '<div>If you do not have a tube with a barcode, write this code on the tube label.Please enter it into field below to confirm.</div><div>' + self.code + '</div><div style="display:none"><input type="text" value="' + self.code + '" name="order[categories][][items][][code]" /></div>' 
 		}
+=end
 	end
 	
 	

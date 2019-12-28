@@ -205,7 +205,6 @@ class Diagnostics::Test
 
 	def all_ages_and_genders_covered_in_ranges_and_no_overlaps
 
-		#puts "validating test ------------------> #{self.name}"
 		self.ranges_hash = {}
 		
 		self.ranges.each do |range|

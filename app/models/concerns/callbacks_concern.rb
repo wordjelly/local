@@ -6,8 +6,6 @@ module Concerns::CallbacksConcern
 		include ActiveModel::Validations
   		include ActiveModel::Validations::Callbacks
 
-
-
   		###############################################################
   		##
   		##
@@ -80,9 +78,7 @@ module Concerns::CallbacksConcern
 		end	
 
 		def validate_nested(vars={})
-			## we merge in the set_vars_for_cascade
-			## and call validate nested on 
-			#puts "doing validate nested with #{self.class.name}"
+			t1 = Time.now
 			self.class.attribute_set.each do |virtus_attribute|
 				if virtus_attribute.primitive.to_s == "Array"
 					if virtus_attribute.respond_to? "member_type"
@@ -115,13 +111,18 @@ module Concerns::CallbacksConcern
 					end
 				end
 			end
+			t2 = Time.now
+			if((t2 - t1).in_milliseconds) > 15
+				puts "total time for validate nested in&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& #{self.class.name} :#{(t2 - t1).in_milliseconds}"
+			end
 		end
 
 		def new_record?
-			puts "is it a new record with class: #{self.class.name}: #{self.newly_added}"
 			if self.newly_added == nil
 				begin
-					self.class.find(self.id.to_s)
+					if RequestStore.store[self.id].blank?
+						RequestStore.store[self.id] = self.class.find(self.id.to_s)
+					end
 					self.newly_added = false
 					false
 				rescue
@@ -158,6 +159,7 @@ module Concerns::CallbacksConcern
 		## @return[nil]
 		def apply_current_user(current_user)
 
+			#self.search_options ||= []			
 		end
 
 		## @param[User] a user

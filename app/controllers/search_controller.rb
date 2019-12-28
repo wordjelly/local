@@ -55,6 +55,7 @@ class SearchController < ApplicationController
 		should_clauses = permissions_clauses(nil)
 
 		query = {
+			_source: ["name","description","search_options","currently_held_by_organization","created_by_user_id","created_at","updated_at","owner_ids"],
 			size: 100,
 			query:  {
 				bool: {
@@ -86,6 +87,10 @@ class SearchController < ApplicationController
 
 	def search
 
+		## so we need to optimize this heavily
+		## and then solve the items issue
+		## and make the UI usable.
+
 		@type = params[:type]
 
 		## you can directly pass the name of the 
@@ -94,14 +99,19 @@ class SearchController < ApplicationController
 		response = Elasticsearch::Persistence.client.search index: "pathofast*", body: build_query
 		mash = Hashie::Mash.new response 
 		@search_results = mash.hits.hits.map{|c|
-			puts "the search result is:"
-			puts c["_source"]
-			puts c["_type"]
-			c = c["_type"].underscore.classify.constantize.new(c["_source"].to_h.merge(:id => c["_id"]))
-			c.run_callbacks(:find) do 
-				c.apply_current_user(current_user) if c.respond_to? :apply_current_user
-			end
+			#puts "the search result is:"
+			#puts c["_source"]
+			#puts c["_type"]
+			id = c["_id"]
+			c = c["_type"].underscore.classify.constantize.new(c["_source"].to_h)
+			c.id = id
+			c.apply_current_user(current_user) if c.respond_to? :apply_current_user
 			c
+			## why run the callbacks ?
+			#c.run_callbacks(:find) do 
+			#	
+			#end
+			##c
 		}
 		respond_to do |format|
 			format.js do 

@@ -646,11 +646,21 @@ class Business::Receipt
 	                }
 	            }       
 
-        save_path = Rails.root.join('public',"#{file_name}.pdf")
-		File.open(save_path, 'wb') do |file|
-		  file << pdf
-		  self.pdf_urls = [save_path]
-		  self.pdf_url = save_path
+        #save_path = Rails.root.join('public',"#{file_name}.pdf")
+		#File.open(save_path, 'wb') do |file|
+		#  file << pdf
+		#  self.pdf_urls = [save_path]
+		#  self.pdf_url = save_path
+		#end
+		Tempfile.open(file_name) do |f| 
+		  f.binmode
+		  f.write pdf
+		  f.close 
+		  #IO.write("#{Rails.root.join("public","test.pdf")}",pdf)
+		  response = Cloudinary::Uploader.upload(File.open(f.path), :public_id => file_name, :upload_preset => "report_pdf_files")
+		  puts "response is: #{response}"
+		  self.latest_version = response['version'].to_s
+		  self.pdf_url = response["secure_url"]
 		end
 		self.skip_pdf_generation = true
 		

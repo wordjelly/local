@@ -149,7 +149,7 @@ class Business::Order
 	## seen nor working.
 	def fields_not_to_show_in_form_hash(root="*")
 		{
-			"*" => ["outsourced_report_statuses","merged_statuses","search_options","procedure_versions_hash","latest_version","patient_id","template_report_ids","name"]
+			"*" => ["outsourced_report_statuses","merged_statuses","search_options","procedure_versions_hash","latest_version","patient_id","template_report_ids","name","pdf_urls","visit_type_tags","recipients","disable_recipient_ids","resend_recipient_ids","owner_ids","changed_for_lis","created_by_user_id","currently_held_by_organization","public","ready_for_pdf_generation","ready_to_send_notification","trigger_lis_poll","bill_outsourced_reports_to_patient","bill_outsourced_reports_to_order_creator"]
 		}
 	end
 

@@ -352,8 +352,9 @@ module Concerns::OrderConcern
 
 		end
 
-		## do this on order.
-		## only.
+		## what about verification.
+		## how long will that take?
+
 		validate :can_modify, :if => Proc.new{|c| !c.changed_attributes.blank?}
 
 		validate :tests_verified_by_authorized_users_only, :if => Proc.new{|c| !c.changed_attributes.blank?}
@@ -374,11 +375,14 @@ module Concerns::OrderConcern
 
 		## if you do it each time, it will be a problem.
 		before_save do |document|
+			t1 = Time.now
 			document.receipts.each do |receipt|
 				#puts "going to update the total."
 				throw(:abort) unless receipt.update_total
 			end
 			$redis.set("before_save",Time.now.to_f.to_s)
+			t2 = Time.now
+			puts "time taken in before save: #{(t2 - t1).in_milliseconds}"
 		end
 
 		## now we knock off all the puts
@@ -1006,14 +1010,31 @@ module Concerns::OrderConcern
 			c.id.to_s
 		}
 
+		## after this the quantity issue
+		## and then the test verification toggles, textual inference, and report generation ->
+
 		self.template_report_ids.each do |r_id|
 			#puts "doing template report id: #{r_id}"
 			unless existing_report_ids.include? r_id
+				tx = Time.now
+				## get teh report raw hash.
+				## get rid of the non-applicable ranges
+				## and only then initialize the object.
+				## that will make it much faster.
 				report = Diagnostics::Report.find(r_id)
+				
+				ty = Time.now
+				puts "time to get report: #{(ty - tx).in_milliseconds}"
 				report.created_by_user = User.find(report.created_by_user_id)
 				report.current_user = self.current_user
+				tz = Time.now
+				puts "time to get created by user: #{(tz - ty).in_milliseconds}"
 				report.run_callbacks(:find)
+				t1 = Time.now
+				puts "time to run callbacks: #{(t1 - tz).in_milliseconds}"
 				report.prune_test_ranges(self.patient)
+				t2 = Time.now
+				puts "prune ranges took: #{(t2-t1).in_milliseconds}"
 				self.reports << report
 				self.order_completed = NO
 			end
@@ -1204,6 +1225,7 @@ module Concerns::OrderConcern
 
 	## whatever items the user has added to the categories will be updated to the reports.
 	def update_report_items
+		
 		self.reports.map{|c|
 			c.clear_all_items
 		}
@@ -1634,19 +1656,18 @@ module Concerns::OrderConcern
                 }
             }       
 
-        save_path = Rails.root.join('public',"#{file_name}.pdf")
-		File.open(save_path, 'wb') do |file|
-		  file << pdf
-		  self.pdf_urls = [save_path]
-		  self.pdf_url = save_path
-		end
+        #save_path = Rails.root.join('public',"#{file_name}.pdf")
+		#File.open(save_path, 'wb') do |file|
+		#  file << pdf
+		#  self.pdf_urls = [save_path]
+		#  self.pdf_url = save_path
+		#end
 		#puts "the pdf url is==========>"
 		#puts self.pdf_url
 		#exit(1)
 
 		## and send the transactional sms.
 
-=begin
 	    Tempfile.open(file_name) do |f| 
 		  f.binmode
 		  f.write pdf
@@ -1655,13 +1676,14 @@ module Concerns::OrderConcern
 		  response = Cloudinary::Uploader.upload(File.open(f.path), :public_id => file_name, :upload_preset => "report_pdf_files")
 		  puts "response is: #{response}"
 		  self.latest_version = response['version'].to_s
-		  self.pdf_url = response["url"]
+		  self.pdf_url = response["secure_url"]
 		end
-=end
 
 		self.skip_pdf_generation = true
 		
 		#self.save		
+		#after_generate_pdf
+
 
 	end
 

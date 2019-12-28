@@ -7,7 +7,12 @@ module Concerns::FormConcern
 
 	included do 
 
+		## used in the new_build_form def to prevent the same script from being repeatedly generated.
+
 		## this should be contextual.
+		def accessors_to_render
+			["force_pdf_generation"]
+		end
 
 		def fields_not_to_render
 			#["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","search_options"]		
@@ -177,6 +182,30 @@ module Concerns::FormConcern
 				element
 			end
 
+		end
+
+		
+
+		## accessors are added as checkbox tags.
+		## checkbox.
+		def add_accessor(root,accessor)
+			input_name = root + "[" + accessor + "]"
+			
+			if self.send(accessor).blank?
+				element = '''
+					<input type="text" name="''' + input_name + '''"></input>
+				'''
+			else
+				element = '''
+					<input type="text" name="''' + input_name + '''" value="''' + self.send(accessor).to_s + '''"></input>
+				'''
+			end
+
+			element += '''
+				<label for="''' + input_name + '''">''' + accessor.to_s + '''</label>
+			'''
+			
+			element
 		end
 
 		## adds the id element.
@@ -383,6 +412,10 @@ module Concerns::FormConcern
 			(object_array_attributes.map{|c| c.name.to_s} & hidden_fields_list).size < object_array_attributes.size
 		end
 
+		## okay so how can we reduce the stuff sent.
+		## so we reduce the scripts.
+		## how can we reduce them the maximum.
+		## like 
 		def new_build_form(root,readonly="no",form_html="",scripts={})
 			
 			hidden_fields_list = fields_to_hide(root)
@@ -440,6 +473,13 @@ module Concerns::FormConcern
 			## add id. to this.
 			non_array_attributes_card += add_id_element(root)
 
+			accessors_to_render.each do |accessor|
+				#puts "doing accessor: #{accessor}"
+				if self.respond_to? accessor
+					#puts "self responds to: #{accessor}"
+					non_array_attributes_card += add_accessor(root,accessor)
+				end
+			end
 
 			non_array_attributes_card += "</div></div>"
 
@@ -598,6 +638,10 @@ module Concerns::FormConcern
 									dummy_entry = class_name.constantize.new
 									scripts[script_id] = '<script id="' + script_id +'" type="text/template" class="template"><div style="padding-left: 1rem;">' + dummy_entry.build_form(root + "[" + virtus_attribute.name.to_s + "][]",readonly,"",scripts) + "</div></script>"
 									
+									## okay so first we reduce the total number of script elements.
+									## 
+									## this can still be done.
+									## 
 
 									element = "<span><i class='material-icons add_nested_element' data-id='#{script_id}'>add_circle_outline</i>Add</span>"
 									
@@ -608,7 +652,9 @@ module Concerns::FormConcern
 
 
 							form_html = form_html + s + "</div>"
-				
+					
+
+
 					elsif virtus_attribute.primitive.to_s == "Date"
 						
 						input_name = root + "[" + virtus_attribute.name.to_s + "]"

@@ -57,7 +57,7 @@ Rails.application.configure do
   }
 
   ## NOTIFICATION(TRANSACTIONAL AFTER REPORT GENERATION, AND PDF JOBS)
-  config.ignore_pdf_job = true
+  config.ignore_pdf_job = false
 
   config.ignore_notification_job = true
   

@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-#gem 'wordjelly-auth', path: '/home/bhargav/Github/Auth'
-gem 'wordjelly-auth'
+gem 'wordjelly-auth', path: '/home/bhargav/Github/Auth'
+#gem 'wordjelly-auth'
 gem 'ox'
 gem 'down'
 gem 'nokogiri'
@@ -19,6 +19,7 @@ gem 'time_difference'
 gem 'rest-firebase'
 gem 'jwt'
 gem 'request_store'
+gem 'awesome_print'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails','5.2.3'

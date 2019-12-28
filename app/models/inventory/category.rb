@@ -17,6 +17,12 @@ class Inventory::Category
 	## how to make a local item group.
 
 	attribute :name, String, mapping: {type: 'keyword'}
+	## so this is a percentage
+	## so ok.
+	## now we can just continue
+	## how much does it need ?
+	## 20 ?
+	## s
 	## this is a percentage.
 	attribute :quantity, Float, mapping: {type: 'float'}, default: 100
 	## these will be the items added.

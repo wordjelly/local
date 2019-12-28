@@ -8,6 +8,7 @@ module Concerns::BaseControllerConcern
 
     included do
         respond_to :js, :html, :json
+        before_action :pretty_print_params
         before_action :get_action_permissions
         ## here you have to modify permissions ?
         ## or what ?
@@ -32,6 +33,9 @@ module Concerns::BaseControllerConcern
 		
     end
 
+    def pretty_print_params
+    	pp params.to_unsafe_h
+    end
 
     def set_organization_from_header
     	puts "came to set organization from header"
@@ -155,7 +159,6 @@ module Concerns::BaseControllerConcern
 	
 
 	def create
-
 		instance = get_resource_class.new(get_model_params.except(@attributes_to_exclude))
 		## this is an attribute accessor.	
 		##puts "is there a current user?"
@@ -247,6 +250,13 @@ module Concerns::BaseControllerConcern
 
 	def update
 		
+
+		## awesome print the params
+		##params_json = JSON.pretty_generate(params)
+		##puts params_json
+		#para = JSON.parse(params_json)
+		#ap para
+
 		if instance_variable_get("@#{get_resource_name}").respond_to? :versions
 			
 			if ((instance_variable_get("@#{get_resource_name}").verified_user_ids_changed?(get_model_params[:verified_by_user_ids])) || (instance_variable_get("@#{get_resource_name}").rejected_user_ids_changed?(get_model_params[:rejected_by_user_ids])))
@@ -385,13 +395,21 @@ module Concerns::BaseControllerConcern
 
 		#puts "resource class is:"
 		#puts get_resource_class.to_s
-
-		results = get_resource_class.search({query: query})
+		t1 = Time.now
+		results = get_resource_class.search({size: 1, query: query})
+		t2 = Time.now
+		puts "total time taken to do the query: #{(t2 - t1).in_milliseconds}"
 		if results.response.hits.hits.size > 0
-			obj = get_resource_class.find(results.response.hits.hits[0]["_id"])
+			t1 = Time.now
+			obj = get_resource_class.new(results.response.hits.hits[0]["_source"])
+			t2 = Time.now
+			puts "total time taken to initialize the object: #{(t2 - t1).in_milliseconds}"
+			obj.id = results.response.hits.hits[0]["_id"]
+			#obj = get_resource_class.find(results.response.hits.hits[0]["_id"])
 			obj.run_callbacks(:find) do 
 				obj.apply_current_user(current_user)
 			end
+			obj.newly_added = false
 			set_images_instance_variable(obj)
 			set_alert_instance_variable(obj)
 			instance_variable_set("@#{get_resource_name}",obj)

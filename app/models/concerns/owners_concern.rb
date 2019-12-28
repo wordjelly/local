@@ -7,6 +7,10 @@ module Concerns::OwnersConcern
 	## set_model in base_controller_concern, adds an or clause as public -> 1, for every query.
 	## so that if a model is there, where the requesting user is not the creating user, or belonging to the creating organization, it can still see this record, if this record is public.
 	## this will also help at search time, the same clause can be used.
+	## we could prefilter the hash.
+	## and then initialize
+	## it will take about 200 instead of 2.
+	## but isn't going to make anything subsequently faster other than whne adding.
 	PUBLIC_OPTIONS = [0,1]
 
 	IS_PUBLIC = 1
@@ -65,18 +69,29 @@ module Concerns::OwnersConcern
 		## CHECKS THAT IF THE ROLE IS OF AN ORGANIZATION, THEN THE USER IS VERIFIED, AS BELONGING TO IT.
 		## this ensures that only verified organization users can interact with resources. 
 		def organization_users_are_enrolled_with_organization
+			t1 = Time.now
+			do_the_validation = true
+			if (self.class.name == "Organization")
+					
+				if self.new_record?
+					do_the_validation = false
+				end
+
+			end
+
+			if !self.skip_owners_validations.blank?
+				do_the_validation = false
+				## don't attempt the validation.
+			end
 			
-			if (self.new_record? && self.class.name == "Organization")
-			
-			elsif !self.skip_owners_validations.blank?
-			
-			else
-				#puts "the created by user is: #{self.created_by_user}"
-				#puts "class is: #{self.class.name}, skip validations is: #{self.skip_owners_validations}"
+			unless do_the_validation.blank?
 				if !self.created_by_user.has_organization?
 					self.errors.add(:created_by_user,"you have not yet been verified as belonging to this organization")
 				end
 			end
+			
+			t2 = Time.now
+			puts  "time taken in owners concern for enrolled validation: #{(t2-t1).in_milliseconds}"
 		end
 
 		def add_owner_ids

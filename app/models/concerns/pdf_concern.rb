@@ -19,6 +19,10 @@ module Concerns::PdfConcern
 		## if true will be used.
 		attr_accessor :force_pdf_generation
 
+		## so we have to have some way to add this accessor.
+		## if we say force, then it will generate the pdf.
+
+
 		if defined? @permitted_params
   			if ((@permitted_params[1].is_a? Hash) && (self.class.name.to_s =~ /#{@permitted_params[1].keys[0]}/i))
   				#puts "it is the first key hash---------->"
@@ -73,7 +77,7 @@ module Concerns::PdfConcern
 		unless self.ready_for_pdf_generation.blank?
 			generate_pdf
 			self.ready_for_pdf_generation = nil
-			self.save(validate: false) 
+			self.save(validate: false)
 		end
 	end
 	
@@ -135,18 +139,17 @@ module Concerns::PdfConcern
 		File.open(save_path, 'wb') do |file|
 		  file << pdf
 		end
-=begin
+
 	    Tempfile.open(file_name) do |f| 
 		  f.binmode
 		  f.write pdf
 		  f.close 
 		  #IO.write("#{Rails.root.join("public","test.pdf")}",pdf)
 		  response = Cloudinary::Uploader.upload(File.open(f.path), :public_id => file_name, :upload_preset => "report_pdf_files")
-		  puts "response is: #{response}"
+		  puts "response is-------------------------------------------------------------->: #{response}"
 		  self.latest_version = response['version'].to_s
 		  self.pdf_url = response["url"]
 		end
-=end
 
 		self.skip_pdf_generation = true
 		
