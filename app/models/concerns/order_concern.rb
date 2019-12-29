@@ -1286,12 +1286,20 @@ module Concerns::OrderConcern
 		end
 	end
 
-
+	
+	## so you write an impression and all the abnormal tests also get verified.
+	## so add an impression and all the abnormal tests get verified.
 	def verify
 		self.reports.each do |report|
 			if report.verify_all == Diagnostics::Report::VERIFY_ALL
-				report.tests.each do |test|
-					test.verify_if_normal
+				if report.impression.blank?
+					report.tests.each do |test|
+						test.verify_if_normal
+					end
+				else
+					report.tests.each do |test|
+						test.verify
+					end
 				end
 			end
 		end
@@ -1506,9 +1514,16 @@ module Concerns::OrderConcern
 	########################################################
 	## if a report has a verification done.
 	## unless all reports 
-
+	## we can change the impression
+	## and show it in the report.
+	## At the bottom.
+	## now after this the verification.
 	## @called_from : SELF#before_validation
+	## now for verify.
 	def generate_report_impressions
+		## we don't do this at the moment.
+		## now for verification.
+=begin
 		self.reports.each do |report|
 			if report.impression.blank?
 				report.impression = ""
@@ -1517,6 +1532,7 @@ module Concerns::OrderConcern
 				end
 			end
 		end
+=end
 	end
 
 
@@ -1540,6 +1556,9 @@ module Concerns::OrderConcern
 		}.size == self.reports.size
 	end
 
+	## so when it generates the pdf
+	## why partial ?
+	## 
 	def proceed_for_pdf_generation?
 		((any_report_just_verified? && (self.organization.generate_partial_order_reports == YES)) || (all_reports_verified? && any_report_just_verified?) || (!self.force_pdf_generation.blank?))
 	end

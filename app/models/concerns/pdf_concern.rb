@@ -81,6 +81,7 @@ module Concerns::PdfConcern
 		end
 	end
 	
+	## first i decided to fix some report formats.
 	## now its firing the receipt issue.
 	## its firing it from the receipt.
 	## which is fine actually.

@@ -20,6 +20,7 @@ class Diagnostics::Test
 	NOT_VERIFIED = -1
 	YES = 1
 	NO = 0
+	DEFAULT_ABNORMAL_INFERNECE = "Correlate Clinically"
 
 	index_name "pathofast-tests"
 
@@ -38,8 +39,7 @@ class Diagnostics::Test
 	## whether to display all the normal ranges in the report.
 	attribute :print_all_ranges_in_report, Integer, mapping: {type: 'integer'}, default: NO
 
-	## whether ranges, should be interpreted, if set to no, it will not assign any normal ranges, in the order, just will show all the ranges.
-	attribute :interpret_ranges, Integer, mapping: {type: 'integer'}, default: YES
+	
 
 	## so we can show the range, which has been selected
 	## in the summary, otherwise the number of ranges, 
@@ -100,6 +100,7 @@ class Diagnostics::Test
 	# all are included.
 	# this is to be in the report if it is abnormal,
 	# otherwise don't include it.
+	# this is not currently being used.
 	attribute :only_include_in_report_if_abnormal, Integer, mapping: {type: 'integer'}, default: YES 
 
 
@@ -301,11 +302,29 @@ class Diagnostics::Test
 	##
 	##########################################################
 	def set_display_range_details
+
 		if r = get_applicable_range
-			self.display_normal_biological_interval = r.get_normal_biological_interval
+			if self.print_all_ranges_in_report == NO
+				self.display_normal_biological_interval = r.get_normal_biological_interval
+			else
+				r.tags.each do |tag|
+					prefix = tag.is_normal? ? "Normal" : tag.name
+					self.display_normal_biological_interval += (prefix + tag.get_biological_interval)
+				end
+			end
+			
+			# so there's just print all ranges.
+			# now add a report level inference field.
+
 			if k = r.get_picked_tag
 				self.display_count_or_grade = k.count.to_s || k.grade.to_s
-				self.display_comments_or_inference = k.inference
+				if k.is_abnormal?
+					self.display_comments_or_inference = k.get_biological_interval + " " + k.inference
+				else
+					self.display_comments_or_inference = k.inference
+				end
+			else
+				self.display_comments_or_inference = DEFAULT_ABNORMAL_INFERNECE
 			end
 		end
 	end
@@ -342,19 +361,35 @@ class Diagnostics::Test
 	## false otherwise
 	## @called_from : order_concern.rb#has_abnormal_reports , which is in turn called from views/business/orders/report_summary, which is in turn called from views/business/orders/show.pdf.erb
 	## the idea is to check if any of the tests are abnormal, so that we can show them in the summary.
+	## so if we only have a normal range.
+	## or one is not defined
+	## then how do we do this ?
+	## sometimes an abnormal range is not defined.
 	def is_abnormal?
+		## sometimes you still want to print all ranges.
+		## return false if self.interpret_ranges == NO
 		if range = self.get_applicable_range
-			range.is_abnormal?
+			range.is_abnormal? || range.value_outside_defined_ranges?
 		else
 			return false
 		end
 	end
 
 	def is_ready_for_reporting?
-		## for this to be set, we need to have the reportable status
-		## to have been set as completed.
-		## so i can set this manually for the moment.
+=begin
 		self.ready_for_reporting == -1 ? "No" : "Yes"
+=end
+		if self.test_must_have_value == YES
+			has_a_result?
+		else
+			true
+		end
+	end
+
+	def has_a_result?
+		## does it have to have a result ?
+		## it also depends upon that.
+		(!self.result_numeric.blank? || !self.result_text.blank?) 
 	end
 
 	def is_verification_done?
@@ -395,7 +430,6 @@ class Diagnostics::Test
 			{ 
 				:test_only_applicable_to_genders => []
 			},
-			:interpret_ranges,
 			:print_all_ranges_in_report
 		]
 	end
@@ -469,9 +503,6 @@ class Diagnostics::Test
 			},
 			test_only_applicable_to_genders: {
 				type: 'keyword'
-			},
-			interpret_ranges: {
-				type: 'integer'
 			},
 			print_all_ranges_in_report: {
 				type: 'integer'
@@ -748,12 +779,14 @@ class Diagnostics::Test
 	## verifies the test if report verify_all is true.
 	## will verify the test only if the picked_range is not abnormal.
 	def verify_if_normal(created_by_user)
-		unless get_applicable_range.blank?
-			if get_applicable_range.is_abnormal?
-				self.verification_done = 1 if self.is_ready_for_reporting?
-			end
-		end 	
+		if !self.is_abnormal?
+			self.verification_done = 1 if self.is_ready_for_reporting?
+		end	
 	end	
+
+	def verify
+		self.verification_done = 1 if self.is_ready_for_reporting?
+	end
 
 	def add_new_object(root,collection_name,scripts,readonly)
 		if root =~ /order/

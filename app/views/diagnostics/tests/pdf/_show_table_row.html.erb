@@ -1,7 +1,10 @@
 <tr>
 	<td><%= test.name %></td>
-	<td><%= test.display_result %></td>
+	<% test.is_abnormal? %>
+		<td><u><<%= test.display_result %></u></td>
+	<% else %>
+		<td><%= test.display_result %></td>
+	<% end %>
 	<td><%= test.display_normal_biological_interval %></td>
-	<td><%= test.display_count_or_grade %></td>
 	<td><%= test.display_comments_or_inference %></td>
 </tr>

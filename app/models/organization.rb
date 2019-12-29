@@ -253,7 +253,7 @@ class Organization
 
 	## whether a summary of reports should be generated or not.
 	## this is the covering page of the reports, and includes the 
-	attribute :generate_report_summary, Integer, mapping: {type: 'integer'}, default: YES
+	attribute :generate_report_summary, Integer, mapping: {type: 'integer'}, default: NO
 
 	attribute :generate_footer, Integer, mapping: {type: 'integer'}, default: YES
 

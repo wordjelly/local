@@ -1,6 +1,5 @@
 <h5><%= report.name %></h5>
 <div class="divider"></div>
-
 <table class="striped">
 <%= render :partial => "/diagnostics/tests/pdf/show_table_headers" %>
 	<tbody>
@@ -9,4 +8,7 @@
 		<% end %>
 	</tbody>
 </table>
-
+<% unless report.impression.blank? %>
+	<h6>Impression</h6>
+	<%= report.impression %>
+<% end %>

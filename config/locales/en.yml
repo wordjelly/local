@@ -24,3 +24,4 @@ en:
   text_overlap_error: "text overlap error"
   pathofast_mailer_report_subject: "Lab Test Reports"
   pathofast_mailer_receipt_subject: "Lab Test Receipt"
+  lab_defined_range_absent: "-"

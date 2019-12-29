@@ -239,11 +239,11 @@ class Diagnostics::Range
 	##########################################################
 
 	before_validation do |document|
-		t1 = Time.now
+		#t1 = Time.now
 		document.set_min_and_max_age
 		document.update_tags
-		t2 = Time.now
-		puts "before validation total time in range: #{(t2-t1).in_milliseconds}"
+		#t2 = Time.now
+		#puts "before validation total time in range: #{(t2-t1).in_milliseconds}"
 	end
 
 
@@ -299,16 +299,7 @@ class Diagnostics::Range
 		end
 
 		## 
-=begin
-		self.template_tag_ids.map{|t_id|
-			## we can have them again.
-			## it has to be one to one.
-			## so this works differently.
-			tag = Tag.find(t_id)
-			tag.nested_id = BSON::ObjectId.new.to_s
-			self.tags << tag
-		}
-=end
+
 	end
 
 	def update_tags
@@ -443,25 +434,26 @@ class Diagnostics::Range
 
 	end
 
+
 	def get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
 		matching_history_tags = {}
 		history_tags.keys.each do |tag_id|
-			puts "checking history tag with numerical response: #{history_tags[tag_id].numerical_history_response} , and textual history respone : #{history_tags[tag_id].text_history_response}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+			#puts "checking history tag with numerical response: #{history_tags[tag_id].numerical_history_response} , and textual history respone : #{history_tags[tag_id].text_history_response}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 			#puts history_tags[tag_id]
 			self.tags.select{|c|
-				puts "checking our tag with min and max history: #{c.min_history_val}, #{c.max_history_val}"
+				#puts "checking our tag with min and max history: #{c.min_history_val}, #{c.max_history_val}"
 				if c.id.to_s == tag_id
-					puts "the ids are the same"
+					#puts "the ids are the same"
 					c.history_satisfied?(history_tags[tag_id])
 				else
-					puts "the tag ids are different"
+					#puts "the tag ids are different"
 					false
 				end
 			}.each do |tag|
 				matching_history_tags[tag.nested_id] = tag
 			end
 		end
-		puts "matching history tags become:"
+		#puts "matching history tags become:"
 		puts matching_history_tags.to_s
 		matching_history_tags
 	end
@@ -485,6 +477,7 @@ class Diagnostics::Range
 	def pick_tag(tag)
 		self.tags.map{|c|
 			if c.nested_id == tag.nested_id
+				self.picked = YES
 				c.pick
 			end
 		}
@@ -492,14 +485,19 @@ class Diagnostics::Range
 
 	def pick_normal_tag(test_result_numeric,test_result_text)
 		self.tags.map{|c|
-			c.pick if (c.is_normal? && c.test_value_satisfied?(test_result_numeric,test_result_text))
+			if (c.is_normal? && c.test_value_satisfied?(test_result_numeric,test_result_text))
+				self.picked = YES
+				c.pick
+			end	
 		}
 	end
 
-
 	def pick_abnormal_tag(test_result_numeric,test_result_text)
 		self.tags.map{|c|
-			c.pick if (c.is_abnormal? && c.test_value_satisfied?(test_result_numeric,test_result_text))
+			if (c.is_abnormal? && c.test_value_satisfied?(test_result_numeric,test_result_text))
+				self.picked = YES
+				c.pick
+			end
 		}
 	end
 
@@ -512,17 +510,8 @@ class Diagnostics::Range
 
 
 	def pick_range(history_tags,test_result_numeric,test_result_text)
-			
-		## find a way to switch off the pdf and notification as it takes a lot of time.
-		#puts "incoming history tags are:"
-		#puts history_tags.to_s
-		#puts "test result numeric: #{test_result_numeric}"
-		#puts "test result text: #{test_result_text}"
 
-		## so we pick a range -> as per the history tags.
-		## 
-
-		self.picked = YES
+		
 			
 		matching_history_tags = get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
 		
@@ -530,33 +519,33 @@ class Diagnostics::Range
 		#puts matching_history_tags.to_s
 
 		unless matching_history_tags.blank?
-			puts "matching history tags not blank"
+			#puts "matching history tags not blank"
 			combination_tags = get_combination_tags(matching_history_tags)
-			puts "combination tags are:"
-			puts combination_tags
+			#puts "combination tags are:"
+			#puts combination_tags
 			if combination_tags.size > 1
-				puts "more than one combination"
+				#puts "more than one combination"
 				self.errors.add(:tags,"more than one combination tag got selected")
 				self.more_than_one_combination_tag = true
 			elsif combination_tags.size == 1
-				puts "only one combination"
+				#puts "only one combination"
 				pick_tag(combination_tags[0])
 			else
-				puts "going for non combinationo"
+				#puts "going for non combinationo"
 				non_combination_tags = get_non_combination_tags(matching_history_tags)
 
-				puts "total non combination tags are:"
-				puts non_combination_tags.size.to_s
+				#puts "total non combination tags are:"
+				#puts non_combination_tags.size.to_s
 
 				if non_combination_tags.size > 1
-					puts "greater than one non combination tag"
+					#puts "greater than one non combination tag"
 					self.more_than_on_non_combination_tag = true
 					self.errors.add(:tags,"more than one history has caused multiple history ranges to get selected")
 				elsif non_combination_tags.size == 1
-					puts "non combination tag only 1"
+					#puts "non combination tag only 1"
 					pick_tag(non_combination_tags[0])
 				else
-					puts "more than one non combination tag"
+					#puts "more than one non combination tag"
 					pick_normal_tag(test_result_numeric,test_result_text)
 					pick_abnormal_tag(test_result_numeric,test_result_text)
 				end
@@ -565,8 +554,13 @@ class Diagnostics::Range
 			#puts "matching history tags are blank-------->"
 			pick_normal_tag(test_result_numeric,test_result_text)
 			pick_abnormal_tag(test_result_numeric,test_result_text)
+			## okay so what if there is no abnormal range.
 		end
+
+
+	
 	end
+
 	###########################################################
 	##
 	## OVERRIDDEN FROM FORM CONCERN
@@ -631,6 +625,9 @@ class Diagnostics::Range
 		self.sex == FEMALE
 	end
 
+	## when is the range abnormal ?
+	## for the test to be abnormal.
+	## this cannot be used.
 	def is_abnormal?
 		self.tags.select{|c|
 			(c.is_abnormal? && c.is_picked?)
@@ -644,6 +641,10 @@ class Diagnostics::Range
 		return ""
 	end
 
+	def value_outside_defined_ranges?
+		self.picked == NO
+	end
+
 	def get_picked_tag
 		t = self.tags.select{|c|
 			c.is_picked?
@@ -653,15 +654,13 @@ class Diagnostics::Range
 		end
 		return nil
 	end
+	
 
 	def get_normal_tag
 		t = self.tags.select{|c|
 			c.is_normal?
 		}
 		if t.size >= 1
-			## because it got more than one.
-			## that's why it failed here.
-			## we need to sort this slime out fast.
 			t[0]
 		else
 			nil
@@ -687,6 +686,48 @@ class Diagnostics::Range
 		else
 			get_normal_biological_interval
 		end
+	end
+
+	def human_readable_min_age
+		result = ""
+		if self.min_age_years != 0
+			result += self.min_age_years
+			result += " yrs,"
+		end
+		if self.min_age_months != 0
+			result += self.min_age_months
+			result += " mnths,"
+		end
+		if self.min_age_days != 0
+			result += self.min_age_days
+			result += " dys,"
+		end
+		if self.min_age_hours != 0
+			result += self.min_age_hours
+			result += " hrs"
+		end
+		result
+	end
+
+	def human_readable_max_age
+		result = ""
+		if self.max_age_years != 0
+			result += self.max_age_years
+			result += " yrs,"
+		end
+		if self.max_age_months != 0
+			result += self.max_age_months
+			result += " mnths,"
+		end
+		if self.max_age_days != 0
+			result += self.max_age_days
+			result += " dys,"
+		end
+		if self.max_age_hours != 0
+			result += self.max_age_hours
+			result += " hrs"
+		end
+		result
 	end
 
 

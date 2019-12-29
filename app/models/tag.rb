@@ -19,6 +19,9 @@ class Tag
 
 	index_name "pathofast-tags"
 
+	## so undefined will be in a tag
+	## in this case, normal biological interval is not available and it should say that.
+
 	## when no values are available for this age and sex
 	attribute :undefined, Integer, mapping: {type: 'integer'}
 
@@ -98,6 +101,10 @@ class Tag
 
 	attribute :max_range_val, Float, mapping: {type: 'float'}
 
+	## this has to be factored
+	## also there is undefined.
+	## for some ranges the values are undefined.
+	## 
 	attribute :max_range_val_unbound, Integer, mapping: {type: 'integer'}
 
 	attribute :min_range_val_unbound, Integer, mapping: {type: 'integer'}
@@ -111,7 +118,7 @@ class Tag
 	## this can be normal/abnormal/history
 	attribute :range_type, String, mapping: {type: 'keyword'}
 	
-	attribute :inference, String, mapping: {type: 'text'}
+	attribute :inference, String, mapping: {type: 'text'}, default: " "
 	validates_presence_of :inference, :if => Proc.new{|c| c.range_type == ABNORMAL }
 
 	attribute :comment, String, mapping: {type: 'text'}
@@ -190,6 +197,8 @@ class Tag
 		self.completed_days_since_date = TimeDifference.between(_date, t).in_days.to_i
 		self.numerical_history_response = self.send(self.numerical_history_response_derived_from_attribute) unless self.numerical_history_response_derived_from_attribute.blank?
 	end
+
+	## after this just the verify and finalize modalities are going to be pending. tomorrow i can finish the report formats, and check once more if all the interfacing is working.
 
 	## do you want to first embed it in test
 	## and write the test and range validations next.
@@ -340,7 +349,6 @@ class Tag
 		self.picked = YES
 	end
 
-
 	def unpick
 		self.picked = NO
 	end
@@ -350,12 +358,22 @@ class Tag
 	## HISTORY HELPERS
 	##
 	##
-	######################################################
+	#####################################################
 	def get_biological_interval
-		if is_numerical_range?
-			self.min_range_val.to_s + "-" + self.max_range_val.to_s
-		elsif is_text_range?
-			self.text_range_val.to_s		
+		if self.undefined == YES
+			"-"
+		else
+			if is_numerical_range?
+				if self.max_range_val_unbound == YES
+					">=" + self.min_range_val.to_s
+				elsif self.min_range_val_unbound == YES
+					"<=" + self.min_range_val.to_s
+				else
+					self.min_range_val.to_s + "-" + self.max_range_val.to_s
+				end
+			elsif is_text_range?
+				self.text_range_val.to_s		
+			end
 		end
 	end
 
@@ -471,6 +489,7 @@ class Tag
 				else
 					false
 				end
+				## but unbound, should affect the printed range.
 			else
 				if self.min_range_val <= test_value_numeric
 					if test_value_numeric < self.max_range_val
