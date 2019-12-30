@@ -14,6 +14,9 @@ class Inventory::Category
 	include Concerns::FormConcern
 	include Concerns::CallbacksConcern
 
+	YES = 1
+	NO = -1
+
 	## how to make a local item group.
 
 	attribute :name, String, mapping: {type: 'keyword'}
@@ -41,6 +44,13 @@ class Inventory::Category
 	## changed_for_lis also changes.
 	attribute :use_category_for_lis, Integer, mapping: {type: 'integer'}, default: 0
 
+	## EXPLANATION:
+	## SOME Categories LIKE TUBES -> MUST BE ADDED AS ITEMS INTO THE CATEGORY
+	## OTHER CATEGORIES like coverslips -> we don't need to add them explicitly as items into the category (so they can be ignored)
+	## and won't raise an error in the satisied? function.
+	## @called_from : self#satisfied?
+	attribute :ignore_missing_items, Integer, mapping: {type: 'integer'}, default: NO
+
 	def fields_not_to_show_in_form_hash(root="*")
 		{
 			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
@@ -54,6 +64,7 @@ class Inventory::Category
 			:quantity,
 			:name,
 			:use_category_for_lis,
+			:ignore_missing_items,
 			{
 				:items => Inventory::Item.permitted_params[1][:item]
 			},
@@ -91,6 +102,9 @@ class Inventory::Category
 				type: 'keyword'
 			},
 			use_category_for_lis: {
+				type: 'integer'
+			},
+			ignore_missing_items: {
 				type: 'integer'
 			}
 			
@@ -245,6 +259,7 @@ class Inventory::Category
 	end
 
 	def satisfied?
+		return true if self.ignore_missing_items == YES
 		mod = self.quantity % 100
 		required_item_quantity = (self.quantity/100).to_i
 		required_item_quantity += 1 if (mod > 0)
@@ -252,6 +267,7 @@ class Inventory::Category
 	end
 
 	def additional_required_items
+		return 0 if self.ignore_missing_items == YES
 		mod = self.quantity % 100
 		required_item_quantity = (self.quantity/100).to_i
 		required_item_quantity += 1 if (mod > 0)

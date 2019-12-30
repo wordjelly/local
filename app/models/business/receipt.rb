@@ -18,7 +18,6 @@ class Business::Receipt
 	include Concerns::CallbacksConcern
 	include Concerns::BackgroundJobConcern
 
-
 	## FOR TWO FACTOR OTP SMS.
 	RECEIPT_UPDATED_TEMPLATE_NAME = "Receipt Updated"
 	RECEIPT_UPDATED_SENDER_ID = "LABTST"
@@ -602,6 +601,17 @@ class Business::Receipt
 			end
 			return !self.force_pdf_generation.blank?
 		end
+		## if order_finalized has been changed ?
+		## from -> no -> yes
+		## then generate
+		## then if you add some more tests to that patient later
+		## then what happens.
+		## the validation of requirement satisfied
+		## has to be seperated
+		## order can be finalized is not the validation.
+		## order finalization -> just triggers receipts
+		## and receipt triggering does not happen without a previously finalized order.
+		## it cannot be an 
 	end
 
 

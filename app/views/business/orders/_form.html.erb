@@ -1,4 +1,4 @@
-<%= form_for @order, as: :order, url: business_order_path(@order.id.to_s)  ,method: @order.new_record? ? :post : :put do |f| %>
+<%= form_for @order, as: :order, url: @order.new_record? ? business_orders_path : business_order_path(@order.id.to_s)  ,method: @order.new_record? ? :post : :put do |f| %>
 	<div class="section page_content">
 		<%= render :partial => "shared/errors", locals: {model: @order} %>
 		<div class="section">

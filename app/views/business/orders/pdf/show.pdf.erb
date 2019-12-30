@@ -1,7 +1,26 @@
 <% if order.organization.generate_report_summary == Organization::YES %>
 	<%= render :partial => "/business/orders/report_summary", locals: {order: order, organization: organization} %>
 <% end %>
+
 <!-- if the format is the same or not, and if the organization is the same or not -->
+<!-- okay so what to do today -->
+<!-- main is ease of making an item group -->
+<!-- adding a from_organization_id, to select the sample is from where. -->
+<!-- so that we can start using for alliance directly -->
+<!-- that should be simple enough -->
+<!-- so you add that as an owner id -->
+<!-- you add it to the recipients -->
+<!-- and what about the payment/receipt generation -->
+<!-- and the rate applied -->
+<!-- make it simple to create the item groups -->
+<!-- can the edit ui be made any simpler? -->
+<!-- get the report formats in order -->
+<!-- check if adding item groups can work -->
+<!-- add hiv, hbs, and see if it works -->
+<!-- and the place to add the impression -->
+<!-- so let me test some scenarios -->
+<!-- make a simpler UI for the item groups -->
+
 <% reports.each do |report| %>
 	<% if report.is_verified? %>
 		<%= render :partial => "/diagnostics/reports/pdf/show", locals: {order: order, organization: organization, report: report} %>

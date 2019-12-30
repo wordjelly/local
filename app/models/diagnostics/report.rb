@@ -15,6 +15,9 @@ class Diagnostics::Report
 	include Concerns::Diagmodule::Report::OutsourceConcern
 	include Concerns::CallbacksConcern
 
+	## ready for reporting ?
+	## we can add a method.
+
 	index_name "pathofast-diagnostics-reports"
 	document_type "diagnostics/report"
 
@@ -54,10 +57,8 @@ class Diagnostics::Report
 	## doesnt need to be a permitted param, is internally assigned.
 	#attribute :order_id, String, mapping: {type: 'keyword'}
 
-	## default : -1, (means don't)
-	## if set to 1 -> it will set verified as true only on those 
-	## tests which (a. are not already verified, are ready for reporting, and whose picked range is not abnormal)
-	attribute :verify_all, Integer, mapping: {type: 'integer'}, default: NO
+
+	attribute :verify_all, Integer, mapping: {type: 'integer'}, default: YES
 
 	## stat marked, means the report will be released as soon as it is ready, without waiting for other reports in the patient order.
 	## it also gets priority.
@@ -108,6 +109,10 @@ class Diagnostics::Report
 	## could be the signatories from the primary organization, includes any additional staff signatures. Primary signatories are first filtered to see if they can sign on this report, like a microbiologist can sign on a microbilogy report.
 	## set from #order_concern#group_reports_by_organization.
 	attr_accessor :final_signatories
+
+	## consider for processing
+	## Set in #self.consider_for_processing
+	attr_accessor :worth_processing
 
 	## @called_from : after_find in Concerns::OrderConcern#after_find
 	## sets all the accessors, and these are included in the json
@@ -228,6 +233,28 @@ class Diagnostics::Report
 		self.procedure_version = Base64.encode64(procedure_version)
 	end
 
+
+	## called_from: #order_concern: generate_receipts
+	## called_from: #order_concern : add_report_values
+	## called_from: #order_concern : verify
+	## a report can be considered for processing
+	def consider_for_processing?(order_history_tags)
+		if self.worth_processing.nil?
+			self.worth_processing = true
+			self.requirements.each do |r|
+				unless req.satisfied?
+					self.worth_processing = false
+				end
+			end
+			self.tests.each do |test|
+				unless test.history_provided?(order_history_tags)
+					self.worth_processing = false
+				end
+			end
+		end
+		self.worth_processing
+	end
+
 	def self.permitted_params
 		base = [
 				:id,
@@ -319,6 +346,8 @@ class Diagnostics::Report
 		}
 	end
 
+	## after this will be the history thing
+	## then we are more or less done.
 	#############################################################
 	##
 	## STATUS GROUPING
@@ -620,7 +649,7 @@ class Diagnostics::Report
 	## if you call to_json on order, then and only then these additional methods are included, calling, as_json on order, does not include these methods.
 	###########################################################
 	def as_json(options={})
-		super(:methods => [:report_has_abnormal_tests,:report_all_tests_verified, :report_is_outsourced])
+		super(:methods => [:report_has_abnormal_tests,:report_all_tests_verified, :report_is_outsourced, :worth_processing])
 	end
 	##########################################################
 	## @called_from : order_concern#remove_reports

@@ -173,6 +173,16 @@ module Concerns::OrderConcern
 		## so we make these permitted on order.
 		##
 		#############################################
+		## so we stop at this
+		## it gets treated like a normal patient.
+		## and gets changed the normal charges ?
+		## we should add one more receipt
+		## to the order organization.
+		## they don't get it on their letter head.
+		## 
+		attribute :referred_by_organization_id, String, mapping: {type: 'keyword'}
+
+		attr_accessor :referred_by_organization
 
 		attribute :bill_outsourced_reports_to_patient, Integer, mapping: {type: 'integer'}
 
@@ -363,9 +373,9 @@ module Concerns::OrderConcern
 
 		validate :receipts_attributes_unchanged_except_payments
 
-		validate :order_can_be_finalized, :if => Proc.new{|c|
-			c.changed_attributes.include? "finalize_order"
-		}	
+		#validate :order_can_be_finalized, :if => Proc.new{|c|
+		#	c.changed_attributes.include? "finalize_order"
+		#}	
 
 		validate :order_completed_not_changed
 
@@ -414,54 +424,54 @@ module Concerns::OrderConcern
 
 
 		before_validation do |document|
-			t1 = Time.now
+			#t1 = Time.now
 			document.check_for_top_up
-			t2 = Time.now
-			puts "step : check_for_top_up  , time taken #{(t2 - t1).in_milliseconds}"
+			#t2 = Time.now
+			#puts "step : check_for_top_up  , time taken #{(t2 - t1).in_milliseconds}"
 			document.load_patient
-			t3 = Time.now
-			puts "step : load_patient  , time taken #{(t3 - t2).in_milliseconds}"
+			#t3 = Time.now
+			#puts "step : load_patient  , time taken #{(t3 - t2).in_milliseconds}"
 			document.update_reports
-			t4 = Time.now
-			puts "step : update_reports  , time taken #{(t4 - t3).in_milliseconds}"
+			#t4 = Time.now
+			#puts "step : update_reports  , time taken #{(t4 - t3).in_milliseconds}"
 			document.update_recipients
-			t5 = Time.now
-			puts "step : update_recipients  , time taken #{(t5 - t4).in_milliseconds}"
+			#t5 = Time.now
+			#puts "step : update_recipients  , time taken #{(t5 - t4).in_milliseconds}"
 			document.update_requirements
-			t6 = Time.now
-			puts "step : update_requirements  , time taken #{(t6 - t5).in_milliseconds}"
+			#t6 = Time.now
+			#puts "step : update_requirements  , time taken #{(t6 - t5).in_milliseconds}"
 			document.update_items_from_item_group
-			t7 = Time.now
-			puts "step : update items from item group  , time taken #{(t7 - t6).in_milliseconds}"
+			#t7 = Time.now
+			#puts "step : update items from item group  , time taken #{(t7 - t6).in_milliseconds}"
 			document.update_report_items
-			t8 = Time.now
-			puts "step : update_report_items  , time taken #{(t8 - t7).in_milliseconds}"
+			#t8 = Time.now
+			#puts "step : update_report_items  , time taken #{(t8 - t7).in_milliseconds}"
 			document.gather_history
-			t9 = Time.now
-			puts "step : gather_history  , time taken #{(t9 - t8).in_milliseconds}"
+			#t9 = Time.now
+			#puts "step : gather_history  , time taken #{(t9 - t8).in_milliseconds}"
 			document.add_report_values
-			t10 = Time.now
-			puts "step : add_report_values  , time taken #{(t10 - t9).in_milliseconds}"
+			#t10 = Time.now
+			#puts "step : add_report_values  , time taken #{(t10 - t9).in_milliseconds}"
 			document.verify
-			t11 = Time.now
-			puts "step : verify  , time taken #{(t11 - t10).in_milliseconds}"
+			#t11 = Time.now
+			#puts "step : verify  , time taken #{(t11 - t10).in_milliseconds}"
 			document.set_accessors
-			t12 = Time.now
-			puts "step : set_accessors  , time taken #{(t12 - t11).in_milliseconds}"
+			#t12 = Time.now
+			#puts "step : set_accessors  , time taken #{(t12 - t11).in_milliseconds}"
 			document.set_changed_for_lis
-			t13 = Time.now
-			puts "step : set_changed_for_lis  , time taken #{(t13 - t12).in_milliseconds}"
+			#t13 = Time.now
+			#puts "step : set_changed_for_lis  , time taken #{(t13 - t12).in_milliseconds}"
 			document.generate_report_impressions
-			t14 = Time.now
-			puts "step : generate_report_impressions  , time taken #{(t14 - t13).in_milliseconds}"
+			#t14 = Time.now
+			#puts "step : generate_report_impressions  , time taken #{(t14 - t13).in_milliseconds}"
 			document.generate_receipts
-			t15 = Time.now
-			puts "step : generate_receipts  , time taken #{(t15 - t14).in_milliseconds}"
+			#t15 = Time.now
+			#puts "step : generate_receipts  , time taken #{(t15 - t14).in_milliseconds}"
 			document.cascade_id_generation(nil)
-			t16 = Time.now
-			puts "step : cascade_id_generation  , time taken #{(t16 - t15).in_milliseconds}"
-			puts "total time for before validation: #{(t16 - t1).in_milliseconds}"
-			$redis.set("before_validation",Time.now.to_f.to_s)
+			#t16 = Time.now
+			#puts "step : cascade_id_generation  , time taken #{(t16 - t15).in_milliseconds}"
+			#puts "total time for before validation: #{(t16 - t1).in_milliseconds}"
+			#$redis.set("before_validation",Time.now.to_f.to_s)
 		end
 
 
@@ -776,28 +786,14 @@ module Concerns::OrderConcern
 		self.errors.add(:order_completed, "you cannot change the order status to completed, this is automatically derived") if self.changed_attributes.include? "order_completed"
 	end
 
-	## validation, called if finalize_order has changed.
-	## how does the range interpretation take place with these tags.
-	## ya i can deliver it on the pathofast portal
+
+=begin
 	def order_can_be_finalized
-		self.reports.each do |report|
-
-			#puts "checking report: #{report.id.to_s}"
-				
-			report.requirements.each do |req|
-				#puts "checking requirement: #{req.id.to_s}, is it satisfied: #{req.satisfied?}"					
-				self.errors.add(:requirements, "the requirement: #{req.name} was not satisfied") unless req.satisfied?
-			end
-
-			report.tests.each do |test|
-				#puts "checking test: #{test.name.to_s}"
-				puts "report: #{report}"
-				puts "test: #{test}"
-				self.errors.add(:reports, "the test #{test.name}, in the report: #{report.name}, has not been provided with the relevant history #{test.get_history_questions}, please answer questions to finalize the order") unless test.history_provided?(self.history_tags)
-			end
-		end
+		## on finalizating -> build the receipts
+		## okay not an issue.
+		## 
 	end
-
+=end
 	def receipts_size_unchanged
 		self.errors.add(:receipts, "you cannot add or remove receipts") if self.changed_array_attribute_sizes.include? "receipts"
 	end
@@ -977,9 +973,7 @@ module Concerns::OrderConcern
 
 	## @called_from : self#update_reports.
 	def remove_reports
-		#puts "came to delete reports."
-		#puts "Reports size before:"
-		#puts self.reports.size.to_s
+		
 		self.reports.delete_if { |c|
 			unless self.template_report_ids.include? c.id.to_s
 				if c.can_be_removed?
@@ -991,8 +985,7 @@ module Concerns::OrderConcern
 				end
 			end
 		}
-		#puts "reports size after"
-		#puts reports.size.to_s
+		
 	end
 
 	## i can go for accounting.
@@ -1012,11 +1005,18 @@ module Concerns::OrderConcern
 
 		## after this the quantity issue
 		## and then the test verification toggles, textual inference, and report generation ->
+		## so only if the order is finalized, then 
+		## now the worth processing.
+		## local item group
+		## organization from 
 
 		self.template_report_ids.each do |r_id|
 			#puts "doing template report id: #{r_id}"
 			unless existing_report_ids.include? r_id
 				tx = Time.now
+				self.finalize_order = NO
+				## unfinalize the order
+				## 
 				## get teh report raw hash.
 				## get rid of the non-applicable ranges
 				## and only then initialize the object.
@@ -1274,14 +1274,13 @@ module Concerns::OrderConcern
 	## for now just let me make something simple.
 	## called before save, to add the patient values
 	def add_report_values
-		## so this can only happen if the order is finalized.
-		## that is the main thing.
-
 		unless self.patient.blank?
 			self.reports.map{|report|
-				report.tests.map{|test|
-					test.add_result(self.patient,self.history_tags) 
-				}
+				if report.consider_for_processing?(self.history_tags)
+					report.tests.map{|test|
+						test.add_result(self.patient,self.history_tags) 
+					}
+				end
 			}
 		end
 	end
@@ -1290,15 +1289,22 @@ module Concerns::OrderConcern
 	## so you write an impression and all the abnormal tests also get verified.
 	## so add an impression and all the abnormal tests get verified.
 	def verify
+		#puts "INSIDE DEF: vERIFY IN ORDER CONCERN."
 		self.reports.each do |report|
-			if report.verify_all == Diagnostics::Report::VERIFY_ALL
-				if report.impression.blank?
-					report.tests.each do |test|
-						test.verify_if_normal
-					end
-				else
-					report.tests.each do |test|
-						test.verify
+			if report.consider_for_processing?(self.history_tags)
+			#puts "checking report: #{report.name}"
+				if report.verify_all == Diagnostics::Report::VERIFY_ALL
+					#puts "reprot verify all is true"
+					if report.impression.blank?
+						#puts "impression is balnk"
+						report.tests.each do |test|
+							#puts "Calling verify if normal on test: #{test.name}"
+							test.verify_if_normal
+						end
+					else
+						report.tests.each do |test|
+							test.verify
+						end
 					end
 				end
 			end
@@ -1482,25 +1488,45 @@ module Concerns::OrderConcern
 		r.add_bill(Business::Payment.bill_from_outsourced_organization_to_order_organization(report,self))
 	end
 
+	def receipt_to_referring_organization(report)
+		r = find_or_initialize_receipt(report.currently_held_by_organization,self.referred_by_organization_id.to_s,nil)
+		r.add_bill(Business::Payment.bill_from_outsourced_organization_to_referring_organization(report,self))
+	end
+
+	## i have a very simple idea
+	## if history tags are there.
+	## and no match is found -> automatically default to print all ranges.
+
+	## so a receipt is created in that manner -> can be used for billing;
+	## but reports will be generated by the 
 	def generate_receipts
-		## so clear every receipt of reports that no longer exist. 
-		self.reports.each do |report|
-			if report.is_outsourced?
-				#puts "report is outsourced."
-				if bill_direct_to_patient?
-					#this will be true.
-					#puts "we are on bill direct to patient."
-					#will be receipt to patient via organizaiton.
-					receipt_to_patient(report.currently_held_by_organization,report)
-					#(from_organization_id,report) 
-				else
-					#puts "we are on double bill"
-					receipt_to_patient(self.organization.id.to_s,report)
-					receipt_to_order_organization(report)
+		## and now display this.
+		if self.finalize_order == YES
+			self.reports.each do |report|
+				if report.consider_for_processing?(self.history_tags)
+					## ready for processing.
+					if report.is_outsourced?
+						#puts "report is outsourced."
+						if bill_direct_to_patient?
+							#this will be true.
+							#puts "we are on bill direct to patient."
+							#will be receipt to patient via organizaiton.
+							receipt_to_patient(report.currently_held_by_organization,report)
+							#(from_organization_id,report) 
+						else
+							#puts "we are on double bill"
+							receipt_to_patient(self.organization.id.to_s,report)
+							receipt_to_order_organization(report)
+						end
+					else
+						
+						receipt_to_patient(self.organization.id.to_s,report)
+					
+						unless self.referred_by_organization_id.blank?
+							receipt_to_referring_organization(report)
+						end
+					end
 				end
-			else
-				#puts "Receipt to patient ----------------------"
-				receipt_to_patient(self.organization.id.to_s,report)
 			end
 		end
 	end
@@ -1843,7 +1869,8 @@ module Concerns::OrderConcern
 					    	:do_top_up,
 					    	:finalize_order,
 					    	:order_completed,
-					    	:local_item_group_id
+					    	:local_item_group_id,
+					    	:referred_by_organization_id
 						]
 					}
 				]

@@ -1,6 +1,6 @@
 <tr>
 	<td><%= test.name %></td>
-	<% test.is_abnormal? %>
+	<% if test.is_abnormal? %>
 		<td><u><<%= test.display_result %></u></td>
 	<% else %>
 		<td><%= test.display_result %></td>

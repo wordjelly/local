@@ -511,7 +511,6 @@ class Diagnostics::Range
 
 	def pick_range(history_tags,test_result_numeric,test_result_text)
 
-		
 			
 		matching_history_tags = get_matching_history_tags(history_tags,test_result_numeric,test_result_text)
 		

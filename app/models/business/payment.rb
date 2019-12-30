@@ -210,7 +210,19 @@ class Business::Payment
 	## @return[Business::Payment]
 	## @called_from : order_concern#receipt_to_order_organization
 	def self.bill_from_outsourced_organization_to_order_organization(report,order)
+		## its just the rate getting that matters.
+		## thats the end of it.
+		## nothing more complicated here.
+		## this should work out.
 		new(amount: report.get_organization_rate(order.organization.id.to_s), for_report_id: report.id.to_s, for_report_name: report.name, status: APPROVED, payment_type: BILL, newly_added: true)
+	end
+
+	def self.bill_from_outsourced_organization_to_referring_organization(report,order)
+		## its just the rate getting that matters.
+		## thats the end of it.
+		## nothing more complicated here.
+		## this should work out.
+		new(amount: report.get_organization_rate(order.referred_by_organization_id.to_s), for_report_id: report.id.to_s, for_report_name: report.name, status: APPROVED, payment_type: BILL, newly_added: true)
 	end
 
 	def self.permitted_params

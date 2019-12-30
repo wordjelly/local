@@ -396,6 +396,7 @@ class Diagnostics::Test
 		self.verification_done == -1 ? "Pending Verification"  : "Verified"
 	end
 
+
 	## so it will have to have a selected option
 	## otherwise its useless.
 	## that makes inputs easier to deal with.
@@ -609,18 +610,11 @@ class Diagnostics::Test
 	end
 
 	def assign_range(patient,history_tags)
-		#puts "------- CAME TO ASSIGN RANGE ------------ "
-		#puts "assign_range in test: #{self.name}, with result numeric: #{self.result_numeric} and result text: #{self.result_text}"
-		#puts "the history tags are:"
-		#history_tags.each do |htag|
-		#	puts htag.to_s
+		#self.ranges.each do |r|
+		self.ranges[0].pick_range(history_tags,self.result_numeric, self.result_text)
 		#end
-
-		self.ranges.each do |r|
-			#puts "checking range min_value: #{r.min_value}, max_value: #{r.max_value}, text value: #{r.text_value} ----------------------------->"
-			## so it would iterate and pick.
-			## actually.
-			r.pick_range(history_tags,self.result_numeric, self.result_text) if patient.meets_range_requirements?(r)
+		if self.ranges[0].picked == NO
+			self.print_all_ranges_in_report = YES
 		end
 	end
 	
@@ -703,8 +697,8 @@ class Diagnostics::Test
 		              <th>' + (self.units || DEFAULT_UNITS) + '</th>
 		              <th>' + range_name + '</th>
 		              <th>' + (inference || '') + '</th>
-		              <th>' + self.is_ready_for_reporting? + '</th>
-		              <th>' + self.is_verification_done? + '</th>
+		              <th>' + self.is_ready_for_reporting?.to_s + '</th>
+		              <th>' + self.is_verification_done?.to_s + '</th>
 		              <th><div class="add_result_manually edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Add Result Manually</div>
 		              	  <div class="verify edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Verify</div>
 		              </th>
@@ -779,13 +773,21 @@ class Diagnostics::Test
 	## verifies the test if report verify_all is true.
 	## will verify the test only if the picked_range is not abnormal.
 	def verify_if_normal(created_by_user)
-		if !self.is_abnormal?
-			self.verification_done = 1 if self.is_ready_for_reporting?
-		end	
+		unless self.verification_done == YES
+			#puts "came to verify if normal."
+			#puts "self is abnormal: #{self.is_abnormal?}"
+			if !self.is_abnormal?
+				#puts "test is normal, i.e not abnormal."
+				self.verification_done = 1 if self.is_ready_for_reporting?
+				self.verification_done_by << created_by_user.id.to_s
+			end	
+		end
 	end	
 
 	def verify
-		self.verification_done = 1 if self.is_ready_for_reporting?
+		unless self.verification_done == YES
+			self.verification_done = 1 if self.is_ready_for_reporting?
+		end
 	end
 
 	def add_new_object(root,collection_name,scripts,readonly)
