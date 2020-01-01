@@ -85,6 +85,10 @@ class Diagnostics::Report
 	###################################################
 	attribute :top_up_template, Integer, mapping: {type: 'integer'}, default: NO
 
+	attribute :outsource_score, Float, mapping: {type: 'float'}, default: 1.0
+
+	attribute :internal_score, Float, mapping: {type: 'float'}, default: 1.0
+
 	####################################################
 	##
 	##
@@ -113,6 +117,32 @@ class Diagnostics::Report
 	## consider for processing
 	## Set in #self.consider_for_processing
 	attr_accessor :worth_processing
+
+	## set from order_concern#verify
+	attr_accessor :a_test_was_verified
+
+	## report list
+	## used from orders.js to get a list of report names that the user can add
+	## from organization id -> also will have to be specified.
+	## when you click -> it shows you which organization
+	## your own, pathofast -> etc
+	## so basically then aggregate by organization
+	## that's how it should work
+	## so this is a bit complicated here.
+	## i want to outsource
+	## i don't want to outsource
+	## if you want to outsource -> shows from other organizations
+	## just grouped by name and sorted alphabetically
+	## what about some kind of weightage ?
+	## the profiles.
+	## aggregate by organizaiton.
+	## and show it.
+	## if he clicks outsource.
+	attr_accessor :show_outsourced
+	attr_accessor :show_packages
+	attr_accessor :reports_list
+	attr_accessor :outsourcable_organization_ids
+
 
 	## @called_from : after_find in Concerns::OrderConcern#after_find
 	## sets all the accessors, and these are included in the json
@@ -217,8 +247,8 @@ class Diagnostics::Report
 
 	def fields_not_to_show_in_form_hash(root="*")
 		{
-			"*" => ["create unless document.created_by_user.blank?d_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","pdf_url","latest_version","request_rerun","start_epoch","verify_all","stat","outsource_to_organization_id","outsource_from_status_category","outsource_from_status_id","patient_id"],
-			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","description","patient_id","start_epoch","tag_ids","pdf_url","latest_version"]
+			"*" => ["create unless document.created_by_user.blank?d_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","pdf_url","latest_version","request_rerun","start_epoch","verify_all","stat","outsource_to_organization_id","outsource_from_status_category","outsource_from_status_id","patient_id","outsource_score"],
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","description","patient_id","start_epoch","tag_ids","pdf_url","latest_version","outsource_score","images_allowed","outsource_to_organization_id","outsource_from_status_category","outsource_from_status_id","name","request_rerun","verify_all","stat","top_up_template","internal_score","requirements","statuses"]
 		}
 	end
 	## generates a huge concated string using the reference status version 
@@ -239,20 +269,25 @@ class Diagnostics::Report
 	## called_from: #order_concern : verify
 	## a report can be considered for processing
 	def consider_for_processing?(order_history_tags)
-		if self.worth_processing.nil?
-			self.worth_processing = true
-			self.requirements.each do |r|
-				unless req.satisfied?
-					self.worth_processing = false
-				end
-			end
-			self.tests.each do |test|
-				unless test.history_provided?(order_history_tags)
-					self.worth_processing = false
-				end
+		result = true
+		#if self.worth_processing.nil?
+			#self.worth_processing = true
+		puts "came to check worth processing."
+		self.requirements.each do |req|
+			puts "checking requirement: #{req.name}"
+			unless req.satisfied?
+				puts "its not satisfied"
+				result = false
 			end
 		end
-		self.worth_processing
+		self.tests.each do |test|
+			unless test.history_provided?(order_history_tags)
+				puts "history not provided."
+				result = false
+			end
+		end
+		self.worth_processing = result
+		result
 	end
 
 	def self.permitted_params
@@ -274,6 +309,8 @@ class Diagnostics::Report
 						:outsource_from_status_id,
 						:currently_held_by_organization,
 						:top_up_template,
+						:outsource_score,
+						:internal_score,
 						{:tag_ids => []},
 						{
 							:requirements => Inventory::Requirement.permitted_params
@@ -286,7 +323,11 @@ class Diagnostics::Report
 				    	},
 				    	{
 				    		:tests => Diagnostics::Test.permitted_params
-				    	}
+				    	},
+				    	:impression,
+				    	:show_packages,
+				    	:show_outsourced,
+				    	:reports_list
 					]
 				}
 			]
@@ -342,6 +383,15 @@ class Diagnostics::Report
 			},
 			:stat => {
 				:type => 'integer'
+			},
+			:impression => {
+				:type => 'keyword'
+			},
+			:outsource_score => {
+				:type => 'float'
+			},
+			:internal_score => {
+				:type => 'score'
 			}
 		}
 	end
@@ -415,6 +465,11 @@ class Diagnostics::Report
 
 	end	
 
+	## simple table -> Report name -> outsource to:
+	## same way -> we can 
+	## tubes, reports editing, and payment receipt downloading
+	## simplify these three
+	## and finish immuno report format checking.
 	#############################################################
 	##
 	##
@@ -554,10 +609,16 @@ class Diagnostics::Report
 	end
 
 	## has any test just been verified?
+	## okay so that's why this doesnt work.
+	## you cannot sit and verify tests individually.
 	def a_test_was_verified?
+		self.a_test_was_verified
+		## so how do we do this ?
+=begin
 		self.tests.select{|c|
 			((c.changed_attributes.include? "verification_done") && (c.verification_done == Diagnostics::Test::VERIFIED))
 		}.size > 0
+=end
 	end
 
 	## @return[Boolean] true/false : true if all the tests are verified.
@@ -642,6 +703,8 @@ class Diagnostics::Report
 		end
 	end
 
+	## tubes
+	## 
 	###########################################################
 	##
 	## override with methods to include all the attr_accessors.
@@ -649,7 +712,7 @@ class Diagnostics::Report
 	## if you call to_json on order, then and only then these additional methods are included, calling, as_json on order, does not include these methods.
 	###########################################################
 	def as_json(options={})
-		super(:methods => [:report_has_abnormal_tests,:report_all_tests_verified, :report_is_outsourced, :worth_processing])
+		super(:methods => [:report_has_abnormal_tests,:report_all_tests_verified, :report_is_outsourced, :worth_processing,:outsourcable_organization_ids])
 	end
 	##########################################################
 	## @called_from : order_concern#remove_reports
@@ -775,5 +838,66 @@ class Diagnostics::Report
 		top_up_report
 	end
 
+	def self.index_controller_action(query,params,current_user)
+		## SCORING CAN BE CONTROLLED BY OUTSOURCE_SCORE, AND INTERNAL_SCORE -> BOTH OF WHICH 
+		return {query: query} if params[:reports_list].blank?
+		aggs = {
+		    report_name: {
+		      	terms: {
+		        	field: "name",
+		        	size: 50
+		      	},
+		      	aggs: {
+		        	report_id: {
+		          		terms: {
+		            		field: "_id",
+		            		size: 10
+		          		}
+		        	},
+		        	organization_id: {
+		          		terms: {
+		            		field: "currently_held_by_organization",
+		            		size: 10
+		          		}
+		        	}
+		      	}
+		    }
+		}
+
+		if params["show_outsourced"] == true
+			## ORDER AGGREGATION BY THE OUTSOURCED SCORE.
+			query[:bool][:must_not] = {
+				term: {
+					currently_held_by_organization: current_user.organization.id.to_s
+				}
+			}
+		else
+			## SCORE BY THE INTERNAL SCORE.
+		end
+
+		puts "aggs becomes:"
+		puts JSON.pretty_generate(aggs)
+
+		{aggs: aggs, query: query, size:0}
+	
+	end
+
+	def self.parse_index_controller_aggregation(response)
+		reports = []
+		puts response.aggregations
+		return reports if response.aggregations.blank?
+		return reports if response.aggregations.report_name.blank?
+		response.aggregations.report_name.buckets.each do |report_name_bucket|
+			report_name = report_name_bucket["key"]
+			outsourcable_organization_ids = report_name_bucket.organization_id.buckets.map{|c|
+				c["key"]
+			}
+			report_id = report_name_bucket.report_id.buckets[0]["key"]
+			report = Diagnostics::Report.new(name: report_name, outsourcable_organization_ids: outsourcable_organization_ids)
+			report.id = report_id
+			reports << report
+		end
+		reports
+	end
 
 end	

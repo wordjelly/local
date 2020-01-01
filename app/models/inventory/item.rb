@@ -170,7 +170,7 @@ class Inventory::Item
 	def fields_not_to_show_in_form_hash(root="*")
 		{
 			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
-			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","item_type_id","supplier_item_group_id","local_item_group_id","transaction_id","filled_amount","expiry_date","report_ids","patient_id","contents_expiry_date","space","statuses","reports","name","location_id","available","applicable_to_report_ids"]
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","item_type_id","supplier_item_group_id","local_item_group_id","transaction_id","filled_amount","expiry_date","report_ids","patient_id","contents_expiry_date","space","statuses","reports","name","location_id","available","applicable_to_report_ids","images_allowed","code","use_code","categories"]
 		}
 	end
 
@@ -685,6 +685,10 @@ class Inventory::Item
 		unless self.expiry_date.blank?
 			self.errors.add(:expiry_date, "this item cannot be created as its expiry date has already elapsed") if (Date.today >= self.expiry_date)
 		end
+	end
+
+	def has_no_identification?
+		self.barcode.blank? && self.use_code.blank?
 	end
 
 end

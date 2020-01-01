@@ -189,6 +189,7 @@ module Concerns::FormConcern
 		## accessors are added as checkbox tags.
 		## checkbox.
 		def add_accessor(root,accessor)
+		
 			input_name = root + "[" + accessor + "]"
 			
 			if self.send(accessor).blank?
@@ -412,6 +413,20 @@ module Concerns::FormConcern
 			(object_array_attributes.map{|c| c.name.to_s} & hidden_fields_list).size < object_array_attributes.size
 		end
 
+		def non_array_attributes_card_title
+			t = nil
+			if self.respond_to? :name
+				if self.name.blank?
+					t = "New Record"
+				else
+					t = self.name
+				end
+			else
+				t = "New Record"
+			end
+			t
+		end
+
 		## okay so how can we reduce the stuff sent.
 		## so we reduce the scripts.
 		## how can we reduce them the maximum.
@@ -430,16 +445,10 @@ module Concerns::FormConcern
 						<div class="card-title">
 			''' 
 
-			if self.respond_to? :name
-				if self.name.blank?
-					non_array_attributes_card += "New Record"
-				else
-					non_array_attributes_card += self.name
-				end
-			else
-				non_array_attributes_card += "New Record"
-			end
 
+			non_array_attributes_card += non_array_attributes_card_title
+
+			
 			#<a href="#categories5d45289cacbcd65941ef89ae" class="">categories</a>
 
 			non_array_attributes_card += '''
@@ -477,7 +486,11 @@ module Concerns::FormConcern
 				#puts "doing accessor: #{accessor}"
 				if self.respond_to? accessor
 					#puts "self responds to: #{accessor}"
-					non_array_attributes_card += add_accessor(root,accessor)
+					unless customizations(root)[accessor.to_s].blank?
+						non_array_attributes_card += customizations(root)[accessor.to_s]
+					else
+						non_array_attributes_card += add_accessor(root,accessor)
+					end
 				end
 			end
 

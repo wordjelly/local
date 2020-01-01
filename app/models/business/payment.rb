@@ -217,7 +217,12 @@ class Business::Payment
 		new(amount: report.get_organization_rate(order.organization.id.to_s), for_report_id: report.id.to_s, for_report_name: report.name, status: APPROVED, payment_type: BILL, newly_added: true)
 	end
 
-	def self.bill_from_outsourced_organization_to_referring_organization(report,order)
+	## okay lets get the show on the road
+	## i want to show the applicable ranges
+	## in the edit view
+	## to help verify or write an impression.
+
+	def self.bill_from_outsourced_organization_to_outsourcer_organization(report,order)
 		## its just the rate getting that matters.
 		## thats the end of it.
 		## nothing more complicated here.

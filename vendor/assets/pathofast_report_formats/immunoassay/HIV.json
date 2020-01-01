@@ -39,7 +39,9 @@
 						{
 							"range_type" : "abnormal",
 							"min_range_val" : 0.9,
-							"max_range_val" : 500
+							"max_range_val" : 500,
+							"max_range_val_unbound" : 1,
+							"inference" : "Repeat with alternative method, Western Blot / Viral Load Determination for confirmation"
 						}
 					]
 				},
@@ -60,7 +62,9 @@
 						{
 							"range_type" : "abnormal",
 							"min_range_val" : 0.9,
-							"max_range_val" : 500
+							"max_range_val" : 500,
+							"max_range_val_unbound" : 1,
+							"inference" : "Repeat with alternative method, Western Blot / Viral Load Determination for confirmation"
 						}
 					]
 				}

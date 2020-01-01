@@ -43,6 +43,8 @@ module Concerns::OrderConcern
 		###############################################
 
 		## now we go for updating the 
+		attr_accessor :simplify_report_adding
+		
 
 		## it should validate them for the name.
 		## the length should be less than or equal to one.
@@ -180,9 +182,9 @@ module Concerns::OrderConcern
 		## to the order organization.
 		## they don't get it on their letter head.
 		## 
-		attribute :referred_by_organization_id, String, mapping: {type: 'keyword'}
+		attribute :outsourced_by_organization_id, String, mapping: {type: 'keyword'}
 
-		attr_accessor :referred_by_organization
+		attr_accessor :outsourced_by_organization
 
 		attribute :bill_outsourced_reports_to_patient, Integer, mapping: {type: 'integer'}
 
@@ -297,6 +299,9 @@ module Concerns::OrderConcern
 		attr_accessor :local_item_group
 
 
+		attr_accessor :can_be_finalized
+
+
 		settings index: { 
 		    number_of_shards: 1, 
 		    number_of_replicas: 0,
@@ -364,6 +369,8 @@ module Concerns::OrderConcern
 
 		## what about verification.
 		## how long will that take?
+		## so you do after find.
+		## then it changes.
 
 		validate :can_modify, :if => Proc.new{|c| !c.changed_attributes.blank?}
 
@@ -376,6 +383,11 @@ module Concerns::OrderConcern
 		#validate :order_can_be_finalized, :if => Proc.new{|c|
 		#	c.changed_attributes.include? "finalize_order"
 		#}	
+		#if someone referred -> and you add a 
+		#so referred is different.
+		#in that case, a bill is not created
+		#outsourced is different.
+		#
 
 		validate :order_completed_not_changed
 
@@ -424,6 +436,16 @@ module Concerns::OrderConcern
 
 
 		before_validation do |document|
+			# so the newly added should have kicked in.
+			document.categories.each do |category|
+				category.items.delete_if{|c|
+					puts "checking item newly added is------------------------------------------------->:"
+					puts c.newly_added
+					puts "has no identification"
+					puts c.has_no_identification?
+					c.newly_added == true && c.has_no_identification?
+				}
+			end
 			#t1 = Time.now
 			document.check_for_top_up
 			#t2 = Time.now
@@ -472,6 +494,7 @@ module Concerns::OrderConcern
 			#puts "step : cascade_id_generation  , time taken #{(t16 - t15).in_milliseconds}"
 			#puts "total time for before validation: #{(t16 - t1).in_milliseconds}"
 			#$redis.set("before_validation",Time.now.to_f.to_s)
+			document.set_can_be_finalized
 		end
 
 
@@ -487,6 +510,27 @@ module Concerns::OrderConcern
 			document.set_accessors
 		end
 
+	end
+
+	##########################################################
+	##
+	##
+	## HELPER METHOD WHICH SHOWS a message about tubes, pending history pending, etc.
+	## same as worth processing on the reports.
+	## its just an amalgamation of those.
+	##
+	##
+	##########################################################
+	def set_can_be_finalized
+		self.reports.each do |report|
+			if report.worth_processing.blank?
+				self.can_be_finalized ||= "The order cannot be finalized for the following reasons:"
+				self.can_be_finalized += ("<br>" + report.name.to_s + " -- " + " You need to add tube barcode details, or answer history questions to proceed.")
+			end
+		end
+		if self.can_be_finalized.blank?
+			self.can_be_finalized = "true"
+		end
 	end
 
 	def trigger_lis_poll_job
@@ -907,13 +951,19 @@ module Concerns::OrderConcern
 	## child elements.
 	def set_accessors
 		t1 = Time.now.to_i
+		self.gather_history
 		self.load_local_item_group
 		self.reports.each do |report|
+			## set nil to give it a chance to reset
+			## but what about 
+			## report.worth_processing = nil
 			report.order_organization = self.organization
+			report.consider_for_processing?(self.history_tags)
 			report.set_accessors
 		end
+		self.set_can_be_finalized
 		t2 = Time.now.to_i
-		puts "set accessors takes: #{t2*1000.to_f - t1*1000.to_f}"
+		puts "set accessors in order takes: #{t2*1000.to_f - t1*1000.to_f}"
 	end
 
 
@@ -1189,7 +1239,9 @@ module Concerns::OrderConcern
 		self.reports.map{|report|
 			report.requirements.each do |req|
 				options = req.categories.size
-				req.categories.each do |category|
+				## now we need something to expand.
+				## 
+				req.categories.each_with_index {|category,key|
 					#puts "looking for category: #{category.name}"
 					if !has_category?(category.name)
 						category_to_add = Inventory::Category.new(quantity: category.quantity, required_for_reports: [], optional_for_reports: [], name: category.name)
@@ -1198,6 +1250,16 @@ module Concerns::OrderConcern
 						else
 							category_to_add.required_for_reports << report.id.to_s
 						end
+						
+						## so now what next,
+						## dim that
+						## don't show set_changed_for_lis
+						## if its the first category in any requirement, then it is absolutely essential.
+						category_to_add.show_by_default = Inventory::Category::YES if key == 0
+
+						## however if we can ignore missing items in this category, then we don't need to show it by default.
+						category_to_add.show_by_default = Inventory::Category::NO if category.ignore_missing_items == Inventory::Category::YES
+						
 						self.categories << category_to_add
 					else
 						self.categories.each do |existing_category|
@@ -1215,10 +1277,14 @@ module Concerns::OrderConcern
 
 								existing_category.required_for_reports.flatten!
 
+								existing_category.show_by_default = Inventory::Category::YES if key == 0
+
+								existing_category.show_by_default = Inventory::Category::NO if category.ignore_missing_items == Inventory::Category::YES
+
 							end
 						end
 					end
-				end
+				}
 			end
 		}		
 	end
@@ -1291,19 +1357,26 @@ module Concerns::OrderConcern
 	def verify
 		#puts "INSIDE DEF: vERIFY IN ORDER CONCERN."
 		self.reports.each do |report|
+			report.a_test_was_verified = false
 			if report.consider_for_processing?(self.history_tags)
 			#puts "checking report: #{report.name}"
+			#puts "report verify all is: #{report.verify_all},,, #{Diagnostics::Report::VERIFY_ALL}"
 				if report.verify_all == Diagnostics::Report::VERIFY_ALL
 					#puts "reprot verify all is true"
 					if report.impression.blank?
 						#puts "impression is balnk"
 						report.tests.each do |test|
 							#puts "Calling verify if normal on test: #{test.name}"
-							test.verify_if_normal
+							unless test.verify_if_normal(self.current_user).blank?
+								report.a_test_was_verified = true
+							end
+
 						end
 					else
 						report.tests.each do |test|
-							test.verify
+							unless test.verify.blank?
+								report.a_test_was_verified = true
+							end
 						end
 					end
 				end
@@ -1488,9 +1561,9 @@ module Concerns::OrderConcern
 		r.add_bill(Business::Payment.bill_from_outsourced_organization_to_order_organization(report,self))
 	end
 
-	def receipt_to_referring_organization(report)
-		r = find_or_initialize_receipt(report.currently_held_by_organization,self.referred_by_organization_id.to_s,nil)
-		r.add_bill(Business::Payment.bill_from_outsourced_organization_to_referring_organization(report,self))
+	def receipt_to_outsourced_organization(report)
+		r = find_or_initialize_receipt(report.currently_held_by_organization,self.outsourced_by_organization_id.to_s,nil)
+		r.add_bill(Business::Payment.bill_from_outsourced_organization_to_outsourcer_organization(report,self))
 	end
 
 	## i have a very simple idea
@@ -1522,8 +1595,8 @@ module Concerns::OrderConcern
 						
 						receipt_to_patient(self.organization.id.to_s,report)
 					
-						unless self.referred_by_organization_id.blank?
-							receipt_to_referring_organization(report)
+						unless self.outsourced_by_organization_id.blank?
+							receipt_to_outsourced_organization(report)
 						end
 					end
 				end
@@ -1588,7 +1661,11 @@ module Concerns::OrderConcern
 	def proceed_for_pdf_generation?
 		((any_report_just_verified? && (self.organization.generate_partial_order_reports == YES)) || (all_reports_verified? && any_report_just_verified?) || (!self.force_pdf_generation.blank?))
 	end
-	
+
+	## now if we finalize the order then the result should get generated.
+	## on finalize order ?
+	## can the report be verified if the order is not finalized?
+	## first see if the receipt gets generated or not.	
 	def before_generate_pdf
 		return false unless self.skip_pdf_generation.blank?
 		return proceed_for_pdf_generation?
@@ -1870,7 +1947,7 @@ module Concerns::OrderConcern
 					    	:finalize_order,
 					    	:order_completed,
 					    	:local_item_group_id,
-					    	:referred_by_organization_id
+					    	:outsourced_by_organization_id
 						]
 					}
 				]

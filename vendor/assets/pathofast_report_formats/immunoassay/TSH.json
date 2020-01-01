@@ -4,12 +4,7 @@
 	"rates" : [
 		{
 			"for_organization_id" : "*",
-			"rate" : 100
-		},
-		{
-			"for_organization_id" : "*",
-			"rate" : 100,
-			"patient_rate" : 1
+			"rate" : 200
 		}
 	],
 	"tests" : [
@@ -222,8 +217,8 @@
 							"max_range_val" : 4.59
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -231,8 +226,8 @@
 							"max_range_val" : 4.10
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -271,6 +266,7 @@
 							"min_range_val" : 0.81,
 							"max_range_val" : 4.33
 						},
+						,
 						{
 							"name" : "1st Trimester Range",
 							"description" : "The range in the first trimester",
@@ -281,8 +277,8 @@
 							"max_range_val" : 4.59
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -290,8 +286,8 @@
 							"max_range_val" : 4.10
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -330,6 +326,7 @@
 							"min_range_val" : 0.45,
 							"max_range_val" : 3.67
 						},
+						,
 						{
 							"name" : "1st Trimester Range",
 							"description" : "The range in the first trimester",
@@ -340,8 +337,8 @@
 							"max_range_val" : 4.59
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -349,8 +346,8 @@
 							"max_range_val" : 4.10
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -389,6 +386,7 @@
 							"min_range_val" : 0.45,
 							"max_range_val" : 3.67
 						},
+						,
 						{
 							"name" : "1st Trimester Range",
 							"description" : "The range in the first trimester",
@@ -399,8 +397,8 @@
 							"max_range_val" : 4.59
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -408,15 +406,14 @@
 							"max_range_val" : 4.10
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
 							"min_range_val" : 0.21,
 							"max_range_val" : 3.15
 						}
-
 					]
 				}
 			]
@@ -427,8 +424,20 @@
 			"name" : "Serum Container",
 			"categories" : [
 				{
+					"name" : "Serum Holder Tube",
+					"quantity" : 5.0
+				},
+				{
 					"name" : "SST Tube",
-					"quantity" : 1.0
+					"quantity" : 5.0
+				},
+				{
+					"name" : "Plain Tube",
+					"quantity" : 5.0
+				},
+				{
+					"name" : "RST Tube",
+					"quantity" : 5.0
 				}
 			]	
 		}

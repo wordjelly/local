@@ -302,20 +302,24 @@ class Diagnostics::Test
 	##
 	##########################################################
 	def set_display_range_details
+		
+		self.display_normal_biological_interval = ''
 
 		if r = get_applicable_range
 			if self.print_all_ranges_in_report == NO
 				self.display_normal_biological_interval = r.get_normal_biological_interval
 			else
 				r.tags.each do |tag|
-					prefix = tag.is_normal? ? "Normal" : tag.name
-					self.display_normal_biological_interval += (prefix + tag.get_biological_interval)
+					#prefix = tag.is_normal? ? "Normal" : tag.name
+					prefix = tag.is_history_tag? ? tag.name : tag.range_type
+					self.display_normal_biological_interval += (prefix + " : " + tag.get_biological_interval)
+					self.display_normal_biological_interval += "\n"
 				end
 			end
-			
-			# so there's just print all ranges.
-			# now add a report level inference field.
 
+			## finalize order should work.
+			## if you finalize it will run generate_receipts.
+		
 			if k = r.get_picked_tag
 				self.display_count_or_grade = k.count.to_s || k.grade.to_s
 				if k.is_abnormal?
@@ -517,10 +521,12 @@ class Diagnostics::Test
 	def fields_not_to_show_in_form_hash(root="*")
 		{
 			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","ready_for_reporting","verification_done","result_text","result_numeric","result_raw"],
-			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","lis_code","description","verification_done","result_text","result_raw","result_numeric","result_type","references","units"]
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","lis_code","description","verification_done","result_text","result_raw","result_numeric","result_type","references","units","images_allowed","name","ready_for_reporting","only_include_in_report_if_abnormal","test_must_have_value","template_tag_ids","verification_done_by","test_only_applicable_to_genders","ranges","tags"]
 		}
 	end
 
+	## summarize range row better
+	## include the different 
 	## filter the incoming results
 	## keep away things like NAN, undefined, blanks, dots.
 	## we do this not before save, but from the order
@@ -566,7 +572,7 @@ class Diagnostics::Test
 			
 			#puts "incorrect result format is:"
 			#puts incorrect_result_format.to_s
-
+			#now test display all ranges
 			if incorrect_result_format.blank?
 				if self.requires_numeric_result?
 					#begin
@@ -617,6 +623,7 @@ class Diagnostics::Test
 			self.print_all_ranges_in_report = YES
 		end
 	end
+
 	
 	
 	## @return[Diagnostics::Range] applicable range, or nil , if none has been picked yet.
@@ -683,24 +690,25 @@ class Diagnostics::Test
 			
 			abnormal = "-"
 
-			if applicable_range = get_applicable_range
+			## so there is no applicable range
+			## as no tag has been assigned.
+			if applicable_range = self.ranges[0]
 				inference = applicable_range.get_inference
 				range_name = applicable_range.get_display_name
 				abnormal = applicable_range.is_abnormal?
 			end
-
+			## this nees to be set as an accessor.
+			## <div class="verify edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Verify</div>
 			'
 				<thead>
 		          <tr>
 		              <th>' + self.name + '</th>
 		              <th>' + (self.result_raw || DEFAULT_RESULT) + '</th>
 		              <th>' + (self.units || DEFAULT_UNITS) + '</th>
-		              <th>' + range_name + '</th>
+		              <th>' + (applicable_range.get_normal_biological_interval || "-") + '</th>
 		              <th>' + (inference || '') + '</th>
-		              <th>' + self.is_ready_for_reporting?.to_s + '</th>
 		              <th>' + self.is_verification_done?.to_s + '</th>
 		              <th><div class="add_result_manually edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Add Result Manually</div>
-		              	  <div class="verify edit_nested_object" data-id=' + self.unique_id_for_form_divs + '>Verify</div>
 		              </th>
 		          </tr>
 		        </thead>
@@ -744,9 +752,8 @@ class Diagnostics::Test
 		              <th>Name</th>
 		              <th>Result</th>
 		              <th>Units</th>
-		              <th>Range Name</th>
+		              <th>Range</th>
 		              <th>Inference</th>
-		              <th>Ready For Reporting</th>
 		              <th>Verified</th>
 		              <th>Options</th>
 		          </tr>
@@ -773,21 +780,31 @@ class Diagnostics::Test
 	## verifies the test if report verify_all is true.
 	## will verify the test only if the picked_range is not abnormal.
 	def verify_if_normal(created_by_user)
+		result = false
 		unless self.verification_done == YES
 			#puts "came to verify if normal."
 			#puts "self is abnormal: #{self.is_abnormal?}"
 			if !self.is_abnormal?
 				#puts "test is normal, i.e not abnormal."
-				self.verification_done = 1 if self.is_ready_for_reporting?
-				self.verification_done_by << created_by_user.id.to_s
+				if self.is_ready_for_reporting?
+					self.verification_done = 1 
+					self.verification_done_by << created_by_user.id.to_s
+					result = true
+				end
 			end	
 		end
+		result
 	end	
 
 	def verify
+		result = false
 		unless self.verification_done == YES
-			self.verification_done = 1 if self.is_ready_for_reporting?
+			if self.is_ready_for_reporting?
+				self.verification_done = 1 
+				result = true
+			end
 		end
+		result
 	end
 
 	def add_new_object(root,collection_name,scripts,readonly)

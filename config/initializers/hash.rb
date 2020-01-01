@@ -62,7 +62,12 @@ class ::Hash
 				object.current_size[k] = self[k].size
 				
 				if object.send(k).blank?
-					object.send("#{k}=",self[k]) unless assign.blank?
+					unless assign.blank?
+						object.send("#{k}=",self[k])
+						object.send("#{k}").map{|c|
+							c.newly_added = true if c.respond_to? :newly_added
+						}
+					end 
 					unless self[k].blank?
 						object.changed_attributes << k
 						object.changed_array_attribute_sizes << k

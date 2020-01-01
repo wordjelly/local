@@ -27,7 +27,7 @@ var get_patient_id = function(){
 
 var get_template_report_ids = function(){
 	var template_report_ids = [];
-	$.each($("[name='template_report_id']"),function(index,element){
+	$.each($("[name*=template_report_ids]"),function(index,element){
 		template_report_ids.push($(element).val());
 	});
 	return template_report_ids;
@@ -44,8 +44,24 @@ var add_report_to_order = function(report_id){
 
 $(document).on('click','.choose_report',function(event){
 	add_report_to_order($(this).attr("data-id"));
-	$("form").first().submit();
+	var html_string = '';
+	var pattern = new RegExp(/\-([^-]+)$/);
+
+	_.each(get_template_report_ids(),function(el){
+		html_string += '<div style="margin-left: 10px;">'
+		var k = pattern.exec(el);
+		html_string += k[1];
+		html_string += '</div>,\n';
+	});
+	M.Toast.dismissAll();
+
+	M.toast({html: "Reports in Order:" + html_string + '<button class="btn-flat toast_submit_form toast-action">Submit</button>', displayLength: 30000});
+	//$("form").first().submit();
 });
+
+$(document).on('click','.toast_submit_form',function(event){
+	$("form").first().submit();
+})
 
 
 /**
@@ -75,3 +91,52 @@ $(document).on('click','#business_order_do_to_up_button',function(event){
 	$("#business_order_do_top_up").val("1");
 	$("form").first().submit();
 });
+
+
+$(document).on('click','#business_order_finalize_order_button',function(event){
+	$("#business_order_finalize_order").val("1");
+	$("form").first().submit();
+});
+
+$(document).on('click','#change_local_item_group_id',function(event){
+	$("#business_order_local_item_group_id").toggle();
+});
+
+$(document).on('click','#force_pdf_generation_button',function(event){
+	$("#business_order_force_pdf_generation").val("1");
+	$("form").first().submit();
+});
+
+$(document).on('click','#add_reports_button',function(event){
+
+	$("#add_reports_details").slideToggle();
+
+});
+
+// tubes
+// payment receipts
+// test editing -> adding values should be more simple.
+$(document).on('click','#show_reports_list',function(event){
+	var show_outsourced = $("#show_outsourced").prop("checked");
+	var show_packages = $("#show_packages").prop("checked");
+	$.get({
+	  url: "/diagnostics/reports",
+	  data: {show_outsourced: show_outsourced, show_packages: show_packages, reports_list: true},
+	  success: function(data){
+	  	if(_.isUndefined(template)){
+			var template = _.template($('#reports_list_template').html());
+		}
+		$("#reports_list_holder").empty();
+	  	_.each(data["reports"],function(report){
+	  		console.log("Report is:");
+	  		console.log(report);
+	  		console.log(template(report));
+	  		$("#reports_list_holder").append(template(report));
+	  	});
+	  }
+	});
+});
+
+// and for the tubes ?
+// we add the tubes.
+// and we have to show the existing reports as well.

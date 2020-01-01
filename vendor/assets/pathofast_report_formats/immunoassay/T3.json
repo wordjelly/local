@@ -4,12 +4,7 @@
 	"rates" : [
 		{
 			"for_organization_id" : "*",
-			"rate" : 100
-		},
-		{
-			"for_organization_id" : "*",
-			"rate" : 100,
-			"patient_rate" : 1
+			"rate" : 200
 		}
 	],
 	"tests" : [
@@ -23,6 +18,7 @@
 			"test_must_have_value" : 1,
 			"ranges" : [
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 0,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
@@ -41,11 +37,12 @@
 							"min_range_val" : 2.88,
 							"max_range_val" : 100,
 							"max_range_val_unbound" : 1,
-							"inference" : "Repeat TSH after 1 week, in fasting state, with free thyroid hormones, and anti-thyroid antibodies if clinically suspected. Rule out drug history."
+							"inference" : "Repeat Thyroid Profile after 1 week, in fasting state, with free thyroid hormones, and anti-thyroid antibodies if clinically suspected. Rule out drug history."
 						}
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 0,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
@@ -63,12 +60,12 @@
 							"range_type" : "abnormal",
 							"min_range_val" : 2.88,
 							"max_range_val" : 100,
-							"max_range_val_unbound" : 1,
-							"inference" : "Repeat TSH after 1 week, in fasting state, with free thyroid hormones, and anti-thyroid antibodies if clinically suspected. Rule out drug history."
+							"max_range_val_unbound" : 1
 						}
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 0,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
@@ -85,6 +82,7 @@
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 0,
 					"min_age_years" : 0,
 					"min_age_months" : 0,
@@ -101,6 +99,7 @@
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 1,
 					"min_age_years" : 0,
 					"min_age_months" : 3,
@@ -117,6 +116,7 @@
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 1,
 					"min_age_years" : 0,
 					"min_age_months" : 3,
@@ -133,6 +133,7 @@
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 6,
 					"min_age_years" : 1,
 					"min_age_months" : 0,
@@ -149,6 +150,7 @@
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 6,
 					"min_age_years" : 1,
 					"min_age_months" : 0,
@@ -165,6 +167,7 @@
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 11,
 					"min_age_years" : 6,
 					"min_age_months" : 0,
@@ -181,6 +184,7 @@
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 11,
 					"min_age_years" : 6,
 					"min_age_months" : 0,
@@ -197,6 +201,7 @@
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 20,
 					"min_age_years" : 11,
 					"min_age_months" : 0,
@@ -213,6 +218,7 @@
 					]
 				},
 				{
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
 					"max_age_years" : 20,
 					"min_age_years" : 11,
 					"min_age_months" : 0,
@@ -256,7 +262,8 @@
 					]
 				},
 				{
-					"max_age_years" : 50,
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
+					"max_age_years" : 40,
 					"min_age_years" : 20,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -266,13 +273,14 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 0.7,
-							"max_range_val" : 2.4
+							"min_range_val" : 0.85,
+							"max_range_val" : 1.49
 						}
 					]
 				},
 				{
-					"max_age_years" : 50,
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
+					"max_age_years" : 40,
 					"min_age_years" : 20,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
@@ -282,8 +290,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 0.7,
-							"max_range_val" : 2.4
+							"min_range_val" : 0.78,
+							"max_range_val" : 1.89
 						},
 						{
 							"name" : "1st Trimester Range",
@@ -315,8 +323,9 @@
 					]
 				},
 				{
-					"max_age_years" : 120,
-					"min_age_years" : 50,
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
+					"max_age_years" : 70,
+					"min_age_years" : 40,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -325,14 +334,15 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 0.4,
-							"max_range_val" : 1.81
+							"min_range_val" : 0.76,
+							"max_range_val" : 1.58
 						}
 					]
 				},
 				{
-					"max_age_years" : 120,
-					"min_age_years" : 50,
+					"reference" : "Reference Intervals for Children and Adults Elecsys Thyroid Tests",
+					"max_age_years" : 70,
+					"min_age_years" : 40,
 					"min_age_months" : 0,
 					"max_age_months" : 0,
 					"min_age_days" : 0,
@@ -341,8 +351,69 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 0.4,
-							"max_range_val" : 1.81
+							"min_range_val" : 0.76,
+							"max_range_val" : 1.76
+						},
+						{
+							"name" : "1st Trimester Range",
+							"description" : "The range in the first trimester",
+							"range_type" : "history",
+							"min_history_val" : 0,
+							"max_history_val" : 90,
+							"min_range_val" : 1.05,
+							"max_range_val" : 2.30
+						},
+						{
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
+							"range_type" : "history",
+							"min_history_val" : 90,
+							"max_history_val" : 180,
+							"min_range_val" : 1.29,
+							"max_range_val" : 2.62
+						},
+						{
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
+							"range_type" : "history",
+							"min_history_val" : 180,
+							"max_history_val" : 270,
+							"min_range_val" : 1.35,
+							"max_range_val" : 2.62
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 70,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Male",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.8,
+							"max_range_val" : 2.0
+						}
+					]
+				},
+				{
+					"reference" : "Mayo Medical Laboratories Interpretative Handbook 2019",
+					"max_age_years" : 120,
+					"min_age_years" : 70,
+					"min_age_months" : 0,
+					"max_age_months" : 0,
+					"min_age_days" : 0,
+					"max_age_days" : 0,
+					"sex" : "Female",
+					"tags" : [
+						{
+							"range_type" : "normal",
+							"min_range_val" : 0.8,
+							"max_range_val" : 2.0
 						},
 						{
 							"name" : "1st Trimester Range",
@@ -381,8 +452,20 @@
 			"name" : "Serum Container",
 			"categories" : [
 				{
+					"name" : "Serum Holder Tube",
+					"quantity" : 5.0
+				},
+				{
 					"name" : "SST Tube",
-					"quantity" : 1.0
+					"quantity" : 5.0
+				},
+				{
+					"name" : "Plain Tube",
+					"quantity" : 5.0
+				},
+				{
+					"name" : "RST Tube",
+					"quantity" : 5.0
 				}
 			]	
 		}

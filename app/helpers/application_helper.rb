@@ -54,4 +54,14 @@ module ApplicationHelper
 		end
 	end
 
+
+	def report_message(report)
+		unless report.worth_processing.blank?
+			## if its not blank -> 
+			""
+		else
+			"Add required tubes/consumables & answer all history questions to proceed"
+		end
+	end
+
 end

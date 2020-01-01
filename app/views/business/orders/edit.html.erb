@@ -1,1 +1,19 @@
+<script type="text/template" id="reports_list_template">
+    <tr>
+    	<td>{{= thing.name }}</td>
+    	<td>
+    		{{ _.each(thing.outsourcable_organization_ids,function(oid){ }}
+    			{{= oid }}
+    		{{  });  }}
+    	</td>
+    	<td>
+    		{{ if(thing.added == 1) { }}
+    			<span class="remove_report" data-id="{{= thing.id }}">Cancel(Report Already Added)</span>
+    		{{  } }}
+    		{{  else { }}
+    			<span class="add_report" data-id="{{= thing.id }}">Add</span>
+    		{{ } }}
+    	</td>
+    </tr>
+</script>
 <%= render :partial => "form" %>

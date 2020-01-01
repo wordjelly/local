@@ -28,6 +28,13 @@ $(document).ready(function(){
         format: "yyyy-mm-dd"
     });
     $('select').formSelect();
+
+_.templateSettings = {
+    interpolate: /\{\{\=(.+?)\}\}/g,
+    evaluate: /\{\{(.+?)\}\}/g
+};
+
+_.templateSettings.variable = 'thing'; 
 });
 
 $(document).on('turbolinks:load', function() {
@@ -40,6 +47,13 @@ $(document).on('turbolinks:load', function() {
         format: "yyyy-mm-dd"
     });
     $('select').formSelect();
+
+_.templateSettings = {
+    interpolate: /\{\{\=(.+?)\}\}/g,
+    evaluate: /\{\{(.+?)\}\}/g
+};
+
+_.templateSettings.variable = 'thing'; 
 });
 
 $(document).on('click','.edit_nested_object,.add_nested_element', function() {
@@ -52,4 +66,13 @@ $(document).on('click','.edit_nested_object,.add_nested_element', function() {
         format: "yyyy-mm-dd"
     });
     $('select').formSelect();
+
+});
+
+
+var template;
+
+
+$(document).on('click','.edit_nested_object',function(event){
+    $(this).parent().parent().toggleClass("green");
 });

@@ -5,11 +5,6 @@
 		{
 			"for_organization_id" : "*",
 			"rate" : 100
-		},
-		{
-			"for_organization_id" : "*",
-			"rate" : 100,
-			"patient_rate" : 1
 		}
 	],
 	"tests" : [
@@ -39,7 +34,9 @@
 						{
 							"range_type" : "abnormal",
 							"min_range_val" : 0.9,
-							"max_range_val" : 500
+							"max_range_val" : 500,
+							"max_range_val_unbound" : 1,
+							"inference" : "Repeat with alternative method"
 						}
 					]
 				},
@@ -60,7 +57,9 @@
 						{
 							"range_type" : "abnormal",
 							"min_range_val" : 0.9,
-							"max_range_val" : 500
+							"max_range_val" : 500,
+							"max_range_val_unbound" : 1,
+							"inference" : "Repeat with alternative method"
 						}
 					]
 				}
@@ -72,12 +71,16 @@
 			"name" : "Serum Container",
 			"categories" : [
 				{
+					"name" : "Serum Holder Tube",
+					"quantity" : 5.0
+				},
+				{
 					"name" : "SST Tube",
-					"quantity" : 0.1
+					"quantity" : 5.0
 				},
 				{
 					"name" : "Plain Tube",
-					"quantity" : 0.1
+					"quantity" : 5.0
 				}
 			]	
 		}

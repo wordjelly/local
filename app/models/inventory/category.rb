@@ -51,10 +51,17 @@ class Inventory::Category
 	## @called_from : self#satisfied?
 	attribute :ignore_missing_items, Integer, mapping: {type: 'integer'}, default: NO
 
+	## set in #order_concern:update_requirements
+	## it only applies to the categories in the order
+	## and is used in the view to just show the main categories and not all.
+	## so that we don't overload the user.
+	## not used inside requirement categories in the reports.
+	attribute :show_by_default, Integer, mapping: {type: 'integer'}, default: NO
+
 	def fields_not_to_show_in_form_hash(root="*")
 		{
-			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options"],
-			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","name","quantity","barcode"]
+			"*" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","show_by_default"],
+			"order" => ["created_at","updated_at","public","currently_held_by_organization","created_by_user_id","owner_ids","procedure_version","outsourced_report_statuses","merged_statuses","search_options","name","quantity","barcode","show_by_default","ignore_missing_items","images_allowed","required_for_reports","optional_for_reports","use_category_for_lis"]
 		}
 	end
 
@@ -73,7 +80,8 @@ class Inventory::Category
 			},
 			{
 				:optional_for_reports => []
-			}
+			},
+			:show_by_default
 		]
 	end
 
@@ -106,8 +114,10 @@ class Inventory::Category
 			},
 			ignore_missing_items: {
 				type: 'integer'
+			},
+			show_by_default: {
+				type: 'integer'
 			}
-			
 		}
     	
 	end
@@ -119,18 +129,23 @@ class Inventory::Category
 		## those become hidden.
 		## not totally absent.
 		if args["root"] =~ /order/
+			display = self.show_by_default == YES ? "" : "display:none";
 
 			s = '
-				<tr>
+				<tr style="' + display + '" data-show-by-default="' + self.show_by_default.to_s + '">
 					<td>' + self.name + '</td>
 					<td>' + self.quantity.to_s + '</td>
 					<td>' + self.items.size.to_s + '</td>
 			'
 
+			## if an item is newly added and totally blank.
+			## then what do we do ?
+			## delete it ?
+			## 
 			if self.quantity > 0
-				total_tubes_required = (self.quantity.to_f / 100.0).round(0)
-				if self.items.size < total_tubes_required
-					s  += '<td><div class="edit_nested_object"  data-id=' + self.unique_id_for_form_divs + '>Click here and then click Add Items</div>'
+				
+				if self.items.size == 0
+					s  += '<td><div class="edit_nested_object"  data-id=' + self.unique_id_for_form_divs + '>Click to ADD BARCODE</div>'
 				else
 					s  += '<td><div class="edit_nested_object"  data-id=' + self.unique_id_for_form_divs + '>Change Tube Barcodes</div>'
 				end
@@ -273,5 +288,6 @@ class Inventory::Category
 		required_item_quantity += 1 if (mod > 0)
 		required_item_quantity - self.items.size
 	end
+
 
 end

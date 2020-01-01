@@ -17,7 +17,7 @@
 <tr>
 	<td><%= link_to @report.name, diagnostics_report_path(@report.id.to_s) %></td>
 	<td><%= @report.tests.size %></td>
-	<td><%= @report.statuses.size %></td>
+	<td><%= report_message(@report) %></td>
 	<td><%= @report.requirements.size %></td>
 	<td><%= render :partial => "/diagnostics/reports/options" %></td>
 </tr>

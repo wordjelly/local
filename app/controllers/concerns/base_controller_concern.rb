@@ -75,6 +75,13 @@ module Concerns::BaseControllerConcern
 					{
 						match_all: {}
 					}
+				],
+				should: [
+					{
+						term: {
+							public: 1
+						}
+					}
 				]
 			}
 		}
@@ -102,13 +109,13 @@ module Concerns::BaseControllerConcern
 
 		if current_user
 			if current_user.belongs_to_organization?
-				query[:bool][:must] << {
+				query[:bool][:should] << {
 					terms: {
 						owner_ids: current_user.organization.all_organizations
 					}
 				}
 			else
-				query[:bool][:must] << {
+				query[:bool][:should] << {
 					term: {
 						owner_ids: current_user.id.to_s
 					}
@@ -119,15 +126,34 @@ module Concerns::BaseControllerConcern
 		#puts "index action final query is--------------->"
 		#puts JSON.pretty_generate(query)
 
+		#modulate the query if reauired
+		aggs = nil
+		size = 10
+=begin
+		if get_resource_class.respond_to? :index_controller_action
+			response = get_resource_class.index_controller_action(query,params,current_user)
+			query = response[:query]
+			aggs = response[:aggs] unless response[:aggs].blank?
+			size = response[:size] unless response[:size].blank?
+		end
+=end
+		final_query_hash = 
+		{
+			size: size,
+			sort: {
+				"updated_at".to_sym => {
+					"order".to_sym => "desc"
+				}
+			},
+			query: query
+		}
+		final_query_hash[:aggs] = aggs unless aggs.blank?
+
+		#puts "final query hash is:"
+		#puts final_query_hash[:aggs]
+
 		results = get_resource_class.search(
-			{
-				sort: {
-					"updated_at".to_sym => {
-						"order".to_sym => "desc"
-					}
-				},
-				query: query
-			}
+			final_query_hash
 		)
 
 		if results.response.hits.hits.size > 0
@@ -141,7 +167,13 @@ module Concerns::BaseControllerConcern
 			}
 			instance_variable_set("@#{get_resource_name.pluralize}",objects)
 		else
+			#puts "no results, we parse the aggregations."
+			#if get_resource_class.respond_to? :parse_index_controller_aggregation
+			#	objects = get_resource_class.parse_index_controller_aggregation(results.response)
+			#	instance_variable_set("@#{get_resource_name.pluralize}",objects)
+			#else
 			instance_variable_set("@#{get_resource_name.pluralize}",[])
+			#end
 		end
 
 		respond_to do |format|

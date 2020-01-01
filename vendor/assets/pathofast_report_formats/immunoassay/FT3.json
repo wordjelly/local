@@ -4,12 +4,7 @@
 	"rates" : [
 		{
 			"for_organization_id" : "*",
-			"rate" : 100
-		},
-		{
-			"for_organization_id" : "*",
-			"rate" : 100,
-			"patient_rate" : 1
+			"rate" : 300
 		}
 	],
 	"tests" : [
@@ -222,8 +217,8 @@
 							"max_range_val" : 5.97
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -231,8 +226,8 @@
 							"max_range_val" : 5.45
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -252,8 +247,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 4.50,
-							"max_range_val" : 6.86
+							"min_range_val" : 4.36,
+							"max_range_val" : 6.74
 						}
 					]
 				},
@@ -268,8 +263,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 3.96,
-							"max_range_val" : 7.07
+							"min_range_val" : 3.66,
+							"max_range_val" : 6.72
 						},
 						{
 							"name" : "1st Trimester Range",
@@ -281,8 +276,8 @@
 							"max_range_val" : 5.97
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -290,8 +285,8 @@
 							"max_range_val" : 5.45
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -311,8 +306,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 4.23,
-							"max_range_val" : 6.44
+							"min_range_val" : 3.98,
+							"max_range_val" : 6.54
 						}
 					]
 				},
@@ -327,8 +322,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 3.86,
-							"max_range_val" : 6.02
+							"min_range_val" : 3.74,
+							"max_range_val" : 6.11
 						},
 						{
 							"name" : "1st Trimester Range",
@@ -340,8 +335,8 @@
 							"max_range_val" : 5.97
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -349,8 +344,8 @@
 							"max_range_val" : 5.45
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -370,8 +365,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 3.96,
-							"max_range_val" : 5.92
+							"min_range_val" : 4.30,
+							"max_range_val" : 6.758
 						}
 					]
 				},
@@ -386,8 +381,8 @@
 					"tags" : [
 						{
 							"range_type" : "normal",
-							"min_range_val" : 3.64,
-							"max_range_val" : 5.80
+							"min_range_val" : 4.30,
+							"max_range_val" : 6.758
 						},
 						{
 							"name" : "1st Trimester Range",
@@ -399,8 +394,8 @@
 							"max_range_val" : 5.97
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "2nd Trimester Range",
+							"description" : "The range in the second trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -408,8 +403,8 @@
 							"max_range_val" : 5.45
 						},
 						{
-							"name" : "1st Trimester Range",
-							"description" : "The range in the first trimester",
+							"name" : "3rd Trimester Range",
+							"description" : "The range in the third trimester",
 							"range_type" : "history",
 							"min_history_val" : 0,
 							"max_history_val" : 90,
@@ -426,8 +421,20 @@
 			"name" : "Serum Container",
 			"categories" : [
 				{
+					"name" : "Serum Holder Tube",
+					"quantity" : 5.0
+				},
+				{
 					"name" : "SST Tube",
-					"quantity" : 1.0
+					"quantity" : 5.0
+				},
+				{
+					"name" : "Plain Tube",
+					"quantity" : 5.0
+				},
+				{
+					"name" : "RST Tube",
+					"quantity" : 5.0
 				}
 			]	
 		}

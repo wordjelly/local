@@ -12638,7 +12638,8 @@
       "categories" : [
         {
           "name" : "Glass Slide",
-          "quantity" : 2.0
+          "quantity" : 2.0,
+          "ignore_missing_items" : 1
         }
       ] 
     },
@@ -12647,7 +12648,8 @@
       "categories" : [
         {
           "name" : "Leishman Stain",
-          "quantity" : 2.0
+          "quantity" : 2.0,
+          "ignore_missing_items" : 1
         }
       ] 
     },
@@ -12656,7 +12658,8 @@
       "categories" : [
         {
           "name" : "Leishman Buffer",
-          "quantity" : 2.0
+          "quantity" : 2.0,
+          "ignore_missing_items" : 1
         }
       ] 
     },
@@ -12665,7 +12668,8 @@
       "categories" : [
         {
           "name" : "Microtip",
-          "quantity" : 2.0
+          "quantity" : 2.0,
+          "ignore_missing_items" : 1
         }
       ] 
     }
